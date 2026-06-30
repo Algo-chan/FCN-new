@@ -1,0 +1,41 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+
+# Environment files
+.env
+.env.local
+.env.development
+.env.production
+
+# Logs
+*.log
+npm-debug.log*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# OpenCode / agent config
+.agents/
+GEMINI.md
+
+# Coverage
+coverage/
+
+# Prisma (keep migrations, ignore generated client at build time)
+fcn-backend/src/prisma/migrations/migration_lock.toml
+
+# Temp
+tmp/
+temp/

@@ -1,0 +1,125 @@
+import { useEffect, useRef } from "react";
+import { motion, useInView, useReducedMotion } from "framer-motion";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { FileText, MessageCircle, Pill, Smartphone, Stethoscope, TestTube, UserCheck } from "lucide-react";
+
+gsap.registerPlugin(ScrollTrigger);
+
+const steps = [
+  { icon: Smartphone, title: "Open FCN", desc: "Login or create your free account" },
+  { icon: Stethoscope, title: "Book Doctor", desc: "Browse and book a doctor that fits your needs" },
+  { icon: MessageCircle, title: "Consult", desc: "Chat, call, or video with your doctor remotely" },
+  { icon: UserCheck, title: "Nurse Sent", desc: "If needed, a nurse visits your home for tests" },
+  { icon: TestTube, title: "Lab Tests", desc: "Samples are processed at our partner labs" },
+  { icon: FileText, title: "E-Prescription", desc: "Receive your digital prescription instantly" },
+  { icon: Pill, title: "Get Meds", desc: "Collect medication at any partner pharmacy" }
+];
+
+export const HowItWorksSection = () => {
+  const sectionRef = useRef<HTMLElement>(null);
+  const lineRef = useRef<SVGPathElement>(null);
+  const isInView = useInView(sectionRef, { once: true, margin: "-120px" });
+  const shouldReduceMotion = useReducedMotion();
+
+  useEffect(() => {
+    if (shouldReduceMotion || !lineRef.current || !sectionRef.current) return;
+
+    const ctx = gsap.context(() => {
+      const length = lineRef.current!.getTotalLength();
+      gsap.set(lineRef.current, { strokeDasharray: length, strokeDashoffset: length });
+
+      ScrollTrigger.create({
+        trigger: sectionRef.current,
+        start: "top center+=100",
+        end: "bottom center-=100",
+        scrub: 1,
+        onUpdate: (self) => {
+          if (lineRef.current) {
+            gsap.to(lineRef.current, {
+              strokeDashoffset: length * (1 - self.progress),
+              duration: 0,
+              overwrite: "auto"
+            });
+          }
+          // Activate step circles
+          const circles = sectionRef.current?.querySelectorAll(".step-circle");
+          circles?.forEach((el, i) => {
+            const progress = self.progress * (circles.length + 1);
+            const stepIdx = i / (circles.length - 1);
+            if (progress >= stepIdx) {
+              el.classList.add("active");
+            } else {
+              el.classList.remove("active");
+            }
+          });
+        }
+      });
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, [shouldReduceMotion]);
+
+  return (
+    <section ref={sectionRef} id="how-it-works" className="scroll-mt-20 py-20">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <motion.div
+          initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          className="mb-14 text-center"
+        >
+          <h2 className="text-3xl font-bold text-fcn-text-light dark:text-white">How FCN Works</h2>
+          <p className="mt-2 text-fcn-text-light/60 dark:text-gray-400">From home to healed, in 7 simple steps</p>
+        </motion.div>
+
+        {/* Desktop horizontal flow */}
+        <div className="relative hidden lg:block">
+          <svg className="absolute left-0 top-8 w-full" height="4" viewBox="0 0 1200 4" preserveAspectRatio="none">
+            <path ref={lineRef} d="M0,2 L1200,2" fill="none" stroke="#0A7EA4" strokeWidth="4" strokeLinecap="round" />
+          </svg>
+          <div className="relative grid grid-cols-7 gap-4">
+            {steps.map((step, i) => (
+              <motion.div
+                key={step.title}
+                initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-60px" }}
+                transition={{ delay: shouldReduceMotion ? 0 : i * 0.08 }}
+                className="text-center"
+              >
+                <div className={`step-circle mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full border-2 transition-all duration-500 ${isInView ? "border-fcn-primary bg-fcn-primary text-white" : "border-gray-600 text-gray-500"}`}>
+                  <step.icon className="h-6 w-6" />
+                </div>
+                <p className="text-sm font-semibold text-fcn-text-light dark:text-white">{step.title}</p>
+                <p className="mt-1 text-xs text-fcn-text-light/50 dark:text-gray-500">{step.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+
+        {/* Mobile vertical stack */}
+        <div className="space-y-6 lg:hidden">
+          {steps.map((step, i) => (
+            <motion.div
+              key={step.title}
+              initial={shouldReduceMotion ? false : { opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: "-40px" }}
+              transition={{ delay: shouldReduceMotion ? 0 : i * 0.06 }}
+              className="flex items-start gap-4"
+            >
+              <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full border-2 border-fcn-primary bg-fcn-primary/10 text-fcn-primary`}>
+                <step.icon className="h-5 w-5" />
+              </div>
+              <div>
+                <p className="font-semibold text-fcn-text-light dark:text-white">{step.title}</p>
+                <p className="text-sm text-fcn-text-light/60 dark:text-gray-400">{step.desc}</p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};

@@ -1,0 +1,119 @@
+.page-enter {
+  animation: page-enter 0.3s ease-out both;
+}
+
+.card-hover {
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 18px 40px rgba(10, 126, 164, 0.18);
+}
+
+.glow-pulse {
+  animation: glow-pulse 2s ease-in-out infinite;
+}
+
+.float-animation {
+  animation: float-animation 4s ease-in-out infinite;
+}
+
+.health-ring {
+  position: relative;
+}
+
+.health-ring::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: conic-gradient(from 0deg, #0A7EA4, #2DD4BF, #10B981, #0A7EA4);
+  animation: health-ring 3s linear infinite;
+  z-index: -1;
+}
+
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes glow-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 rgba(10, 126, 164, 0);
+  }
+
+  50% {
+    box-shadow: 0 0 24px rgba(45, 212, 191, 0.45);
+  }
+}
+
+@keyframes float-animation {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes health-ring {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.medical-cross {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  animation: medical-cross-pulse 4s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+.medical-cross::before,
+.medical-cross::after {
+  content: "";
+  position: absolute;
+  background: currentColor;
+}
+
+.medical-cross::before {
+  width: 100%;
+  height: 30%;
+  top: 35%;
+  left: 0;
+}
+
+.medical-cross::after {
+  width: 30%;
+  height: 100%;
+  top: 0;
+  left: 35%;
+}
+
+@keyframes medical-cross-pulse {
+  0%, 100% { transform: rotate(0deg) scale(1); opacity: 1; }
+  50% { transform: rotate(45deg) scale(1.1); opacity: 0.6; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
