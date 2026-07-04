@@ -20,11 +20,11 @@ export const Footer = () => {
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
           {/* Brand */}
           <div>
-            <div className="mb-3 text-xl font-extrabold tracking-tight text-fcn-text-light dark:text-white">
-              FCN<span className="text-fcn-accent">.</span>
-            </div>
-            <p className="text-sm text-fcn-text-light/50 dark:text-gray-400">Healthcare Without Walls</p>
-            <p className="mt-1 text-[10px] tracking-[4px] text-fcn-text-light/30 dark:text-gray-500">ጤና</p>
+            <img
+              src="/logo/fcn-logo-full.png"
+              alt="FCN Logo"
+              className="mb-3 h-9 w-auto"
+            />
             <div className="mt-4 flex gap-3">
               {socialIcons.map((s) => (
                 <a key={s.href} href={s.href} className="rounded-full p-2 text-fcn-text-light/40 transition hover:text-fcn-accent dark:text-gray-400" aria-label="Social link">

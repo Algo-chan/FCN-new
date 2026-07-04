@@ -44,13 +44,12 @@ export const Navbar = () => {
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${bgClasses}`}>
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo */}
-        <Link to="/" className="flex flex-col items-start">
-          <span className={`text-xl font-extrabold tracking-tight ${textClasses}`}>
-            FCN<span className="text-fcn-accent">.</span>
-          </span>
-          <span className={`-mt-1 text-[10px] tracking-[4px] ${scrolled ? "text-fcn-text-light/40 dark:text-fcn-text-dark/40" : "text-white/40"}`}>
-            ጤና
-          </span>
+        <Link to="/" className="flex items-center gap-2">
+          <img
+            src="/logo/fcn-logo-full.png"
+            alt="FCN Logo"
+            className="h-9 w-auto"
+          />
         </Link>
 
         {/* Desktop nav */}

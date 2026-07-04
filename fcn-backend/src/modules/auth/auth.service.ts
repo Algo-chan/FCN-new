@@ -38,12 +38,26 @@ export class AuthService {
       }
 
       if (data.role === "doctor") {
+        let hospital_id: string | undefined;
+
+        if (data.hospital_id) {
+          const hospital = await tx.hospital.findUnique({ where: { id: data.hospital_id } });
+          if (!hospital) {
+            throw new AppError("Selected hospital not found", 404, "NOT_FOUND");
+          }
+          if (!data.specialty || !hospital.specialties.includes(data.specialty)) {
+            throw new AppError("Selected specialty is not offered by your affiliated hospital", 400, "INVALID_SPECIALTY_FOR_HOSPITAL");
+          }
+          hospital_id = hospital.id;
+        }
+
         await tx.doctorProfile.create({
           data: {
             user_id: created.id,
             license_number: data.license_number!,
             specialty: data.specialty!,
-            years_experience: data.years_experience ?? 0
+            years_experience: data.years_experience ?? 0,
+            hospital_id
           }
         });
       }

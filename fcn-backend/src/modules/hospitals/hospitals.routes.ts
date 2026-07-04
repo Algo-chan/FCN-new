@@ -8,6 +8,7 @@ import {
   getAllHospitalsController,
   getHospitalAdminsController,
   getHospitalByIdController,
+  getHospitalSpecialtiesController,
   updateHospitalController,
   updateHospitalStatusController,
   updateOccupancyController
@@ -17,6 +18,7 @@ export const hospitalRoutes = Router();
 
 hospitalRoutes.get("/", authMiddleware, getAllHospitalsController);
 hospitalRoutes.get("/:id", authMiddleware, getHospitalByIdController);
+hospitalRoutes.get("/:id/specialties", authMiddleware, getHospitalSpecialtiesController);
 hospitalRoutes.patch("/:id/occupancy", authMiddleware, requireRole("hospital_admin", "super_admin"), requireHospitalScope, updateOccupancyController);
 hospitalRoutes.post("/", authMiddleware, requireRole("super_admin"), createHospitalController);
 hospitalRoutes.patch("/:id", authMiddleware, requireRole("super_admin"), updateHospitalController);

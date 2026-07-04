@@ -48,5 +48,8 @@ export const hospitalsService = {
     api.get<ApiResponse<HospitalAdminProfile[]>>(`/hospitals/${hospitalId}/admins`).then((r) => r.data),
 
   createHospitalAdmin: (hospitalId: string, data: CreateHospitalAdminDto) =>
-    api.post<ApiResponse<HospitalAdminProfile>>(`/hospitals/${hospitalId}/admins`, data).then((r) => r.data)
+    api.post<ApiResponse<HospitalAdminProfile>>(`/hospitals/${hospitalId}/admins`, data).then((r) => r.data),
+
+  getHospitalSpecialties: (hospitalId: string) =>
+    api.get<ApiResponse<string[]>>(`/hospitals/${hospitalId}/specialties`).then((r) => r.data?.data ?? [])
 };

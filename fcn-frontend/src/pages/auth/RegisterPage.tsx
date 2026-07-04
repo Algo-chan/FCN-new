@@ -1,11 +1,15 @@
 import { useCallback, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Activity, Check, Heart, Loader2, Lock, Mail, MapPin, Shield, Stethoscope, User, UserPlus } from "lucide-react";
 import { authService } from "@/services/auth.service";
+import { doctorsService } from "@/services/doctors.service";
+import { hospitalsService } from "@/services/hospitals.service";
 import { useAuthStore } from "@/store/auth.store";
 import { useSound } from "@/hooks/useSound";
 import { Button } from "@/components/ui/Button";
+import { Spinner } from "@/components/ui/Spinner";
 
 type Role = "patient" | "doctor" | "nurse" | "rural_health_officer";
 
@@ -19,11 +23,10 @@ interface FormData {
   specialty: string;
   years_experience: string;
   hospital_name: string;
+  hospital_id: string;
   nursing_license_number: string;
   coverage_zone: string;
 }
-
-const specialties = ["General", "Cardiology", "Endocrinology", "Pediatrics", "Dermatology", "Orthopedics", "Neurology", "Psychiatry", "Gynecology", "Other"];
 
 const roleCards = [
   { role: "patient" as Role, icon: User, title: "Patient", desc: "Get remote healthcare from home" },
@@ -52,8 +55,27 @@ const RegisterPage = () => {
   const [form, setForm] = useState<FormData>({
     full_name: "", email: "", password: "", confirmPassword: "",
     role: null, license_number: "", specialty: "", years_experience: "",
-    hospital_name: "", nursing_license_number: "", coverage_zone: ""
+    hospital_name: "", hospital_id: "", nursing_license_number: "", coverage_zone: ""
   });
+
+  const { data: hospitalsResponse } = useQuery({
+    queryKey: ["hospitals", "active"],
+    queryFn: () => hospitalsService.getAllHospitals("active"),
+    enabled: form.role === "doctor"
+  });
+
+  const hospitals = useMemo(() => hospitalsResponse?.data ?? [], [hospitalsResponse]);
+
+  const { data: hospitalSpecialties, isLoading: specialtiesLoading } = useQuery({
+    queryKey: ["hospital-specialties", form.hospital_id],
+    queryFn: () => doctorsService.getHospitalSpecialties(form.hospital_id),
+    enabled: !!form.hospital_id && form.role === "doctor"
+  });
+
+  const dynamicSpecialties = useMemo(() => {
+    if (hospitalSpecialties && hospitalSpecialties.length > 0) return hospitalSpecialties;
+    return null;
+  }, [hospitalSpecialties]);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -148,8 +170,11 @@ const RegisterPage = () => {
           ))}
         </div>
         <div className="absolute left-8 top-8 z-10">
-          <div className="text-3xl font-extrabold tracking-tight text-white">FCN</div>
-          <div className="text-sm font-medium text-white/70">Foundation Care Network</div>
+          <img
+            src="/logo/fcn-logo-full.png"
+            alt="FCN Logo"
+            className="h-10 w-auto"
+          />
         </div>
         <div className="relative z-10 flex h-full flex-col justify-center px-16 pb-24">
           <h1 className="mb-6 text-5xl font-bold leading-tight text-white">Join FCN Today</h1>
@@ -253,9 +278,38 @@ const RegisterPage = () => {
                   {form.role === "doctor" && (
                     <motion.div key="doctor-fields" initial={!shouldReduceMotion ? { height: 0, opacity: 0 } : undefined} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="space-y-3 overflow-hidden">
                       <label className="block"><span className="mb-1 block text-sm font-medium">License number</span><input type="text" value={form.license_number} onChange={(e) => update("license_number", e.target.value)} className="h-11 w-full rounded-md border border-fcn-primary/20 bg-white px-3 text-sm outline-none focus:border-fcn-accent focus:ring-2 focus:ring-fcn-accent/30 dark:bg-fcn-dark" aria-label="License number" />{errors.license_number && <p className="mt-1 text-xs text-fcn-danger">{errors.license_number}</p>}</label>
-                      <label className="block"><span className="mb-1 block text-sm font-medium">Specialty</span><select value={form.specialty} onChange={(e) => update("specialty", e.target.value)} className="h-11 w-full rounded-md border border-fcn-primary/20 bg-white px-3 text-sm outline-none focus:border-fcn-accent focus:ring-2 focus:ring-fcn-accent/30 dark:bg-fcn-dark" aria-label="Specialty"><option value="">Select...</option>{specialties.map((s) => <option key={s} value={s}>{s}</option>)}</select>{errors.specialty && <p className="mt-1 text-xs text-fcn-danger">{errors.specialty}</p>}</label>
+
+                      <label className="block"><span className="mb-1 block text-sm font-medium">Hospital</span>
+                        <select value={form.hospital_id} onChange={(e) => { update("hospital_id", e.target.value); const h = hospitals.find((x) => x.id === e.target.value); update("hospital_name", h?.name ?? ""); update("specialty", ""); }} className="h-11 w-full rounded-md border border-fcn-primary/20 bg-white px-3 text-sm outline-none focus:border-fcn-accent focus:ring-2 focus:ring-fcn-accent/30 dark:bg-fcn-dark" aria-label="Hospital">
+                          <option value="">Select a hospital...</option>
+                          {hospitals.map((h) => <option key={h.id} value={h.id}>{h.name} — {h.location}</option>)}
+                        </select>
+                      </label>
+
+                      <label className="block"><span className="mb-1 block text-sm font-medium">Specialty</span>
+                        {form.hospital_id && specialtiesLoading ? (
+                          <div className="flex h-11 items-center gap-2 rounded-md border border-fcn-primary/20 bg-white px-3 dark:bg-fcn-dark">
+                            <Spinner size="sm" />
+                            <span className="text-sm text-fcn-text-light/50">Loading specialties...</span>
+                          </div>
+                        ) : dynamicSpecialties && dynamicSpecialties.length > 0 ? (
+                          <select value={form.specialty} onChange={(e) => update("specialty", e.target.value)} className="h-11 w-full rounded-md border border-fcn-primary/20 bg-white px-3 text-sm outline-none focus:border-fcn-accent focus:ring-2 focus:ring-fcn-accent/30 dark:bg-fcn-dark" aria-label="Specialty">
+                            <option value="">Select specialty...</option>
+                            {dynamicSpecialties.map((s) => <option key={s} value={s}>{s}</option>)}
+                          </select>
+                        ) : form.hospital_id ? (
+                          <div className="flex h-11 items-center gap-2 rounded-md border border-fcn-primary/20 bg-white px-3 text-sm text-fcn-text-light/50 dark:bg-fcn-dark">
+                            No specialties available for this hospital
+                          </div>
+                        ) : (
+                          <div className="flex h-11 items-center gap-2 rounded-md border border-fcn-primary/20 bg-white px-3 text-sm text-fcn-text-light/50 dark:bg-fcn-dark">
+                            Select a hospital first
+                          </div>
+                        )}
+                        {errors.specialty && <p className="mt-1 text-xs text-fcn-danger">{errors.specialty}</p>}
+                      </label>
+
                       <label className="block"><span className="mb-1 block text-sm font-medium">Years experience</span><input type="number" min="0" value={form.years_experience} onChange={(e) => update("years_experience", e.target.value)} className="h-11 w-full rounded-md border border-fcn-primary/20 bg-white px-3 text-sm outline-none focus:border-fcn-accent focus:ring-2 focus:ring-fcn-accent/30 dark:bg-fcn-dark" aria-label="Years experience" /></label>
-                      <label className="block"><span className="mb-1 block text-sm font-medium">Hospital name</span><input type="text" value={form.hospital_name} onChange={(e) => update("hospital_name", e.target.value)} className="h-11 w-full rounded-md border border-fcn-primary/20 bg-white px-3 text-sm outline-none focus:border-fcn-accent focus:ring-2 focus:ring-fcn-accent/30 dark:bg-fcn-dark" aria-label="Hospital name" /></label>
                     </motion.div>
                   )}
 

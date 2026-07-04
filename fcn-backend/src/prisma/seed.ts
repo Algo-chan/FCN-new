@@ -120,6 +120,27 @@ async function main() {
     console.log(`HospitalAdminProfile already exists for: ${adminUser.email}`);
   }
 
+  const systemSettingsData = [
+    { key: "free_period_ends_at", value: "2025-08-01T00:00:00.000Z", description: "End date of free trial period" },
+    { key: "payment_enabled", value: "false", description: "Master switch for payment processing" },
+    { key: "default_consultation_fee_etb", value: "50", description: "Default doctor consultation fee" },
+    { key: "platform_fee_percent", value: "10", description: "Platform fee as percentage of consultation fee" },
+    { key: "max_reschedule_count", value: "3", description: "Maximum number of reschedules per appointment" },
+    { key: "appointment_duration_minutes", value: "30", description: "Default appointment duration" },
+    { key: "max_appointments_per_slot", value: "1", description: "Maximum appointments per time slot" },
+    { key: "message_retention_days", value: "30", description: "Number of days to keep consultation messages before auto-deletion" },
+    { key: "consultation_summary_enabled", value: "true", description: "Enable automatic consultation summary creation" }
+  ];
+
+  for (const setting of systemSettingsData) {
+    await prisma.systemSettings.upsert({
+      where: { key: setting.key },
+      update: { value: setting.value },
+      create: { key: setting.key, value: setting.value, description: setting.description }
+    });
+  }
+  console.log("System settings seeded.");
+
   console.log("Seeding complete.");
 }
 

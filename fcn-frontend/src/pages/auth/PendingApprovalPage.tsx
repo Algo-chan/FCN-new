@@ -79,6 +79,15 @@ const PendingApprovalPage = () => {
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-fcn-dark to-[#0A1628] px-6 py-12">
+      {/* Logo */}
+      <div className="mb-8">
+        <img
+          src="/logo/fcn-logo-full.png"
+          alt="FCN Logo"
+          className="h-10 w-auto"
+        />
+      </div>
+
       {/* Top Section */}
       <div className="mb-12 text-center">
         <div className="relative mx-auto mb-6 flex h-24 w-24 items-center justify-center">

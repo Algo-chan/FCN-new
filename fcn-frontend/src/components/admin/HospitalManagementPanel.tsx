@@ -14,6 +14,8 @@ import { Badge } from "@/components/ui/Badge";
 import { Modal } from "@/components/ui/Modal";
 import { Input } from "@/components/ui/Input";
 import { SkeletonCard } from "@/components/dashboard/SkeletonCard";
+import { MASTER_SPECIALTIES } from "@/constants/specialties";
+import { clsx } from "clsx";
 import type { Hospital, HospitalAdminProfile } from "@/types";
 
 const CreateHospitalSchema = z.object({
@@ -21,7 +23,7 @@ const CreateHospitalSchema = z.object({
   location: z.string().trim().min(3, "Location must be at least 3 characters"),
   lat: z.coerce.number().optional(),
   lng: z.coerce.number().optional(),
-  specialties: z.string().trim().min(1, "Enter at least one specialty")
+  specialties: z.array(z.string()).min(1, "Select at least one specialty")
 });
 
 const CreateAdminSchema = z.object({
@@ -80,7 +82,7 @@ export const HospitalManagementPanel = () => {
 
   const createHospitalForm = useForm<CreateHospitalForm>({
     resolver: zodResolver(CreateHospitalSchema),
-    defaultValues: { name: "", location: "", lat: undefined, lng: undefined, specialties: "" }
+    defaultValues: { name: "", location: "", lat: undefined, lng: undefined, specialties: [] }
   });
 
   const createAdminForm = useForm<CreateAdminForm>({
@@ -94,7 +96,7 @@ export const HospitalManagementPanel = () => {
       location: data.location,
       lat: data.lat || undefined,
       lng: data.lng || undefined,
-      specialties: data.specialties.split(",").map((s) => s.trim()).filter(Boolean)
+      specialties: data.specialties
     }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["hospitals"] });
@@ -243,7 +245,36 @@ export const HospitalManagementPanel = () => {
             <Input label="Latitude" type="number" step="any" {...createHospitalForm.register("lat")} />
             <Input label="Longitude" type="number" step="any" {...createHospitalForm.register("lng")} />
           </div>
-          <Input label="Specialties (comma-separated)" error={createHospitalForm.formState.errors.specialties?.message} {...createHospitalForm.register("specialties")} />
+          <div>
+            <span className="mb-1.5 block text-sm font-medium text-fcn-text-light dark:text-fcn-text-dark">Specialties</span>
+            <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto rounded-md border border-fcn-primary/10 p-3">
+              {MASTER_SPECIALTIES.map((spec) => {
+                const selected = createHospitalForm.watch("specialties")?.includes(spec) ?? false;
+                return (
+                  <label key={spec} className={clsx("flex cursor-pointer items-center gap-2 rounded-md px-2.5 py-1.5 text-xs transition-colors", selected ? "bg-fcn-accent/10 text-fcn-accent" : "text-fcn-text-light/60 hover:bg-fcn-primary/5 dark:text-fcn-text-dark/60")}>
+                    <input
+                      type="checkbox"
+                      value={spec}
+                      checked={selected}
+                      onChange={(e) => {
+                        const current = createHospitalForm.getValues("specialties") ?? [];
+                        if (e.target.checked) {
+                          createHospitalForm.setValue("specialties", [...current, spec], { shouldValidate: true });
+                        } else {
+                          createHospitalForm.setValue("specialties", current.filter((s) => s !== spec), { shouldValidate: true });
+                        }
+                      }}
+                      className="h-3.5 w-3.5 rounded border-fcn-primary/30 text-fcn-accent focus:ring-fcn-accent"
+                    />
+                    {spec}
+                  </label>
+                );
+              })}
+            </div>
+            {createHospitalForm.formState.errors.specialties?.message && (
+              <p className="mt-1 text-sm text-fcn-danger">{createHospitalForm.formState.errors.specialties.message}</p>
+            )}
+          </div>
           <Button type="submit" loading={createMutation.isPending} className="w-full">Create Hospital</Button>
         </form>
       </Modal>

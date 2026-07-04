@@ -10,6 +10,8 @@ import ConsultationPage from "@/pages/consultation/ConsultationPage";
 import DashboardPage from "@/pages/dashboard/DashboardPage";
 import FindDoctorsPage from "@/pages/doctors/FindDoctorsPage";
 import HealthRecordsPage from "@/pages/health-records/HealthRecordsPage";
+import NurseHealthRecordsPage from "@/pages/health-records/NurseHealthRecordsPage";
+import PatientRecordsViewPage from "@/pages/health-records/PatientRecordsViewPage";
 import HospitalCheckerPage from "@/pages/hospitals/HospitalCheckerPage";
 import LandingPage from "@/pages/LandingPage";
 import NotificationsPage from "@/pages/notifications/NotificationsPage";
@@ -88,6 +90,9 @@ export const AppRouter = () => (
       <Route path="/appointments" element={<MyAppointmentsPage />} />
       <Route path="/consultation/:appointmentId" element={<ConsultationPage />} />
       <Route path="/health-records" element={<HealthRecordsPage />} />
+      <Route path="/health-records/nurse" element={<NurseHealthRecordsPage />} />
+      <Route path="/health-records/patient/:patientId" element={<HealthRecordsPage />} />
+      <Route path="/health-records/patient/:patientId/view" element={<PatientRecordsViewPage />} />
       <Route path="/ai-check" element={<AISymptomCheckPage />} />
       <Route path="/pharmacy" element={<PharmacyPage />} />
       <Route path="/notifications" element={<NotificationsPage />} />

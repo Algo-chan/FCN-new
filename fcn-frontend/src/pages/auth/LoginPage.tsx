@@ -75,6 +75,7 @@ const LoginPage = () => {
     } else {
       authService.getOnboardingStatus().then(({ data }) => {
         if (data.data?.completed) {
+          useAuthStore.getState().setOnboardingCompleted(true);
           navigate("/dashboard", { replace: true });
         } else {
           navigate("/onboarding", { replace: true });
@@ -120,8 +121,11 @@ const LoginPage = () => {
         </div>
 
         <div className="absolute left-8 top-8 z-10">
-          <div className="text-3xl font-extrabold tracking-tight text-white">FCN</div>
-          <div className="text-sm font-medium text-white/70">Foundation Care Network</div>
+          <img
+            src="/logo/fcn-logo-full.png"
+            alt="FCN Logo"
+            className="h-10 w-auto"
+          />
         </div>
 
         <div className="relative z-10 flex h-full flex-col justify-center px-16 pb-24">

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { MASTER_SPECIALTIES } from "../../constants/specialties";
 
 export const UpdateOccupancySchema = z
   .object({
@@ -17,7 +18,7 @@ export const CreateHospitalSchema = z.object({
   location: z.string().trim().min(3),
   lat: z.coerce.number().optional(),
   lng: z.coerce.number().optional(),
-  specialties: z.array(z.string().trim().min(1)).min(1)
+  specialties: z.array(z.enum(MASTER_SPECIALTIES as unknown as [string, ...string[]])).min(1, "Select at least one specialty")
 });
 
 export const UpdateHospitalStatusSchema = z.object({

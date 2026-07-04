@@ -91,6 +91,14 @@ export class HospitalsService {
     return mapHospital(hospital);
   }
 
+  async getHospitalSpecialties(hospitalId: string): Promise<string[]> {
+    const hospital = await prisma.hospital.findUnique({ where: { id: hospitalId } });
+    if (!hospital) {
+      throw new AppError("Hospital not found", 404, "NOT_FOUND");
+    }
+    return hospital.specialties;
+  }
+
   async createHospital(data: CreateHospitalDto) {
     const hospital = await prisma.hospital.create({
       data: {

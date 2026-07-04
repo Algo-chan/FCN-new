@@ -39,7 +39,8 @@ const envSchema = z.object({
   GOOGLE_CLIENT_ID: z.string().optional().default(""),
   GOOGLE_CLIENT_SECRET: z.string().optional().default(""),
   GOOGLE_CALLBACK_URL: z.string().url().optional().or(z.literal("")).default(""),
-  SESSION_SECRET: requiredText("SESSION_SECRET").min(32, "SESSION_SECRET must be at least 32 characters")
+  SESSION_SECRET: requiredText("SESSION_SECRET").min(32, "SESSION_SECRET must be at least 32 characters"),
+  CHAPA_SECRET_KEY: z.string().optional().default("")
 });
 
 const parsed = envSchema.safeParse(process.env);

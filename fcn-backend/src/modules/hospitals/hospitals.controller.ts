@@ -80,6 +80,15 @@ export const getHospitalAdminsController = async (req: Request, res: Response, n
   }
 };
 
+export const getHospitalSpecialtiesController = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const data = await hospitalsService.getHospitalSpecialties(req.params.id);
+    successResponse(res, data);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const createHospitalAdminController = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const body = CreateHospitalAdminSchema.parse(req.body);

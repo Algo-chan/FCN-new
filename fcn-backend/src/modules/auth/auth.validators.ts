@@ -15,6 +15,7 @@ export const RegisterSchema = z
     license_number: z.string().trim().optional(),
     specialty: z.string().trim().optional(),
     hospital_name: z.string().trim().optional(),
+    hospital_id: z.string().uuid().optional(),
     years_experience: z.coerce.number().int().min(0).optional(),
     nursing_license_number: z.string().trim().optional(),
     coverage_zone: z.string().trim().optional()

@@ -4,6 +4,7 @@ import { connectDatabase, disconnectDatabase } from "./src/config/database";
 import { connectRedis, disconnectRedis } from "./src/config/redis";
 import { env } from "./src/config/env";
 import { initSocket } from "./src/socket";
+import { startMessageCleanupJob } from "./src/jobs/message-cleanup.job";
 import { logger } from "./src/utils/logger";
 
 const server = http.createServer(app);
@@ -15,6 +16,7 @@ const startServer = async (): Promise<void> => {
 
   server.listen(env.PORT, () => {
     logger.info(`FCN backend listening on port ${env.PORT}`);
+    startMessageCleanupJob();
   });
 };
 

@@ -12,6 +12,12 @@ import { authRoutes } from "./modules/auth/auth.routes";
 import { onboardingRoutes } from "./modules/auth/onboarding.routes";
 import { dashboardRoutes } from "./modules/dashboard/dashboard.routes";
 import { hospitalRoutes } from "./modules/hospitals/hospitals.routes";
+import { doctorRoutes } from "./modules/doctors/doctors.routes";
+import { appointmentRoutes } from "./modules/appointments/appointments.routes";
+import { paymentRoutes } from "./modules/payments/payment.routes";
+import { settingsRoutes } from "./modules/settings/settings.routes";
+import { consultationRoutes } from "./modules/consultation/consultation.routes";
+import { healthRecordsRoutes } from "./modules/health-records/health-records.routes";
 import { successResponse } from "./utils/response";
 import { logger } from "./utils/logger";
 
@@ -25,7 +31,7 @@ app.use(
     credentials: true
   })
 );
-app.use(express.json({ limit: "10mb" }));
+app.use(express.json({ limit: "10mb", verify: (req, _res, buf) => { (req as any).rawBody = buf.toString(); } }));
 app.use(
   session({
     secret: env.SESSION_SECRET,
@@ -62,5 +68,11 @@ app.use("/api/v1/onboarding", onboardingRoutes);
 
 app.use("/api/v1/dashboard", dashboardRoutes);
 app.use("/api/v1/hospitals", hospitalRoutes);
+app.use("/api/v1/doctors", doctorRoutes);
+app.use("/api/v1/appointments", appointmentRoutes);
+app.use("/api/v1/payments", paymentRoutes);
+app.use("/api/v1/settings", settingsRoutes);
+app.use("/api/v1/consultations", consultationRoutes);
+app.use("/api/v1/health-records", healthRecordsRoutes);
 
 app.use(errorMiddleware);

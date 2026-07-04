@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import gsap from "gsap";
 import { Check, Heart, MapPin, ClipboardList, X, Plus, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
+import { useAuthStore } from "@/store/auth.store";
 import { authService } from "@/services/auth.service";
 import { useSound } from "@/hooks/useSound";
 import { Button } from "@/components/ui/Button";
@@ -165,6 +166,7 @@ const OnboardingPage = () => {
         emergency_contact_name: s3.emergency_contact_name.trim(),
         emergency_contact_phone: s3.emergency_contact_phone.trim()
       });
+      useAuthStore.getState().setOnboardingCompleted(true);
       setIsComplete(true);
     } catch (err: any) {
       setError(err?.response?.data?.error?.message ?? "Failed to save");
@@ -181,7 +183,11 @@ const OnboardingPage = () => {
     <div className="relative flex min-h-screen flex-col bg-gradient-to-br from-fcn-dark to-[#0A1628]">
       {/* Top bar */}
       <div className="flex items-center justify-between px-6 py-4">
-        <div className="text-xl font-extrabold tracking-tight text-white">FCN</div>
+        <img
+          src="/logo/fcn-logo-full.png"
+          alt="FCN Logo"
+          className="h-9 w-auto"
+        />
         <div className="flex items-center gap-3">
           <span className="text-sm text-white/50">Step {step} of 3</span>
           {!isComplete && <button onClick={handleSkip} className="text-sm text-white/40 hover:text-white/70 transition-colors">Skip for now</button>}

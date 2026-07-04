@@ -85,15 +85,18 @@ export const Sidebar = () => {
         )}
       >
         <div className="flex h-16 items-center justify-between border-b border-fcn-primary/10 px-4">
-          {!sidebarCollapsed && (
-            <span className="text-xl font-bold tracking-tight text-fcn-primary">
-              FCN
-            </span>
-          )}
-          {sidebarCollapsed && (
-            <span className="text-xl font-bold tracking-tight text-fcn-primary mx-auto">
-              +
-            </span>
+          {!sidebarCollapsed ? (
+            <img
+              src="/logo/fcn-logo-full.png"
+              alt="FCN Logo"
+              className="h-8 w-auto"
+            />
+          ) : (
+            <img
+              src="/logo/fcn-logo-full.png"
+              alt="FCN Logo"
+              className="mx-auto h-8 w-auto"
+            />
           )}
           <button
             onClick={handleToggleCollapse}
