@@ -18,6 +18,12 @@ import { paymentRoutes } from "./modules/payments/payment.routes";
 import { settingsRoutes } from "./modules/settings/settings.routes";
 import { consultationRoutes } from "./modules/consultation/consultation.routes";
 import { healthRecordsRoutes } from "./modules/health-records/health-records.routes";
+import { aiTriageRoutes } from "./modules/ai-triage/ai-triage.routes";
+import { pharmacyRoutes } from "./modules/pharmacy/pharmacy.routes";
+import { notificationsRoutes } from "./modules/notifications/notifications.routes";
+import { adminRoutes } from "./modules/admin/admin.routes";
+import { doctorDashboardRoutes } from "./modules/doctor-dashboard/doctor-dashboard.routes";
+import { nurseDashboardRoutes } from "./modules/nurse-dashboard/nurse-dashboard.routes";
 import { successResponse } from "./utils/response";
 import { logger } from "./utils/logger";
 
@@ -74,5 +80,11 @@ app.use("/api/v1/payments", paymentRoutes);
 app.use("/api/v1/settings", settingsRoutes);
 app.use("/api/v1/consultations", consultationRoutes);
 app.use("/api/v1/health-records", healthRecordsRoutes);
+app.use("/api/v1/ai-triage", aiTriageRoutes);
+app.use("/api/v1/pharmacy", pharmacyRoutes);
+app.use("/api/v1/notifications", notificationsRoutes);
+app.use("/api/v1/admin", adminRoutes);
+app.use("/api/v1/doctor-dashboard", doctorDashboardRoutes);
+app.use("/api/v1/nurse-dashboard", nurseDashboardRoutes);
 
 app.use(errorMiddleware);

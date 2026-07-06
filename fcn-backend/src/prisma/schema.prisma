@@ -13,6 +13,7 @@ enum Role {
   nurse
   rural_health_officer
   hospital_admin
+  pharmacy_admin
   super_admin
 }
 
@@ -72,6 +73,7 @@ enum PrescriptionStatus {
   refill_due
   expired
   cancelled
+  dispensed
 }
 
 enum MessageType {
@@ -81,8 +83,16 @@ enum MessageType {
 }
 
 enum PharmacyStatus {
-  active
-  inactive
+  PENDING
+  ACTIVE
+  SUSPENDED
+  INACTIVE
+}
+
+enum RefillStatus {
+  PENDING
+  APPROVED
+  DECLINED
 }
 
 model User {
@@ -97,6 +107,8 @@ model User {
   phone_verified   Boolean         @default(false)
   fcm_token        String?
   theme_preference ThemePreference @default(dark)
+  rejection_reason String?
+  suspended_reason String?
   created_at       DateTime        @default(now())
   updated_at       DateTime        @updatedAt
   last_login_at    DateTime?
@@ -105,6 +117,7 @@ model User {
   doctor_profile              DoctorProfile?       @relation("DoctorUser")
   nurse_profile               NurseProfile?
   approved_doctors            DoctorProfile[]      @relation("DoctorApprover")
+  approved_nurses             NurseProfile[]       @relation("NurseApprover")
   patient_appointments        Appointment[]        @relation("PatientAppointments")
   doctor_appointments         Appointment[]        @relation("DoctorAppointments")
   nurse_appointments          Appointment[]        @relation("NurseAppointments")
@@ -120,10 +133,40 @@ model User {
   doctor_consultation_ratings  ConsultationRating[] @relation("DoctorRatings")
   hospital_admin_profiles      HospitalAdminProfile[]
   created_hospital_admins      HospitalAdminProfile[] @relation("CreatedHospitalAdmins")
+  pharmacy_admin_profiles      PharmacyAdminProfile[]
+  created_pharmacy_admins      PharmacyAdminProfile[] @relation("CreatedPharmacyAdmins")
+  patient_refill_requests      RefillRequest[]        @relation("PatientRefillRequests")
+  doctor_refill_requests       RefillRequest[]        @relation("DoctorRefillRequests")
+  dispense_records             DispenseRecord[]
+  symptom_assessments          SymptomAssessment[]
+  doctor_notes                 DoctorNote[]         @relation("DoctorNotes")
+  patient_notes                DoctorNote[]         @relation("PatientNotes")
+
+  activity_logs ActivityLog[]
 
   @@index([email])
   @@index([phone])
   @@map("users")
+}
+
+model ActivityLog {
+  id          String   @id @default(uuid()) @db.Uuid
+  actor_id    String   @db.Uuid
+  actor_role  String
+  action      String
+  target_type String?
+  target_id   String?
+  target_name String?
+  details     Json?
+  ip_address  String?
+  created_at  DateTime @default(now())
+
+  actor User @relation(fields: [actor_id], references: [id], onDelete: Restrict)
+
+  @@index([actor_id, created_at])
+  @@index([action, created_at])
+  @@index([created_at])
+  @@map("activity_logs")
 }
 
 model PatientProfile {
@@ -174,9 +217,12 @@ model NurseProfile {
   user_id        String    @id @db.Uuid
   license_number String    @unique
   coverage_zone  String
+  years_experience Int    @default(0)
   approved_at    DateTime?
+  approved_by    String?   @db.Uuid
 
-  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user     User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  approver User? @relation("NurseApprover", fields: [approved_by], references: [id], onDelete: SetNull)
 
   @@map("nurse_profiles")
 }
@@ -198,6 +244,7 @@ model Hospital {
 
   doctors              DoctorProfile[]
   hospital_admin_profiles HospitalAdminProfile[]
+  hospital_pharmacy_links HospitalPharmacyLink[]
 
   @@map("hospitals")
 }
@@ -239,6 +286,9 @@ model Appointment {
   actual_end_time     DateTime?
   consultation_started_at DateTime?
   consultation_ended_at   DateTime?
+  reminder_sent           Boolean           @default(false)
+  completed_at            DateTime?
+  follow_up_prescription_deadline DateTime?
 
   created_at          DateTime          @default(now())
   updated_at          DateTime          @updatedAt
@@ -254,6 +304,8 @@ model Appointment {
   payment_logs        PaymentLog[]
   messages            Message[]
   consultation_summary ConsultationSummary?
+  visit_checklist     NurseVisitChecklist?
+  doctor_notes        DoctorNote[]
 
   @@index([patient_id, scheduled_at])
   @@index([doctor_id, scheduled_at])
@@ -344,32 +396,105 @@ model Prescription {
   expires_at     DateTime
   refill_count   Int                @default(0)
   max_refills    Int                @default(1)
+  dispensed_at   DateTime?
+  dispensed_by_pharmacy_id String?  @db.Uuid
+  dispense_count Int                @default(0)
 
-  appointment  Appointment?             @relation(fields: [appointment_id], references: [id], onDelete: SetNull)
-  patient      User                     @relation("PatientPrescriptions", fields: [patient_id], references: [id], onDelete: Restrict)
-  doctor       User                     @relation("DoctorPrescriptions", fields: [doctor_id], references: [id], onDelete: Restrict)
-  medications  PrescriptionMedication[]
+  appointment        Appointment?             @relation(fields: [appointment_id], references: [id], onDelete: SetNull)
+  patient            User                     @relation("PatientPrescriptions", fields: [patient_id], references: [id], onDelete: Restrict)
+  doctor             User                     @relation("DoctorPrescriptions", fields: [doctor_id], references: [id], onDelete: Restrict)
+  medications        PrescriptionMedication[]
+  dispense_records   DispenseRecord[]
+  refill_requests    RefillRequest[]
+  dispensed_pharmacy Pharmacy?                @relation(fields: [dispensed_by_pharmacy_id], references: [id], onDelete: SetNull)
 
   @@index([patient_id, status])
   @@map("prescriptions")
 }
 
 model PrescriptionMedication {
-  id                String   @id @default(uuid()) @db.Uuid
-  prescription_id   String   @db.Uuid
+  id                String    @id @default(uuid()) @db.Uuid
+  prescription_id   String    @db.Uuid
   drug_name         String
   strength          String
   form              String?
   instructions      String
-  frequency_per_day Int      @default(1)
+  frequency_per_day Int       @default(1)
   reminder_times    String[]
   supply_days       Int
-  is_ongoing        Boolean  @default(false)
+  is_ongoing        Boolean   @default(false)
   quantity          Int?
+  reminder_enabled  Boolean   @default(true)
+  last_reminder_sent DateTime?
 
   prescription Prescription @relation(fields: [prescription_id], references: [id], onDelete: Cascade)
 
   @@map("prescription_medications")
+}
+
+model PharmacyAdminProfile {
+  user_id     String   @id @db.Uuid
+  pharmacy_id String   @db.Uuid
+  created_by  String   @db.Uuid
+  created_at  DateTime @default(now())
+
+  user     User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  pharmacy Pharmacy @relation(fields: [pharmacy_id], references: [id], onDelete: Cascade)
+  creator  User     @relation("CreatedPharmacyAdmins", fields: [created_by], references: [id], onDelete: Restrict)
+
+  @@map("pharmacy_admin_profiles")
+}
+
+model HospitalPharmacyLink {
+  id          String   @id @default(uuid()) @db.Uuid
+  hospital_id String   @db.Uuid
+  pharmacy_id String   @db.Uuid
+  created_at  DateTime @default(now())
+
+  hospital Hospital @relation(fields: [hospital_id], references: [id], onDelete: Cascade)
+  pharmacy Pharmacy @relation(fields: [pharmacy_id], references: [id], onDelete: Cascade)
+
+  @@unique([hospital_id, pharmacy_id])
+  @@map("hospital_pharmacy_links")
+}
+
+model DispenseRecord {
+  id                   String   @id @default(uuid()) @db.Uuid
+  prescription_id      String   @db.Uuid
+  pharmacy_id          String   @db.Uuid
+  dispensed_by         String   @db.Uuid
+  dispensed_at         DateTime @default(now())
+  notes                String?
+  medications_dispensed String[]
+
+  prescription Prescription @relation(fields: [prescription_id], references: [id], onDelete: Restrict)
+  pharmacy     Pharmacy     @relation(fields: [pharmacy_id], references: [id], onDelete: Restrict)
+  dispensed_by_user User    @relation(fields: [dispensed_by], references: [id], onDelete: Restrict)
+
+  @@index([prescription_id])
+  @@index([pharmacy_id])
+  @@map("dispense_records")
+}
+
+model RefillRequest {
+  id                  String       @id @default(uuid()) @db.Uuid
+  prescription_id     String       @db.Uuid
+  patient_id          String       @db.Uuid
+  doctor_id           String       @db.Uuid
+  status              RefillStatus @default(PENDING)
+  patient_note        String?
+  doctor_note         String?
+  new_prescription_id String?
+  requested_at        DateTime     @default(now())
+  responded_at        DateTime?
+
+  prescription Prescription @relation(fields: [prescription_id], references: [id], onDelete: Restrict)
+  patient      User         @relation("PatientRefillRequests", fields: [patient_id], references: [id], onDelete: Restrict)
+  doctor       User         @relation("DoctorRefillRequests", fields: [doctor_id], references: [id], onDelete: Restrict)
+
+  @@index([prescription_id])
+  @@index([doctor_id, status])
+  @@map("refill_requests")
 }
 
 model Message {
@@ -411,11 +536,17 @@ model Notification {
   read_at      DateTime?
   push_sent    Boolean   @default(false)
   sms_sent     Boolean   @default(false)
+  group_type   String?   @db.VarChar(50)
+  priority     String    @default("normal") @db.VarChar(20)
+  expires_at   DateTime?
+  image_url    String?
   created_at   DateTime  @default(now())
 
   user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@index([user_id, read, created_at])
+  @@index([user_id, group_type, created_at])
+  @@index([user_id, priority])
   @@map("notifications")
 }
 
@@ -435,18 +566,81 @@ model ConsultationRating {
   @@map("consultation_ratings")
 }
 
+model SymptomAssessment {
+  id                  String    @id @default(uuid()) @db.Uuid
+  patient_id          String    @db.Uuid
+  language            String
+  initial_symptoms    String
+  conversation        Json
+  round_count         Int       @default(0)
+  risk_level          String?
+  recommended_specialty String?
+  final_assessment    String?
+  is_complete         Boolean   @default(false)
+  booking_initiated   Boolean   @default(false)
+  created_at          DateTime  @default(now())
+  updated_at          DateTime  @updatedAt
+
+  patient User @relation(fields: [patient_id], references: [id], onDelete: Cascade)
+
+  @@index([patient_id])
+  @@map("symptom_assessments")
+}
+
 model Pharmacy {
-  id            String         @id @default(uuid()) @db.Uuid
-  name          String
-  location      String
-  lat           Decimal?       @db.Decimal(10, 7)
-  lng           Decimal?       @db.Decimal(10, 7)
-  phone         String?
-  opening_hours String?
-  is_partner    Boolean        @default(false)
-  status        PharmacyStatus @default(active)
+  id              String         @id @default(uuid()) @db.Uuid
+  name            String
+  location        String
+  lat             Decimal?       @db.Decimal(10, 7)
+  lng             Decimal?       @db.Decimal(10, 7)
+  phone           String?
+  email           String?
+  opening_hours   String?
+  license_number  String         @unique
+  status          PharmacyStatus @default(PENDING)
+  is_partner      Boolean        @default(false)
+  created_at      DateTime       @default(now())
+  updated_at      DateTime       @updatedAt
+  last_updated_at DateTime       @default(now())
+
+  admins              PharmacyAdminProfile[]
+  hospital_links      HospitalPharmacyLink[]
+  dispense_records    DispenseRecord[]
+  dispensed_prescriptions Prescription[]
 
   @@map("pharmacies")
+}
+
+model NurseVisitChecklist {
+  id              String   @id @default(uuid()) @db.Uuid
+  appointment_id  String   @unique @db.Uuid
+  items           Json     @default("[]")
+  completed_items Json     @default("[]")
+  notes           String?
+  completed_at    DateTime?
+  created_at      DateTime @default(now())
+
+  appointment Appointment @relation(fields: [appointment_id], references: [id], onDelete: Cascade)
+
+  @@map("nurse_visit_checklists")
+}
+
+model DoctorNote {
+  id              String   @id @default(uuid()) @db.Uuid
+  doctor_id       String   @db.Uuid
+  patient_id      String   @db.Uuid
+  appointment_id  String?  @db.Uuid
+  note_text       String
+  is_private      Boolean  @default(true)
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  doctor      User        @relation("DoctorNotes", fields: [doctor_id], references: [id], onDelete: Cascade)
+  patient     User        @relation("PatientNotes", fields: [patient_id], references: [id], onDelete: Cascade)
+  appointment Appointment? @relation(fields: [appointment_id], references: [id], onDelete: SetNull)
+
+  @@index([doctor_id, patient_id])
+  @@map("doctor_notes")
 }
 
 model ConsultationSummary {

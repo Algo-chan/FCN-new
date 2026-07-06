@@ -1,4 +1,4 @@
-export type Role = "patient" | "doctor" | "nurse" | "rural_health_officer" | "hospital_admin" | "super_admin";
+export type Role = "patient" | "doctor" | "nurse" | "rural_health_officer" | "hospital_admin" | "pharmacy_admin" | "super_admin";
 export type UserStatus = "pending" | "active" | "suspended" | "rejected";
 export type ThemePreference = "dark" | "light";
 export type AppointmentType = "remote" | "in_person" | "nurse_visit";
@@ -152,6 +152,8 @@ export interface Appointment {
   cancelled_by_role?: string | null;
   actual_start_time?: string | null;
   actual_end_time?: string | null;
+  completed_at?: string | null;
+  follow_up_prescription_deadline?: string | null;
   created_at?: string;
   updated_at?: string;
   doctor?: { id: string; full_name: string; doctor_profile?: { specialty?: string } };
@@ -183,7 +185,7 @@ export interface Prescription {
   rx_reference: string;
   patient_id: string;
   doctor_id: string;
-  status: "active" | "refill_due" | "expired" | "cancelled";
+  status: "active" | "refill_due" | "expired" | "cancelled" | "dispensed";
   qr_hash: string;
   issued_at: string;
   expires_at: string;
@@ -198,9 +200,94 @@ export interface PrescriptionMedication {
   prescription_id: string;
   drug_name: string;
   strength: string;
+  form?: string | null;
   instructions: string;
   supply_days: number;
   is_ongoing: boolean;
+  quantity?: number | null;
+  frequency_per_day?: number;
+  reminder_times?: string[];
+  reminder_enabled?: boolean;
+}
+
+export interface PrescriptionWithMedications extends Prescription {
+  medications: PrescriptionMedication[];
+  doctor_name: string;
+  doctor_specialty: string;
+  refill_count: number;
+  max_refills: number;
+  dispense_count: number;
+  dispensed_at?: string | null;
+  dispensed_by_pharmacy_id?: string | null;
+  refill_requests: RefillRequest[];
+  dispense_records: DispenseRecord[];
+}
+
+export interface PrescriptionVerificationResult {
+  valid: boolean;
+  reason?: string;
+  prescription?: {
+    id: string;
+    rx_reference: string;
+    patient_name: string;
+    doctor_name: string;
+    issued_at: string;
+    expires_at: string;
+    status: string;
+    medications: PrescriptionMedication[];
+  };
+  message?: string;
+}
+
+export interface RefillRequest {
+  id: string;
+  prescription_id: string;
+  patient_id: string;
+  doctor_id: string;
+  status: "PENDING" | "APPROVED" | "DECLINED";
+  patient_note?: string | null;
+  doctor_note?: string | null;
+  new_prescription_id?: string | null;
+  requested_at: string;
+  responded_at?: string | null;
+  prescription?: {
+    rx_reference: string;
+    medications: { drug_name: string }[];
+  };
+  patient?: { id: string; full_name: string };
+}
+
+export interface DispenseRecord {
+  id: string;
+  prescription_id: string;
+  pharmacy_id: string;
+  pharmacy_name?: string;
+  dispensed_by: string;
+  dispensed_by_name?: string;
+  dispensed_at: string;
+  notes?: string | null;
+  medications_dispensed: string[];
+}
+
+export interface Pharmacy {
+  id: string;
+  name: string;
+  location: string;
+  lat?: number | null;
+  lng?: number | null;
+  phone?: string | null;
+  email?: string | null;
+  opening_hours?: string | null;
+  license_number: string;
+  status: string;
+  is_partner: boolean;
+  distance_km?: number | null;
+  hospital_links?: HospitalPharmacyLink[];
+}
+
+export interface HospitalPharmacyLink {
+  hospital_id: string;
+  hospital_name: string;
 }
 
 export interface Message {
@@ -304,7 +391,15 @@ export interface Notification {
   title: string;
   message: string;
   action_url?: string | null;
+  reference_id?: string | null;
   read: boolean;
+  read_at?: string | null;
+  push_sent?: boolean;
+  sms_sent?: boolean;
+  group_type?: string | null;
+  priority?: string;
+  expires_at?: string | null;
+  image_url?: string | null;
   created_at: string;
 }
 
@@ -325,6 +420,131 @@ export interface ApiResponse<T> {
     limit: number;
     total: number;
   };
+}
+
+export type SupportedLanguage = "en" | "am" | "so" | "om";
+
+export interface LanguageConfig {
+  code: SupportedLanguage;
+  name: string;
+  nativeName: string;
+  flag: string;
+  thinkingText: string;
+  greeting: string;
+}
+
+export interface ConversationMessage {
+  role: "user" | "assistant";
+  content: string;
+  round?: number;
+  timestamp: string;
+}
+
+export interface ParsedAssessment {
+  risk_level: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+  risk_explanation: string;
+  likely_causes: string[];
+  recommended_specialty: string;
+  recommended_actions: string[];
+  warning_signs: string[];
+  home_care_tips: string[];
+  disclaimer: string;
+}
+
+export interface SymptomAssessment {
+  id: string;
+  language: SupportedLanguage;
+  initial_symptoms: string;
+  conversation: ConversationMessage[];
+  round_count: number;
+  risk_level?: string;
+  recommended_specialty?: string;
+  final_assessment?: string;
+  is_complete: boolean;
+  created_at: string;
+}
+
+export interface ActivityLogEntry {
+  id: string;
+  actor_id: string;
+  actor_role: string;
+  action: string;
+  target_type: string | null;
+  target_id: string | null;
+  target_name: string | null;
+  details: any;
+  ip_address: string | null;
+  created_at: string;
+  actor: {
+    id: string;
+    full_name: string;
+    email: string | null;
+    role: string;
+  };
+}
+
+export interface AnalyticsOverview {
+  total_users: number;
+  total_users_growth: number;
+  total_doctors: number;
+  total_patients: number;
+  total_appointments: number;
+  appointments_today: number;
+  appointments_this_week: number;
+  completed_consultations: number;
+  completion_rate: number;
+  pending_approvals: number;
+  active_hospitals: number;
+  active_pharmacies: number;
+  total_prescriptions: number;
+  revenue_this_month: number;
+  revenue_total: number;
+}
+
+export interface TrendPoint {
+  date: string;
+  total: number;
+  completed: number;
+  cancelled: number;
+}
+
+export interface RegistrationTrendPoint {
+  week: string;
+  patients: number;
+  doctors: number;
+  nurses: number;
+  total: number;
+}
+
+export interface TopDoctor {
+  doctor_id: string;
+  full_name: string;
+  specialty: string;
+  hospital_name: string | null;
+  photo_url: string | null;
+  total_consultations: number;
+  completed_consultations: number;
+  rating_average: number;
+  rating_count: number;
+  revenue_generated: number;
+}
+
+export interface RevenueTrendPoint {
+  month: string;
+  revenue: number;
+  consultations_paid: number;
+  average_fee: number;
+}
+
+export interface UserReviewData {
+  user: any;
+  profile: any;
+  hospital: any | null;
+  appointments_count: number;
+  registration_date: string;
+  license_verification_status: string;
+  specialty_valid: boolean;
+  flags: string[];
 }
 
 export interface ToastMessage {

@@ -20,6 +20,7 @@ const roleClasses: Record<Role, string> = {
   nurse: "bg-fcn-warning text-fcn-dark",
   rural_health_officer: "bg-fcn-success text-white",
   hospital_admin: "bg-fcn-indigo text-white",
+  pharmacy_admin: "bg-fcn-success text-white",
   super_admin: "bg-fcn-danger text-white"
 };
 

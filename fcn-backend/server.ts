@@ -5,6 +5,10 @@ import { connectRedis, disconnectRedis } from "./src/config/redis";
 import { env } from "./src/config/env";
 import { initSocket } from "./src/socket";
 import { startMessageCleanupJob } from "./src/jobs/message-cleanup.job";
+import { startMedicationReminderJob } from "./src/jobs/medication-reminder.job";
+import { startPrescriptionStatusJob } from "./src/jobs/prescription-status.job";
+import { startNotificationCleanupJob } from "./src/jobs/notification-cleanup.job";
+import { startAppointmentReminderJob } from "./src/jobs/appointment-reminder.job";
 import { logger } from "./src/utils/logger";
 
 const server = http.createServer(app);
@@ -17,6 +21,10 @@ const startServer = async (): Promise<void> => {
   server.listen(env.PORT, () => {
     logger.info(`FCN backend listening on port ${env.PORT}`);
     startMessageCleanupJob();
+    startMedicationReminderJob();
+    startPrescriptionStatusJob();
+    startNotificationCleanupJob();
+    startAppointmentReminderJob();
   });
 };
 

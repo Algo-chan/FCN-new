@@ -1,7 +1,6 @@
 import { useCallback, useState } from "react";
 import { Link } from "react-router-dom";
 import {
-  Bell,
   LogOut,
   Menu,
   Moon,
@@ -14,6 +13,7 @@ import { useUiStore } from "@/store/ui.store";
 import { useAuthStore } from "@/store/auth.store";
 import { useThemeMode } from "@/hooks/useThemeMode";
 import { useClickOutside } from "@/hooks/useClickOutside";
+import { NotificationBell } from "@/components/notifications/NotificationBell";
 import { useNotifications } from "@/hooks/useNotifications";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -67,13 +67,7 @@ export const TopBar = () => {
           {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
         </button>
 
-        <Link
-          to="/notifications"
-          className="relative rounded-md p-2 text-fcn-text-light/50 hover:bg-fcn-primary/10 hover:text-fcn-primary dark:text-fcn-text-dark/50"
-          aria-label="Notifications"
-        >
-          <Bell className="h-5 w-5" />
-        </Link>
+        <NotificationBell />
 
         <div ref={dropdownRef} className="relative">
           <button

@@ -43,6 +43,7 @@ const navItems: NavItem[] = [
   { label: "Messages", path: "/messages", icon: <MessageSquare className="h-5 w-5" /> },
   { label: "Notifications", path: "/notifications", icon: <Heart className="h-5 w-5" /> },
   { label: "Admin Panel", path: "/admin", icon: <Shield className="h-5 w-5" />, roles: ["super_admin"] },
+  { label: "Pharmacy Admin", path: "/pharmacy-admin", icon: <Pill className="h-5 w-5" />, roles: ["pharmacy_admin"] },
   { label: "Doctor Dashboard", path: "/doctor-dashboard", icon: <UserCheck className="h-5 w-5" />, roles: ["doctor"] },
   { label: "Patients", path: "/patients", icon: <Users className="h-5 w-5" />, roles: ["doctor", "nurse"] },
   { label: "Prescriptions", path: "/prescriptions", icon: <ClipboardList className="h-5 w-5" />, roles: ["doctor"] },

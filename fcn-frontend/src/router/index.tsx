@@ -16,6 +16,8 @@ import HospitalCheckerPage from "@/pages/hospitals/HospitalCheckerPage";
 import LandingPage from "@/pages/LandingPage";
 import NotificationsPage from "@/pages/notifications/NotificationsPage";
 import PharmacyPage from "@/pages/pharmacy/PharmacyPage";
+import DoctorPrescriptionsPage from "@/pages/pharmacy/DoctorPrescriptionsPage";
+import PharmacyAdminPortalPage from "@/pages/pharmacy/PharmacyAdminPortalPage";
 import ProfilePage from "@/pages/profile/ProfilePage";
 import { PageScaffold } from "@/pages/PageScaffold";
 import OnboardingPage from "@/pages/auth/OnboardingPage";
@@ -95,6 +97,7 @@ export const AppRouter = () => (
       <Route path="/health-records/patient/:patientId/view" element={<PatientRecordsViewPage />} />
       <Route path="/ai-check" element={<AISymptomCheckPage />} />
       <Route path="/pharmacy" element={<PharmacyPage />} />
+      <Route path="/pharmacy-admin" element={<PharmacyAdminPortalPage />} />
       <Route path="/notifications" element={<NotificationsPage />} />
       <Route path="/profile" element={<ProfilePage />} />
     </Route>
@@ -105,6 +108,7 @@ export const AppRouter = () => (
 
     <Route element={<ProtectedRoute allowedRoles={["doctor"]} />}>
       <Route path="/doctor-dashboard" element={<DoctorDashboardPage />} />
+      <Route path="/prescriptions" element={<DoctorPrescriptionsPage />} />
     </Route>
 
     <Route path="*" element={<Navigate to="/" replace />} />

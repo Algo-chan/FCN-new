@@ -1,6 +1,24 @@
 import { prisma } from "../../config/database";
-import { logger } from "../../utils/logger";
+import { firebaseAdmin } from "../../config/firebase";
+import { twilioClient } from "../../config/twilio";
 import { env } from "../../config/env";
+import { redis } from "../../config/redis";
+import { systemSettings } from "../../utils/system-settings";
+import { logger } from "../../utils/logger";
+import { getGroupForType } from "../../constants/notifications";
+
+const RATE_LIMIT_MAX = 50;
+const RATE_LIMIT_WINDOW = 3600;
+
+const SAFE_MESSAGE_FALLBACKS: Record<string, string> = {
+  vital_alert: 'New health alert — Open FCN to view',
+  ai_assessment_complete: 'Your AI assessment is ready — Open FCN to view',
+  lab_results_ready: 'Lab results are ready — Open FCN to view',
+  new_message: 'New message received — Open FCN to view',
+  prescription_issued: 'A prescription has been issued — Open FCN to view',
+  medication_reminder: 'Medication reminder — Open FCN to view',
+  refill_due: 'Refill is due — Open FCN to view',
+};
 
 interface SendNotificationParams {
   userId: string;
@@ -9,13 +27,26 @@ interface SendNotificationParams {
   message: string;
   actionUrl?: string;
   referenceId?: string;
-  sendPush?: boolean;
-  sendSms?: boolean;
+  priority?: 'low' | 'normal' | 'high' | 'critical';
+  channels?: ('in_app' | 'fcm' | 'sms')[];
+  imageUrl?: string;
+  safeMessage?: string;
 }
 
 class NotificationService {
   async send(params: SendNotificationParams): Promise<void> {
-    const { userId, type, title, message, actionUrl, referenceId, sendPush = false, sendSms = false } = params;
+    const {
+      userId, type, title, message, actionUrl, referenceId,
+      priority = 'normal', channels = ['in_app'], imageUrl, safeMessage
+    } = params;
+
+    const rateLimited = await this.checkRateLimit(userId);
+    if (rateLimited) {
+      logger.warn(`Notification rate limit exceeded for user ${userId}, type ${type}`);
+      return;
+    }
+
+    const groupType = getGroupForType(type);
 
     const notification = await prisma.notification.create({
       data: {
@@ -25,180 +56,234 @@ class NotificationService {
         message,
         action_url: actionUrl ?? null,
         reference_id: referenceId ?? null,
+        group_type: groupType,
+        priority,
+        image_url: imageUrl ?? null,
+        read: false,
         push_sent: false,
-        sms_sent: false
+        sms_sent: false,
       }
     });
 
-    if (sendPush && env.FIREBASE_PROJECT_ID) {
-      try {
-        await this.sendFcmPush(userId, title, message, actionUrl);
-        await prisma.notification.update({
-          where: { id: notification.id },
-          data: { push_sent: true }
-        });
-      } catch (err) {
-        logger.error("FCM push failed", { userId, error: err });
-      }
+    if (channels.includes('fcm')) {
+      const pushBody = safeMessage || SAFE_MESSAGE_FALLBACKS[type] || title;
+      await this.sendFcmPush(userId, notification, title, pushBody, actionUrl, priority, imageUrl);
     }
 
-    if (sendSms && env.TWILIO_ACCOUNT_SID) {
-      try {
-        await this.sendSms(userId, message);
-        await prisma.notification.update({
-          where: { id: notification.id },
-          data: { sms_sent: true }
-        });
-      } catch (err) {
-        logger.error("SMS send failed", { userId, error: err });
-      }
+    if (channels.includes('sms')) {
+      await this.sendSms(userId, message);
     }
   }
 
-  async appointmentCreated(patientId: string, doctorName: string, scheduledAt: Date): Promise<void> {
-    await this.send({
-      userId: patientId,
-      type: "appointment_created",
-      title: "Appointment Created",
-      message: `Your appointment with Dr. ${doctorName} has been created for ${scheduledAt.toLocaleDateString()} at ${scheduledAt.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}.`,
-      actionUrl: "/appointments"
-    });
+  private async checkRateLimit(userId: string): Promise<boolean> {
+    try {
+      const hour = Math.floor(Date.now() / 3600000);
+      const key = `notif_rate:${userId}:${hour}`;
+      const count = await redis.incr(key);
+      if (count === 1) {
+        await redis.expire(key, RATE_LIMIT_WINDOW);
+      }
+      return count > RATE_LIMIT_MAX;
+    } catch {
+      return false;
+    }
   }
 
-  async appointmentConfirmed(patientId: string, doctorId: string, doctorName: string, scheduledAt: Date): Promise<void> {
-    await this.send({
-      userId: patientId,
-      type: "appointment_confirmed",
-      title: "Appointment Confirmed",
-      message: `Your appointment with Dr. ${doctorName} on ${scheduledAt.toLocaleDateString()} at ${scheduledAt.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} has been confirmed.`,
-      actionUrl: "/appointments"
-    });
+  private async sendFcmPush(
+    userId: string,
+    notification: { id: string; type: string },
+    title: string,
+    message: string,
+    actionUrl?: string,
+    priority?: string,
+    imageUrl?: string
+  ): Promise<void> {
+    try {
+      const fcmEnabled = await systemSettings.get('fcm_enabled');
+      if (fcmEnabled !== 'true') {
+        logger.debug('FCM disabled via system settings');
+        return;
+      }
+    } catch {
+      logger.debug('Could not check fcm_enabled setting, proceeding with FCM');
+    }
 
-    await this.send({
-      userId: doctorId,
-      type: "appointment_scheduled",
-      title: "New Appointment Scheduled",
-      message: `You have a new appointment scheduled on ${scheduledAt.toLocaleDateString()} at ${scheduledAt.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}.`,
-      actionUrl: "/appointments"
-    });
-  }
+    if (!firebaseAdmin) {
+      logger.debug('Firebase Admin not initialized');
+      return;
+    }
 
-  async appointmentCancelled(patientId: string, doctorId: string, doctorName: string, scheduledAt: Date): Promise<void> {
-    await this.send({
-      userId: patientId,
-      type: "appointment_cancelled",
-      title: "Appointment Cancelled",
-      message: `Your appointment with Dr. ${doctorName} on ${scheduledAt.toLocaleDateString()} has been cancelled.`,
-      actionUrl: "/appointments"
-    });
-
-    await this.send({
-      userId: doctorId,
-      type: "appointment_cancelled",
-      title: "Appointment Cancelled",
-      message: `An appointment scheduled for ${scheduledAt.toLocaleDateString()} has been cancelled.`,
-      actionUrl: "/appointments"
-    });
-  }
-
-  async appointmentRescheduled(patientId: string, doctorId: string, doctorName: string, oldDate: Date, newDate: Date): Promise<void> {
-    await this.send({
-      userId: patientId,
-      type: "appointment_rescheduled",
-      title: "Appointment Rescheduled",
-      message: `Your appointment with Dr. ${doctorName} has been moved from ${oldDate.toLocaleDateString()} to ${newDate.toLocaleDateString()} at ${newDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}.`,
-      actionUrl: "/appointments"
-    });
-
-    await this.send({
-      userId: doctorId,
-      type: "appointment_rescheduled",
-      title: "Appointment Rescheduled",
-      message: `An appointment has been rescheduled from ${oldDate.toLocaleDateString()} to ${newDate.toLocaleDateString()} at ${newDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}.`,
-      actionUrl: "/appointments"
-    });
-  }
-
-  async paymentReceived(userId: string, amount: number, txRef: string): Promise<void> {
-    await this.send({
-      userId,
-      type: "payment_received",
-      title: "Payment Received",
-      message: `Your payment of ETB ${amount.toFixed(2)} (Ref: ${txRef}) has been received successfully.`,
-      actionUrl: "/appointments"
-    });
-  }
-
-  async paymentFailed(userId: string, amount: number, txRef: string): Promise<void> {
-    await this.send({
-      userId,
-      type: "payment_failed",
-      title: "Payment Failed",
-      message: `Your payment of ETB ${amount.toFixed(2)} (Ref: ${txRef}) has failed. Please try again.`,
-      actionUrl: "/appointments"
-    });
-  }
-
-  private async sendFcmPush(userId: string, title: string, message: string, actionUrl?: string): Promise<void> {
     const user = await prisma.user.findUnique({
       where: { id: userId },
       select: { fcm_token: true }
     });
 
     if (!user?.fcm_token) {
-      logger.debug("No FCM token for user", { userId });
+      logger.debug('No FCM token for user', { userId });
       return;
     }
 
     try {
-      const admin = await import("firebase-admin");
-      if (admin.apps.length === 0) {
-        admin.initializeApp({
-          credential: admin.credential.cert({
-            projectId: env.FIREBASE_PROJECT_ID,
-            privateKey: env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, "\n"),
-            clientEmail: env.FIREBASE_CLIENT_EMAIL
-          })
-        });
-      }
-      const firebaseMessaging = admin.messaging();
-
-      const pushMessage = {
+      await firebaseAdmin.messaging().send({
         token: user.fcm_token,
-        notification: { title, body: message },
-        webpush: actionUrl ? { fcmOptions: { link: `${env.FRONTEND_URL}${actionUrl}` } } : undefined,
-        android: { priority: "high" as const },
-        apns: { payload: { aps: { sound: "default" } } }
-      };
+        notification: {
+          title,
+          body: message,
+          imageUrl: imageUrl ?? undefined,
+        },
+        data: {
+          type: notification.type,
+          actionUrl: actionUrl || '',
+          referenceId: notification.id,
+          priority: priority || 'normal',
+          click_action: 'FLUTTER_NOTIFICATION_CLICK',
+        },
+        android: {
+          priority: priority === 'critical' ? 'high' : 'normal',
+          notification: {
+            sound: 'default',
+            channelId: priority === 'critical' ? 'fcn_critical' : 'fcn_default',
+            color: '#0A7EA4',
+          },
+        },
+        webpush: {
+          headers: {
+            Urgency: priority === 'critical' ? 'high' : 'normal',
+          },
+          notification: {
+            title,
+            body: message,
+            icon: '/logo/fcn-logo-full.png',
+            badge: '/logo/fcn-badge.png',
+            vibrate: [200, 100, 200],
+            actions: actionUrl ? [{ action: 'open', title: 'View' }] : [],
+          },
+          fcmOptions: {
+            link: actionUrl ? `${env.FRONTEND_URL}${actionUrl}` : 'https://app.fcncare.com',
+          },
+        },
+      });
 
-      await firebaseMessaging.send(pushMessage);
-    } catch (err) {
-      logger.warn("Firebase not configured or push failed", { userId, error: err });
+      await prisma.notification.updateMany({
+        where: {
+          user_id: userId,
+          type: notification.type,
+          push_sent: false,
+          created_at: { gte: new Date(Date.now() - 5000) }
+        },
+        data: { push_sent: true }
+      });
+    } catch (error: any) {
+      logger.error('FCM send failed:', { userId, type: notification.type, error: error.message });
+
+      if (
+        error.code === 'messaging/invalid-registration-token' ||
+        error.code === 'messaging/registration-token-not-registered'
+      ) {
+        await prisma.user.update({
+          where: { id: userId },
+          data: { fcm_token: null }
+        });
+        logger.info(`Cleared invalid FCM token for user ${userId}`);
+      }
     }
   }
 
   private async sendSms(userId: string, message: string): Promise<void> {
+    try {
+      const smsEnabled = await systemSettings.get('sms_enabled');
+      if (smsEnabled !== 'true') {
+        logger.info(`SMS skipped (disabled) for user ${userId}`);
+        return;
+      }
+    } catch {
+      logger.debug('Could not check sms_enabled setting');
+    }
+
+    if (!twilioClient || !env.TWILIO_PHONE_NUMBER) {
+      logger.debug('Twilio not configured');
+      return;
+    }
+
     const user = await prisma.user.findUnique({
       where: { id: userId },
       select: { phone: true }
     });
 
     if (!user?.phone) {
-      logger.debug("No phone for user", { userId });
+      logger.debug('No phone for user', { userId });
       return;
     }
 
     try {
-      const twilioModule = await import("twilio");
-      const client = twilioModule.default(env.TWILIO_ACCOUNT_SID, env.TWILIO_AUTH_TOKEN);
-      await client.messages.create({
-        body: message,
+      await twilioClient.messages.create({
+        body: `FCN: ${message}`,
         from: env.TWILIO_PHONE_NUMBER,
         to: user.phone
       });
-    } catch (err) {
-      logger.warn("Twilio not configured or SMS send failed", { userId, error: err });
+
+      await prisma.notification.updateMany({
+        where: {
+          user_id: userId,
+          sms_sent: false,
+          created_at: { gte: new Date(Date.now() - 5000) }
+        },
+        data: { sms_sent: true }
+      });
+    } catch (error: any) {
+      logger.error('SMS send failed:', { userId, error: error.message });
     }
+  }
+
+  async sendToMultiple(
+    userIds: string[],
+    params: Omit<SendNotificationParams, 'userId'>
+  ): Promise<void> {
+    const results = await Promise.allSettled(
+      userIds.map((userId) => this.send({ ...params, userId }))
+    );
+
+    const failures = results.filter((r) => r.status === 'rejected');
+    if (failures.length > 0) {
+      logger.warn(`${failures.length}/${userIds.length} notifications failed in batch send`);
+    }
+  }
+
+  async sendAppointmentReminder(appointmentId: string): Promise<void> {
+    const appointment = await prisma.appointment.findUnique({
+      where: { id: appointmentId },
+      include: {
+        patient: { select: { id: true, full_name: true } },
+        doctor: { select: { full_name: true } }
+      }
+    });
+
+    if (!appointment) {
+      logger.warn(`Appointment ${appointmentId} not found for reminder`);
+      return;
+    }
+
+    await this.send({
+      userId: appointment.patient.id,
+      type: 'appointment_reminder',
+      title: '\u23F0 Appointment Reminder',
+      message: `Your appointment with Dr. ${appointment.doctor.full_name} is in 30 minutes`,
+      actionUrl: `/consultation/${appointmentId}`,
+      channels: ['in_app', 'fcm'],
+      priority: 'high'
+    });
+  }
+
+  async sendWelcomeNotification(userId: string, userName: string): Promise<void> {
+    await this.send({
+      userId,
+      type: 'welcome',
+      title: '\u{1F3E5} Welcome to FCN!',
+      message: `Welcome ${userName}! Healthcare Without Walls starts here. Book your first consultation today.`,
+      actionUrl: '/dashboard',
+      channels: ['in_app', 'fcm'],
+      priority: 'normal'
+    });
   }
 }
 

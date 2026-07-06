@@ -5,7 +5,7 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { clsx } from "clsx";
 import {
   CalendarClock, Clock, Video, MapPin, User, XCircle, ArrowLeftRight,
-  Stethoscope, FileText, CreditCard, ExternalLink
+  Stethoscope, FileText, CreditCard, ExternalLink, Pill
 } from "lucide-react";
 
 import { Card } from "@/components/ui/Card";
@@ -15,7 +15,9 @@ import { Spinner } from "@/components/ui/Spinner";
 import { Modal } from "@/components/ui/Modal";
 import { PageTransition } from "@/components/animations/PageTransition";
 import { useNotifications } from "@/hooks/useNotifications";
+import { useAuthStore } from "@/store/auth.store";
 import { appointmentsService } from "@/services/appointments.service";
+import { FollowUpPrescriptionPanel } from "@/components/doctor-dashboard/FollowUpPrescriptionPanel";
 import type { Appointment, AppointmentStatus } from "@/types";
 
 const statusConfig: Record<string, { label: string; variant: "success" | "warning" | "danger" | "info" | "neutral" }> = {
@@ -61,6 +63,10 @@ const MyAppointmentsPage = () => {
   const [rescheduleDate, setRescheduleDate] = useState("");
   const [rescheduleTime, setRescheduleTime] = useState("");
   const [rescheduleReason, setRescheduleReason] = useState("");
+  const [followUpModalOpen, setFollowUpModalOpen] = useState(false);
+  const [followUpAppointment, setFollowUpAppointment] = useState<Appointment | null>(null);
+
+  const userRole = useAuthStore((s) => s.user?.role);
 
   const { data: appointmentsData, isLoading, error } = useQuery({
     queryKey: ["my-appointments"],
@@ -147,6 +153,26 @@ const MyAppointmentsPage = () => {
   const canCancel = (status: string) => ["pending", "confirmed", "scheduled"].includes(status);
   const canReschedule = (status: string) => ["pending", "confirmed", "scheduled"].includes(status);
   const canJoin = (status: string) => status === "in_session";
+
+  const canFollowUp = (apt: Appointment) => {
+    if (userRole !== "doctor") return false;
+    if (apt.status !== "completed") return false;
+    if (!apt.follow_up_prescription_deadline) return true;
+    return new Date(apt.follow_up_prescription_deadline).getTime() > Date.now();
+  };
+
+  const followUpTimeLeft = (deadline: string) => {
+    const diff = new Date(deadline).getTime() - Date.now();
+    if (diff <= 0) return "";
+    const hours = Math.floor(diff / 3600000);
+    const mins = Math.floor((diff % 3600000) / 60000);
+    return `${hours}h ${mins}m`;
+  };
+
+  const isFollowUpExpiringSoon = (deadline: string) => {
+    const diff = new Date(deadline).getTime() - Date.now();
+    return diff > 0 && diff < 21600000; // < 6 hours
+  };
 
   if (isLoading) {
     return (
@@ -335,6 +361,20 @@ const MyAppointmentsPage = () => {
                             Cancel
                           </Button>
                         )}
+                        {canFollowUp(apt) && apt.follow_up_prescription_deadline && (
+                          <Button
+                            size="sm"
+                            variant={isFollowUpExpiringSoon(apt.follow_up_prescription_deadline) ? "danger" : "secondary"}
+                            onClick={() => {
+                              setFollowUpAppointment(apt);
+                              setFollowUpModalOpen(true);
+                            }}
+                            icon={<Pill className="h-3.5 w-3.5" />}
+                            title={isFollowUpExpiringSoon(apt.follow_up_prescription_deadline) ? `Window closes in ${followUpTimeLeft(apt.follow_up_prescription_deadline)}` : undefined}
+                          >
+                            Follow-Up Rx
+                          </Button>
+                        )}
                       </div>
                     </Card>
                   </motion.div>
@@ -439,6 +479,20 @@ const MyAppointmentsPage = () => {
               </Button>
             </div>
           </div>
+        </Modal>
+
+        <Modal isOpen={followUpModalOpen} onClose={() => { setFollowUpModalOpen(false); setFollowUpAppointment(null); }} title="Follow-Up Prescription" size="md">
+          {followUpAppointment && followUpAppointment.follow_up_prescription_deadline && (
+            <FollowUpPrescriptionPanel
+              appointmentId={followUpAppointment.id}
+              patientName={followUpAppointment.patient?.full_name ?? "Patient"}
+              deadline={followUpAppointment.follow_up_prescription_deadline}
+              onSuccess={() => {
+                queryClient.invalidateQueries({ queryKey: ["my-appointments"] });
+              }}
+              onClose={() => { setFollowUpModalOpen(false); setFollowUpAppointment(null); }}
+            />
+          )}
         </Modal>
       </div>
     </PageTransition>

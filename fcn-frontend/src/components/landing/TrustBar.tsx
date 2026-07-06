@@ -1,43 +1,131 @@
+import { useEffect, useRef } from "react";
 import { motion, useInView, useReducedMotion } from "framer-motion";
-import { useRef } from "react";
-import { ImagePlaceholder } from "@/components/landing/ImagePlaceholder";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { clsx } from "clsx";
+import { Building2, GraduationCap, HeartPulse, Stethoscope, ShieldCheck } from "lucide-react";
 
 const partners = [
-  { name: "Dire Dawa General Hospital", query: "Dire Dawa General Hospital exterior, modern East African hospital architecture" },
-  { name: "Haramaya University Hospital", query: "Haramaya University teaching hospital entrance" },
-  { name: "Dil-Chora Referral Hospital", query: "Dil-Chora Referral Hospital building, Dire Dawa" },
-  { name: "Ethiopian Medical Association", query: "Ethiopian Medical Association office building logo" },
-  { name: "Ministry of Health Ethiopia", query: "Ethiopian Ministry of Health official building" }
+  { name: "Dire Dawa General Hospital", icon: Building2, hue: 190 },
+  { name: "Haramaya University Hospital", icon: GraduationCap, hue: 210 },
+  { name: "Dil-Chora Referral Hospital", icon: HeartPulse, hue: 170 },
+  { name: "Ethiopian Medical Association", icon: Stethoscope, hue: 200 },
+  { name: "Ministry of Health Ethiopia", icon: ShieldCheck, hue: 180 }
 ];
 
+const cardVariants = {
+  hidden: { opacity: 0, y: 24, scale: 0.94 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { delay: i * 0.09, duration: 0.45, ease: [0.25, 0.46, 0.45, 0.94] }
+  })
+};
+
 export const TrustBar = () => {
-  const ref = useRef<HTMLElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-80px" });
+  const sectionRef = useRef<HTMLElement>(null);
+  const isInView = useInView(sectionRef, { once: true, margin: "-60px" });
   const shouldReduceMotion = useReducedMotion();
 
+  useEffect(() => {
+    if (shouldReduceMotion || !sectionRef.current) return;
+
+    const ctx = gsap.context(() => {
+      ScrollTrigger.create({
+        trigger: sectionRef.current,
+        start: "top center",
+        onEnter: () => {
+          gsap.fromTo(
+            sectionRef.current!.querySelector(".trust-shine"),
+            { x: "-100%" },
+            { x: "200%", duration: 1.2, ease: "power2.out" }
+          );
+        }
+      });
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, [shouldReduceMotion]);
+
   return (
-    <section ref={ref} className="border-y border-white/5 bg-white/30 py-10 dark:bg-white/[0.02]">
+    <section
+      ref={sectionRef}
+      className="relative overflow-hidden border-y border-white/10 bg-gradient-to-b from-white/40 to-white/20 py-14 dark:from-white/[0.03] dark:to-white/[0.01]"
+    >
+      <div className="trust-shine pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-fcn-accent/8 to-transparent" />
+
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <motion.p
-          initial={shouldReduceMotion ? false : { opacity: 0, y: 10 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          className="mb-8 text-center text-sm font-medium text-fcn-text-light/50 dark:text-gray-400"
-        >
-          Trusted by leading healthcare institutions in Dire Dawa
-        </motion.p>
-        <div className="flex flex-wrap items-center justify-center gap-8 opacity-60 grayscale transition hover:opacity-100">
-          {partners.map((p, i) => (
-            <motion.div
-              key={p.name}
-              initial={shouldReduceMotion ? false : { opacity: 0, y: 15 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ delay: shouldReduceMotion ? 0 : i * 0.08 }}
-              className="h-10 w-32 grayscale transition hover:grayscale-0"
-            >
-              <ImagePlaceholder query={p.query} alt={`${p.name} logo`} aspectRatio="3/1" rounded="md" className="h-full w-full" />
-            </motion.div>
-          ))}
+        <div className="mb-10 text-center">
+          <span className="mx-auto mb-3 block h-px w-12 bg-gradient-to-r from-transparent via-fcn-accent to-transparent" />
+          <motion.p
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 8 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.4 }}
+            className="text-xs font-semibold uppercase tracking-[0.2em] text-fcn-primary/60 dark:text-fcn-accent/60"
+          >
+            Our Partners in Care
+          </motion.p>
+          <motion.h2
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 10 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ delay: 0.1, duration: 0.4 }}
+            className="mt-2 text-lg font-medium text-fcn-text-light/80 dark:text-fcn-text-dark/80"
+          >
+            Trusted by leading healthcare institutions across{" "}
+            <span className="text-fcn-primary dark:text-fcn-accent">Dire Dawa</span>
+          </motion.h2>
         </div>
+
+        <div className="flex flex-wrap items-center justify-center gap-5">
+          {partners.map((p, i) => {
+            const Icon = p.icon;
+            return (
+              <motion.div
+                key={p.name}
+                custom={i}
+                variants={shouldReduceMotion ? undefined : cardVariants}
+                initial="hidden"
+                animate={isInView ? "visible" : "hidden"}
+                whileHover={shouldReduceMotion ? undefined : { y: -6, scale: 1.02 }}
+                className="group relative w-[180px]"
+              >
+                <div
+                  className={clsx(
+                    "relative overflow-hidden rounded-xl border bg-white/70 px-5 py-5 text-center shadow-sm backdrop-blur transition-all duration-300 dark:bg-fcn-dark/60",
+                    "border-white/20 hover:border-fcn-accent/30 dark:border-white/5",
+                    "hover:shadow-[0_12px_40px_rgba(10,126,164,0.12)] dark:hover:shadow-[0_12px_40px_rgba(45,212,191,0.08)]"
+                  )}
+                >
+                  <div
+                    className="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-lg transition-colors duration-300 group-hover:shadow-[0_0_20px_rgba(10,126,164,0.15)]"
+                    style={{
+                      backgroundColor: `hsla(${p.hue}, 70%, 45%, 0.1)`,
+                      color: `hsl(${p.hue}, 70%, 45%)`
+                    }}
+                  >
+                    <Icon className="h-5 w-5" strokeWidth={1.5} />
+                  </div>
+                  <p className="text-sm font-medium leading-tight text-fcn-text-light dark:text-fcn-text-dark">
+                    {p.name}
+                  </p>
+                  <p className="mt-1 text-[10px] text-fcn-text-light/40 dark:text-fcn-text-dark/40">
+                    Partner Institution
+                  </p>
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
+
+        <motion.p
+          initial={shouldReduceMotion ? false : { opacity: 0 }}
+          animate={isInView ? { opacity: 1 } : {}}
+          transition={{ delay: 0.7, duration: 0.5 }}
+          className="mt-10 text-center text-xs text-fcn-text-light/40 dark:text-fcn-text-dark/40"
+        >
+          Serving over 50,000+ patients across the region
+        </motion.p>
       </div>
     </section>
   );

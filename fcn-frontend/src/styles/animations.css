@@ -132,6 +132,21 @@
   animation: vital-pulse 0.5s ease-in-out;
 }
 
+@keyframes pulse-red-border {
+  0%, 100% {
+    border-color: rgba(248, 113, 113, 0.3);
+    box-shadow: 0 0 8px rgba(248, 113, 113, 0.2);
+  }
+  50% {
+    border-color: rgba(248, 113, 113, 0.8);
+    box-shadow: 0 0 24px rgba(248, 113, 113, 0.5);
+  }
+}
+
+.critical-pulse {
+  animation: pulse-red-border 1.5s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
