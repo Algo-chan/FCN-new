@@ -112,6 +112,15 @@ model User {
   created_at       DateTime        @default(now())
   updated_at       DateTime        @updatedAt
   last_login_at    DateTime?
+  two_fa_enabled            Boolean   @default(false)
+  two_fa_secret             String?
+  deletion_requested_at     DateTime?
+  deletion_confirmed_at     DateTime?
+  is_deleted                Boolean   @default(false)
+  deleted_at                DateTime?
+  deletion_reason           String?
+  pending_email             String?
+  pending_phone             String?
 
   patient_profile             PatientProfile?
   doctor_profile              DoctorProfile?       @relation("DoctorUser")
@@ -142,6 +151,7 @@ model User {
   doctor_notes                 DoctorNote[]         @relation("DoctorNotes")
   patient_notes                DoctorNote[]         @relation("PatientNotes")
 
+  two_fa_sessions TwoFASession[]
   activity_logs ActivityLog[]
 
   @@index([email])
@@ -205,6 +215,15 @@ model DoctorProfile {
   available_since        DateTime?
   approved_at            DateTime?
   approved_by            String?            @db.Uuid
+  show_phone             Boolean            @default(false)
+  show_email             Boolean            @default(false)
+  show_hospital          Boolean            @default(true)
+  show_rating            Boolean            @default(true)
+  show_experience        Boolean            @default(true)
+  show_consultation_count Boolean           @default(true)
+  languages_spoken       String[]           @default([])
+  clinic_address         String?
+  consultation_types     String[]           @default([])
 
   user      User      @relation("DoctorUser", fields: [user_id], references: [id], onDelete: Cascade)
   hospital  Hospital? @relation(fields: [hospital_id], references: [id], onDelete: SetNull)
@@ -564,6 +583,21 @@ model ConsultationRating {
   doctor      User        @relation("DoctorRatings", fields: [doctor_id], references: [id], onDelete: Cascade)
 
   @@map("consultation_ratings")
+}
+
+model TwoFASession {
+  id         String   @id @default(uuid()) @db.Uuid
+  user_id    String   @db.Uuid
+  otp        String
+  purpose    String
+  expires_at DateTime
+  used       Boolean  @default(false)
+  created_at DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id, purpose])
+  @@map("two_fa_sessions")
 }
 
 model SymptomAssessment {

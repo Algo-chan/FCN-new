@@ -19,6 +19,7 @@ import PharmacyPage from "@/pages/pharmacy/PharmacyPage";
 import DoctorPrescriptionsPage from "@/pages/pharmacy/DoctorPrescriptionsPage";
 import PharmacyAdminPortalPage from "@/pages/pharmacy/PharmacyAdminPortalPage";
 import ProfilePage from "@/pages/profile/ProfilePage";
+import { DoctorPublicProfilePage } from "@/components/profile/DoctorPublicProfilePage";
 import { PageScaffold } from "@/pages/PageScaffold";
 import OnboardingPage from "@/pages/auth/OnboardingPage";
 import PendingApprovalPage from "@/pages/auth/PendingApprovalPage";
@@ -82,12 +83,13 @@ export const AppRouter = () => (
 
     <Route path="/onboarding" element={<OnboardingPage />} />
     <Route path="/pending" element={<PendingApprovalPage />} />
+    <Route path="/doctors/:doctorId" element={<DoctorPublicProfilePage />} />
 
     <Route element={<ProtectedRoute />}>
       <Route path="/dashboard" element={<DashboardPage />} />
       <Route path="/hospitals" element={<HospitalCheckerPage />} />
       <Route path="/doctors" element={<FindDoctorsPage />} />
-      <Route path="/doctors/:id" element={<DoctorDetailsPage />} />
+      <Route path="/doctors/:id/details" element={<DoctorDetailsPage />} />
       <Route path="/appointments/book" element={<BookAppointmentPage />} />
       <Route path="/appointments" element={<MyAppointmentsPage />} />
       <Route path="/consultation/:appointmentId" element={<ConsultationPage />} />

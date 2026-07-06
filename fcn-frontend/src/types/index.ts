@@ -21,6 +21,20 @@ export interface User {
   status: UserStatus;
   theme_preference: ThemePreference;
   fcm_token?: string | null;
+  two_fa_enabled?: boolean;
+  email_verified?: boolean;
+  phone_verified?: boolean;
+  pending_email?: string | null;
+  pending_phone?: string | null;
+  created_at?: string;
+  last_login_at?: string | null;
+}
+
+export interface NurseProfile {
+  user_id: string;
+  license_number: string;
+  coverage_zone: string;
+  years_experience: number;
 }
 
 export interface PatientProfile {
@@ -34,6 +48,7 @@ export interface PatientProfile {
   home_address?: string | null;
   emergency_contact_name?: string | null;
   emergency_contact_phone?: string | null;
+  onboarding_completed: boolean;
 }
 
 export interface DoctorProfile {
@@ -51,6 +66,15 @@ export interface DoctorProfile {
   photo_public_id?: string | null;
   available_since?: string | null;
   languages?: string[];
+  show_phone?: boolean;
+  show_email?: boolean;
+  show_hospital?: boolean;
+  show_rating?: boolean;
+  show_experience?: boolean;
+  show_consultation_count?: boolean;
+  languages_spoken?: string[];
+  clinic_address?: string;
+  consultation_types?: string[];
 }
 
 export interface DoctorWithProfile {

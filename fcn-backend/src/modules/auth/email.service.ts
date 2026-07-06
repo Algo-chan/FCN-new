@@ -88,6 +88,47 @@ export class EmailService {
     );
   }
 
+  async sendCustomEmail(to: string, subject: string, html: string): Promise<void> {
+    await this.send(to, subject, html);
+  }
+
+  async sendPasswordChangeAlert(to: string, fullName: string): Promise<void> {
+    const now = new Date().toLocaleString("en-US", { timeZone: "Africa/Addis_Ababa" });
+    await this.send(
+      to,
+      "FCN: Your password was changed",
+      this.shell(`
+        <h2 style="margin:0 0 12px;color:#1E293B">Password Changed</h2>
+        <p style="margin:0 0 16px">Your FCN account password was changed on ${now}.</p>
+        <p style="margin:16px 0 0;color:#F87171;font-weight:600">If this wasn't you, please contact support immediately at support@fcncare.com</p>
+      `)
+    );
+  }
+
+  async send2FAEnabledEmail(to: string, fullName: string): Promise<void> {
+    await this.send(
+      to,
+      "2FA has been enabled on your FCN account",
+      this.shell(`
+        <h2 style="margin:0 0 12px;color:#1E293B">Two-Factor Authentication Enabled</h2>
+        <p style="margin:0 0 16px">Two-factor authentication has been enabled on your FCN account. Your account is now more secure.</p>
+        <p style="margin:16px 0 0;color:#475569">If you didn't make this change, please contact support immediately.</p>
+      `)
+    );
+  }
+
+  async send2FADisabledEmail(to: string, fullName: string): Promise<void> {
+    await this.send(
+      to,
+      "2FA has been disabled on your FCN account",
+      this.shell(`
+        <h2 style="margin:0 0 12px;color:#1E293B">Two-Factor Authentication Disabled</h2>
+        <p style="margin:0 0 16px">Two-factor authentication has been disabled on your FCN account.</p>
+        <p style="margin:16px 0 0;color:#475569">If you didn't make this change, please contact support immediately.</p>
+      `)
+    );
+  }
+
   private shell(content: string): string {
     return `
       <div style="background:#F8FFFE;padding:32px;font-family:Inter,Arial,sans-serif;color:#1E293B">
