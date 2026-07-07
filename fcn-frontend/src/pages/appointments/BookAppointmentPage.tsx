@@ -365,7 +365,7 @@ const BookAppointmentPage = () => {
               </div>
             </div>
 
-            <div className="md:col-span-2">
+            <div className="hidden md:block md:col-span-2">
               <BookingSummaryCard
                 doctorName={selectedDoctor.full_name}
                 specialty={selectedDoctor.doctor_profile?.specialty ?? ""}
@@ -420,6 +420,25 @@ const BookAppointmentPage = () => {
             )}
           </div>
         </div>
+
+        {/* Mobile sticky bottom bar for confirm step */}
+        {step === "confirm" && (
+          <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-fcn-primary/10 bg-white px-4 py-3 dark:bg-fcn-dark md:hidden">
+            <div className="flex items-center justify-between">
+              <div className="text-sm">
+                <span className="text-fcn-text-light/60 dark:text-fcn-text-dark/60">Total: </span>
+                <span className="font-bold text-fcn-primary">ETB {grandTotal.toFixed(0)}</span>
+              </div>
+              <Button
+                onClick={handleConfirmBooking}
+                loading={createMutation.isPending}
+                disabled={createMutation.isPending}
+              >
+                {createMutation.isPending ? "Booking..." : "Confirm Booking"}
+              </Button>
+            </div>
+          </div>
+        )}
 
         <ConfirmationModal
           isOpen={showConfirmation}

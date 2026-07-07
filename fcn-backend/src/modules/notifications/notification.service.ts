@@ -31,13 +31,15 @@ interface SendNotificationParams {
   channels?: ('in_app' | 'fcm' | 'sms')[];
   imageUrl?: string;
   safeMessage?: string;
+  sendPush?: boolean;
 }
 
 class NotificationService {
   async send(params: SendNotificationParams): Promise<void> {
     const {
       userId, type, title, message, actionUrl, referenceId,
-      priority = 'normal', channels = ['in_app'], imageUrl, safeMessage
+      priority = 'normal', channels = ['in_app'], imageUrl, safeMessage,
+      sendPush = true
     } = params;
 
     const rateLimited = await this.checkRateLimit(userId);
@@ -65,7 +67,7 @@ class NotificationService {
       }
     });
 
-    if (channels.includes('fcm')) {
+    if (channels.includes('fcm') && sendPush) {
       const pushBody = safeMessage || SAFE_MESSAGE_FALLBACKS[type] || title;
       await this.sendFcmPush(userId, notification, title, pushBody, actionUrl, priority, imageUrl);
     }
@@ -269,6 +271,66 @@ class NotificationService {
       title: '\u23F0 Appointment Reminder',
       message: `Your appointment with Dr. ${appointment.doctor.full_name} is in 30 minutes`,
       actionUrl: `/consultation/${appointmentId}`,
+      channels: ['in_app', 'fcm'],
+      priority: 'high'
+    });
+  }
+
+  async appointmentCreated(patientId: string, doctorName: string, scheduledDate: Date): Promise<void> {
+    await this.send({
+      userId: patientId,
+      type: 'appointment_created',
+      title: '\u2705 Appointment Booked',
+      message: `Your appointment with Dr. ${doctorName} has been booked for ${scheduledDate.toLocaleDateString()}`,
+      actionUrl: '/dashboard',
+      channels: ['in_app', 'fcm'],
+      priority: 'normal'
+    });
+  }
+
+  async appointmentCancelled(patientId: string, doctorId: string, doctorName: string, scheduledDate: Date): Promise<void> {
+    await this.send({
+      userId: patientId,
+      type: 'appointment_cancelled',
+      title: '\u274C Appointment Cancelled',
+      message: `Your appointment with Dr. ${doctorName} on ${scheduledDate.toLocaleDateString()} has been cancelled`,
+      actionUrl: '/dashboard',
+      channels: ['in_app', 'fcm'],
+      priority: 'high'
+    });
+  }
+
+  async appointmentRescheduled(patientId: string, doctorId: string, doctorName: string, oldDate: Date, newDate: Date): Promise<void> {
+    await this.send({
+      userId: patientId,
+      type: 'appointment_rescheduled',
+      title: '\u{1F504} Appointment Rescheduled',
+      message: `Your appointment with Dr. ${doctorName} has been moved from ${oldDate.toLocaleDateString()} to ${newDate.toLocaleDateString()}`,
+      actionUrl: '/dashboard',
+      channels: ['in_app', 'fcm'],
+      priority: 'high'
+    });
+  }
+
+  async paymentReceived(patientId: string, amount: number, txRef: string): Promise<void> {
+    await this.send({
+      userId: patientId,
+      type: 'payment_received',
+      title: '\u2705 Payment Received',
+      message: `Your payment of ETB ${amount.toLocaleString()} has been received (Ref: ${txRef})`,
+      actionUrl: '/payments',
+      channels: ['in_app', 'fcm'],
+      priority: 'normal'
+    });
+  }
+
+  async appointmentConfirmed(patientId: string, doctorId: string, doctorName: string, scheduledDate: Date): Promise<void> {
+    await this.send({
+      userId: patientId,
+      type: 'appointment_confirmed',
+      title: '\u2705 Appointment Confirmed',
+      message: `Your appointment with Dr. ${doctorName} on ${scheduledDate.toLocaleDateString()} is confirmed`,
+      actionUrl: '/dashboard',
       channels: ['in_app', 'fcm'],
       priority: 'high'
     });

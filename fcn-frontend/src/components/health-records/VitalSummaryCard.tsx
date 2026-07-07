@@ -1,6 +1,8 @@
 import { useEffect, useRef, type ReactNode } from "react";
 import { motion } from "framer-motion";
 import { clsx } from "clsx";
+import toast from "react-hot-toast";
+import { Share2 } from "lucide-react";
 import type { VitalClassification } from "@/utils/vitals-classifier";
 
 interface VitalSummaryCardProps {
@@ -11,6 +13,13 @@ interface VitalSummaryCardProps {
   icon: ReactNode;
   recordedAt: string | null;
   isLoading: boolean;
+  shareData?: {
+    vitalName: string;
+    value: string;
+    unit: string;
+    status: string;
+    timeAgo: string;
+  } | null;
 }
 
 export const VitalSummaryCard = ({
@@ -20,7 +29,8 @@ export const VitalSummaryCard = ({
   classification,
   icon,
   recordedAt,
-  isLoading
+  isLoading,
+  shareData
 }: VitalSummaryCardProps) => {
   const valueRef = useRef<HTMLDivElement>(null);
   const prevValueRef = useRef(value);
@@ -49,6 +59,17 @@ export const VitalSummaryCard = ({
   const statusColor = classification?.color ?? "#94A3B8";
   const statusLabel = classification?.label ?? "Not recorded";
 
+  const handleShare = () => {
+    if (!shareData) return;
+    const text = `My latest ${shareData.vitalName}: ${shareData.value} ${shareData.unit} — ${shareData.status}
+Recorded ${shareData.timeAgo} on FCN`;
+    navigator.clipboard.writeText(text).then(() => {
+      toast.success("Copied to clipboard!");
+    }).catch(() => {
+      toast.error("Could not copy");
+    });
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, x: -20 }}
@@ -66,11 +87,22 @@ export const VitalSummaryCard = ({
         transition={{ duration: 0.6, ease: "easeOut" }}
       />
 
-      <div className="flex items-center gap-2">
-        <span className="text-fcn-accent">{icon}</span>
-        <span className="text-xs font-medium text-fcn-text-light/60 dark:text-fcn-text-dark/60">
-          {label}
-        </span>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <span className="text-fcn-accent">{icon}</span>
+          <span className="text-xs font-medium text-fcn-text-light/60 dark:text-fcn-text-dark/60">
+            {label}
+          </span>
+        </div>
+        {shareData && value && value !== "—" && (
+          <button
+            onClick={handleShare}
+            className="flex h-6 w-6 items-center justify-center rounded-md text-fcn-text-light/30 hover:bg-fcn-primary/10 hover:text-fcn-primary transition-colors"
+            title="Share with doctor"
+          >
+            <Share2 className="h-3 w-3" />
+          </button>
+        )}
       </div>
 
       <div ref={valueRef} className="mt-2 flex items-baseline gap-1.5 transition-colors duration-300">

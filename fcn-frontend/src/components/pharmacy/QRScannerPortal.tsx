@@ -32,6 +32,7 @@ export const QRScannerPortal = () => {
       return pharmacyService.verifyQR(input, tab === "rx", pharmacyId || undefined);
     },
     onSuccess: (res) => {
+      if (!res.data) return;
       setResult(res.data);
       if (res.data.valid) {
         playSuccess();

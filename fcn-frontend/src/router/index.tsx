@@ -1,5 +1,6 @@
 import { Navigate, Outlet, Route, Routes, useParams } from "react-router-dom";
 import { PageLayout } from "@/components/layout/PageLayout";
+import { ScrollToTop } from "@/components/layout/ScrollToTop";
 import AdminPanelPage from "@/pages/admin/AdminPanelPage";
 import AISymptomCheckPage from "@/pages/ai-check/AISymptomCheckPage";
 import BookAppointmentPage from "@/pages/appointments/BookAppointmentPage";
@@ -14,6 +15,8 @@ import NurseHealthRecordsPage from "@/pages/health-records/NurseHealthRecordsPag
 import PatientRecordsViewPage from "@/pages/health-records/PatientRecordsViewPage";
 import HospitalCheckerPage from "@/pages/hospitals/HospitalCheckerPage";
 import LandingPage from "@/pages/LandingPage";
+import ComingSoonPage from "@/pages/ComingSoonPage";
+import NotFoundPage from "@/pages/NotFoundPage";
 import NotificationsPage from "@/pages/notifications/NotificationsPage";
 import PharmacyPage from "@/pages/pharmacy/PharmacyPage";
 import DoctorPrescriptionsPage from "@/pages/pharmacy/DoctorPrescriptionsPage";
@@ -77,7 +80,8 @@ const DoctorDetailsPage = () => {
 
 export const AppRouter = () => (
   <Routes>
-    <Route path="/" element={<LandingPage />} />
+    <Route path="/" element={<ComingSoonPage />} />
+    <Route path="/landing" element={<LandingPage />} />
     <Route path="/login" element={<LoginPage />} />
     <Route path="/register" element={<RegisterPage />} />
 
@@ -113,6 +117,6 @@ export const AppRouter = () => (
       <Route path="/prescriptions" element={<DoctorPrescriptionsPage />} />
     </Route>
 
-    <Route path="*" element={<Navigate to="/" replace />} />
+    <Route path="*" element={<NotFoundPage />} />
   </Routes>
 );

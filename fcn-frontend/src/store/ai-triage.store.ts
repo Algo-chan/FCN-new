@@ -21,6 +21,7 @@ interface AITriageActions {
   setComplete: (assessment: ParsedAssessment) => void;
   setError: (error: string | null) => void;
   setBookingInitiated: () => void;
+  setAssessmentId: (id: string) => void;
   reset: () => void;
 }
 
@@ -72,6 +73,8 @@ export const useAITriageStore = create<AITriageState & AITriageActions>((set) =>
   setError: (error) => set({ error, isLoading: false }),
 
   setBookingInitiated: () => set({ bookingInitiated: true }),
+
+  setAssessmentId: (id) => set({ assessmentId: id }),
 
   reset: () => set(initialState)
 }));

@@ -96,7 +96,7 @@ class NotificationsQueryService {
     });
 
     try {
-      await redis.set(cacheKey, count.toString(), { EX: 30 });
+      await redis.set(cacheKey, count.toString(), "EX", 30);
     } catch {
       // Redis cache set failure is non-critical
     }

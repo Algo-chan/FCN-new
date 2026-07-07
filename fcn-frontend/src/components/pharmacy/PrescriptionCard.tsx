@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { Calendar, ChevronDown, ChevronUp, Clock, Pill, Printer, ShieldAlert } from "lucide-react";
+import { Calendar, ChevronDown, ChevronUp, Clock, Pill, Printer, ShieldAlert, Timer, AlertCircle } from "lucide-react";
 import { clsx } from "clsx";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
@@ -38,6 +38,17 @@ export const PrescriptionCard = ({ prescription }: PrescriptionCardProps) => {
     && prescription.refill_count < prescription.max_refills;
 
   const hasPendingRefill = prescription.refill_requests?.some((r) => r.status === "PENDING");
+
+  const pendingRefill = prescription.refill_requests?.find((r) => r.status === "PENDING");
+
+  const getTimeAgo = (d: string) => {
+    const diff = Date.now() - new Date(d).getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 60) return `${mins} minutes ago`;
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return `${hrs} hours ago`;
+    return `${Math.floor(hrs / 24)} days ago`;
+  };
 
   const printQR = () => {
     const printWindow = window.open("", "_blank");
@@ -85,6 +96,33 @@ export const PrescriptionCard = ({ prescription }: PrescriptionCardProps) => {
             <Badge variant={statusInfo.variant}>{statusInfo.label}</Badge>
           </div>
 
+          {/* Status Timeline */}
+          <div className="space-y-1.5">
+            <div className="flex items-center gap-2 text-xs text-fcn-text-light/60 dark:text-fcn-text-dark/60">
+              <span className="flex h-2 w-2 rounded-full bg-fcn-success" />
+              <span>Issued by Dr. {prescription.doctor_name} on {formatDate(prescription.issued_at)}</span>
+            </div>
+            {prescription.status !== "cancelled" && prescription.status !== "expired" && (
+              <div className="flex items-center gap-2 text-xs text-fcn-text-light/60 dark:text-fcn-text-dark/60">
+                <span className={clsx("flex h-2 w-2 rounded-full",
+                  prescription.status === "active" ? "bg-fcn-success" :
+                  prescription.status === "refill_due" ? "bg-fcn-warning" : "bg-fcn-primary"
+                )} />
+                <span>
+                  {prescription.status === "active" ? "Active" :
+                   prescription.status === "refill_due" ? "Refill due" : "Active"}
+                  {daysRemaining !== null && ` — expires ${formatDate(prescription.expires_at)}`}
+                </span>
+              </div>
+            )}
+            {daysRemaining !== null && daysRemaining > 0 && (
+              <div className="flex items-center gap-2 text-xs font-medium text-fcn-text-light/50 dark:text-fcn-text-dark/50">
+                <Timer className="h-3 w-3" />
+                <span>{daysRemaining} days remaining</span>
+              </div>
+            )}
+          </div>
+
           <div className="flex items-center gap-2 text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">
             <Calendar className="h-3.5 w-3.5" />
             <span>
@@ -109,6 +147,11 @@ export const PrescriptionCard = ({ prescription }: PrescriptionCardProps) => {
                       ? `${med.instructions.slice(0, 60)}...`
                       : med.instructions}
                   </p>
+                  {med.reminder_times && med.reminder_times.length > 0 && (
+                    <p className="mt-0.5 text-[11px] text-fcn-accent">
+                      ⏰ Reminders: {med.reminder_times.join(" · ")}
+                    </p>
+                  )}
                 </div>
                 <span className="shrink-0 text-xs text-fcn-text-light/40 dark:text-fcn-text-dark/40">
                   {med.is_ongoing ? "Ongoing" : `${med.supply_days} days`}
@@ -142,13 +185,27 @@ export const PrescriptionCard = ({ prescription }: PrescriptionCardProps) => {
               </Button>
             )}
 
-            {hasPendingRefill && (
-              <Badge variant="warning">Refill Requested - Awaiting Doctor</Badge>
+            {hasPendingRefill && pendingRefill && (
+              <div className="w-full rounded-md bg-fcn-warning/5 p-2 text-xs">
+                <div className="flex items-center gap-1.5 text-fcn-warning">
+                  <AlertCircle className="h-3.5 w-3.5" />
+                  <span className="font-medium">Refill Requested</span>
+                </div>
+                <p className="mt-0.5 text-fcn-text-light/50 dark:text-fcn-text-dark/50">
+                  Refill requested {getTimeAgo(pendingRefill.requested_at)}
+                </p>
+                <p className="text-fcn-text-light/50 dark:text-fcn-text-dark/50">
+                  ⏳ Awaiting Dr. {prescription.doctor_name}'s approval
+                </p>
+                <p className="text-[11px] text-fcn-text-light/40 dark:text-fcn-text-dark/40">
+                  Estimated response: Usually within 24h
+                </p>
+              </div>
             )}
 
             {prescription.refill_count >= prescription.max_refills && prescription.max_refills > 0 && (
               <p className="text-xs text-fcn-text-light/40 dark:text-fcn-text-dark/40">
-                No refills remaining - book a new consultation
+                No refills remaining — book a new consultation
               </p>
             )}
           </div>

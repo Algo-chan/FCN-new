@@ -143,14 +143,19 @@ const PharmacyPage = () => {
               </div>
             ) : filteredPrescriptions.length === 0 ? (
               <Card className="p-8 text-center">
-                <Pill className="mx-auto mb-3 h-12 w-12 text-fcn-primary/30" />
+                <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-fcn-primary/10">
+                  <svg viewBox="0 0 48 48" fill="none" className="h-10 w-10 text-fcn-primary/40">
+                    <rect x="19" y="6" width="10" height="36" rx="3" stroke="currentColor" strokeWidth="2" />
+                    <rect x="6" y="19" width="36" height="10" rx="3" stroke="currentColor" strokeWidth="2" />
+                  </svg>
+                </div>
                 <h3 className="text-lg font-medium text-fcn-text-light dark:text-fcn-text-dark">
                   No prescriptions yet
                 </h3>
                 <p className="mt-1 text-sm text-fcn-text-light/50 dark:text-fcn-text-dark/50">
-                  Your doctor will issue prescriptions during consultations
+                  Your doctor will issue prescriptions during your consultations
                 </p>
-                <Button className="mt-4" onClick={() => window.history.pushState({}, "", "/appointments/book")}>
+                <Button className="mt-4" onClick={() => window.location.href = "/appointments/book"}>
                   Book a Consultation
                 </Button>
               </Card>

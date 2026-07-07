@@ -205,81 +205,88 @@ export const VitalsHistoryTable = ({
       </AnimatePresence>
 
       {/* Table */}
-      <div className="overflow-x-auto">
-        <table className="w-full text-left text-xs">
-          <thead>
-            <tr className="border-b border-fcn-primary/10 bg-fcn-light/50 dark:bg-fcn-dark/50">
-              <TH>Date</TH>
-              <TH>Time</TH>
-              <TH>BP</TH>
-              <TH>Glucose</TH>
-              <TH>HR</TH>
-              <TH>Temp</TH>
-              <TH>SpO2</TH>
-              <TH>Weight</TH>
-              <TH>BMI</TH>
-              <TH>Source</TH>
-              <TH />
-            </tr>
-          </thead>
-          <tbody>
-            {paged.length === 0 ? (
-              <tr>
-                <td colSpan={11} className="px-3 py-8 text-center text-fcn-text-light/40 dark:text-fcn-text-dark/40">
-                  No records match filters
-                </td>
+      <div className="relative">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs">
+            <thead>
+              <tr className="border-b border-fcn-primary/10 bg-fcn-light/50 dark:bg-fcn-dark/50">
+                <TH className="sticky left-0 z-10 bg-fcn-light dark:bg-fcn-dark shadow-[2px_0_4px_rgba(0,0,0,0.05)]">Date</TH>
+                <TH>Time</TH>
+                <TH>BP</TH>
+                <TH>Glucose</TH>
+                <TH>HR</TH>
+                <TH>Temp</TH>
+                <TH>SpO2</TH>
+                <TH>Weight</TH>
+                <TH>BMI</TH>
+                <TH>Source</TH>
+                <TH />
               </tr>
-            ) : (
-              paged.map((rec) => (
-                <motion.tr
-                  key={rec.id}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className={clsx(
-                    "border-b border-fcn-primary/5 transition-colors hover:bg-fcn-light/50 dark:hover:bg-fcn-dark/50",
-                    rec.is_flagged && "bg-red-50/50 dark:bg-red-950/10"
-                  )}
-                >
-                  <TD>{fmtDate(rec.recorded_at)}</TD>
-                  <TD>{fmtTime(rec.recorded_at)}</TD>
-                  <TD>
-                    {rec.bp_systolic ? `${rec.bp_systolic}/${rec.bp_diastolic ?? "—"}` : "—"}
-                  </TD>
-                  <TD>{rec.blood_glucose_mg_dl ?? "—"}</TD>
-                  <TD>{rec.heart_rate_bpm ?? "—"}</TD>
-                  <TD>{rec.temperature_celsius ?? "—"}</TD>
-                  <TD>
-                    {rec.spo2_percent != null ? (
-                      <span className="inline-flex items-center gap-1">
-                        {rec.spo2_percent < 95 && <AlertTriangle className="h-3 w-3 text-red-500" />}
-                        {rec.spo2_percent}
-                      </span>
-                    ) : "—"}
-                  </TD>
-                  <TD>{rec.weight_kg ?? "—"}</TD>
-                  <TD>{rec.bmi ?? "—"}</TD>
-                  <TD>
-                    <span className={clsx(
-                      "capitalize",
-                      rec.vital_source === "self" && "text-fcn-accent",
-                      rec.vital_source === "nurse" && "text-emerald-500",
-                      rec.vital_source === "doctor" && "text-blue-500"
-                    )}>
-                      {rec.vital_source}
-                    </span>
-                  </TD>
-                  <TD>
-                    {rec.is_flagged && (
-                      <span className="flex items-center gap-1 text-[10px] text-red-500" title={rec.flagged_reasons?.join(", ")}>
-                        <Flag className="h-3 w-3" />
-                      </span>
+            </thead>
+            <tbody>
+              {paged.length === 0 ? (
+                <tr>
+                  <td colSpan={11} className="px-3 py-8 text-center text-fcn-text-light/40 dark:text-fcn-text-dark/40">
+                    No records match filters
+                  </td>
+                </tr>
+              ) : (
+                paged.map((rec) => (
+                  <motion.tr
+                    key={rec.id}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className={clsx(
+                      "border-b border-fcn-primary/5 transition-colors hover:bg-fcn-light/50 dark:hover:bg-fcn-dark/50",
+                      rec.is_flagged && "bg-red-50/50 dark:bg-red-950/10"
                     )}
-                  </TD>
-                </motion.tr>
-              ))
-            )}
-          </tbody>
-        </table>
+                  >
+                    <TD className="sticky left-0 z-10 bg-white dark:bg-fcn-dark shadow-[2px_0_4px_rgba(0,0,0,0.05)]">{fmtDate(rec.recorded_at)}</TD>
+                    <TD>{fmtTime(rec.recorded_at)}</TD>
+                    <TD>
+                      {rec.bp_systolic ? `${rec.bp_systolic}/${rec.bp_diastolic ?? "—"}` : "—"}
+                    </TD>
+                    <TD>{rec.blood_glucose_mg_dl ?? "—"}</TD>
+                    <TD>{rec.heart_rate_bpm ?? "—"}</TD>
+                    <TD>{rec.temperature_celsius ?? "—"}</TD>
+                    <TD>
+                      {rec.spo2_percent != null ? (
+                        <span className="inline-flex items-center gap-1">
+                          {rec.spo2_percent < 95 && <AlertTriangle className="h-3 w-3 text-red-500" />}
+                          {rec.spo2_percent}
+                        </span>
+                      ) : "—"}
+                    </TD>
+                    <TD>{rec.weight_kg ?? "—"}</TD>
+                    <TD>{rec.bmi ?? "—"}</TD>
+                    <TD>
+                      <span className={clsx(
+                        "capitalize",
+                        rec.vital_source === "self" && "text-fcn-accent",
+                        rec.vital_source === "nurse" && "text-emerald-500",
+                        rec.vital_source === "doctor" && "text-blue-500"
+                      )}>
+                        {rec.vital_source}
+                      </span>
+                    </TD>
+                    <TD>
+                      {rec.is_flagged && (
+                        <span className="flex items-center gap-1 text-[10px] text-red-500" title={rec.flagged_reasons?.join(", ")}>
+                          <Flag className="h-3 w-3" />
+                        </span>
+                      )}
+                    </TD>
+                  </motion.tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+        {/* Scroll indicator */}
+        <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white/80 to-transparent dark:from-fcn-dark/80" />
+        <div className="pointer-events-none absolute bottom-2 right-2 text-[10px] text-fcn-text-light/30 animate-pulse">
+          More →
+        </div>
       </div>
 
       {/* Pagination */}
@@ -334,14 +341,14 @@ export const VitalsHistoryTable = ({
   );
 };
 
-function TH({ children }: { children?: React.ReactNode }) {
+function TH({ children, className }: { children?: React.ReactNode; className?: string }) {
   return (
-    <th className="whitespace-nowrap px-3 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-fcn-text-light/50 dark:text-fcn-text-dark/50">
+    <th className={clsx("whitespace-nowrap px-3 py-2.5 text-[10px] font-semibold uppercase tracking-wider text-fcn-text-light/50 dark:text-fcn-text-dark/50", className)}>
       {children}
     </th>
   );
 }
 
-function TD({ children }: { children?: React.ReactNode }) {
-  return <td className="whitespace-nowrap px-3 py-2.5 text-fcn-text-light/70 dark:text-fcn-text-dark/70">{children}</td>;
+function TD({ children, className }: { children?: React.ReactNode; className?: string }) {
+  return <td className={clsx("whitespace-nowrap px-3 py-2.5 text-fcn-text-light/70 dark:text-fcn-text-dark/70", className)}>{children}</td>;
 }

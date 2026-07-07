@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FCN — Coming Soon | Foundation Care Network</title>
+  <meta name="description" content="Ethiopia's first complete digital healthcare platform launching July 15, 2026 in Dire Dawa." />
+  <meta name="theme-color" content="#0D1117" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #0D1117;
+      color: #fff;
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    canvas#particle-canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .ekg-container {
+      position: fixed;
+      bottom: 0; left: 0;
+      width: 100%; height: 33vh;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.06;
+    }
+    .coming-soon-wrapper {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 24px;
+    }
+    .logo-container {
+      margin-bottom: 32px;
+      animation: logoFadeIn 0.8s ease-out forwards;
+    }
+    .logo-container img {
+      height: 80px;
+      filter: drop-shadow(0 0 20px rgba(10,126,164,0.4));
+      animation: logoGlow 2s ease-in-out infinite alternate;
+    }
+    @keyframes logoGlow {
+      0% { filter: drop-shadow(0 0 20px rgba(10,126,164,0.4)); }
+      100% { filter: drop-shadow(0 0 30px rgba(10,126,164,0.7)); }
+    }
+    @keyframes logoFadeIn {
+      0% { opacity: 0; transform: scale(0.9); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+    .tagline-row {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .tagline-brand {
+      font-size: 12px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: #0A7EA4;
+      font-weight: 600;
+    }
+    .tagline-sub {
+      font-size: 15px;
+      font-style: italic;
+      color: #e2e8f0;
+      margin-top: 6px;
+    }
+    .headline {
+      font-size: 56px;
+      font-weight: 800;
+      color: #fff;
+      text-align: center;
+      line-height: 1.15;
+      margin-bottom: 20px;
+      max-width: 800px;
+    }
+    .headline .word {
+      display: inline-block;
+      opacity: 0;
+      animation: fadeInUp 0.6s ease-out forwards;
+    }
+    .headline .word:nth-child(1) { animation-delay: 0s; }
+    .headline .word:nth-child(2) { animation-delay: 0.15s; }
+    .headline .word:nth-child(3) { animation-delay: 0.3s; }
+    @keyframes fadeInUp {
+      0% { opacity: 0; transform: translateY(20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .subtitle {
+      font-size: 18px;
+      color: #94A3B8;
+      text-align: center;
+      max-width: 600px;
+      line-height: 1.6;
+      margin-bottom: 12px;
+      opacity: 0;
+      animation: fadeIn 0.6s ease-out 0.6s forwards;
+    }
+    .amharic-accent {
+      font-size: 16px;
+      font-style: italic;
+      color: #2DD4BF;
+      text-align: center;
+      margin-bottom: 40px;
+      opacity: 0;
+      animation: fadeIn 0.6s ease-out 0.8s forwards;
+    }
+    @keyframes fadeIn {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+    .countdown {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 48px;
+      opacity: 0;
+      animation: fadeIn 0.8s ease-out 1.5s forwards;
+    }
+    .countdown-box {
+      background: #1E293B;
+      border: 1px solid #0A7EA4;
+      border-radius: 12px;
+      width: 100px;
+      padding: 16px 12px;
+      text-align: center;
+    }
+    .countdown-box .number {
+      font-size: 48px;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1;
+      display: inline-block;
+      transition: transform 0.15s ease;
+    }
+    .countdown-box .number.flip {
+      transform: scaleY(0);
+    }
+    .countdown-box .label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #64748B;
+      margin-top: 8px;
+    }
+    .signup-section {
+      width: 100%;
+      max-width: 460px;
+      margin-bottom: 48px;
+      opacity: 0;
+      animation: fadeIn 0.8s ease-out 2s forwards;
+    }
+    .signup-label {
+      font-size: 12px;
+      color: #2DD4BF;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+    .signup-form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .signup-form input {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.05);
+      color: #fff;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .signup-form input:focus {
+      border-color: #0A7EA4;
+    }
+    .signup-form input::placeholder {
+      color: #64748B;
+    }
+    .signup-form .row {
+      display: flex;
+      gap: 10px;
+    }
+    .signup-form .row input {
+      flex: 1;
+    }
+    .signup-form button {
+      width: 100%;
+      padding: 14px;
+      border-radius: 10px;
+      background: #0A7EA4;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s, opacity 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .signup-form button:hover {
+      background: #0E8FB8;
+    }
+    .signup-form button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    .spinner {
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .signup-success {
+      text-align: center;
+    }
+    .signup-success h3 {
+      color: #2DD4BF;
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+    .signup-success p {
+      color: #94A3B8;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .signup-error {
+      color: #F87171;
+      font-size: 13px;
+      text-align: center;
+      margin-top: 8px;
+    }
+    .features-label {
+      font-size: 11px;
+      color: #64748B;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+    .features {
+      display: flex;
+      gap: 16px;
+      max-width: 800px;
+      width: 100%;
+      margin-bottom: 48px;
+      opacity: 0;
+      animation: fadeIn 0.8s ease-out 2.5s forwards;
+    }
+    .feature-card {
+      flex: 1;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 14px;
+      padding: 24px 20px;
+      text-align: center;
+      transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+    .feature-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(10,126,164,0.3);
+    }
+    .feature-card .icon {
+      font-size: 32px;
+      margin-bottom: 12px;
+    }
+    .feature-card h4 {
+      font-size: 15px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+    .feature-card p {
+      font-size: 13px;
+      color: #94A3B8;
+      line-height: 1.5;
+    }
+    .footer {
+      text-align: center;
+      padding: 16px 0;
+      opacity: 0;
+      animation: fadeIn 0.8s ease-out 3s forwards;
+    }
+    .footer p {
+      font-size: 12px;
+      color: #64748B;
+      margin-bottom: 8px;
+    }
+    .footer .social {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+    .footer .social a {
+      color: #64748B;
+      text-decoration: none;
+      font-size: 13px;
+      transition: color 0.2s;
+    }
+    .footer .social a:hover {
+      color: #0A7EA4;
+    }
+    @media (max-width: 640px) {
+      .headline { font-size: 36px; }
+      .countdown {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      .countdown-box {
+        width: auto;
+        padding: 12px;
+      }
+      .countdown-box .number { font-size: 36px; }
+      .features { flex-direction: column; }
+      .logo-container img { height: 60px; }
+      .signup-form .row { flex-direction: column; }
+      .coming-soon-wrapper { padding: 24px 16px; }
+    }
+    @media (max-width: 480px) {
+      .headline { font-size: 28px; }
+      .subtitle { font-size: 15px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="particle-canvas"></canvas>
+
+  <div class="ekg-container">
+    <svg viewBox="0 0 1200 400" preserveAspectRatio="none" style="width:100%;height:100%">
+      <path id="ekg-path" d="M0,200 L100,200 L120,200 L140,200 L160,200 L180,200 L200,200 L220,200 L240,200 L260,200 L280,200 L300,200 L320,200 L340,200 L360,200 L380,200 L400,200 L420,200 L440,200 L460,200 L480,200 L500,200 L520,200 L540,200 L560,200 L580,200 L600,200 L620,200 L640,200 L660,200 L680,200 L700,200 L720,200 L740,200 L760,200 L780,200 L800,200 L820,200 L840,200 L860,200 L880,200 L900,200 L920,200 L940,200 L960,200 L980,200 L1000,200 L1020,200 L1040,200 L1060,200 L1080,200 L1100,200 L1120,200 L1140,200 L1160,200 L1180,200 L1200,200" fill="none" stroke="#2DD4BF" stroke-width="3" stroke-dasharray="2400" stroke-dashoffset="2400" />
+    </svg>
+  </div>
+
+  <div class="coming-soon-wrapper">
+    <div class="logo-container">
+      <img src="/logo/fcn-logo-full.png" alt="FCN Logo" onerror="this.style.display='none'" />
+    </div>
+
+    <div class="tagline-row">
+      <div class="tagline-brand">Foundation Care Network</div>
+      <div class="tagline-sub">Compassion. Connection. Care.</div>
+    </div>
+
+    <h1 class="headline">
+      <span class="word">Healthcare</span>
+      <span class="word">Without</span>
+      <span class="word">Walls</span>
+    </h1>
+
+    <p class="subtitle">
+      Ethiopia's first complete digital healthcare platform is launching in Dire Dawa.
+    </p>
+
+    <p class="amharic-accent">ጤና ለሁሉም — Health for All</p>
+
+    <div class="countdown" id="countdown">
+      <div class="countdown-box">
+        <span class="number" id="days">00</span>
+        <div class="label">Days</div>
+      </div>
+      <div class="countdown-box">
+        <span class="number" id="hours">00</span>
+        <div class="label">Hours</div>
+      </div>
+      <div class="countdown-box">
+        <span class="number" id="minutes">00</span>
+        <div class="label">Minutes</div>
+      </div>
+      <div class="countdown-box">
+        <span class="number" id="seconds">00</span>
+        <div class="label">Seconds</div>
+      </div>
+    </div>
+
+    <div class="signup-section">
+      <div class="signup-label">Be the first to know when we launch</div>
+
+      <div id="signup-form-container">
+        <form class="signup-form" id="waitlist-form" novalidate>
+          <div class="row">
+            <input type="text" id="name-input" placeholder="Your name" required />
+            <input type="email" id="email-input" placeholder="Your email" required />
+          </div>
+          <button type="submit" id="submit-btn">
+            Notify Me <span>→</span>
+          </button>
+        </form>
+      </div>
+
+      <div id="signup-success" style="display:none">
+        <div class="signup-success">
+          <h3>✅ You're on the list!</h3>
+          <p id="success-message">We'll email you when FCN launches on July 15, 2026</p>
+        </div>
+      </div>
+
+      <div id="signup-error" class="signup-error" style="display:none"></div>
+    </div>
+
+    <div class="features-label">What's coming:</div>
+
+    <div class="features">
+      <div class="feature-card">
+        <div class="icon">🏥</div>
+        <h4>Remote Consultations</h4>
+        <p>See a doctor from home via chat, voice or video</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🤖</div>
+        <h4>AI Health Check</h4>
+        <p>Describe symptoms in Amharic, Somali, Oromo or English</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">💊</div>
+        <h4>E-Prescriptions</h4>
+        <p>Digital prescriptions delivered to partner pharmacies</p>
+      </div>
+    </div>
+
+    <div class="footer">
+      <p>&copy; 2026 Foundation Care Network — Dire Dawa, Ethiopia</p>
+      <div class="social">
+        <a href="#" target="_blank" rel="noopener">Facebook</a>
+        <a href="#" target="_blank" rel="noopener">Twitter/X</a>
+        <a href="#" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="#" target="_blank" rel="noopener">Telegram</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      // ─── PARTICLE SYSTEM ───────────────────────────────
+      var canvas = document.getElementById('particle-canvas');
+      var ctx = canvas.getContext('2d');
+      var particles = [];
+      var particleCount = 50;
+      var colors = ['#0A7EA4', '#2DD4BF'];
+
+      function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      resizeCanvas();
+      window.addEventListener('resize', resizeCanvas);
+
+      function createParticle() {
+        return {
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          vx: (Math.random() - 0.5) * 0.4,
+          vy: (Math.random() - 0.5) * 0.4,
+          radius: 2 + Math.random() * 2,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          opacity: 0.3 + Math.random() * 0.4,
+          pulsePhase: Math.random() * Math.PI * 2
+        };
+      }
+
+      for (var i = 0; i < particleCount; i++) {
+        particles.push(createParticle());
+      }
+
+      function drawParticles() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        for (var i = 0; i < particles.length; i++) {
+          var p = particles[i];
+          p.x += p.vx;
+          p.y += p.vy;
+          p.pulsePhase += 0.02;
+
+          if (p.x < 0) { p.x = 0; p.vx *= -1; }
+          if (p.x > canvas.width) { p.x = canvas.width; p.vx *= -1; }
+          if (p.y < 0) { p.y = 0; p.vy *= -1; }
+          if (p.y > canvas.height) { p.y = canvas.height; p.vy *= -1; }
+
+          var pulseFactor = 1 + Math.sin(p.pulsePhase) * 0.3;
+          var currentRadius = p.radius * (0.8 + pulseFactor * 0.2);
+          var currentOpacity = Math.min(1, p.opacity * (0.8 + Math.sin(p.pulsePhase) * 0.2));
+
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, currentRadius, 0, Math.PI * 2);
+          ctx.fillStyle = p.color;
+          ctx.globalAlpha = currentOpacity;
+          ctx.fill();
+        }
+
+        for (var i = 0; i < particles.length; i++) {
+          for (var j = i + 1; j < particles.length; j++) {
+            var dx = particles[i].x - particles[j].x;
+            var dy = particles[i].y - particles[j].y;
+            var dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 100) {
+              ctx.beginPath();
+              ctx.moveTo(particles[i].x, particles[i].y);
+              ctx.lineTo(particles[j].x, particles[j].y);
+              ctx.strokeStyle = '#0A7EA4';
+              ctx.globalAlpha = (1 - dist / 100) * 0.15;
+              ctx.lineWidth = 0.5;
+              ctx.stroke();
+            }
+          }
+        }
+
+        ctx.globalAlpha = 1;
+        requestAnimationFrame(drawParticles);
+      }
+
+      drawParticles();
+
+      // ─── EKG HEARTBEAT LINE (GSAP) ─────────────────────
+      var ekgPath = document.getElementById('ekg-path');
+      if (ekgPath && typeof gsap !== 'undefined') {
+        var ekgLength = ekgPath.getTotalLength();
+        gsap.set(ekgPath, { strokeDasharray: ekgLength, strokeDashoffset: ekgLength });
+        gsap.to(ekgPath, {
+          strokeDashoffset: 0,
+          duration: 4,
+          repeat: -1,
+          ease: 'none'
+        });
+      }
+
+      // ─── COUNTDOWN TIMER ──────────────────────────────
+      var targetDate = new Date('2026-07-15T00:00:00+03:00');
+
+      function updateCountdown() {
+        var now = new Date();
+        var diff = targetDate - now;
+
+        if (diff <= 0) {
+          document.getElementById('days').textContent = '00';
+          document.getElementById('hours').textContent = '00';
+          document.getElementById('minutes').textContent = '00';
+          document.getElementById('seconds').textContent = '00';
+          return;
+        }
+
+        var days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        var hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        var minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        var seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+        updateNumber('days', String(days).padStart(2, '0'));
+        updateNumber('hours', String(hours).padStart(2, '0'));
+        updateNumber('minutes', String(minutes).padStart(2, '0'));
+        updateNumber('seconds', String(seconds).padStart(2, '0'));
+      }
+
+      var prevValues = { days: null, hours: null, minutes: null, seconds: null };
+
+      function updateNumber(id, value) {
+        var el = document.getElementById(id);
+        if (el.textContent !== value) {
+          el.classList.add('flip');
+          setTimeout(function() { el.classList.remove('flip'); }, 150);
+          el.textContent = value;
+        }
+      }
+
+      updateCountdown();
+      setInterval(updateCountdown, 1000);
+
+      // ─── WAITLIST FORM ────────────────────────────────
+      var form = document.getElementById('waitlist-form');
+      var nameInput = document.getElementById('name-input');
+      var emailInput = document.getElementById('email-input');
+      var submitBtn = document.getElementById('submit-btn');
+      var formContainer = document.getElementById('signup-form-container');
+      var successDiv = document.getElementById('signup-success');
+      var successMsg = document.getElementById('success-message');
+      var errorDiv = document.getElementById('signup-error');
+
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        errorDiv.style.display = 'none';
+        errorDiv.textContent = '';
+
+        var name = nameInput.value.trim();
+        var email = emailInput.value.trim();
+
+        if (!name || name.length < 2) {
+          errorDiv.textContent = 'Please enter your name.';
+          errorDiv.style.display = 'block';
+          return;
+        }
+
+        var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email || !emailRegex.test(email)) {
+          errorDiv.textContent = 'Please enter a valid email address.';
+          errorDiv.style.display = 'block';
+          return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner"></span> Submitting...';
+
+        fetch('https://api.fcncare.com/api/v1/waitlist', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: name, email: email })
+        })
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+          if (data.success) {
+            formContainer.style.display = 'none';
+            successMsg.textContent = "We'll email you at " + email + ' when FCN launches on July 15, 2026';
+            successDiv.style.display = 'block';
+          } else {
+            throw new Error(data.error?.message || 'Something went wrong');
+          }
+        })
+        .catch(function(err) {
+          errorDiv.textContent = err.message || 'Something went wrong. Try again.';
+          errorDiv.style.display = 'block';
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = 'Notify Me <span>→</span>';
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

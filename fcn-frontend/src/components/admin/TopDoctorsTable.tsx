@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { ArrowUpDown, Star } from "lucide-react";
+import { ArrowUpDown, Star, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { clsx } from "clsx";
 import type { TopDoctor } from "@/services/admin.service";
@@ -48,9 +48,9 @@ export const TopDoctorsTable = ({ data, loading }: Props) => {
     }
   };
 
-  const SortHeader = ({ label, sortKey: sk }: { label: string; sortKey: SortKey }) => (
+  const SortHeader = ({ label, sortKey: sk, className }: { label: string; sortKey: SortKey; className?: string }) => (
     <th
-      className="cursor-pointer px-4 py-3 text-xs font-medium text-fcn-text-light/60 dark:text-fcn-text-dark/60"
+      className={clsx("cursor-pointer px-4 py-3 text-xs font-medium text-fcn-text-light/60 dark:text-fcn-text-dark/60", className)}
       onClick={() => toggleSort(sk)}
     >
       <div className="flex items-center gap-1">
@@ -73,105 +73,97 @@ export const TopDoctorsTable = ({ data, loading }: Props) => {
         {loading ? (
           <div className="h-[200px] animate-pulse rounded-lg bg-fcn-primary/5" />
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead>
-                <tr className="border-b border-fcn-primary/10">
-                  <th className="px-4 py-3 text-xs font-medium text-fcn-text-light/60 dark:text-fcn-text-dark/60">
-                    Rank
-                  </th>
-                  <th className="px-4 py-3 text-xs font-medium text-fcn-text-light/60 dark:text-fcn-text-dark/60">
-                    Doctor
-                  </th>
-                  <th className="px-4 py-3 text-xs font-medium text-fcn-text-light/60 dark:text-fcn-text-dark/60">
-                    Specialty
-                  </th>
-                  <th className="px-4 py-3 text-xs font-medium text-fcn-text-light/60 dark:text-fcn-text-dark/60">
-                    Hospital
-                  </th>
-                  <SortHeader label="Consultations" sortKey="completed_consultations" />
-                  <SortHeader label="Rating" sortKey="rating_average" />
-                  <SortHeader label="Revenue" sortKey="revenue_generated" />
-                </tr>
-              </thead>
-              <tbody>
-                {sorted.map((doc, i) => (
-                  <tr
-                    key={doc.doctor_id}
-                    className="cursor-pointer border-b border-fcn-primary/5 transition-colors hover:bg-fcn-primary/[0.02]"
-                    onClick={() => setSelectedDoctor(doc)}
-                  >
-                    <td className="px-4 py-3 text-lg">{rankDisplay(i)}</td>
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-2">
-                        <Avatar
-                          imageUrl={doc.photo_url}
-                          name={doc.full_name}
-                          size="sm"
-                          role="doctor"
-                        />
-                        <span className="font-medium text-fcn-text-light dark:text-fcn-text-dark">
-                          {doc.full_name}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 text-fcn-text-light/70 dark:text-fcn-text-dark/70">
-                      {doc.specialty}
-                    </td>
-                    <td className="px-4 py-3 text-fcn-text-light/70 dark:text-fcn-text-dark/70">
-                      {doc.hospital_name || "\u2014"}
-                    </td>
-                    <td className="px-4 py-3 font-medium text-fcn-text-light dark:text-fcn-text-dark">
-                      {doc.completed_consultations}
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-1">
-                        <Star className="h-3.5 w-3.5 fill-fcn-accent text-fcn-accent" />
-                        <span className="font-medium">
-                          {doc.rating_average.toFixed(1)}
-                        </span>
-                        <span className="text-xs text-fcn-text-light/40">
-                          ({doc.rating_count})
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 font-medium text-fcn-text-light dark:text-fcn-text-dark">
-                      {doc.revenue_generated > 0 ? `Br ${doc.revenue_generated.toLocaleString()}` : "\u2014"}
-                    </td>
+          <>
+            {/* Desktop table */}
+            <div className="hidden sm:block overflow-x-auto">
+              <table className="w-full text-left text-sm">
+                <thead>
+                  <tr className="border-b border-fcn-primary/10">
+                    <th className="px-4 py-3 text-xs font-medium text-fcn-text-light/60 dark:text-fcn-text-dark/60">Rank</th>
+                    <th className="px-4 py-3 text-xs font-medium text-fcn-text-light/60 dark:text-fcn-text-dark/60">Doctor</th>
+                    <th className="px-4 py-3 text-xs font-medium text-fcn-text-light/60 dark:text-fcn-text-dark/60">Specialty</th>
+                    <th className="px-4 py-3 text-xs font-medium text-fcn-text-light/60 dark:text-fcn-text-dark/60">Hospital</th>
+                    <SortHeader label="Consultations" sortKey="completed_consultations" />
+                    <SortHeader label="Rating" sortKey="rating_average" />
+                    <SortHeader label="Revenue" sortKey="revenue_generated" />
                   </tr>
-                ))}
-                {sorted.length === 0 && (
-                  <tr>
-                    <td colSpan={7} className="px-4 py-8 text-center text-sm text-fcn-text-light/40">
-                      No data available
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {sorted.map((doc, i) => (
+                    <tr
+                      key={doc.doctor_id}
+                      className="cursor-pointer border-b border-fcn-primary/5 transition-colors hover:bg-fcn-primary/[0.02]"
+                      onClick={() => setSelectedDoctor(doc)}
+                    >
+                      <td className="px-4 py-3 text-lg">{rankDisplay(i)}</td>
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-2">
+                          <Avatar imageUrl={doc.photo_url} name={doc.full_name} size="sm" role="doctor" />
+                          <span className="font-medium text-fcn-text-light dark:text-fcn-text-dark">{doc.full_name}</span>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-fcn-text-light/70 dark:text-fcn-text-dark/70">{doc.specialty}</td>
+                      <td className="px-4 py-3 text-fcn-text-light/70 dark:text-fcn-text-dark/70">{doc.hospital_name || "\u2014"}</td>
+                      <td className="px-4 py-3 font-medium text-fcn-text-light dark:text-fcn-text-dark">{doc.completed_consultations}</td>
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-1">
+                          <Star className="h-3.5 w-3.5 fill-fcn-accent text-fcn-accent" />
+                          <span className="font-medium">{doc.rating_average.toFixed(1)}</span>
+                          <span className="text-xs text-fcn-text-light/40">({doc.rating_count})</span>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 font-medium text-fcn-text-light dark:text-fcn-text-dark">
+                        {doc.revenue_generated > 0 ? `Br ${doc.revenue_generated.toLocaleString()}` : "\u2014"}
+                      </td>
+                    </tr>
+                  ))}
+                  {sorted.length === 0 && (
+                    <tr>
+                      <td colSpan={7} className="px-4 py-8 text-center text-sm text-fcn-text-light/40">No data available</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile cards */}
+            <div className="space-y-2 sm:hidden">
+              {sorted.map((doc, i) => (
+                <div
+                  key={doc.doctor_id}
+                  className="flex items-center gap-3 rounded-lg border border-fcn-primary/10 p-3 cursor-pointer hover:bg-fcn-primary/[0.02] transition-colors"
+                  onClick={() => setSelectedDoctor(doc)}
+                >
+                  <span className="text-base w-6 text-center">{rankDisplay(i)}</span>
+                  <Avatar imageUrl={doc.photo_url} name={doc.full_name} size="sm" role="doctor" />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-fcn-text-light dark:text-fcn-text-dark truncate">{doc.full_name}</p>
+                    <div className="flex items-center gap-2 text-xs text-fcn-text-light/50">
+                      <span>{doc.completed_consultations} cons.</span>
+                      <span className="flex items-center gap-0.5">
+                        <Star className="h-3 w-3 fill-fcn-accent text-fcn-accent" />
+                        {doc.rating_average.toFixed(1)}
+                      </span>
+                    </div>
+                  </div>
+                  <ChevronRight className="h-4 w-4 text-fcn-text-light/30 shrink-0" />
+                </div>
+              ))}
+              {sorted.length === 0 && (
+                <div className="px-4 py-8 text-center text-sm text-fcn-text-light/40">No data available</div>
+              )}
+            </div>
+          </>
         )}
       </Card>
 
       {selectedDoctor && (
-        <Modal
-          isOpen={!!selectedDoctor}
-          onClose={() => setSelectedDoctor(null)}
-          title="Doctor Profile"
-          size="md"
-        >
+        <Modal isOpen={!!selectedDoctor} onClose={() => setSelectedDoctor(null)} title="Doctor Profile" size="md">
           <div className="space-y-4">
             <div className="flex items-center gap-4">
-              <Avatar
-                imageUrl={selectedDoctor.photo_url}
-                name={selectedDoctor.full_name}
-                size="lg"
-                role="doctor"
-              />
+              <Avatar imageUrl={selectedDoctor.photo_url} name={selectedDoctor.full_name} size="lg" role="doctor" />
               <div>
-                <h3 className="text-lg font-bold text-fcn-text-light dark:text-fcn-text-dark">
-                  {selectedDoctor.full_name}
-                </h3>
+                <h3 className="text-lg font-bold text-fcn-text-light dark:text-fcn-text-dark">{selectedDoctor.full_name}</h3>
                 <p className="text-sm text-fcn-text-light/60">{selectedDoctor.specialty}</p>
                 <p className="text-sm text-fcn-text-light/40">{selectedDoctor.hospital_name || "\u2014"}</p>
               </div>
@@ -187,16 +179,11 @@ export const TopDoctorsTable = ({ data, loading }: Props) => {
               </div>
               <div>
                 <p className="text-xs text-fcn-text-light/40">Rating</p>
-                <p className="text-lg font-bold">
-                  {selectedDoctor.rating_average.toFixed(1)} / 5.0
-                  <span className="ml-1 text-xs text-fcn-text-light/40">({selectedDoctor.rating_count})</span>
-                </p>
+                <p className="text-lg font-bold">{selectedDoctor.rating_average.toFixed(1)} / 5.0<span className="ml-1 text-xs text-fcn-text-light/40">({selectedDoctor.rating_count})</span></p>
               </div>
               <div>
                 <p className="text-xs text-fcn-text-light/40">Revenue Generated</p>
-                <p className="text-lg font-bold">
-                  {selectedDoctor.revenue_generated > 0 ? `Br ${selectedDoctor.revenue_generated.toLocaleString()}` : "\u2014"}
-                </p>
+                <p className="text-lg font-bold">{selectedDoctor.revenue_generated > 0 ? `Br ${selectedDoctor.revenue_generated.toLocaleString()}` : "\u2014"}</p>
               </div>
             </div>
           </div>

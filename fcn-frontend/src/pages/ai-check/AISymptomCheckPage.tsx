@@ -1,9 +1,10 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
-import { Sparkles, Loader2, Info, ChevronLeft } from "lucide-react";
+import { Sparkles, Loader2, Info, ChevronLeft, RefreshCw, Share2, Printer } from "lucide-react";
 import gsap from "gsap";
 import { useNavigate } from "react-router-dom";
 import { clsx } from "clsx";
+import toast from "react-hot-toast";
 import { useAuthStore } from "@/store/auth.store";
 import { useAITriageStore } from "@/store/ai-triage.store";
 import {
@@ -40,11 +41,40 @@ const LANGUAGE_PLACEHOLDERS: Record<string, string> = {
 
 const DURATION_OPTIONS = ["< 24 hours", "1-3 days", "3-7 days", "Over a week"];
 
+const LOADING_MESSAGES: Record<string, string[]> = {
+  en: [
+    "Analyzing your symptoms...",
+    "Reviewing your medical history...",
+    "Consulting medical knowledge...",
+    "Preparing your assessment..."
+  ],
+  am: [
+    "ምልክቶችዎን በመተንተን ላይ...",
+    "የህክምና ታሪክዎን በመገምገም ላይ...",
+    "የህክምና እውቀትን በማማከር ላይ...",
+    "ግምገማዎን በማዘጋጀት ላይ..."
+  ],
+  so: [
+    "Falanqaynta calaamadahaaga...",
+    "Dib u eegista taariikhdaada caafimaad...",
+    "La-tashiga aqoonta caafimaadka...",
+    "Diyaarinta qiimeyntaada..."
+  ],
+  om: [
+    "Mallattoolee keessan xiinxalaa jira...",
+    "Seenaa yaala keessan ilaalaa jira...",
+    "Beekumsa yaalaa gorshee jira...",
+    "Qorannoo keessan qopheessaa jira..."
+  ]
+};
+
 const slideVariants = {
   enter: (direction: number) => ({ x: direction > 0 ? 300 : -300, opacity: 0 }),
   center: { x: 0, opacity: 1 },
   exit: (direction: number) => ({ x: direction > 0 ? -300 : 300, opacity: 0 })
 };
+
+const PREFERRED_LANG_KEY = "fcn_preferred_language";
 
 const AISymptomCheckPage = () => {
   const navigate = useNavigate();
@@ -63,10 +93,17 @@ const AISymptomCheckPage = () => {
   const [historyLoading, setHistoryLoading] = useState(false);
   const [modalAssessmentId, setModalAssessmentId] = useState<string | null>(null);
   const [showFinalCard, setShowFinalCard] = useState(false);
+  const [incompleteBanner, setIncompleteBanner] = useState<{ id: string; timeAgo: string } | null>(null);
+  const [retrying, setRetrying] = useState(false);
+  const [loadingMessageIndex, setLoadingMessageIndex] = useState(0);
+  const [loadingProgress, setLoadingProgress] = useState(0);
   const severityNumRef = useRef<HTMLSpanElement>(null);
   const sparkleRef = useRef<HTMLSpanElement>(null);
+  const progressRef = useRef<HTMLDivElement>(null);
   const shouldReduceMotion = useReducedMotion();
   const { playTransition, playNotification } = useSound();
+
+  const langCode = store.language || localStorage.getItem(PREFERRED_LANG_KEY) || "en";
 
   useEffect(() => {
     if (sparkleRef.current && !shouldReduceMotion) {
@@ -103,6 +140,60 @@ const AISymptomCheckPage = () => {
     }
   }, [store.isComplete, store.finalAssessment]);
 
+  useEffect(() => {
+    const savedLang = localStorage.getItem(PREFERRED_LANG_KEY) as SupportedLanguage | null;
+    if (savedLang && !store.language) {
+      store.setLanguage(savedLang);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (store.isLoading) {
+      const msgInterval = setInterval(() => {
+        setLoadingMessageIndex((i) => (i + 1) % 4);
+      }, 2000);
+      const progressInterval = setInterval(() => {
+        setLoadingProgress((p) => {
+          if (p >= 70) return 70;
+          return p + 2.5;
+        });
+      }, 100);
+      return () => {
+        clearInterval(msgInterval);
+        clearInterval(progressInterval);
+      };
+    } else {
+      setLoadingProgress(100);
+      setLoadingMessageIndex(0);
+    }
+  }, [store.isLoading]);
+
+  useEffect(() => {
+    checkIncomplete();
+  }, []);
+
+  const checkIncomplete = async () => {
+    try {
+      const res = await apiGetHistory(1);
+      if (res.success && res.data) {
+        const incomplete = res.data.data?.find((item: any) => !item.is_complete);
+        if (incomplete) {
+          const timeAgo = getTimeAgo(incomplete.created_at);
+          setIncompleteBanner({ id: incomplete.id, timeAgo });
+        }
+      }
+    } catch { }
+  };
+
+  const getTimeAgo = (d: string): string => {
+    const diff = Date.now() - new Date(d).getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 60) return `${mins} minutes ago`;
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return `${hrs} hours ago`;
+    return `${Math.floor(hrs / 24)} days ago`;
+  };
+
   const loadHistory = useCallback(async () => {
     setHistoryLoading(true);
     try {
@@ -117,6 +208,7 @@ const AISymptomCheckPage = () => {
 
   const handleLanguageSelect = (lang: SupportedLanguage) => {
     store.setLanguage(lang);
+    localStorage.setItem(PREFERRED_LANG_KEY, lang);
     setDirection(1);
     setPageState("symptoms_input");
     playTransition();
@@ -131,6 +223,8 @@ const AISymptomCheckPage = () => {
     if (!store.language || symptoms.length < 10) return;
 
     setStarting(true);
+    setLoadingProgress(0);
+    setLoadingMessageIndex(0);
     try {
       let symptomsText = symptoms;
       if (duration) symptomsText += `\nDuration: ${duration}`;
@@ -160,6 +254,8 @@ const AISymptomCheckPage = () => {
     if (!store.assessmentId) return;
 
     store.setLoading(true);
+    setLoadingProgress(0);
+    setLoadingMessageIndex(0);
     try {
       const res = await apiContinueConversation(store.assessmentId, message);
       if (res.success && res.data) {
@@ -176,15 +272,31 @@ const AISymptomCheckPage = () => {
           );
         }
       }
+      setLoadingProgress(100);
     } catch (err: any) {
-      store.setError(err?.response?.data?.error?.message || "Failed to send message");
+      const errMsg = err?.response?.data?.error?.message || "AI service temporarily unavailable";
+      store.setError(
+        `${errMsg}. Your conversation is saved. Try again in a few minutes.`
+      );
     }
+  };
+
+  const handleRetry = async () => {
+    if (!store.assessmentId || store.conversation.length < 2) return;
+    setRetrying(true);
+    store.setError("");
+    const lastUserMsg = [...store.conversation].reverse().find((m) => m.role === "user");
+    if (lastUserMsg) {
+      await handleSendMessage(lastUserMsg.content);
+    }
+    setRetrying(false);
   };
 
   const handleSkipToAssessment = async () => {
     if (!store.assessmentId) return;
 
     store.setLoading(true);
+    setLoadingProgress(0);
     try {
       const res = await apiCompleteAssessment(store.assessmentId);
       if (res.success && res.data && res.data.finalAssessment) {
@@ -224,13 +336,51 @@ const AISymptomCheckPage = () => {
     navigate("/dashboard");
   };
 
+  const handleResumeIncomplete = async (id: string) => {
+    setIncompleteBanner(null);
+    store.reset();
+    store.setAssessmentId(id);
+    setPageState("conversation");
+    setActiveTab("new");
+  };
+
+  const handleStartFresh = () => {
+    setIncompleteBanner(null);
+  };
+
+  const handleShareAssessment = () => {
+    if (!store.finalAssessment) return;
+    const text = `FCN AI Assessment — ${new Date().toLocaleDateString()}
+Risk Level: ${store.finalAssessment.risk_level}
+Symptoms: ${store.conversation.find((m) => m.role === "user")?.content?.split("\n")[0] || "N/A"}
+Recommended: See ${store.finalAssessment.recommended_specialty || "a doctor"}`;
+    navigator.clipboard.writeText(text).then(() => {
+      toast.success("Assessment summary copied!");
+    }).catch(() => {
+      toast.error("Could not copy to clipboard");
+    });
+  };
+
+  const handlePrintAssessment = () => {
+    window.print();
+  };
+
+  const handleResumeFromHistory = (id: string) => {
+    store.reset();
+    store.setAssessmentId(id);
+    setPageState("conversation");
+    setActiveTab("new");
+  };
+
   const severityColor = (() => {
     if (severity <= 3) return "text-fcn-success";
     if (severity <= 6) return "text-fcn-warning";
     return "text-fcn-danger";
   })();
 
-  const langCode = store.language || "en";
+  const loadingTexts = LOADING_MESSAGES[langCode] || LOADING_MESSAGES.en;
+
+  const isWaitingForApi = starting || store.isLoading;
 
   return (
     <div className="mx-auto max-w-5xl">
@@ -247,6 +397,32 @@ const AISymptomCheckPage = () => {
           AI Guidance Only — Not a Diagnosis
         </span>
       </div>
+
+      {incompleteBanner && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-4 rounded-lg border border-fcn-accent/20 bg-fcn-accent/5 p-4"
+        >
+          <p className="mb-2 text-sm text-fcn-text-light dark:text-fcn-text-dark">
+            You have an incomplete assessment from {incompleteBanner.timeAgo}. Continue where you left off?
+          </p>
+          <div className="flex gap-2">
+            <button
+              onClick={() => handleResumeIncomplete(incompleteBanner.id)}
+              className="rounded-lg bg-fcn-primary px-4 py-1.5 text-xs font-medium text-white hover:bg-fcn-accent transition-colors"
+            >
+              Continue
+            </button>
+            <button
+              onClick={handleStartFresh}
+              className="rounded-lg border border-fcn-primary/30 px-4 py-1.5 text-xs font-medium text-fcn-text-light dark:text-fcn-text-dark hover:bg-white/5 transition-colors"
+            >
+              Start Fresh
+            </button>
+          </div>
+        </motion.div>
+      )}
 
       {pageState !== "language_select" && (
         <div className="mb-6 flex gap-4 border-b border-fcn-primary/10">
@@ -287,6 +463,44 @@ const AISymptomCheckPage = () => {
         </div>
       )}
 
+      {isWaitingForApi && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="mb-6 rounded-lg border border-fcn-accent/20 bg-fcn-accent/5 p-6"
+        >
+          <div className="mb-4 flex items-center justify-center gap-3">
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+              className="text-2xl"
+            >
+              +
+            </motion.div>
+            <div className="h-2 flex-1 max-w-md rounded-full bg-fcn-primary/10 overflow-hidden">
+              <motion.div
+                ref={progressRef}
+                className="h-full rounded-full bg-gradient-to-r from-fcn-primary to-fcn-accent"
+                initial={{ width: "0%" }}
+                animate={{ width: `${loadingProgress}%` }}
+                transition={{ duration: 0.3 }}
+              />
+            </div>
+          </div>
+          <AnimatePresence mode="wait">
+            <motion.p
+              key={loadingMessageIndex}
+              initial={{ opacity: 0, y: 5 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -5 }}
+              className="text-center text-sm text-fcn-text-light/70 dark:text-fcn-text-dark/70"
+            >
+              {loadingTexts[loadingMessageIndex]}
+            </motion.p>
+          </AnimatePresence>
+        </motion.div>
+      )}
+
       <AnimatePresence mode="wait" custom={direction}>
         {activeTab === "history" && pageState !== "language_select" ? (
           <motion.div
@@ -307,11 +521,7 @@ const AISymptomCheckPage = () => {
                     key={item.id}
                     {...item}
                     onView={(id) => setModalAssessmentId(id)}
-                    onResume={(id) => {
-                      store.reset();
-                      setPageState("conversation");
-                      setActiveTab("new");
-                    }}
+                    onResume={(id) => handleResumeFromHistory(id)}
                   />
                 ))}
               </div>
@@ -511,18 +721,46 @@ const AISymptomCheckPage = () => {
             )}
 
             {store.error && (
-              <div className="rounded-lg bg-fcn-danger/10 p-3 text-sm text-fcn-danger">
-                {store.error}
+              <div className="rounded-lg border border-fcn-danger/20 bg-fcn-danger/10 p-4">
+                <p className="text-sm text-fcn-danger">{store.error}</p>
+                {store.conversation.length > 0 && (
+                  <button
+                    onClick={handleRetry}
+                    disabled={retrying}
+                    className="mt-2 flex items-center gap-1.5 rounded-lg bg-fcn-danger/20 px-3 py-1.5 text-xs font-medium text-fcn-danger hover:bg-fcn-danger/30 transition-colors disabled:opacity-50"
+                  >
+                    <RefreshCw className={clsx("h-3.5 w-3.5", retrying && "animate-spin")} />
+                    Retry
+                  </button>
+                )}
               </div>
             )}
 
             {showFinalCard && store.finalAssessment && (
-              <FinalAssessmentCard
-                assessment={store.finalAssessment}
-                onBookConsultation={handleBookConsultation}
-                onSaveAndReturn={handleSaveAndReturn}
-                onStartNew={handleStartOver}
-              />
+              <>
+                <FinalAssessmentCard
+                  assessment={store.finalAssessment}
+                  onBookConsultation={handleBookConsultation}
+                  onSaveAndReturn={handleSaveAndReturn}
+                  onStartNew={handleStartOver}
+                />
+                <div className="flex items-center justify-center gap-3">
+                  <button
+                    onClick={handleShareAssessment}
+                    className="flex items-center gap-1.5 rounded-lg border border-fcn-primary/20 px-4 py-2 text-xs font-medium text-fcn-primary hover:bg-fcn-primary/5 transition-colors"
+                  >
+                    <Share2 className="h-3.5 w-3.5" />
+                    Share with Doctor
+                  </button>
+                  <button
+                    onClick={handlePrintAssessment}
+                    className="flex items-center gap-1.5 rounded-lg border border-fcn-primary/20 px-4 py-2 text-xs font-medium text-fcn-primary hover:bg-fcn-primary/5 transition-colors"
+                  >
+                    <Printer className="h-3.5 w-3.5" />
+                    Print Assessment
+                  </button>
+                </div>
+              </>
             )}
           </motion.div>
         )}

@@ -114,6 +114,11 @@ export const QRDisplayModal = ({ prescriptionId, onClose }: QRDisplayModalProps)
                 </p>
               </div>
 
+              <div className="flex items-center justify-center gap-1.5 rounded-lg bg-fcn-success/5 p-2 text-xs text-fcn-success">
+                <span>🔒</span>
+                <span>Cryptographically verified by FCN &middot; Cannot be forged</span>
+              </div>
+
               <div className="border-t border-fcn-primary/10 pt-3 text-center">
                 <p className="text-[10px] text-fcn-text-light/30 dark:text-fcn-text-dark/30">
                   Foundation Care Network &middot; Compassion. Connection. Care.

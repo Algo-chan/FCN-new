@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { format, addDays, startOfWeek, addWeeks, subWeeks, isToday, parseISO, isBefore, addMinutes } from "date-fns";
@@ -40,6 +40,18 @@ export const DoctorScheduleView = ({ doctorId }: DoctorScheduleViewProps) => {
   const shouldReduceMotion = useReducedMotion();
   const [view, setView] = useState<"day" | "week">("week");
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 640);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
+  useEffect(() => {
+    if (isMobile) setView("day");
+  }, [isMobile]);
 
   const dateStr = format(selectedDate, "yyyy-MM-dd");
 
@@ -237,6 +249,13 @@ export const DoctorScheduleView = ({ doctorId }: DoctorScheduleViewProps) => {
     );
   };
 
+  const dayPills = weekDays.map((day) => ({
+    label: format(day, "EEE"),
+    date: day,
+    isSelected: format(day, "yyyy-MM-dd") === format(selectedDate, "yyyy-MM-dd"),
+    isToday: isToday(day)
+  }));
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -262,7 +281,7 @@ export const DoctorScheduleView = ({ doctorId }: DoctorScheduleViewProps) => {
             Today
           </Button>
         </div>
-        <div className="relative flex rounded-full border border-fcn-primary/10 bg-fcn-primary/5 p-0.5">
+        <div className={clsx("relative flex rounded-full border border-fcn-primary/10 bg-fcn-primary/5 p-0.5", isMobile && "hidden")}>
           {(["week", "day"] as const).map((v) => (
             <button
               key={v}
@@ -284,6 +303,28 @@ export const DoctorScheduleView = ({ doctorId }: DoctorScheduleViewProps) => {
           ))}
         </div>
       </div>
+
+      {isMobile && (
+        <div className="flex gap-1 overflow-x-auto pb-2 scrollbar-none">
+          {dayPills.map((pill) => (
+            <button
+              key={format(pill.date, "yyyy-MM-dd")}
+              onClick={() => setSelectedDate(pill.date)}
+              className={clsx(
+                "flex shrink-0 flex-col items-center gap-0.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors",
+                pill.isSelected
+                  ? "bg-fcn-primary text-white"
+                  : pill.isToday
+                    ? "bg-fcn-accent/10 text-fcn-accent"
+                    : "text-fcn-text-light/60 hover:bg-fcn-primary/10 dark:text-fcn-text-dark/60"
+              )}
+            >
+              <span>{pill.label}</span>
+              <span className="font-bold">{format(pill.date, "d")}</span>
+            </button>
+          ))}
+        </div>
+      )}
 
       {view === "week" ? renderWeekView() : renderDayView()}
     </div>

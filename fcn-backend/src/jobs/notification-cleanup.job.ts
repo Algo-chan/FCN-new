@@ -7,7 +7,7 @@ export function startNotificationCleanupJob(): void {
   cron.schedule("0 3 * * *", async () => {
     try {
       const retentionDaysStr = await systemSettings.get("notification_retention_days");
-      const retentionDays = parseInt(retentionDaysStr, 10) || 90;
+      const retentionDays = parseInt(retentionDaysStr ?? "90", 10);
 
       const cutoff = new Date(Date.now() - retentionDays * 24 * 60 * 60 * 1000);
 
