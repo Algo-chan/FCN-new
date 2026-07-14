@@ -145,6 +145,8 @@ const RegisterPage = () => {
 
       if (result.accessToken) {
         useAuthStore.getState().login(result.user, { accessToken: result.accessToken, refreshToken: "" });
+      } else {
+        useAuthStore.getState().setUser(result.user);
       }
       playSuccess();
 

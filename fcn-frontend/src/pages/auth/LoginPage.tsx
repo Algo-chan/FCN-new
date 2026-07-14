@@ -100,10 +100,8 @@ const LoginPage = () => {
       redirectUser(payload.user);
     } catch (err: any) {
       const code = err?.response?.data?.error?.code;
-      const msg = err?.response?.data?.error?.message ?? "Connection failed. Check your internet.";
-      if (code === "ACCOUNT_PENDING") setError({ type: "info", message: msg });
-      else if (code === "ACCOUNT_SUSPENDED") setError({ type: "danger", message: msg });
-      else if (code === "ACCOUNT_REJECTED") setError({ type: "danger", message: msg });
+      if (code === "ACCOUNT_SUSPENDED") setError({ type: "danger", message: err?.response?.data?.error?.message ?? "Account suspended" });
+      else if (code === "ACCOUNT_REJECTED") setError({ type: "danger", message: err?.response?.data?.error?.message ?? "Account application was rejected" });
       else setError({ type: "danger", message: "Invalid email or password" });
     } finally {
       setIsLoading(false);

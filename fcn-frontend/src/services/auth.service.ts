@@ -1,5 +1,8 @@
+import axios from "axios";
 import { api, postApi } from "./api";
 import type { ApiResponse, AuthTokens, User } from "@/types";
+
+const baseURL = import.meta.env.VITE_API_URL ?? "http://localhost:5000/api/v1";
 
 export interface LoginResponse {
   user: User;
@@ -45,8 +48,8 @@ export const authService = {
 
   logout: () => postApi("/auth/logout"),
 
-  refreshToken: () => api.post<ApiResponse<{ accessToken: string; refreshToken: string }>>(
-    "/auth/refresh",
+  refreshToken: () => axios.post<ApiResponse<{ accessToken: string; refreshToken: string }>>(
+    `${baseURL}/auth/refresh`,
     {},
     { withCredentials: true }
   ),

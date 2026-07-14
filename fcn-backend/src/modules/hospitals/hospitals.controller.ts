@@ -14,6 +14,8 @@ export const getAllHospitalsController = async (req: Request, res: Response, nex
     let statusFilter: string | undefined = req.query.status as string | undefined;
     if (req.user?.role !== "super_admin") {
       statusFilter = "active";
+    } else if (!statusFilter || statusFilter === "all") {
+      statusFilter = undefined;
     }
     const data = await hospitalsService.getAllHospitals(statusFilter);
     successResponse(res, data);

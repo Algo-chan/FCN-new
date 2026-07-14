@@ -29,7 +29,9 @@ export class ProfileService {
       include: {
         patient_profile: true,
         doctor_profile: { include: { hospital: { select: { name: true, location: true } } } },
-        nurse_profile: true
+        nurse_profile: true,
+        hospital_admin_profiles: true,
+        pharmacy_admin_profiles: true
       }
     });
     if (!user) throw new AppError("User not found", 404, "NOT_FOUND");
@@ -67,6 +69,20 @@ export class ProfileService {
 
     if (role === "nurse" && user.nurse_profile) {
       profile = user.nurse_profile;
+    }
+
+    if (role === "hospital_admin" && user.hospital_admin_profiles?.[0]) {
+      const hap = user.hospital_admin_profiles[0];
+      profile = hap;
+      const hosp = await prisma.hospital.findUnique({
+        where: { id: hap.hospital_id },
+        select: { name: true, location: true }
+      });
+      hospital = hosp ?? null;
+    }
+
+    if (role === "pharmacy_admin" && user.pharmacy_admin_profiles?.[0]) {
+      profile = user.pharmacy_admin_profiles[0];
     }
 
     return {

@@ -21,6 +21,8 @@ const PendingApprovalPage = () => {
   const [checking, setChecking] = useState(false);
   const [statusMsg, setStatusMsg] = useState<string | null>(null);
   const clockRef = useRef<HTMLDivElement>(null);
+  const user = useAuthStore((state) => state.user);
+  const accessToken = useAuthStore((state) => state.accessToken);
 
   useEffect(() => {
     playTransition();
@@ -29,8 +31,9 @@ const PendingApprovalPage = () => {
     }
   }, [playTransition, shouldReduceMotion]);
 
-  // Auto-check every 60 seconds
+  // Auto-check every 60 seconds — only if we have a token
   useEffect(() => {
+    if (!accessToken) return;
     const interval = setInterval(async () => {
       try {
         const { data: response } = await authService.getMe();
@@ -45,9 +48,13 @@ const PendingApprovalPage = () => {
       }
     }, 60000);
     return () => clearInterval(interval);
-  }, [navigate, playSuccess]);
+  }, [navigate, playSuccess, accessToken]);
 
   const handleCheckStatus = async () => {
+    if (!accessToken) {
+      setStatusMsg("Please log in to check your approval status.");
+      return;
+    }
     setChecking(true);
     setStatusMsg(null);
     try {
@@ -96,7 +103,10 @@ const PendingApprovalPage = () => {
         </div>
 
         <h1 className="mb-2 text-3xl font-bold text-white">Your Application is Under Review</h1>
-        <p className="mb-4 text-sm text-white/50">Our team will verify your credentials within 24–48 hours</p>
+        <p className="mb-4 text-sm text-white/50">
+          {user ? `Welcome, ${user.full_name}. ` : ""}
+          Our team will verify your credentials within 24–48 hours
+        </p>
         <span className="inline-flex items-center gap-1.5 rounded-full bg-fcn-warning/20 px-4 py-1.5 text-sm font-medium text-fcn-warning">
           <RefreshCw className="h-3.5 w-3.5 animate-spin" /> Pending Review
         </span>

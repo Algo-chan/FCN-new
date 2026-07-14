@@ -1,11 +1,14 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Clock, MapPin, Stethoscope, Users } from "lucide-react";
+import { CheckCircle, Clock, MapPin, Stethoscope, Users } from "lucide-react";
 import { clsx } from "clsx";
 import { Modal } from "@/components/ui/Modal";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { ImagePlaceholder } from "@/components/landing/ImagePlaceholder";
 import { HospitalMap } from "@/components/hospitals/HospitalMap";
+import { hospitalsService } from "@/services/hospitals.service";
+import { useAuthStore } from "@/store/auth.store";
 import type { HospitalDetail, OccupancyBand } from "@/types";
 
 interface HospitalDetailModalProps {
@@ -22,8 +25,22 @@ const bandConfig: Record<OccupancyBand, { label: string; color: string; barColor
 
 export const HospitalDetailModal = ({ isOpen, onClose, hospital }: HospitalDetailModalProps) => {
   const navigate = useNavigate();
+  const user = useAuthStore((state) => state.user);
+  const [activating, setActivating] = useState(false);
+  const [currentStatus, setCurrentStatus] = useState(hospital.status);
   const band = bandConfig[hospital.occupancy_band];
   const freePercent = 100 - hospital.occupancy_percent;
+  const isSuperAdmin = user?.role === "super_admin";
+
+  const handleActivate = async () => {
+    setActivating(true);
+    try {
+      await hospitalsService.updateHospitalStatus(hospital.id, "active");
+      setCurrentStatus("active");
+    } finally {
+      setActivating(false);
+    }
+  };
 
   const handleBook = () => {
     onClose();
@@ -46,10 +63,21 @@ export const HospitalDetailModal = ({ isOpen, onClose, hospital }: HospitalDetai
               <h3 className="text-xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
                 {hospital.name}
               </h3>
-              {hospital.status === "active" ? (
+              {currentStatus === "active" ? (
                 <Badge variant="success" size="sm">Open</Badge>
               ) : (
-                <Badge variant="neutral" size="sm">{hospital.status}</Badge>
+                <span className="flex items-center gap-2">
+                  <Badge variant="neutral" size="sm">{currentStatus}</Badge>
+                  {isSuperAdmin && (
+                    <button
+                      onClick={handleActivate}
+                      disabled={activating}
+                      className="flex items-center gap-1 rounded bg-fcn-success/20 px-2 py-0.5 text-xs font-medium text-fcn-success transition hover:bg-fcn-success/30 disabled:opacity-50"
+                    >
+                      {activating ? "..." : <><CheckCircle className="h-3 w-3" /> Activate</>}
+                    </button>
+                  )}
+                </span>
               )}
             </div>
             <div className="mt-1 flex items-center gap-1 text-sm text-fcn-text-light/50 dark:text-fcn-text-dark/50">

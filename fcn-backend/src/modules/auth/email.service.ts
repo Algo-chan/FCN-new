@@ -6,10 +6,16 @@ type OtpPurpose = "verification" | "reset";
 
 export class EmailService {
   private transporter = nodemailer.createTransport({
-    host: env.SMTP_HOST,
-    port: env.SMTP_PORT,
-    secure: env.SMTP_PORT === 465,
-    auth: env.SMTP_USER && env.SMTP_PASS ? { user: env.SMTP_USER, pass: env.SMTP_PASS } : undefined
+    host: env.SMTP_HOST,        // mail.fcncare.com
+    port: Number(env.SMTP_PORT), // 465
+    secure: true,                // true for port 465
+    auth: {
+      user: env.SMTP_USER,      // noreply@fcncare.com
+      pass: env.SMTP_PASS,      // your password
+    },
+    tls: {
+      rejectUnauthorized: false  // PPL Host compatibility
+    }
   });
 
   private async send(to: string, subject: string, html: string): Promise<void> {

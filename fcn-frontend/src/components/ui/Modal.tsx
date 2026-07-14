@@ -80,7 +80,7 @@ export const Modal = ({ isOpen, onClose, title, children, size = "md" }: ModalPr
             aria-labelledby="modal-title"
             tabIndex={-1}
             className={clsx(
-              "w-full rounded-lg border border-fcn-primary/20 bg-white p-5 shadow-xl outline-none dark:bg-fcn-dark",
+              "w-full max-h-[calc(100vh-2rem)] overflow-y-auto rounded-lg border border-fcn-primary/20 bg-white p-5 shadow-xl outline-none dark:bg-fcn-dark",
               sizeClasses[size]
             )}
             initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.96 }}

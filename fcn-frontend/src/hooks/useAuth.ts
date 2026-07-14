@@ -21,6 +21,7 @@ export const useAuth = () => {
         }
 
         store.login(payload.user, { accessToken: payload.accessToken, refreshToken: "" });
+        store.updateActivity();
         playSuccess();
 
         if (payload.user.role === "patient") {
@@ -57,6 +58,7 @@ export const useAuth = () => {
 
         if (payload.accessToken) {
           store.login(payload.user, { accessToken: payload.accessToken, refreshToken: "" });
+          store.updateActivity();
         }
         playSuccess();
 

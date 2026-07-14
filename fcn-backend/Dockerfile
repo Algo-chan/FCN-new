@@ -23,10 +23,13 @@ RUN npm ci --omit=dev && npm cache clean --force
 
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder /app/src/prisma ./src/prisma
+COPY entrypoint.sh ./
+RUN chmod +x entrypoint.sh
 
 USER fcn
 EXPOSE 5000
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 CMD wget -qO- http://localhost:5000/health || exit 1
 
-CMD ["node", "dist/server.js"]
+ENTRYPOINT ["./entrypoint.sh"]

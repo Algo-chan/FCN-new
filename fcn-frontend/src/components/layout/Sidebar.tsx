@@ -2,22 +2,31 @@ import { useCallback, useMemo } from "react";
 import { NavLink } from "react-router-dom";
 import {
   Activity,
+  ArrowUpCircle,
+  Building2,
   Calendar,
+  CalendarCheck,
+  CalendarPlus,
   ChevronLeft,
   ChevronRight,
   ClipboardList,
-  Heart,
-  Hospital,
+  Clock,
+  FileText,
+  HeartPulse,
+  Home,
+  Inbox,
   LayoutDashboard,
-  MessageSquare,
+  MapPin,
+  MessageCircle,
   Pill,
+  QrCode,
   Search,
   Settings,
-  Shield,
+  Sparkles,
   Stethoscope,
-  Syringe,
-  UserCheck,
   Users,
+  User,
+  Bell,
   X
 } from "lucide-react";
 import { clsx } from "clsx";
@@ -29,27 +38,195 @@ interface NavItem {
   label: string;
   path: string;
   icon: React.ReactNode;
-  roles?: Role[];
 }
 
-const navItems: NavItem[] = [
-  { label: "Dashboard", path: "/dashboard", icon: <LayoutDashboard className="h-5 w-5" /> },
-  { label: "Hospitals", path: "/hospitals", icon: <Hospital className="h-5 w-5" /> },
-  { label: "Doctors", path: "/doctors", icon: <Stethoscope className="h-5 w-5" /> },
-  { label: "Appointments", path: "/appointments", icon: <Calendar className="h-5 w-5" /> },
-  { label: "Health Records", path: "/health-records", icon: <Activity className="h-5 w-5" />, roles: ["patient"] },
-  { label: "AI Check", path: "/ai-check", icon: <Search className="h-5 w-5" />, roles: ["patient"] },
-  { label: "Pharmacy", path: "/pharmacy", icon: <Pill className="h-5 w-5" /> },
-  { label: "Messages", path: "/messages", icon: <MessageSquare className="h-5 w-5" /> },
-  { label: "Notifications", path: "/notifications", icon: <Heart className="h-5 w-5" /> },
-  { label: "Admin Panel", path: "/admin", icon: <Shield className="h-5 w-5" />, roles: ["super_admin"] },
-  { label: "Pharmacy Admin", path: "/pharmacy-admin", icon: <Pill className="h-5 w-5" />, roles: ["pharmacy_admin"] },
-  { label: "Doctor Dashboard", path: "/doctor-dashboard", icon: <UserCheck className="h-5 w-5" />, roles: ["doctor"] },
-  { label: "Patients", path: "/patients", icon: <Users className="h-5 w-5" />, roles: ["doctor", "nurse"] },
-  { label: "Prescriptions", path: "/prescriptions", icon: <ClipboardList className="h-5 w-5" />, roles: ["doctor"] },
-  { label: "Vaccinations", path: "/vaccinations", icon: <Syringe className="h-5 w-5" />, roles: ["nurse", "rural_health_officer"] },
-  { label: "Profile", path: "/profile", icon: <Settings className="h-5 w-5" /> }
-];
+interface NavGroup {
+  group: string;
+  items: NavItem[];
+}
+
+const ICON_MAP: Record<string, React.ReactNode> = {
+  Home: <Home className="h-5 w-5" />,
+  Stethoscope: <Stethoscope className="h-5 w-5" />,
+  CalendarPlus: <CalendarPlus className="h-5 w-5" />,
+  CalendarCheck: <CalendarCheck className="h-5 w-5" />,
+  HeartPulse: <HeartPulse className="h-5 w-5" />,
+  Sparkles: <Sparkles className="h-5 w-5" />,
+  MessageCircle: <MessageCircle className="h-5 w-5" />,
+  Pill: <Pill className="h-5 w-5" />,
+  Bell: <Bell className="h-5 w-5" />,
+  User: <User className="h-5 w-5" />,
+  Calendar: <Calendar className="h-5 w-5" />,
+  Inbox: <Inbox className="h-5 w-5" />,
+  Users: <Users className="h-5 w-5" />,
+  FileText: <FileText className="h-5 w-5" />,
+  MapPin: <MapPin className="h-5 w-5" />,
+  Clock: <Clock className="h-5 w-5" />,
+  ArrowUpCircle: <ArrowUpCircle className="h-5 w-5" />,
+  Activity: <Activity className="h-5 w-5" />,
+  Building2: <Building2 className="h-5 w-5" />,
+  Settings: <Settings className="h-5 w-5" />,
+  ClipboardList: <ClipboardList className="h-5 w-5" />,
+  QrCode: <QrCode className="h-5 w-5" />,
+  LayoutDashboard: <LayoutDashboard className="h-5 w-5" />,
+};
+
+const NAV_CONFIG: Record<Role, NavGroup[]> = {
+  patient: [
+    {
+      group: "MAIN",
+      items: [
+        { label: "Dashboard", icon: "Home", path: "/dashboard" },
+        { label: "Find Doctors", icon: "Stethoscope", path: "/doctors" },
+        { label: "Book Appointment", icon: "CalendarPlus", path: "/appointments/book" },
+        { label: "My Appointments", icon: "CalendarCheck", path: "/appointments" },
+      ]
+    },
+    {
+      group: "HEALTH",
+      items: [
+        { label: "Health Records", icon: "HeartPulse", path: "/health-records" },
+        { label: "AI Health Check", icon: "Sparkles", path: "/ai-check" },
+      ]
+    },
+    {
+      group: "SERVICES",
+      items: [
+        { label: "Consultation", icon: "MessageCircle", path: "/consultation" },
+        { label: "Pharmacy & Rx", icon: "Pill", path: "/pharmacy" },
+      ]
+    },
+    {
+      group: "ACCOUNT",
+      items: [
+        { label: "Notifications", icon: "Bell", path: "/notifications" },
+        { label: "Profile", icon: "User", path: "/profile" },
+      ]
+    }
+  ],
+
+  doctor: [
+    {
+      group: "MAIN",
+      items: [
+        { label: "Dashboard", icon: "Home", path: "/dashboard" },
+        { label: "My Schedule", icon: "Calendar", path: "/doctor/schedule" },
+        { label: "Appointment Requests", icon: "Inbox", path: "/appointments" },
+        { label: "Consultations", icon: "MessageCircle", path: "/consultation" },
+      ]
+    },
+    {
+      group: "PATIENTS",
+      items: [
+        { label: "My Patients", icon: "Users", path: "/doctor/patients" },
+        { label: "Prescriptions Issued", icon: "FileText", path: "/doctor/prescriptions" },
+      ]
+    },
+    {
+      group: "ACCOUNT",
+      items: [
+        { label: "Notifications", icon: "Bell", path: "/notifications" },
+        { label: "Profile", icon: "User", path: "/profile" },
+      ]
+    }
+  ],
+
+  nurse: [
+    {
+      group: "MAIN",
+      items: [
+        { label: "Dashboard", icon: "Home", path: "/dashboard" },
+        { label: "Today's Visits", icon: "MapPin", path: "/nurse/today" },
+        { label: "My Patients", icon: "Users", path: "/nurse/patients" },
+        { label: "Visit History", icon: "Clock", path: "/nurse/history" },
+      ]
+    },
+    {
+      group: "ACCOUNT",
+      items: [
+        { label: "Notifications", icon: "Bell", path: "/notifications" },
+        { label: "Profile", icon: "User", path: "/profile" },
+      ]
+    }
+  ],
+
+  rural_health_officer: [
+    {
+      group: "MAIN",
+      items: [
+        { label: "Dashboard", icon: "Home", path: "/dashboard" },
+        { label: "Today's Cases", icon: "MapPin", path: "/nurse/today" },
+        { label: "My Patients", icon: "Users", path: "/nurse/patients" },
+        { label: "Specialist Escalation", icon: "ArrowUpCircle", path: "/nurse/escalation" },
+        { label: "Visit History", icon: "Clock", path: "/nurse/history" },
+      ]
+    },
+    {
+      group: "ACCOUNT",
+      items: [
+        { label: "Notifications", icon: "Bell", path: "/notifications" },
+        { label: "Profile", icon: "User", path: "/profile" },
+      ]
+    }
+  ],
+
+  hospital_admin: [
+    {
+      group: "MY HOSPITAL",
+      items: [
+        { label: "Dashboard", icon: "Home", path: "/hospital-admin" },
+        { label: "Update Occupancy", icon: "Activity", path: "/hospital-admin/occupancy" },
+        { label: "My Doctors", icon: "Stethoscope", path: "/hospital-admin/doctors" },
+      ]
+    },
+    {
+      group: "ACCOUNT",
+      items: [
+        { label: "Notifications", icon: "Bell", path: "/notifications" },
+        { label: "Profile", icon: "User", path: "/profile" },
+      ]
+    }
+  ],
+
+  pharmacy_admin: [
+    {
+      group: "PHARMACY",
+      items: [
+        { label: "Dashboard", icon: "Home", path: "/pharmacy-admin" },
+        { label: "Verify Prescription", icon: "QrCode", path: "/pharmacy-admin/verify" },
+        { label: "Dispense History", icon: "ClipboardList", path: "/pharmacy-admin/history" },
+      ]
+    },
+    {
+      group: "ACCOUNT",
+      items: [
+        { label: "Notifications", icon: "Bell", path: "/notifications" },
+        { label: "Profile", icon: "User", path: "/profile" },
+      ]
+    }
+  ],
+
+  super_admin: [
+    {
+      group: "ADMIN PANEL",
+      items: [
+        { label: "Overview", icon: "LayoutDashboard", path: "/admin" },
+        { label: "User Management", icon: "Users", path: "/admin/users" },
+        { label: "Hospital Management", icon: "Building2", path: "/admin/hospitals" },
+        { label: "Pharmacy Management", icon: "Pill", path: "/admin/pharmacies" },
+        { label: "Platform Settings", icon: "Settings", path: "/admin/settings" },
+        { label: "Activity Logs", icon: "ClipboardList", path: "/admin/logs" },
+      ]
+    },
+    {
+      group: "ACCOUNT",
+      items: [
+        { label: "Notifications", icon: "Bell", path: "/notifications" },
+        { label: "Profile", icon: "User", path: "/profile" },
+      ]
+    }
+  ],
+};
 
 export const Sidebar = () => {
   const sidebarOpen = useUiStore((state) => state.sidebarOpen);
@@ -58,16 +235,9 @@ export const Sidebar = () => {
   const setSidebarCollapsed = useUiStore((state) => state.setSidebarCollapsed);
   const user = useAuthStore((state) => state.user);
 
-  const filteredItems = useMemo(
-    () =>
-      navItems.filter((item) => {
-        if (!item.roles) {
-          return true;
-        }
-        return user ? item.roles.includes(user.role) : false;
-      }),
-    [user]
-  );
+  const navGroups = useMemo(() => {
+    return NAV_CONFIG[user?.role ?? "patient"] ?? NAV_CONFIG.patient;
+  }, [user?.role]);
 
   const handleToggleCollapse = useCallback(() => {
     setSidebarCollapsed(!sidebarCollapsed);
@@ -113,29 +283,38 @@ export const Sidebar = () => {
         </div>
 
         <nav className="flex-1 overflow-y-auto p-2">
-          <ul className="space-y-1">
-            {filteredItems.map((item) => (
-              <li key={item.path}>
-                <NavLink
-                  to={item.path}
-                  end={item.path === "/dashboard"}
-                  className={({ isActive }) =>
-                    clsx(
-                      "flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors",
-                      isActive
-                        ? "bg-fcn-primary/10 text-fcn-primary"
-                        : "text-fcn-text-light/60 hover:bg-fcn-primary/5 hover:text-fcn-text-light dark:text-fcn-text-dark/60 dark:hover:text-fcn-text-dark",
-                      sidebarCollapsed && "justify-center px-2"
-                    )
-                  }
-                  title={sidebarCollapsed ? item.label : undefined}
-                >
-                  {item.icon}
-                  {!sidebarCollapsed && <span>{item.label}</span>}
-                </NavLink>
-              </li>
-            ))}
-          </ul>
+          {navGroups.map((group) => (
+            <div key={group.group} className="mb-4">
+              {!sidebarCollapsed && (
+                <p className="mb-1 px-3 text-[10px] font-semibold uppercase tracking-wider text-fcn-text-light/30 dark:text-fcn-text-dark/30">
+                  {group.group}
+                </p>
+              )}
+              <ul className="space-y-1">
+                {group.items.map((item) => (
+                  <li key={item.path}>
+                    <NavLink
+                      to={item.path}
+                      end={item.path === "/dashboard" || item.path === "/hospital-admin" || item.path === "/pharmacy-admin" || item.path === "/admin"}
+                      className={({ isActive }) =>
+                        clsx(
+                          "flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors",
+                          isActive
+                            ? "bg-fcn-primary/10 text-fcn-primary"
+                            : "text-fcn-text-light/60 hover:bg-fcn-primary/5 hover:text-fcn-text-light dark:text-fcn-text-dark/60 dark:hover:text-fcn-text-dark",
+                          sidebarCollapsed && "justify-center px-2"
+                        )
+                      }
+                      title={sidebarCollapsed ? item.label : undefined}
+                    >
+                      {ICON_MAP[item.icon as string] ?? <Home className="h-5 w-5" />}
+                      {!sidebarCollapsed && <span>{item.label}</span>}
+                    </NavLink>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </nav>
 
         <div className="border-t border-fcn-primary/10 p-3">

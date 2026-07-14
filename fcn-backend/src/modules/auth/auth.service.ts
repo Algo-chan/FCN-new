@@ -11,7 +11,7 @@ import type { AuthTokens } from "../../types";
 import { emailService } from "./email.service";
 import type { RegisterDto } from "./auth.validators";
 
-const REFRESH_TTL_SECONDS = 7 * 24 * 60 * 60;
+const REFRESH_TTL_SECONDS = 3 * 24 * 60 * 60;
 type SafeUser = Omit<User, "password_hash"> & { patient_profile?: { onboarding_completed: boolean } | null };
 
 export class AuthService {
@@ -89,9 +89,6 @@ export class AuthService {
       throw new AppError("Invalid credentials", 401, "INVALID_CREDENTIALS");
     }
 
-    if (user.status === "pending") {
-      throw new AppError("Your account is under review", 403, "ACCOUNT_PENDING");
-    }
     if (user.status === "suspended") {
       throw new AppError("Your account has been suspended", 403, "ACCOUNT_SUSPENDED");
     }
@@ -106,16 +103,21 @@ export class AuthService {
   async refreshToken(refreshToken: string): Promise<AuthTokens> {
     const payload = verifyRefreshToken(refreshToken);
 
-    if ((await redisGet(this.refreshBlacklistKey(refreshToken))) || (await redisGet(`blacklist:user:${payload.id}`))) {
+    if (await redisGet(`blacklist:user:${payload.id}`)) {
+      throw new AppError("Refresh token has been revoked", 401, "TOKEN_REVOKED");
+    }
+
+    const blacklistKey = this.refreshBlacklistKey(refreshToken);
+    const locked = await redis.set(blacklistKey, "1", "EX", REFRESH_TTL_SECONDS, "NX");
+    if (!locked) {
       throw new AppError("Refresh token has been revoked", 401, "TOKEN_REVOKED");
     }
 
     const user = await prisma.user.findUnique({ where: { id: payload.id } });
-    if (!user || user.status !== "active") {
+    if (!user || user.status === "suspended" || user.status === "rejected") {
       throw new AppError("User account is not active", 403, "ACCOUNT_INACTIVE");
     }
 
-    await redisSet(this.refreshBlacklistKey(refreshToken), "1", REFRESH_TTL_SECONDS);
     return this.generateTokenPair(user.id, user.role, user.status);
   }
 

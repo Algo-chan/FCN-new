@@ -58,7 +58,7 @@ const mapHospital = (h: { id: string; name: string; location: string; lat?: unkn
 
 export class HospitalsService {
   async getAllHospitals(statusFilter?: string): Promise<HospitalWithOccupancy[]> {
-    const where = statusFilter ? { status: statusFilter as "active" | "pending" | "inactive" } : { status: "active" as const };
+    const where = statusFilter ? { status: statusFilter as "active" | "pending" | "inactive" } : {};
     const hospitals = await prisma.hospital.findMany({ where, orderBy: { name: "asc" } });
     return hospitals.map(mapHospital);
   }

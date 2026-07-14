@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
-import { Home, QrCode, ClipboardList, Download, Calendar } from "lucide-react";
+import { QrCode, ClipboardList, Download, Pill } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
@@ -12,7 +12,7 @@ import { formatDate } from "@/utils/formatters";
 import { useAuthStore } from "@/store/auth.store";
 import type { DispenseRecord } from "@/types";
 
-type AdminView = "dashboard" | "verify" | "history";
+type AdminView = "verify" | "history";
 
 const exportToCSV = (records: DispenseRecord[]) => {
   const headers = ["Date", "Patient Name", "RX Reference", "Medications", "Dispensed By", "Notes"];
@@ -38,7 +38,7 @@ const exportToCSV = (records: DispenseRecord[]) => {
 const PharmacyAdminPortalPage = () => {
   const shouldReduceMotion = useReducedMotion();
   const user = useAuthStore((state) => state.user);
-  const [view, setView] = useState<AdminView>("dashboard");
+  const [view, setView] = useState<AdminView>("verify");
 
   const dispenseHistoryQuery = useQuery({
     queryKey: ["dispense-history"],
@@ -53,7 +53,6 @@ const PharmacyAdminPortalPage = () => {
   const dispensedThisWeek = records.filter((r) => r.dispensed_at >= weekAgo);
 
   const navItems = [
-    { id: "dashboard" as AdminView, label: "Dashboard", icon: Home },
     { id: "verify" as AdminView, label: "Verify Prescription", icon: QrCode },
     { id: "history" as AdminView, label: "Dispense History", icon: ClipboardList }
   ];
@@ -64,12 +63,30 @@ const PharmacyAdminPortalPage = () => {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
-              Pharmacy Admin Portal
+              Pharmacy Operations
             </h1>
             <p className="text-sm text-fcn-text-light/50 dark:text-fcn-text-dark/50">
-              Managing your pharmacy operations
+              {user?.full_name ?? "Pharmacist"} — Scan, verify, and dispense
             </p>
           </div>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-3">
+          <Card className="text-center">
+            <Pill className="mx-auto h-5 w-5 text-fcn-primary" />
+            <p className="mt-2 text-2xl font-bold text-fcn-primary">{dispensedToday.length}</p>
+            <p className="text-xs text-fcn-text-light/50 dark:text-fcn-text-dark/50">Dispensed Today</p>
+          </Card>
+          <Card className="text-center">
+            <Pill className="mx-auto h-5 w-5 text-fcn-success" />
+            <p className="mt-2 text-2xl font-bold text-fcn-success">{dispensedThisWeek.length}</p>
+            <p className="text-xs text-fcn-text-light/50 dark:text-fcn-text-dark/50">This Week</p>
+          </Card>
+          <Card className="text-center">
+            <Pill className="mx-auto h-5 w-5 text-fcn-accent" />
+            <p className="mt-2 text-2xl font-bold text-fcn-accent">{records.length}</p>
+            <p className="text-xs text-fcn-text-light/50 dark:text-fcn-text-dark/50">All Time</p>
+          </Card>
         </div>
 
         <div className="flex gap-1 rounded-lg border border-fcn-primary/20 p-1">
@@ -95,34 +112,6 @@ const PharmacyAdminPortalPage = () => {
             </button>
           ))}
         </div>
-
-        {view === "dashboard" && (
-          <div className="space-y-6">
-            <div>
-              <h2 className="text-lg font-semibold">
-                Good {new Date().getHours() < 12 ? "morning" : new Date().getHours() < 17 ? "afternoon" : "evening"}, {user?.full_name?.split(" ")[0] ?? "Pharmacist"}
-              </h2>
-              <p className="text-sm text-fcn-text-light/50 dark:text-fcn-text-dark/50">
-                Managing pharmacy operations
-              </p>
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-3">
-              <Card className="text-center">
-                <p className="text-3xl font-bold text-fcn-primary">{dispensedToday.length}</p>
-                <p className="text-sm text-fcn-text-light/50 dark:text-fcn-text-dark/50">Dispensed Today</p>
-              </Card>
-              <Card className="text-center">
-                <p className="text-3xl font-bold text-fcn-success">{dispensedThisWeek.length}</p>
-                <p className="text-sm text-fcn-text-light/50 dark:text-fcn-text-dark/50">Dispensed This Week</p>
-              </Card>
-              <Card className="text-center">
-                <p className="text-3xl font-bold text-fcn-accent">{records.length}</p>
-                <p className="text-sm text-fcn-text-light/50 dark:text-fcn-text-dark/50">Total All Time</p>
-              </Card>
-            </div>
-          </div>
-        )}
 
         {view === "verify" && <QRScannerPortal />}
 

@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useAuthStore } from "@/store/auth.store";
-import { hospitalsService } from "@/services/hospitals.service";
+import { profileService } from "@/services/profile.service";
 import { OccupancyUpdateForm } from "@/components/hospitals/OccupancyUpdateForm";
 import { Card } from "@/components/ui/Card";
 import { SkeletonCard } from "@/components/dashboard/SkeletonCard";
@@ -10,19 +10,34 @@ import { Building2, Clock, Stethoscope, Users } from "lucide-react";
 const HospitalAdminDashboardPage = () => {
   const user = useAuthStore((state) => state.user);
 
-  const { data: response, isLoading } = useQuery({
-    queryKey: ["hospitals"],
-    queryFn: () => hospitalsService.getAllHospitals()
+  const profileQuery = useQuery({
+    queryKey: ["profile", "me"],
+    queryFn: () => profileService.getMyProfile(),
+    enabled: !!user && user.role === "hospital_admin",
   });
 
-  const hospitals = useMemo(() => response?.data ?? [], [response]);
+  const hospitalId = useMemo(() => {
+    const profile = profileQuery.data?.data?.profile as any;
+    return profile?.hospital_id ?? null;
+  }, [profileQuery.data]);
 
-  const userHospital = useMemo(() => {
-    if (!hospitals.length || !user) {
-      return null;
-    }
-    return hospitals[0];
-  }, [hospitals, user]);
+  const hospitalQuery = useQuery({
+    queryKey: ["hospitals", hospitalId],
+    queryFn: () => profileService.getMyProfile().then((r) => r.data),
+    enabled: !!hospitalId,
+  });
+
+  const hospital = useMemo(() => {
+    const hosp = hospitalQuery.data?.hospital;
+    if (!hosp) return null;
+    return {
+      ...hosp,
+      id: hospitalId,
+      ...(hospitalQuery.data?.profile as any),
+    };
+  }, [hospitalQuery.data, hospitalId]);
+
+  const isLoading = profileQuery.isLoading || hospitalQuery.isLoading;
 
   if (isLoading) {
     return (
@@ -37,7 +52,7 @@ const HospitalAdminDashboardPage = () => {
     );
   }
 
-  if (!userHospital) {
+  if (!hospital) {
     return (
       <div className="flex flex-col items-center justify-center py-20">
         <Building2 className="mb-4 h-12 w-12 text-fcn-text-light/30" />
@@ -48,8 +63,6 @@ const HospitalAdminDashboardPage = () => {
     );
   }
 
-  const freePercent = 100 - userHospital.occupancy_percent;
-
   return (
     <div className="space-y-6">
       <div>
@@ -57,46 +70,8 @@ const HospitalAdminDashboardPage = () => {
           Welcome, {user?.full_name?.split(" ")[0] ?? "Admin"}
         </h1>
         <p className="mt-1 text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">
-          Managing <strong>{userHospital.name}</strong>
+          Managing <strong>{hospital.name}</strong>
         </p>
-      </div>
-
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
-        <Card className="text-center">
-          <Users className="mx-auto h-5 w-5 text-fcn-primary" />
-          <p className="mt-2 text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
-            {userHospital.total_beds}
-          </p>
-          <p className="text-xs text-fcn-text-light/50 dark:text-fcn-text-dark/50">Total Beds</p>
-        </Card>
-        <Card className="text-center">
-          <Users className="mx-auto h-5 w-5 text-fcn-warning" />
-          <p className="mt-2 text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
-            {userHospital.occupied_beds}
-          </p>
-          <p className="text-xs text-fcn-text-light/50 dark:text-fcn-text-dark/50">Occupied Beds</p>
-        </Card>
-        <Card className="text-center">
-          <Building2 className="mx-auto h-5 w-5 text-fcn-accent" />
-          <p className="mt-2 text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
-            {userHospital.occupancy_percent}%
-          </p>
-          <p className="text-xs text-fcn-text-light/50 dark:text-fcn-text-dark/50">Occupancy</p>
-        </Card>
-        <Card className="text-center">
-          <Stethoscope className="mx-auto h-5 w-5 text-fcn-primary" />
-          <p className="mt-2 text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
-            {userHospital.active_doctors_count}
-          </p>
-          <p className="text-xs text-fcn-text-light/50 dark:text-fcn-text-dark/50">Active Doctors</p>
-        </Card>
-        <Card className="text-center">
-          <Clock className="mx-auto h-5 w-5 text-fcn-warning" />
-          <p className="mt-2 text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
-            ~{userHospital.avg_wait_minutes}
-          </p>
-          <p className="text-xs text-fcn-text-light/50 dark:text-fcn-text-dark/50">Avg Wait (min)</p>
-        </Card>
       </div>
 
       <div className="rounded-lg border border-fcn-primary/10 bg-fcn-primary/5 p-4 text-sm text-fcn-text-light/70 dark:text-fcn-text-dark/70">
@@ -104,9 +79,16 @@ const HospitalAdminDashboardPage = () => {
       </div>
 
       <OccupancyUpdateForm
-        hospitalId={userHospital.id}
-        currentData={userHospital}
-        onSuccess={() => window.location.reload()}
+        hospitalId={hospitalId!}
+        currentData={{
+          total_beds: 0,
+          occupied_beds: 0,
+          occupancy_percent: 0,
+          active_doctors_count: 0,
+          avg_wait_minutes: 0,
+          ...hospital,
+        }}
+        onSuccess={() => hospitalQuery.refetch()}
       />
     </div>
   );
