@@ -98,7 +98,7 @@ const PharmacyPage = () => {
             >
               {tab === t.id && (
                 <motion.div
-                  layoutId="tab-indicator"
+                  layoutId="pharmacy-tab-indicator"
                   className="absolute inset-0 rounded-md bg-fcn-primary"
                   transition={{ type: "spring", stiffness: 400, damping: 30 }}
                 />

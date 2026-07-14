@@ -16,7 +16,7 @@ import {
 
 export const hospitalRoutes = Router();
 
-hospitalRoutes.get("/", getAllHospitalsController);
+hospitalRoutes.get("/", authMiddleware, getAllHospitalsController);
 hospitalRoutes.get("/:id", authMiddleware, getHospitalByIdController);
 hospitalRoutes.get("/:id/specialties", getHospitalSpecialtiesController);
 hospitalRoutes.patch("/:id/occupancy", authMiddleware, requireRole("hospital_admin", "super_admin"), requireHospitalScope, updateOccupancyController);

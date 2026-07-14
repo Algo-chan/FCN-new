@@ -59,7 +59,10 @@ const FindDoctorsPage = () => {
   }, [setSearchParams]);
 
   const queryParams = useMemo(() => ({
-    ...filters,
+    search: filters.search || undefined,
+    specialty: filters.specialty || undefined,
+    hospital_id: filters.hospital_id || undefined,
+    available_now: filters.available_now || undefined,
     page,
     limit: 12
   }), [filters, page]);

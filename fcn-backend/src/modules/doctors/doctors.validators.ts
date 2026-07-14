@@ -2,8 +2,8 @@ import { z } from "zod";
 import { MASTER_SPECIALTIES } from "../../constants/specialties";
 
 export const GetDoctorsQuerySchema = z.object({
-  specialty: z.enum(MASTER_SPECIALTIES as unknown as [string, ...string[]]).optional(),
-  hospital_id: z.string().uuid().optional(),
+  specialty: z.string().max(100).optional(),
+  hospital_id: z.string().uuid({ message: "hospital_id must be a valid UUID" }).optional(),
   available_now: z.enum(["true", "false"]).transform((val) => val === "true").optional(),
   search: z.string().max(100).optional(),
   page: z.coerce.number().int().min(1).default(1),

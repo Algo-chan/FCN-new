@@ -75,7 +75,7 @@ export class AuthService {
       return created;
     });
 
-    await emailService.sendWelcomeEmail(data.email, data.full_name, data.role);
+    emailService.sendWelcomeEmail(data.email, data.full_name, data.role).catch(() => {});
 
     const safeUser = await this.getMe(user.id);
     const tokens = user.status === "active" ? this.generateTokenPair(user.id, user.role, user.status) : undefined;

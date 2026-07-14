@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback, useLayoutEffect } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { User, HeartPulse, Stethoscope, Eye, Shield, AlertTriangle, Save, Phone, Mail, Calendar } from "lucide-react";
@@ -49,6 +49,24 @@ const ProfilePage = () => {
   const [editPhone, setEditPhone] = useState("");
   const [saving, setSaving] = useState(false);
   const [showDeletion, setShowDeletion] = useState(false);
+
+  const tabRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
+  const [indicator, setIndicator] = useState({ left: 0, width: 0 });
+
+  const measureTabs = useCallback(() => {
+    const active = tabRefs.current.get(activeTab);
+    const container = active?.parentElement;
+    if (!active || !container) return;
+    const cr = active.getBoundingClientRect();
+    const pr = container.getBoundingClientRect();
+    setIndicator({ left: cr.left - pr.left, width: cr.width });
+  }, [activeTab]);
+
+  useLayoutEffect(() => {
+    measureTabs();
+    window.addEventListener("resize", measureTabs);
+    return () => window.removeEventListener("resize", measureTabs);
+  }, [measureTabs]);
 
   const { data, isLoading } = useQuery({
     queryKey: ["my-profile"],
@@ -125,12 +143,13 @@ const ProfilePage = () => {
   return (
     <div className="space-y-6">
       {/* Tab Navigation */}
-      <div className="relative flex gap-1 rounded-lg bg-fcn-primary/5 p-1">
+      <div className="relative flex gap-4 rounded-lg bg-fcn-primary/5 p-1 w-full">
         {availableTabs.map((tab) => (
           <button
             key={tab.id}
+            ref={(el) => { if (el) tabRefs.current.set(tab.id, el); else tabRefs.current.delete(tab.id); }}
             onClick={() => setActiveTab(tab.id)}
-            className={`relative z-10 flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+            className={`relative z-10 flex flex-1 items-center justify-center gap-2 rounded-md px-4 py-2.5 text-sm font-medium transition-colors ${
               activeTab === tab.id ? "text-white" : "text-fcn-text-light/60 hover:text-fcn-text-light dark:text-fcn-text-dark/60 dark:hover:text-fcn-text-dark"
             }`}
           >
@@ -139,12 +158,9 @@ const ProfilePage = () => {
           </button>
         ))}
         <motion.div
-          layoutId="tab-indicator"
+          layoutId="profile-tab-indicator"
           className="absolute inset-y-1 rounded-md bg-fcn-primary"
-          style={{
-            left: `${(availableTabs.findIndex((t) => t.id === activeTab) / availableTabs.length) * 100}%`,
-            width: `${(1 / availableTabs.length) * 100}%`
-          }}
+          animate={{ left: indicator.left, width: indicator.width }}
           transition={{ type: "spring", stiffness: 500, damping: 30 }}
         />
       </div>
