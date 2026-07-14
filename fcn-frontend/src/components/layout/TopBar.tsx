@@ -97,22 +97,26 @@ export const TopBar = () => {
               </div>
 
               <div className="p-1">
-                <Link
-                  to="/profile"
-                  onClick={() => setDropdownOpen(false)}
-                  className="flex items-center gap-3 rounded-md px-3 py-2 text-sm text-fcn-text-light/70 hover:bg-fcn-primary/5 hover:text-fcn-text-light dark:text-fcn-text-dark/70 dark:hover:text-fcn-text-dark"
-                >
-                  <User className="h-4 w-4" />
-                  Profile
-                </Link>
-                <Link
-                  to="/profile"
-                  onClick={() => setDropdownOpen(false)}
-                  className="flex items-center gap-3 rounded-md px-3 py-2 text-sm text-fcn-text-light/70 hover:bg-fcn-primary/5 hover:text-fcn-text-light dark:text-fcn-text-dark/70 dark:hover:text-fcn-text-dark"
-                >
-                  <Settings className="h-4 w-4" />
-                  Settings
-                </Link>
+                {user?.role !== "super_admin" && (
+                  <>
+                    <Link
+                      to="/profile"
+                      onClick={() => setDropdownOpen(false)}
+                      className="flex items-center gap-3 rounded-md px-3 py-2 text-sm text-fcn-text-light/70 hover:bg-fcn-primary/5 hover:text-fcn-text-light dark:text-fcn-text-dark/70 dark:hover:text-fcn-text-dark"
+                    >
+                      <User className="h-4 w-4" />
+                      Profile
+                    </Link>
+                    <Link
+                      to="/admin/settings"
+                      onClick={() => setDropdownOpen(false)}
+                      className="flex items-center gap-3 rounded-md px-3 py-2 text-sm text-fcn-text-light/70 hover:bg-fcn-primary/5 hover:text-fcn-text-light dark:text-fcn-text-dark/70 dark:hover:text-fcn-text-dark"
+                    >
+                      <Settings className="h-4 w-4" />
+                      Settings
+                    </Link>
+                  </>
+                )}
               </div>
 
               <div className="border-t border-fcn-primary/10 p-1">

@@ -20,7 +20,6 @@ import {
   MessageCircle,
   Pill,
   QrCode,
-  Search,
   Settings,
   Sparkles,
   Stethoscope,
@@ -212,11 +211,11 @@ const NAV_CONFIG: Record<Role, NavGroup[]> = {
       group: "ADMIN PANEL",
       items: [
         { label: "Overview", icon: "LayoutDashboard", path: "/admin" },
-        { label: "Users", icon: "Users", path: "/admin" },
-        { label: "Hospitals", icon: "Building2", path: "/admin" },
-        { label: "Pharmacies", icon: "Pill", path: "/admin" },
-        { label: "Settings", icon: "Settings", path: "/admin" },
-        { label: "Activity Logs", icon: "ClipboardList", path: "/admin" },
+        { label: "Users", icon: "Users", path: "/admin/users" },
+        { label: "Hospitals", icon: "Building2", path: "/admin/hospitals" },
+        { label: "Pharmacies", icon: "Pill", path: "/admin/pharmacies" },
+        { label: "Settings", icon: "Settings", path: "/admin/settings" },
+        { label: "Activity Logs", icon: "ClipboardList", path: "/admin/logs" },
       ]
     },
     {

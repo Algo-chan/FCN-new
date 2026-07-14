@@ -22,7 +22,7 @@ export const errorMiddleware = (
   if (error instanceof ZodError) {
     statusCode = 422;
     code = "VALIDATION_ERROR";
-    message = error.issues.map((issue) => `${issue.path.join(".")}: ${issue.message}`).join("; ");
+    message = error.issues.map((issue) => issue.message).join("; ");
   } else if (error instanceof Prisma.PrismaClientKnownRequestError) {
     if (error.code === "P2002") {
       statusCode = 409;

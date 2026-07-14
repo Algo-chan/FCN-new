@@ -4,7 +4,7 @@ export const CreateAppointmentSchema = z.object({
   body: z.object({
     doctor_id: z.string().uuid(),
     appointment_type: z.enum(["remote", "in_person", "nurse_visit"]),
-    scheduled_at: z.string().datetime({ message: "scheduled_at must be an ISO datetime string" }),
+    scheduled_at: z.string().datetime({ offset: true, message: "Please provide a valid date and time" }),
     duration_minutes: z.number().int().min(15).max(120).default(30),
     chief_complaint: z.string().max(500).optional()
   })
@@ -18,7 +18,7 @@ export const CancelAppointmentSchema = z.object({
 
 export const RescheduleAppointmentSchema = z.object({
   body: z.object({
-    new_scheduled_at: z.string().datetime({ message: "new_scheduled_at must be an ISO datetime string" }),
+    new_scheduled_at: z.string().datetime({ offset: true, message: "Please provide a valid date and time" }),
     reason: z.string().max(500).optional()
   })
 });

@@ -78,7 +78,12 @@ const BookAppointmentPage = () => {
   const createMutation = useMutation({
     mutationFn: async () => {
       if (!selectedDoctor || !selectedDate || !selectedTime) throw new Error("Missing booking details");
-      const scheduledAt = `${selectedDate}T${selectedTime}:00.000Z`;
+      const d = new Date(`${selectedDate}T${selectedTime}:00`);
+      const offsetMin = d.getTimezoneOffset();
+      const sign = offsetMin <= 0 ? "+" : "-";
+      const oh = String(Math.floor(Math.abs(offsetMin) / 60)).padStart(2, "0");
+      const om = String(Math.abs(offsetMin) % 60).padStart(2, "0");
+      const scheduledAt = `${selectedDate}T${selectedTime}:00.000${sign}${oh}:${om}`;
       const res = await appointmentsService.create({
         doctor_id: selectedDoctor.id,
         appointment_type: selectedType as "remote" | "in_person" | "nurse_visit",
@@ -92,8 +97,9 @@ const BookAppointmentPage = () => {
       setConfirmationType("created");
       setShowConfirmation(true);
     },
-    onError: () => {
-      addToast({ type: "danger", title: "Failed to create appointment" });
+    onError: (error: any) => {
+      const msg = error?.response?.data?.error?.message || error?.message || "Failed to create appointment";
+      addToast({ type: "danger", title: msg });
     }
   });
 
