@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import toast from "react-hot-toast";
 import {
   BarChart3, Users, Building2, Pill, Settings, ClipboardList,
-  Shield, Plus, X, ChevronRight,
+  Shield, Plus, X, ChevronRight, Bell, User,
 } from "lucide-react";
 import { clsx } from "clsx";
 import { useAuthStore } from "@/store/auth.store";
@@ -29,6 +29,8 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Modal } from "@/components/ui/Modal";
+import NotificationsPage from "@/pages/notifications/NotificationsPage";
+import ProfilePage from "@/pages/profile/ProfilePage";
 import type { Pharmacy } from "@/types";
 
 const TABS = [
@@ -38,6 +40,8 @@ const TABS = [
   { id: "pharmacies", label: "Pharmacies", icon: Pill },
   { id: "settings", label: "Settings", icon: Settings },
   { id: "activity", label: "Activity Logs", icon: ClipboardList },
+  { id: "notifications", label: "Notifications", icon: Bell },
+  { id: "profile", label: "Profile", icon: User },
 ];
 
 const getTabLabel = (id: string) => TABS.find((t) => t.id === id)?.label || id;
@@ -330,6 +334,10 @@ const AdminPanelPage = () => {
             onFiltersChange={handleLogFiltersChange}
           />
         );
+      case "notifications":
+        return <NotificationsPage />;
+      case "profile":
+        return <ProfilePage />;
       default:
         return null;
     }

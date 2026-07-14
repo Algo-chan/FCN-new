@@ -77,6 +77,7 @@ const NAV_CONFIG: Record<Role, NavGroup[]> = {
       group: "MAIN",
       items: [
         { label: "Dashboard", icon: "Home", path: "/dashboard" },
+        { label: "Hospitals", icon: "Building2", path: "/hospitals" },
         { label: "Find Doctors", icon: "Stethoscope", path: "/doctors" },
         { label: "Book Appointment", icon: "CalendarPlus", path: "/appointments/book" },
         { label: "My Appointments", icon: "CalendarCheck", path: "/appointments" },
@@ -211,11 +212,11 @@ const NAV_CONFIG: Record<Role, NavGroup[]> = {
       group: "ADMIN PANEL",
       items: [
         { label: "Overview", icon: "LayoutDashboard", path: "/admin" },
-        { label: "User Management", icon: "Users", path: "/admin/users" },
-        { label: "Hospital Management", icon: "Building2", path: "/admin/hospitals" },
-        { label: "Pharmacy Management", icon: "Pill", path: "/admin/pharmacies" },
-        { label: "Platform Settings", icon: "Settings", path: "/admin/settings" },
-        { label: "Activity Logs", icon: "ClipboardList", path: "/admin/logs" },
+        { label: "Users", icon: "Users", path: "/admin" },
+        { label: "Hospitals", icon: "Building2", path: "/admin" },
+        { label: "Pharmacies", icon: "Pill", path: "/admin" },
+        { label: "Settings", icon: "Settings", path: "/admin" },
+        { label: "Activity Logs", icon: "ClipboardList", path: "/admin" },
       ]
     },
     {

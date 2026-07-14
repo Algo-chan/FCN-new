@@ -2,11 +2,6 @@ import { Navigate, Outlet, Route, Routes, useParams } from "react-router-dom";
 import { PageLayout } from "@/components/layout/PageLayout";
 import { ScrollToTop } from "@/components/layout/ScrollToTop";
 import AdminPanelPage from "@/pages/admin/AdminPanelPage";
-import AdminUsersPage from "@/pages/admin/AdminUsersPage";
-import AdminHospitalsPage from "@/pages/admin/AdminHospitalsPage";
-import AdminPharmaciesPage from "@/pages/admin/AdminPharmaciesPage";
-import AdminSettingsPage from "@/pages/admin/AdminSettingsPage";
-import AdminLogsPage from "@/pages/admin/AdminLogsPage";
 import AISymptomCheckPage from "@/pages/ai-check/AISymptomCheckPage";
 import BookAppointmentPage from "@/pages/appointments/BookAppointmentPage";
 import MyAppointmentsPage from "@/pages/appointments/MyAppointmentsPage";
@@ -120,6 +115,7 @@ export const AppRouter = () => (
     {/* ── Shared authenticated routes ─────────────────────────── */}
     <Route element={<ProtectedRoute />}>
       <Route path="/dashboard" element={<DashboardPage />} />
+      <Route path="/hospitals" element={<HospitalCheckerPage />} />
       <Route path="/notifications" element={<NotificationsPage />} />
       <Route path="/profile" element={<ProfilePage />} />
     </Route>
@@ -175,11 +171,6 @@ export const AppRouter = () => (
     {/* ── Super Admin routes ──────────────────────────────────── */}
     <Route element={<SuperAdminRoute />}>
       <Route path="/admin" element={<AdminPanelPage />} />
-      <Route path="/admin/users" element={<AdminUsersPage />} />
-      <Route path="/admin/hospitals" element={<AdminHospitalsPage />} />
-      <Route path="/admin/pharmacies" element={<AdminPharmaciesPage />} />
-      <Route path="/admin/settings" element={<AdminSettingsPage />} />
-      <Route path="/admin/logs" element={<AdminLogsPage />} />
     </Route>
 
     <Route path="*" element={<NotFoundPage />} />
