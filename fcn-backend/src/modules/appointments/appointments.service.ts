@@ -72,7 +72,7 @@ export class AppointmentsService {
     const appointment = await prisma.$transaction(async (tx) => {
       const existing = await tx.$queryRawUnsafe<Array<{ id: string }>>(
         `SELECT id FROM appointments
-         WHERE doctor_id = $1
+         WHERE doctor_id = $1::uuid
            AND status != 'cancelled'
            AND scheduled_at < $2::timestamptz + interval '1 minute' * $3
            AND scheduled_at + interval '1 minute' * $4 > $5::timestamptz
@@ -312,8 +312,8 @@ export class AppointmentsService {
     const updated = await prisma.$transaction(async (tx) => {
       const existing = await tx.$queryRawUnsafe<Array<{ id: string }>>(
         `SELECT id FROM appointments
-         WHERE doctor_id = $1
-           AND id != $2
+         WHERE doctor_id = $1::uuid
+           AND id != $2::uuid
            AND status != 'cancelled'
            AND scheduled_at < $3::timestamptz + interval '1 minute' * $4
            AND scheduled_at + interval '1 minute' * $5 > $6::timestamptz

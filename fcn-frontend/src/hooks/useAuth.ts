@@ -20,11 +20,16 @@ export const useAuth = () => {
           throw new Error(response.error?.message ?? "Login failed");
         }
 
-        store.login(payload.user, { accessToken: payload.accessToken, refreshToken: "" });
+        if ("requiresOTP" in payload && payload.requiresOTP) {
+          return { requiresOTP: true as const, email: payload.email };
+        }
+
+        const loginPayload = payload as { user: { role: string; status: string; id: string; full_name: string; email: string; phone: string | null; theme_preference: string | null; [key: string]: unknown }; accessToken: string };
+        store.login(loginPayload.user as any, { accessToken: loginPayload.accessToken, refreshToken: "" });
         store.updateActivity();
         playSuccess();
 
-        if (payload.user.role === "patient") {
+        if (loginPayload.user.role === "patient") {
           try {
             const { data: onboarding } = await authService.getOnboardingStatus();
             const completed = onboarding.data?.completed ?? false;
@@ -33,11 +38,13 @@ export const useAuth = () => {
           } catch {
             navigate("/onboarding", { replace: true });
           }
-        } else if ((payload.user.role === "doctor" || payload.user.role === "nurse" || payload.user.role === "rural_health_officer") && payload.user.status === "pending") {
+        } else if ((loginPayload.user.role === "doctor" || loginPayload.user.role === "nurse" || loginPayload.user.role === "rural_health_officer") && loginPayload.user.status === "pending") {
           navigate("/pending", { replace: true });
         } else {
           navigate("/dashboard", { replace: true });
         }
+
+        return { requiresOTP: false as const };
       } finally {
         store.setLoading(false);
       }

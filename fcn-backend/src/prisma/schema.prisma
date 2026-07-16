@@ -101,6 +101,7 @@ model User {
   email            String?         @unique
   phone            String?         @unique
   password_hash    String?
+  google_id        String?         @unique
   role             Role
   status           UserStatus      @default(pending)
   email_verified   Boolean         @default(false)
@@ -229,6 +230,8 @@ model DoctorProfile {
   hospital  Hospital? @relation(fields: [hospital_id], references: [id], onDelete: SetNull)
   approver  User?     @relation("DoctorApprover", fields: [approved_by], references: [id], onDelete: SetNull)
 
+  @@index([specialty])
+  @@index([availability_status])
   @@map("doctor_profiles")
 }
 
@@ -329,6 +332,9 @@ model Appointment {
   @@index([patient_id, scheduled_at])
   @@index([doctor_id, scheduled_at])
   @@index([payment_tx_ref])
+  @@index([status])
+  @@index([patient_id, status])
+  @@index([doctor_id, status])
   @@map("appointments")
 }
 
@@ -428,6 +434,7 @@ model Prescription {
   dispensed_pharmacy Pharmacy?                @relation(fields: [dispensed_by_pharmacy_id], references: [id], onDelete: SetNull)
 
   @@index([patient_id, status])
+  @@index([doctor_id, status])
   @@map("prescriptions")
 }
 
@@ -536,10 +543,11 @@ model Message {
 
   sender    User        @relation("SentMessages", fields: [sender_user_id], references: [id], onDelete: Cascade)
   recipient User        @relation("ReceivedMessages", fields: [recipient_user_id], references: [id], onDelete: Cascade)
-  appointment Appointment @relation(fields: [appointment_id], references: [id])
+  appointment Appointment @relation(fields: [appointment_id], references: [id], onDelete: Cascade)
 
   @@index([conversation_id, sent_at])
   @@index([appointment_id, sent_at])
+  @@index([recipient_user_id, read_at])
   @@map("messages")
 }
 
@@ -690,7 +698,7 @@ model ConsultationSummary {
   summary_note        String?
   created_at          DateTime    @default(now())
 
-  appointment Appointment @relation(fields: [appointment_id], references: [id])
+  appointment Appointment @relation(fields: [appointment_id], references: [id], onDelete: Cascade)
 
   @@map("consultation_summaries")
 }

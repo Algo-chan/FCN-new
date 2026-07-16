@@ -82,4 +82,94 @@ export const OnboardingStep3Schema = z.object({
   emergency_contact_phone: z.string().trim().min(1)
 });
 
+export const RegisterGoogleSchema = z
+  .object({
+    googleId: z.string().trim().min(1),
+    email: z.string().trim().email(),
+    full_name: z.string().trim().min(2).max(100),
+    role: z.enum(["patient", "doctor", "nurse", "rural_health_officer"]),
+    license_number: z.string().trim().optional(),
+    specialty: z.string().trim().optional(),
+    hospital_id: z.string().uuid().optional(),
+    years_experience: z.coerce.number().int().min(0).optional(),
+    nursing_license_number: z.string().trim().optional(),
+    coverage_zone: z.string().trim().optional()
+  })
+  .superRefine((data, ctx) => {
+    if (data.role === "doctor") {
+      if (!data.license_number) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["license_number"], message: "License number is required" });
+      }
+      if (!data.specialty) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["specialty"], message: "Specialty is required" });
+      }
+    }
+
+    if (data.role === "nurse" || data.role === "rural_health_officer") {
+      if (!data.nursing_license_number) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["nursing_license_number"], message: "Nursing license number is required" });
+      }
+      if (!data.coverage_zone) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["coverage_zone"], message: "Coverage zone is required" });
+      }
+    }
+  });
+
+export const RegisterStep1Schema = z.object({
+  full_name: z.string().trim().min(2).max(100),
+  email: z.string().trim().email(),
+  password: passwordSchema
+});
+
+export const VerifyRegistrationOTPSchema = z.object({
+  email: z.string().trim().email(),
+  otp: z.string().length(6)
+});
+
+export const RegisterStep2Schema = z
+  .object({
+    email: z.string().trim().email(),
+    role: z.enum(["patient", "doctor", "nurse", "rural_health_officer"]),
+    license_number: z.string().trim().optional(),
+    specialty: z.string().trim().optional(),
+    hospital_name: z.string().trim().optional(),
+    hospital_id: z.string().uuid().optional(),
+    years_experience: z.coerce.number().int().min(0).optional(),
+    nursing_license_number: z.string().trim().optional(),
+    coverage_zone: z.string().trim().optional()
+  })
+  .superRefine((data, ctx) => {
+    if (data.role === "doctor") {
+      if (!data.license_number) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["license_number"], message: "License number is required" });
+      }
+      if (!data.specialty) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["specialty"], message: "Specialty is required" });
+      }
+    }
+
+    if (data.role === "nurse" || data.role === "rural_health_officer") {
+      if (!data.nursing_license_number) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["nursing_license_number"], message: "Nursing license number is required" });
+      }
+      if (!data.coverage_zone) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["coverage_zone"], message: "Coverage zone is required" });
+      }
+    }
+  });
+
+export const LoginOTPSchema = z.object({
+  email: z.string().trim().email(),
+  otp: z.string().length(6)
+});
+
+export const ResendOTPSchema = z.object({
+  email: z.string().trim().email(),
+  purpose: z.enum(["registration", "login"])
+});
+
 export type RegisterDto = z.infer<typeof RegisterSchema>;
+export type RegisterStep1Dto = z.infer<typeof RegisterStep1Schema>;
+export type RegisterStep2Dto = z.infer<typeof RegisterStep2Schema>;
+export type RegisterGoogleDto = z.infer<typeof RegisterGoogleSchema>;
+export type LoginOTPDto = z.infer<typeof LoginOTPSchema>;

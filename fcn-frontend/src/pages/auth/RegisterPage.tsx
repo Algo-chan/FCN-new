@@ -1,8 +1,8 @@
 import { useCallback, useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { Activity, Check, Heart, Loader2, Lock, Mail, MapPin, Shield, Stethoscope, User, UserPlus } from "lucide-react";
+import { Activity, Check, Lock, Mail, MapPin, Stethoscope, User } from "lucide-react";
 import { authService } from "@/services/auth.service";
 import { doctorsService } from "@/services/doctors.service";
 import { hospitalsService } from "@/services/hospitals.service";
@@ -10,8 +10,10 @@ import { useAuthStore } from "@/store/auth.store";
 import { useSound } from "@/hooks/useSound";
 import { Button } from "@/components/ui/Button";
 import { Spinner } from "@/components/ui/Spinner";
+import { OTPVerification } from "@/components/auth/OTPVerification";
 
 type Role = "patient" | "doctor" | "nurse" | "rural_health_officer";
+type Phase = "account" | "otp" | "role" | "review";
 
 interface FormData {
   full_name: string;
@@ -48,12 +50,18 @@ const VITE_API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:5000/api/
 
 const RegisterPage = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const shouldReduceMotion = useReducedMotion();
   const { playSuccess } = useSound();
 
-  const [step, setStep] = useState(1);
+  const isGoogle = searchParams.get("googleRegister") === "true";
+  const googleEmail = searchParams.get("email") || "";
+  const googleName = searchParams.get("name") || "";
+  const googleId = searchParams.get("googleId") || "";
+
+  const [phase, setPhase] = useState<Phase>(isGoogle ? "role" : "account");
   const [form, setForm] = useState<FormData>({
-    full_name: "", email: "", password: "", confirmPassword: "",
+    full_name: googleName, email: googleEmail, password: "", confirmPassword: "",
     role: null, license_number: "", specialty: "", years_experience: "",
     hospital_name: "", hospital_id: "", nursing_license_number: "", coverage_zone: ""
   });
@@ -76,12 +84,18 @@ const RegisterPage = () => {
     if (hospitalSpecialties && hospitalSpecialties.length > 0) return hospitalSpecialties;
     return null;
   }, [hospitalSpecialties]);
+
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
+  const [otpError, setOtpError] = useState<string | null>(null);
+  const [otpLocked, setOtpLocked] = useState(false);
+  const [isOTPLoading, setIsOTPLoading] = useState(false);
 
   const pwStrength = useMemo(() => calcStrength(form.password), [form.password]);
+
+  const displayStep = phase === "account" || phase === "otp" ? 1 : phase === "role" ? 2 : 3;
 
   const update = (field: keyof FormData, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -89,6 +103,7 @@ const RegisterPage = () => {
   };
 
   const validateStep1 = useCallback(() => {
+    if (isGoogle) return true;
     const errs: Record<string, string> = {};
     if (!form.full_name.trim() || form.full_name.trim().length < 2) errs.full_name = "Name must be at least 2 characters";
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errs.email = "Valid email required";
@@ -98,7 +113,7 @@ const RegisterPage = () => {
     if (form.password !== form.confirmPassword) errs.confirmPassword = "Passwords do not match";
     setErrors(errs);
     return Object.keys(errs).length === 0;
-  }, [form]);
+  }, [form, isGoogle]);
 
   const validateStep2 = useCallback(() => {
     if (!form.role) { setErrors({ role: "Select a role" }); return false; }
@@ -115,17 +130,60 @@ const RegisterPage = () => {
     return Object.keys(errs).length === 0;
   }, [form]);
 
+  const handleSendOTP = async () => {
+    setIsSubmitting(true);
+    setApiError(null);
+    try {
+      await authService.registerStep1({
+        full_name: form.full_name.trim(),
+        email: form.email.trim(),
+        password: form.password
+      });
+      setPhase("otp");
+    } catch (err: any) {
+      setApiError(err?.response?.data?.error?.message ?? "Failed to send OTP. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleVerifyOTP = async (otp: string) => {
+    setIsOTPLoading(true);
+    setOtpError(null);
+    try {
+      await authService.verifyRegistrationOTP(form.email.trim(), otp);
+      setPhase("role");
+    } catch (err: any) {
+      const code = err?.response?.data?.error?.code;
+      if (code === "OTP_LOCKED") {
+        setOtpLocked(true);
+        setOtpError("Too many failed attempts. Please go back and try again.");
+      } else {
+        setOtpError(err?.response?.data?.error?.message ?? "Invalid OTP. Please try again.");
+      }
+    } finally {
+      setIsOTPLoading(false);
+    }
+  };
+
+  const handleResendOTP = async () => {
+    await authService.resendOTP(form.email.trim(), "registration");
+  };
+
   const handleSubmit = async () => {
     if (!agreeTerms) { setApiError("You must agree to the terms"); return; }
     setIsSubmitting(true);
     setApiError(null);
 
     const payload: Record<string, unknown> = {
-      full_name: form.full_name.trim(),
       email: form.email.trim(),
-      password: form.password,
       role: form.role
     };
+
+    if (isGoogle) {
+      payload.googleId = googleId;
+      payload.full_name = form.full_name.trim();
+    }
 
     if (form.role === "doctor") {
       payload.license_number = form.license_number.trim();
@@ -139,7 +197,8 @@ const RegisterPage = () => {
     }
 
     try {
-      const { data: response } = await authService.register(payload);
+      const apiCall = isGoogle ? authService.registerGoogle : authService.registerStep2;
+      const { data: response } = await apiCall(payload);
       const result = response.data;
       if (!result) throw new Error(response.error?.message ?? "Registration failed");
 
@@ -164,7 +223,7 @@ const RegisterPage = () => {
 
   return (
     <div className="flex min-h-screen">
-      {/* Left Panel - same as login */}
+      {/* Left Panel */}
       <div className="relative hidden w-3/5 overflow-hidden bg-gradient-to-br from-fcn-primary to-fcn-dark md:block">
         <div className="absolute inset-0 opacity-[0.03]">
           {Array.from({ length: 12 }).map((_, i) => (
@@ -190,28 +249,30 @@ const RegisterPage = () => {
 
           {/* Step Indicator */}
           <div className="mb-8 flex items-center justify-center gap-2">
-            {[1, 2, 3].map((s) => (
+            {(isGoogle ? [2, 3] : [1, 2, 3]).map((s, i) => (
               <div key={s} className="flex items-center gap-2">
-                <motion.div layoutId={step === s ? "step" : undefined} className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold ${step > s ? "bg-fcn-accent text-white" : step === s ? "bg-fcn-primary text-white" : "bg-fcn-primary/10 text-fcn-text-light/50 dark:text-fcn-text-dark/50"}`}>
-                  {step > s ? <Check className="h-4 w-4" /> : s}
+                <motion.div layoutId={displayStep === s ? "step" : undefined} className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold ${displayStep > s ? "bg-fcn-accent text-white" : displayStep === s ? "bg-fcn-primary text-white" : "bg-fcn-primary/10 text-fcn-text-light/50 dark:text-fcn-text-dark/50"}`}>
+                  {displayStep > s ? <Check className="h-4 w-4" /> : i + 1}
                 </motion.div>
-                {s < 3 && <span className={`h-0.5 w-8 ${step > s ? "bg-fcn-accent" : "bg-fcn-primary/10"}`} />}
+                {s < 3 && <span className={`h-0.5 w-8 ${displayStep > s ? "bg-fcn-accent" : "bg-fcn-primary/10"}`} />}
               </div>
             ))}
           </div>
 
           <AnimatePresence mode="wait">
-            {step === 1 && (
-              <motion.div key="step1" initial={!shouldReduceMotion ? { opacity: 0, x: 40 } : undefined} animate={{ opacity: 1, x: 0 }} exit={!shouldReduceMotion ? { opacity: 0, x: -40 } : undefined} className="space-y-4">
+            {phase === "account" && (
+              <motion.div key="account" initial={!shouldReduceMotion ? { opacity: 0, x: 40 } : undefined} animate={{ opacity: 1, x: 0 }} exit={!shouldReduceMotion ? { opacity: 0, x: -40 } : undefined} className="space-y-4">
                 <div className="mb-4 text-center">
                   <h2 className="text-xl font-bold text-fcn-text-light dark:text-fcn-text-dark">Create your account</h2>
                   <p className="text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">Step 1 of 3 — Account info</p>
                 </div>
 
+                {false && (
                 <a href={`${VITE_API_URL}/auth/google`} className="flex w-full items-center justify-center gap-3 rounded-md border border-fcn-primary/20 bg-white px-4 py-2.5 text-sm font-medium text-fcn-text-light shadow-sm transition hover:shadow-md dark:bg-fcn-dark dark:text-fcn-text-dark">
                   <svg className="h-5 w-5" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
                   Sign up with Google
                 </a>
+                )}
 
                 <div className="flex items-center gap-3"><span className="h-px flex-1 bg-fcn-primary/10" /><span className="text-xs text-fcn-text-light/50">or</span><span className="h-px flex-1 bg-fcn-primary/10" /></div>
 
@@ -252,13 +313,28 @@ const RegisterPage = () => {
                   {errors.confirmPassword && <p className="mt-1 text-xs text-fcn-danger">{errors.confirmPassword}</p>}
                 </label>
 
-                <Button onClick={() => { if (validateStep1()) setStep(2); }} className="w-full">Next</Button>
+                <Button onClick={() => { if (validateStep1()) handleSendOTP(); }} loading={isSubmitting} className="w-full">Next</Button>
                 <p className="text-center text-xs text-fcn-text-light/60 dark:text-fcn-text-dark/60">Already have an account? <Link to="/login" className="font-medium text-fcn-primary hover:underline">Login</Link></p>
               </motion.div>
             )}
 
-            {step === 2 && (
-              <motion.div key="step2" initial={!shouldReduceMotion ? { opacity: 0, x: 40 } : undefined} animate={{ opacity: 1, x: 0 }} exit={!shouldReduceMotion ? { opacity: 0, x: -40 } : undefined} className="space-y-4">
+            {phase === "otp" && (
+              <OTPVerification
+                key="otp"
+                email={form.email.trim()}
+                onVerify={handleVerifyOTP}
+                onResend={handleResendOTP}
+                onBack={() => setPhase("account")}
+                isLoading={isOTPLoading}
+                error={otpError}
+                locked={otpLocked}
+                title="Verify your email"
+                subtitle="Enter the 6-digit code sent to"
+              />
+            )}
+
+            {phase === "role" && (
+              <motion.div key="role" initial={!shouldReduceMotion ? { opacity: 0, x: 40 } : undefined} animate={{ opacity: 1, x: 0 }} exit={!shouldReduceMotion ? { opacity: 0, x: -40 } : undefined} className="space-y-4">
                 <div className="mb-2 text-center">
                   <h2 className="text-xl font-bold text-fcn-text-light dark:text-fcn-text-dark">I am joining FCN as...</h2>
                   <p className="text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">Step 2 of 3 — Select your role</p>
@@ -324,14 +400,14 @@ const RegisterPage = () => {
                 </AnimatePresence>
 
                 <div className="flex gap-3">
-                  <Button variant="secondary" onClick={() => setStep(1)} className="flex-1">Back</Button>
-                  <Button onClick={() => { if (validateStep2()) setStep(3); }} className="flex-1">Next</Button>
+                  <Button variant="secondary" onClick={() => isGoogle ? navigate("/login") : setPhase("account")} className="flex-1">Back</Button>
+                  <Button onClick={() => { if (validateStep2()) setPhase("review"); }} className="flex-1">Next</Button>
                 </div>
               </motion.div>
             )}
 
-            {step === 3 && (
-              <motion.div key="step3" initial={!shouldReduceMotion ? { opacity: 0, x: 40 } : undefined} animate={{ opacity: 1, x: 0 }} exit={!shouldReduceMotion ? { opacity: 0, x: -40 } : undefined} className="space-y-4">
+            {phase === "review" && (
+              <motion.div key="review" initial={!shouldReduceMotion ? { opacity: 0, x: 40 } : undefined} animate={{ opacity: 1, x: 0 }} exit={!shouldReduceMotion ? { opacity: 0, x: -40 } : undefined} className="space-y-4">
                 <div className="mb-2 text-center">
                   <h2 className="text-xl font-bold text-fcn-text-light dark:text-fcn-text-dark">Review & Confirm</h2>
                   <p className="text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">Step 3 of 3 — Verify your details</p>
@@ -363,7 +439,7 @@ const RegisterPage = () => {
                 </label>
 
                 <div className="flex gap-3">
-                  <Button variant="secondary" onClick={() => setStep(2)} className="flex-1">Back</Button>
+                  <Button variant="secondary" onClick={() => setPhase("role")} className="flex-1">Back</Button>
                   <Button onClick={handleSubmit} loading={isSubmitting} className="flex-1">{isSubmitting ? "Creating..." : "Submit"}</Button>
                 </div>
               </motion.div>

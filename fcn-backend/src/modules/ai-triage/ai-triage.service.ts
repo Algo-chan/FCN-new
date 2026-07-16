@@ -1,4 +1,4 @@
-import Anthropic from "@anthropic-ai/sdk";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { prisma } from "../../config/database";
 import { redis, redisGet, redisSet } from "../../config/redis";
 import { env } from "../../config/env";
@@ -10,9 +10,15 @@ import { notificationService } from "../notifications/notification.service";
 
 const INPUT_SANITIZE_RE = /<[^>]*>|(['";\-–])|(\b(SELECT|INSERT|UPDATE|DELETE|DROP|UNION|CREATE|ALTER|TRUNCATE|EXEC|EXECUTE)\b)/gi;
 
-const anthropic = new Anthropic({
-  apiKey: env.ANTHROPIC_API_KEY
-});
+const genAI = new GoogleGenerativeAI(env.GEMINI_API_KEY);
+
+const GEMINI_DEFAULT_MODEL = "gemini-2.0-flash";
+
+async function getGeminiModel(systemInstruction: string) {
+  const raw = (await systemSettings.get("ai_model")) || GEMINI_DEFAULT_MODEL;
+  const model = raw.startsWith("gemini") ? raw : GEMINI_DEFAULT_MODEL;
+  return genAI.getGenerativeModel({ model, systemInstruction });
+}
 
 export interface PatientContext {
   full_name: string;
@@ -131,22 +137,16 @@ class AITriageService {
     const systemPrompt = buildSystemPrompt(language, patientContext);
     const roundPrompt = buildRoundPrompt(1, language);
 
-    const response = await anthropic.messages.create({
-      model: (await systemSettings.get("ai_model")) || "claude-sonnet-4-6",
-      max_tokens: 1024,
-      system: systemPrompt + "\n\n" + roundPrompt,
-      messages: [
-        {
-          role: "user",
-          content: `Patient's initial symptoms: ${sanitizedSymptoms}`
-        }
-      ]
-    });
+    const model = await getGeminiModel(systemPrompt + "\n\n" + roundPrompt);
 
-    const aiResponse = response.content
-      .filter((block) => block.type === "text")
-      .map((block) => block.text)
-      .join("");
+    const result = await model.generateContent(
+      `Patient's initial symptoms: ${sanitizedSymptoms}`
+    );
+    const aiResponse = result.response.text();
+
+    if (!aiResponse) {
+      throw new AppError("AI returned an empty response. Please try again.", 502, "AI_EMPTY_RESPONSE");
+    }
 
     const assessment = await prisma.symptomAssessment.create({
       data: {
@@ -207,26 +207,20 @@ class AITriageService {
     const systemPrompt = buildSystemPrompt(assessment.language, patientContext);
     const roundPrompt = buildRoundPrompt(newRound, assessment.language);
 
-    const messages: Anthropic.MessageParam[] = conversation.map((msg) => ({
-      role: msg.role,
-      content: msg.content
+    const history = conversation.map((msg) => ({
+      role: msg.role === "assistant" ? "model" as const : "user" as const,
+      parts: [{ text: msg.content }]
     }));
-    messages.push({
-      role: "user",
-      content: sanitizedMessage
-    });
 
-    const response = await anthropic.messages.create({
-      model: (await systemSettings.get("ai_model")) || "claude-sonnet-4-6",
-      max_tokens: 1024,
-      system: systemPrompt + "\n\n" + roundPrompt,
-      messages
-    });
+    const model = await getGeminiModel(systemPrompt + "\n\n" + roundPrompt);
 
-    const aiResponse = response.content
-      .filter((block) => block.type === "text")
-      .map((block) => block.text)
-      .join("");
+    const chat = model.startChat({ history });
+    const result = await chat.sendMessage(sanitizedMessage);
+    const aiResponse = result.response.text();
+
+    if (!aiResponse) {
+      throw new AppError("AI returned an empty response. Please try again.", 502, "AI_EMPTY_RESPONSE");
+    }
 
     conversation.push(
       { role: "user", content: sanitizedMessage, timestamp: new Date().toISOString() },
@@ -313,22 +307,21 @@ class AITriageService {
     const systemPrompt = buildSystemPrompt(assessment.language, patientContext);
     const roundPrompt = buildRoundPrompt(3, assessment.language);
 
-    const messages: Anthropic.MessageParam[] = conversation.map((msg) => ({
-      role: msg.role,
-      content: msg.content
+    const history = conversation.slice(0, -1).map((msg) => ({
+      role: msg.role === "assistant" ? "model" as const : "user" as const,
+      parts: [{ text: msg.content }]
     }));
 
-    const response = await anthropic.messages.create({
-      model: (await systemSettings.get("ai_model")) || "claude-sonnet-4-6",
-      max_tokens: 1024,
-      system: systemPrompt + "\n\n" + roundPrompt,
-      messages
-    });
+    const model = await getGeminiModel(systemPrompt + "\n\n" + roundPrompt);
 
-    const aiResponse = response.content
-      .filter((block) => block.type === "text")
-      .map((block) => block.text)
-      .join("");
+    const lastUserMsg = [...conversation].reverse().find((m) => m.role === "user");
+    const chat = model.startChat({ history });
+    const result = await chat.sendMessage(lastUserMsg?.content || "Please provide your final assessment now.");
+    const aiResponse = result.response.text();
+
+    if (!aiResponse) {
+      throw new AppError("AI returned an empty response. Please try again.", 502, "AI_EMPTY_RESPONSE");
+    }
 
     const parsed = this.parseFinalAssessment(aiResponse);
 

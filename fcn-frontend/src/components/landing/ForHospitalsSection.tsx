@@ -17,14 +17,14 @@ export const ForHospitalsSection = () => {
   const shouldReduceMotion = useReducedMotion();
 
   return (
-    <section ref={ref} id="for-hospitals" className="scroll-mt-20 py-20">
+    <section ref={ref} id="for-hospitals" className="scroll-mt-20 py-10 px-4 sm:py-20 sm:px-6">
       <div className="mx-auto max-w-7xl items-center gap-12 px-4 sm:px-6 lg:flex lg:px-8">
         {/* Left - Image */}
         <motion.div
           initial={shouldReduceMotion ? false : { opacity: 0, x: -40 }}
           animate={isInView ? { opacity: 1, x: 0 } : {}}
           transition={{ duration: shouldReduceMotion ? 0 : 0.5 }}
-          className="relative mb-8 lg:mb-0 lg:w-1/2"
+          className="relative mb-8 hidden lg:mb-0 lg:block lg:w-1/2"
         >
           <ImagePlaceholder
             query="Dire Dawa General Hospital exterior, modern East African hospital architecture, daytime"
@@ -53,8 +53,8 @@ export const ForHospitalsSection = () => {
           className="lg:w-1/2"
         >
           <p className="mb-2 text-xs font-semibold tracking-widest text-fcn-accent">FOR HOSPITALS</p>
-          <h2 className="mb-4 text-3xl font-bold text-fcn-text-light dark:text-white">Reduce Overcrowding. Improve Patient Flow.</h2>
-          <p className="mb-6 text-fcn-text-light/60 dark:text-gray-400">
+          <h2 className="mb-4 text-xl font-bold text-fcn-text-light dark:text-white sm:text-3xl">Reduce Overcrowding. Improve Patient Flow.</h2>
+          <p className="mb-6 text-sm text-fcn-text-light/60 dark:text-gray-400 sm:text-base">
             Partner with FCN to give patients visibility into your real-time capacity, reduce unnecessary walk-ins, and route appropriate cases to remote consultation first.
           </p>
           <ul className="mb-8 space-y-3">

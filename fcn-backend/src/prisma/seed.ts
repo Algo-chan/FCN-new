@@ -7,13 +7,15 @@ async function main() {
   console.log("Seeding database...");
 
   const superAdminUser = await prisma.user.upsert({
-    where: { email: "superadmin@fcn.health" },
-    update: {},
+    where: { email: "admin@fcncare.com" },
+    update: {
+      password_hash: await bcrypt.hash("Muheman@6695$", 12)
+    },
     create: {
       full_name: "FCN Super Admin",
-      email: "superadmin@fcn.health",
+      email: "admin@fcncare.com",
       phone: "+251911000000",
-      password_hash: await bcrypt.hash("SuperAdmin123!", 12),
+      password_hash: await bcrypt.hash("Muheman@6695$", 12),
       role: "super_admin",
       status: "active",
       email_verified: true,
@@ -21,22 +23,6 @@ async function main() {
     }
   });
   console.log(`Super admin: ${superAdminUser.email}`);
-
-  const adminUserSeed = await prisma.user.upsert({
-    where: { email: "admin@fcncare.com" },
-    update: {},
-    create: {
-      full_name: "FCN Administrator",
-      email: "admin@fcncare.com",
-      phone: "+251900000000",
-      password_hash: await bcrypt.hash("FCN@Admin2026!", 12),
-      role: "super_admin",
-      status: "active",
-      email_verified: true,
-      phone_verified: true
-    }
-  });
-  console.log(`Admin seed: ${adminUserSeed.email}`);
   console.log("  ⚠️  After first login, change password at Profile → Security → Change Password.");
   console.log("  ⚠️  Never use the default password in production.");
 
@@ -52,7 +38,7 @@ async function main() {
     { key: "consultation_summary_enabled", value: "true", description: "Enable automatic consultation summary creation" },
     { key: "ai_triage_enabled", value: "true", description: "Enable AI symptom checker triage" },
     { key: "ai_max_rounds", value: "3", description: "Maximum conversation rounds for AI triage" },
-    { key: "ai_model", value: "claude-sonnet-4-6", description: "Anthropic Claude model for AI triage" },
+    { key: "ai_model", value: "gemini-2.0-flash", description: "Google Gemini model for AI triage" },
     { key: "prescription_qr_secret", value: "change_this_in_production", description: "Secret key for QR code HMAC verification" },
     { key: "medication_reminders_enabled", value: "true", description: "Enable medication reminder push notifications" },
     { key: "notification_retention_days", value: "90", description: "Number of days to keep read notifications before auto-deletion" },

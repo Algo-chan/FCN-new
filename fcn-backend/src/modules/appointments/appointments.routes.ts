@@ -17,6 +17,7 @@ export const appointmentRoutes = Router();
 appointmentRoutes.post("/", authMiddleware, requireRole("patient"), createAppointmentController);
 appointmentRoutes.get("/", authMiddleware, getMyAppointmentsController);
 appointmentRoutes.get("/doctor", authMiddleware, requireRole("doctor"), getDoctorAppointmentsController);
+appointmentRoutes.get("/admin/all", authMiddleware, requireRole("super_admin", "hospital_admin"), getAppointmentByIdController);
 appointmentRoutes.get("/:id", authMiddleware, getAppointmentByIdController);
 appointmentRoutes.patch("/:id/cancel", authMiddleware, cancelAppointmentController);
 appointmentRoutes.patch("/:id/reschedule", authMiddleware, rescheduleAppointmentController);

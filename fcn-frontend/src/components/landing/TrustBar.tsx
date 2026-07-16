@@ -51,7 +51,7 @@ export const TrustBar = () => {
   return (
     <section
       ref={sectionRef}
-      className="relative overflow-hidden border-y border-white/10 bg-gradient-to-b from-white/40 to-white/20 py-14 dark:from-white/[0.03] dark:to-white/[0.01]"
+      className="relative overflow-hidden border-y border-white/10 bg-gradient-to-b from-white/40 to-white/20 py-10 dark:from-white/[0.03] dark:to-white/[0.01]"
     >
       <div className="trust-shine pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-fcn-accent/8 to-transparent" />
 
@@ -70,14 +70,14 @@ export const TrustBar = () => {
             initial={shouldReduceMotion ? false : { opacity: 0, y: 10 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: 0.1, duration: 0.4 }}
-            className="mt-2 text-lg font-medium text-fcn-text-light/80 dark:text-fcn-text-dark/80"
+            className="mt-2 text-sm font-medium text-fcn-text-light/80 dark:text-fcn-text-dark/80 md:text-lg"
           >
             Trusted by leading healthcare institutions across{" "}
             <span className="text-fcn-primary dark:text-fcn-accent">Dire Dawa</span>
           </motion.h2>
         </div>
 
-        <div className="flex flex-wrap items-center justify-center gap-5">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-5 md:gap-5">
           {partners.map((p, i) => {
             const Icon = p.icon;
             return (
@@ -88,17 +88,17 @@ export const TrustBar = () => {
                 initial="hidden"
                 animate={isInView ? "visible" : "hidden"}
                 whileHover={shouldReduceMotion ? undefined : { y: -6, scale: 1.02 }}
-                className="group relative w-[180px]"
+                className="group relative"
               >
                 <div
                   className={clsx(
-                    "relative overflow-hidden rounded-xl border bg-white/70 px-5 py-5 text-center shadow-sm backdrop-blur transition-all duration-300 dark:bg-fcn-dark/60",
+                    "relative overflow-hidden rounded-xl border bg-white/70 p-3 text-center shadow-sm backdrop-blur transition-all duration-300 dark:bg-fcn-dark/60 sm:px-5 sm:py-5",
                     "border-white/20 hover:border-fcn-accent/30 dark:border-white/5",
                     "hover:shadow-[0_12px_40px_rgba(10,126,164,0.12)] dark:hover:shadow-[0_12px_40px_rgba(45,212,191,0.08)]"
                   )}
                 >
                   <div
-                    className="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-lg transition-colors duration-300 group-hover:shadow-[0_0_20px_rgba(10,126,164,0.15)]"
+                    className="mx-auto mb-2 flex h-9 w-9 items-center justify-center rounded-lg transition-colors duration-300 group-hover:shadow-[0_0_20px_rgba(10,126,164,0.15)] sm:mb-3 sm:h-11 sm:w-11"
                     style={{
                       backgroundColor: `hsla(${p.hue}, 70%, 45%, 0.1)`,
                       color: `hsl(${p.hue}, 70%, 45%)`
@@ -106,10 +106,10 @@ export const TrustBar = () => {
                   >
                     <Icon className="h-5 w-5" strokeWidth={1.5} />
                   </div>
-                  <p className="text-sm font-medium leading-tight text-fcn-text-light dark:text-fcn-text-dark">
+                  <p className="text-xs font-medium leading-tight text-fcn-text-light dark:text-fcn-text-dark sm:text-sm">
                     {p.name}
                   </p>
-                  <p className="mt-1 text-[10px] text-fcn-text-light/40 dark:text-fcn-text-dark/40">
+                  <p className="mt-1 hidden text-[10px] text-fcn-text-light/40 dark:text-fcn-text-dark/40 sm:block">
                     Partner Institution
                   </p>
                 </div>

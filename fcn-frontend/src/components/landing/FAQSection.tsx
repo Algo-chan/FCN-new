@@ -23,15 +23,15 @@ export const FAQSection = () => {
   const toggle = (i: number) => setOpenIdx(openIdx === i ? null : i);
 
   return (
-    <section id="faq" className="scroll-mt-20 py-20">
-      <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+    <section id="faq" className="scroll-mt-20 py-10 px-4 sm:py-20 sm:px-6">
+      <div className="mx-auto max-w-lg px-4 sm:max-w-3xl sm:px-6 lg:px-8">
         <motion.div
           initial={!shouldReduceMotion ? { opacity: 0, y: 20 } : undefined}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           className="mb-12 text-center"
         >
-          <h2 className="text-3xl font-bold text-fcn-text-light dark:text-white">Frequently Asked Questions</h2>
+          <h2 className="text-2xl font-bold text-fcn-text-light dark:text-white sm:text-3xl">Frequently Asked Questions</h2>
           <p className="mt-2 text-fcn-text-light/60 dark:text-gray-400">Everything you need to know about FCN</p>
         </motion.div>
 
@@ -47,7 +47,7 @@ export const FAQSection = () => {
             >
               <button
                 onClick={() => toggle(i)}
-                className="flex w-full items-center justify-between px-5 py-4 text-left"
+                className="flex w-full items-center justify-between px-4 py-3 text-left sm:px-5 sm:py-4"
                 aria-expanded={openIdx === i}
               >
                 <span className="pr-4 text-sm font-medium text-fcn-text-light dark:text-white">{faq.q}</span>
@@ -68,7 +68,7 @@ export const FAQSection = () => {
                     transition={{ duration: shouldReduceMotion ? 0 : 0.25, ease: "easeInOut" }}
                     className="overflow-hidden"
                   >
-                    <div className="border-t border-fcn-accent/10 px-5 py-4 text-sm leading-relaxed text-fcn-text-light/70 dark:text-gray-400">
+                    <div className="border-t border-fcn-accent/10 px-4 py-3 text-sm leading-relaxed text-fcn-text-light/70 dark:text-gray-400 sm:px-5 sm:py-4">
                       {faq.a}
                     </div>
                   </motion.div>

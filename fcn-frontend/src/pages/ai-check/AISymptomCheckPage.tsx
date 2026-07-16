@@ -649,6 +649,18 @@ Recommended: See ${store.finalAssessment.recommended_specialty || "a doctor"}`;
                     "Start AI Assessment"
                   )}
                 </button>
+
+                {store.error && (
+                  <div className="rounded-lg border border-fcn-danger/20 bg-fcn-danger/10 p-3">
+                    <p className="text-sm text-fcn-danger">{store.error}</p>
+                    <button
+                      onClick={() => store.setError(null)}
+                      className="mt-2 text-xs text-fcn-danger/70 hover:text-fcn-danger transition-colors"
+                    >
+                      Dismiss
+                    </button>
+                  </div>
+                )}
               </div>
 
               <div className="hidden w-72 shrink-0 space-y-4 lg:block">
@@ -684,7 +696,7 @@ Recommended: See ${store.finalAssessment.recommended_specialty || "a doctor"}`;
                     </span>
                   </div>
                   <p className="text-xs text-fcn-text-light/60 dark:text-fcn-text-dark/60">
-                    Claude AI will consider your{" "}
+                    Gemini AI will consider your{" "}
                     {patientProfile?.chronic_conditions?.length > 0
                       ? patientProfile.chronic_conditions.join(", ")
                       : "health profile"}{" "}

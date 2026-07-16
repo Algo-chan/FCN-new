@@ -1,6 +1,6 @@
 import { Modal } from "@/components/ui/Modal";
 import { Button } from "@/components/ui/Button";
-import { CheckCircle, CreditCard, ExternalLink } from "lucide-react";
+import { CheckCircle } from "lucide-react";
 
 interface ConfirmationModalProps {
   isOpen: boolean;
@@ -12,25 +12,22 @@ interface ConfirmationModalProps {
 const typeConfig = {
   created: {
     title: "Appointment Created",
-    message: "Your appointment has been successfully created.",
-    variant: "success" as const,
-    needsPayment: (url: string | null | undefined) => !!url
+    message: "Your appointment has been successfully created. You will receive a confirmation shortly.",
+    variant: "success" as const
   },
   cancelled: {
     title: "Appointment Cancelled",
     message: "Your appointment has been cancelled.",
-    variant: "danger" as const,
-    needsPayment: () => false
+    variant: "danger" as const
   },
   rescheduled: {
     title: "Appointment Rescheduled",
     message: "Your appointment has been rescheduled.",
-    variant: "info" as const,
-    needsPayment: () => false
+    variant: "info" as const
   }
 };
 
-export const ConfirmationModal = ({ isOpen, onClose, type, checkoutUrl }: ConfirmationModalProps) => {
+export const ConfirmationModal = ({ isOpen, onClose, type }: ConfirmationModalProps) => {
   const config = typeConfig[type];
 
   return (
@@ -43,7 +40,8 @@ export const ConfirmationModal = ({ isOpen, onClose, type, checkoutUrl }: Confir
           {config.message}
         </p>
 
-        {config.needsPayment(checkoutUrl) && checkoutUrl && (
+        {/* Payment section - commented out for now, will be configured later
+        {checkoutUrl && (
           <div className="w-full space-y-3">
             <div className="rounded-lg border border-fcn-warning/20 bg-fcn-warning/5 p-3">
               <div className="flex items-center gap-2">
@@ -64,9 +62,10 @@ export const ConfirmationModal = ({ isOpen, onClose, type, checkoutUrl }: Confir
             </Button>
           </div>
         )}
+        */}
 
         <Button variant="secondary" onClick={onClose}>
-          {config.needsPayment(checkoutUrl) ? "I'll Pay Later" : "OK"}
+          OK
         </Button>
       </div>
     </Modal>

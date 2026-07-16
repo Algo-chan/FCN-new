@@ -11,12 +11,14 @@ import { startNotificationCleanupJob } from "./src/jobs/notification-cleanup.job
 import { startAppointmentReminderJob } from "./src/jobs/appointment-reminder.job";
 import { logger } from "./src/utils/logger";
 
-const server = http.createServer(app);
-initSocket(server);
+let server: http.Server;
 
 const startServer = async (): Promise<void> => {
   await connectDatabase();
   await connectRedis();
+
+  server = http.createServer(app);
+  initSocket(server);
 
   server.listen(env.PORT, () => {
     logger.info(`FCN backend listening on port ${env.PORT}`);
@@ -40,6 +42,15 @@ const shutdown = async (signal: NodeJS.Signals): Promise<void> => {
 
 process.on("SIGTERM", () => void shutdown("SIGTERM"));
 process.on("SIGINT", () => void shutdown("SIGINT"));
+
+process.on("unhandledRejection", (reason: unknown) => {
+  logger.error("Unhandled Rejection", { reason: reason instanceof Error ? reason.message : String(reason) });
+});
+
+process.on("uncaughtException", (error: Error) => {
+  logger.error("Uncaught Exception", { error: error.message, stack: error.stack });
+  process.exit(1);
+});
 
 startServer().catch((error) => {
   logger.error("Failed to start server", { error: error instanceof Error ? error.message : String(error) });

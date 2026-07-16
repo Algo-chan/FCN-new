@@ -1,4 +1,4 @@
-import { Navigate, Outlet, Route, Routes } from "react-router-dom";
+import { Navigate, Outlet, Route, Routes, useLocation } from "react-router-dom";
 import { PageLayout } from "@/components/layout/PageLayout";
 import AdminPanelPage from "@/pages/admin/AdminPanelPage";
 import AdminUsersPage from "@/pages/admin/AdminUsersPage";
@@ -11,6 +11,7 @@ import BookAppointmentPage from "@/pages/appointments/BookAppointmentPage";
 import MyAppointmentsPage from "@/pages/appointments/MyAppointmentsPage";
 import LoginPage from "@/pages/auth/LoginPage";
 import RegisterPage from "@/pages/auth/RegisterPage";
+import AuthCallbackPage from "@/pages/auth/AuthCallbackPage";
 import ConsultationPage from "@/pages/consultation/ConsultationPage";
 import DashboardPage from "@/pages/dashboard/DashboardPage";
 import FindDoctorsPage from "@/pages/doctors/FindDoctorsPage";
@@ -65,13 +66,14 @@ const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProps) => {
   const user = useAuthStore((state) => state.user);
   const isLoading = useAuthStore((state) => state.isLoading);
   const onboardingCompleted = useAuthStore((state) => state.onboardingCompleted);
+  const location = useLocation();
 
   if (!isAuthenticated && isLoading) {
     return null;
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/login" state={{ from: location.pathname + location.search }} replace />;
   }
 
   if (allowedRoles && user && !allowedRoles.includes(user.role)) {
@@ -79,15 +81,13 @@ const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProps) => {
   }
 
   if (user && (user.role === "doctor" || user.role === "nurse" || user.role === "rural_health_officer") && user.status === "pending") {
-    const path = window.location.pathname;
-    if (path !== "/pending") {
+    if (location.pathname !== "/pending") {
       return <Navigate to="/pending" replace />;
     }
   }
 
   if (user && user.role === "patient" && !onboardingCompleted) {
-    const path = window.location.pathname;
-    if (path !== "/onboarding") {
+    if (location.pathname !== "/onboarding") {
       return <Navigate to="/onboarding" replace />;
     }
   }
@@ -111,6 +111,7 @@ export const AppRouter = () => (
     <Route path="/" element={<LandingPage />} />
     <Route path="/login" element={<LoginPage />} />
     <Route path="/register" element={<RegisterPage />} />
+    <Route path="/auth/callback" element={<AuthCallbackPage />} />
 
     <Route path="/onboarding" element={<OnboardingPage />} />
     <Route path="/pending" element={<PendingApprovalPage />} />
@@ -144,6 +145,7 @@ export const AppRouter = () => (
       <Route path="/appointments" element={<MyAppointmentsPage />} />
       <Route path="/consultation" element={<ConsultationPage />} />
       <Route path="/doctor/patients" element={<DoctorPatientsPage />} />
+      <Route path="/doctor/patients/:patientId" element={<PatientRecordsViewPage />} />
       <Route path="/doctor/prescriptions" element={<DoctorPrescriptionsListPage />} />
     </Route>
 

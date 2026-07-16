@@ -61,7 +61,7 @@ export const HowItWorksSection = () => {
   }, [shouldReduceMotion]);
 
   return (
-    <section ref={sectionRef} id="how-it-works" className="scroll-mt-20 py-20">
+    <section ref={sectionRef} id="how-it-works" className="scroll-mt-20 py-10 px-4 sm:py-20 sm:px-6">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
@@ -69,7 +69,7 @@ export const HowItWorksSection = () => {
           viewport={{ once: true, margin: "-80px" }}
           className="mb-14 text-center"
         >
-          <h2 className="text-3xl font-bold text-fcn-text-light dark:text-white">How FCN Works</h2>
+          <h2 className="text-2xl font-bold text-fcn-text-light dark:text-white sm:text-3xl">How FCN Works</h2>
           <p className="mt-2 text-fcn-text-light/60 dark:text-gray-400">From home to healed, in 7 simple steps</p>
         </motion.div>
 
@@ -99,7 +99,7 @@ export const HowItWorksSection = () => {
         </div>
 
         {/* Mobile vertical stack */}
-        <div className="space-y-6 lg:hidden">
+        <div className="space-y-4 lg:hidden">
           {steps.map((step, i) => (
             <motion.div
               key={step.title}
@@ -109,12 +109,12 @@ export const HowItWorksSection = () => {
               transition={{ delay: shouldReduceMotion ? 0 : i * 0.06 }}
               className="flex items-start gap-4"
             >
-              <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full border-2 border-fcn-primary bg-fcn-primary/10 text-fcn-primary`}>
-                <step.icon className="h-5 w-5" />
+              <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-fcn-primary bg-fcn-primary/10 text-fcn-primary sm:h-12 sm:w-12`}>
+                <step.icon className="h-4 w-4 sm:h-5 sm:w-5" />
               </div>
               <div>
                 <p className="font-semibold text-fcn-text-light dark:text-white">{step.title}</p>
-                <p className="text-sm text-fcn-text-light/60 dark:text-gray-400">{step.desc}</p>
+                <p className="text-xs text-fcn-text-light/60 dark:text-gray-400 sm:text-sm">{step.desc}</p>
               </div>
             </motion.div>
           ))}

@@ -265,9 +265,9 @@ export default function ConsultationPage() {
 
   const isDoctor = user?.role === "doctor";
   const otherPartyName = isDoctor
-    ? contextData?.appointment.patient.full_name
-    : contextData?.appointment.doctor.full_name;
-  const otherPartySpecialty = contextData?.appointment.doctor.specialty;
+    ? contextData?.appointment?.patient?.full_name
+    : contextData?.appointment?.doctor?.full_name;
+  const otherPartySpecialty = contextData?.appointment?.doctor?.specialty;
 
   return (
     <div className="flex h-[calc(100vh-4rem)] overflow-hidden bg-gray-950">
@@ -340,7 +340,7 @@ export default function ConsultationPage() {
 
           <PrescribePanel
             appointmentId={appointmentId ?? ""}
-            patientName={contextData?.appointment.patient.full_name ?? "Patient"}
+            patientName={contextData?.appointment?.patient?.full_name ?? "Patient"}
             isOpen={isDoctor && prescribeOpen}
             onClose={() => setPrescribeOpen(false)}
             onPrescriptionIssued={handlePrescriptionIssued}

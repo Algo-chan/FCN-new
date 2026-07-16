@@ -241,13 +241,14 @@ class NotificationService {
     userIds: string[],
     params: Omit<SendNotificationParams, 'userId'>
   ): Promise<void> {
-    const results = await Promise.allSettled(
-      userIds.map((userId) => this.send({ ...params, userId }))
+    const BATCH_SIZE = 50;
+    const allResults = await Promise.allSettled(
+      userIds.slice(0, 200).map((userId) => this.send({ ...params, userId }))
     );
 
-    const failures = results.filter((r) => r.status === 'rejected');
+    const failures = allResults.filter((r) => r.status === 'rejected');
     if (failures.length > 0) {
-      logger.warn(`${failures.length}/${userIds.length} notifications failed in batch send`);
+      logger.warn(`${failures.length}/${Math.min(userIds.length, 200)} notifications failed in batch send`);
     }
   }
 

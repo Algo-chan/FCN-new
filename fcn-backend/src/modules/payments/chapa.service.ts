@@ -9,7 +9,7 @@ import { notificationService } from "../notifications/notification.service";
 
 const CHAPA_API_URL = "https://api.chapa.co/v1";
 const CHAPA_SECRET_KEY = env.CHAPA_SECRET_KEY;
-const CHAPA_CALLBACK_BASE = `${env.FRONTEND_URL}/api/v1/payments/chapa-webhook`;
+const CHAPA_CALLBACK_BASE = `${env.BACKEND_URL}/api/v1/payments/chapa-webhook`;
 
 interface ChapaInitResponse {
   status: "success" | "failed";
@@ -168,6 +168,21 @@ export class ChapaService {
 
     if (!appointment) {
       logger.error("Chapa webhook: appointment not found", { txRef });
+      return;
+    }
+
+    if (appointment.payment_status === "paid") {
+      logger.warn("Chapa webhook: already processed", { txRef, appointmentId: appointment.id });
+      return;
+    }
+
+    const updatableStatuses = ["pending", "confirmed"];
+    if (!updatableStatuses.includes(appointment.status)) {
+      logger.warn("Chapa webhook: appointment in non-updatable status", {
+        txRef,
+        appointmentId: appointment.id,
+        status: appointment.status
+      });
       return;
     }
 

@@ -16,8 +16,8 @@ const socialIcons = [
 export const Footer = () => {
   return (
     <footer className="border-t border-white/10 bg-white/50 dark:bg-[#0D1117]/80">
-      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-16 lg:px-8">
+        <div className="grid gap-8 grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 lg:gap-10">
           {/* Brand */}
           <div>
             <img
@@ -57,7 +57,7 @@ export const Footer = () => {
           <div>
             <h4 className="mb-3 text-sm font-semibold text-fcn-text-light dark:text-white">Stay Updated</h4>
             <p className="mb-3 text-sm text-fcn-text-light/50 dark:text-gray-400">Get the latest FCN news and updates</p>
-            <div className="flex gap-2">
+            <div className="flex flex-col gap-2 sm:flex-row">
               <input
                 type="email"
                 placeholder="your@email.com"

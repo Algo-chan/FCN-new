@@ -13,6 +13,7 @@ export interface GooglePassportUser {
   role: Role;
   status: UserStatus;
   googleId: string;
+  isNewGoogleUser?: boolean;
 }
 
 const mapGoogleProfile = (profile: Profile): GooglePassportUser => {
@@ -65,51 +66,32 @@ export const configurePassport = (): void => {
           const existing = await prisma.user.findUnique({ where: { email: googleUser.email } });
 
           if (existing) {
+            if (!existing.google_id) {
+              await prisma.user.update({ where: { id: existing.id }, data: { google_id: profile.id } });
+            }
             done(null, {
-              id: existing.id,
-              email: existing.email ?? googleUser.email,
-              full_name: existing.full_name,
-              role: existing.role,
-              status: existing.status,
-              avatar: googleUser.avatar,
-              googleId: profile.id
-            });
+            id: existing.id,
+            email: existing.email ?? googleUser.email,
+            full_name: existing.full_name,
+            role: existing.role,
+            status: existing.status,
+            avatar: googleUser.avatar,
+            googleId: profile.id,
+            isNewGoogleUser: false
+          } as unknown as Express.User);
             return;
           }
 
-          const created = await prisma.$transaction(async (tx) => {
-            const user = await tx.user.create({
-              data: {
-                full_name: googleUser.full_name,
-                email: googleUser.email,
-                phone: null,
-                password_hash: null,
-                role: "patient",
-                status: "active",
-                email_verified: true,
-                phone_verified: false
-              }
-            });
-
-            await tx.patientProfile.create({
-              data: {
-                user_id: user.id,
-                chronic_conditions: []
-              }
-            });
-
-            return user;
-          });
-
           done(null, {
-            id: created.id,
-            email: created.email ?? googleUser.email,
-            full_name: created.full_name,
-            role: created.role,
-            status: created.status,
+            id: profile.id,
+            email: googleUser.email,
+            full_name: googleUser.full_name,
+            role: "patient",
+            status: "active",
             avatar: googleUser.avatar,
-            googleId: profile.id
-          });
+            googleId: profile.id,
+            isNewGoogleUser: true
+          } as unknown as Express.User);
         } catch (error) {
           done(error);
         }

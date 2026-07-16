@@ -152,6 +152,16 @@ export const initSocket = (server: HttpServer): Server => {
           return;
         }
 
+        if (!messageText || typeof messageText !== "string" || messageText.trim().length === 0) {
+          socket.emit("error", { message: "Message cannot be empty" });
+          return;
+        }
+
+        if (messageText.length > 5000) {
+          socket.emit("error", { message: "Message exceeds 5000 character limit" });
+          return;
+        }
+
         const appointment = await prisma.appointment.findUnique({
           where: { id: appointmentId },
           select: { status: true, patient_id: true, doctor_id: true }
@@ -223,6 +233,16 @@ export const initSocket = (server: HttpServer): Server => {
 
         if (fileSize > MAX_FILE_SIZE) {
           ack({ error: "File size exceeds 10MB limit" });
+          return;
+        }
+
+        if (!fileName || typeof fileName !== "string") {
+          ack({ error: "File name is required" });
+          return;
+        }
+
+        if (!fileData || typeof fileData !== "string") {
+          ack({ error: "File data is required" });
           return;
         }
 

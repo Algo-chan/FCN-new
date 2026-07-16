@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion, useReducedMotion } from "framer-motion";
 import { format, parseISO, isBefore, addMinutes } from "date-fns";
 import { Video, MapPin, User, Activity, Stethoscope, AlertTriangle, FileText } from "lucide-react";
@@ -19,6 +20,7 @@ const typeIcons: Record<string, typeof Video> = { remote: Video, in_person: MapP
 
 export const ActivePatientCard = ({ patient, index = 0 }: ActivePatientCardProps) => {
   const shouldReduceMotion = useReducedMotion();
+  const navigate = useNavigate();
   const [noteModalOpen, setNoteModalOpen] = useState(false);
 
   const isNowOrSoon = isBefore(parseISO(patient.next_appointment.scheduled_at), addMinutes(new Date(), 30));
@@ -109,7 +111,7 @@ export const ActivePatientCard = ({ patient, index = 0 }: ActivePatientCardProps
             <Button
               size="sm"
               className="w-full mb-2 animate-pulse"
-              onClick={() => window.location.href = `/consultation/${patient.next_appointment.id}`}
+              onClick={() => navigate(`/consultation/${patient.next_appointment.id}`)}
             >
               <Video className="h-3.5 w-3.5" /> Join Now
             </Button>
@@ -133,12 +135,12 @@ export const ActivePatientCard = ({ patient, index = 0 }: ActivePatientCardProps
           )}
 
           <div className="mt-2">
-            <a
-              href={`/health-records/${patient.patient_id}`}
+            <button
+              onClick={() => navigate(`/doctor/patients/${patient.patient_id}`)}
               className="text-xs text-fcn-primary hover:underline"
             >
               View Full Records →
-            </a>
+            </button>
           </div>
         </Card>
       </motion.div>

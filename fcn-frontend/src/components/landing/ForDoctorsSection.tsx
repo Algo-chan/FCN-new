@@ -19,14 +19,14 @@ export const ForDoctorsSection = () => {
   const { playTransition } = useSound();
 
   return (
-    <section ref={ref} id="for-doctors" className="scroll-mt-20 py-20">
+    <section ref={ref} id="for-doctors" className="scroll-mt-20 py-10 px-4 sm:py-20 sm:px-6">
       <div className="mx-auto max-w-7xl items-center gap-12 px-4 sm:px-6 lg:flex lg:flex-row-reverse lg:px-8">
         {/* Right - Image (reversed) */}
         <motion.div
           initial={shouldReduceMotion ? false : { opacity: 0, x: 40 }}
           animate={isInView ? { opacity: 1, x: 0 } : {}}
           transition={{ duration: shouldReduceMotion ? 0 : 0.5 }}
-          className="relative mb-8 lg:mb-0 lg:w-1/2"
+          className="relative mb-8 hidden lg:mb-0 lg:block lg:w-1/2"
         >
           <ImagePlaceholder
             query="Confident Ethiopian female doctor in clinic, white coat, stethoscope, warm professional portrait, soft lighting"
@@ -55,8 +55,8 @@ export const ForDoctorsSection = () => {
           className="lg:w-1/2"
         >
           <p className="mb-2 text-xs font-semibold tracking-widest text-fcn-accent">FOR DOCTORS</p>
-          <h2 className="mb-4 text-3xl font-bold text-fcn-text-light dark:text-white">Practice Medicine On Your Terms</h2>
-          <p className="mb-6 text-fcn-text-light/60 dark:text-gray-400">
+          <h2 className="mb-4 text-xl font-bold text-fcn-text-light dark:text-white sm:text-3xl">Practice Medicine On Your Terms</h2>
+          <p className="mb-6 text-sm text-fcn-text-light/60 dark:text-gray-400 sm:text-base">
             Set your own hours. Consult from anywhere. Build a verified reputation. FCN handles the platform — you focus on patient care.
           </p>
           <ul className="mb-8 space-y-3">
@@ -66,7 +66,7 @@ export const ForDoctorsSection = () => {
               </li>
             ))}
           </ul>
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-col gap-3 sm:flex-row">
             <Link to="/register" onClick={() => playTransition()}>
               <Button>Join as a Doctor</Button>
             </Link>

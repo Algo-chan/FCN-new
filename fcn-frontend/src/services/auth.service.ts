@@ -9,6 +9,19 @@ export interface LoginResponse {
   accessToken: string;
 }
 
+export interface LoginOTPResponse {
+  requiresOTP: boolean;
+  email: string;
+}
+
+export interface RegisterStep1Response {
+  message: string;
+}
+
+export interface VerifyRegistrationOTPResponse {
+  verified: boolean;
+}
+
 export interface RegisterResponse {
   user: User;
   accessToken?: string;
@@ -41,10 +54,25 @@ export interface OnboardingStatus {
 
 export const authService = {
   login: (email: string, password: string) =>
-    api.post<ApiResponse<LoginResponse>>("/auth/login", { email, password }),
+    api.post<ApiResponse<LoginOTPResponse | LoginResponse>>("/auth/login", { email, password }),
+
+  loginVerifyOTP: (email: string, otp: string) =>
+    api.post<ApiResponse<LoginResponse>>("/auth/login/verify-otp", { email, otp }),
 
   register: (data: Record<string, unknown>) =>
     api.post<ApiResponse<RegisterResponse>>("/auth/register", data),
+
+  registerStep1: (data: { full_name: string; email: string; password: string }) =>
+    api.post<ApiResponse<RegisterStep1Response>>("/auth/register/step1", data),
+
+  verifyRegistrationOTP: (email: string, otp: string) =>
+    api.post<ApiResponse<VerifyRegistrationOTPResponse>>("/auth/register/verify-otp", { email, otp }),
+
+  registerStep2: (data: Record<string, unknown>) =>
+    api.post<ApiResponse<RegisterResponse>>("/auth/register/step2", data),
+
+  registerGoogle: (data: Record<string, unknown>) =>
+    api.post<ApiResponse<RegisterResponse>>("/auth/register-google", data),
 
   logout: () => postApi("/auth/logout"),
 
@@ -59,6 +87,9 @@ export const authService = {
 
   verifyOTP: (email: string, otp: string) =>
     api.post<ApiResponse<{ verified: boolean }>>("/auth/verify-otp", { email, otp }),
+
+  resendOTP: (email: string, purpose: "registration" | "login") =>
+    api.post<ApiResponse<{ message: string }>>("/auth/resend-otp", { email, purpose }),
 
   forgotPassword: (email: string) =>
     api.post<ApiResponse<{ message: string }>>("/auth/forgot-password", { email }),

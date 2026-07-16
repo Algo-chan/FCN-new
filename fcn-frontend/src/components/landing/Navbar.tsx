@@ -48,7 +48,7 @@ export const Navbar = () => {
           <img
             src="/logo/fcn-logo-full.png"
             alt="FCN Logo"
-            className="h-9 w-auto"
+            className="h-8 w-auto sm:h-9"
           />
         </Link>
 
@@ -119,7 +119,7 @@ export const Navbar = () => {
               exit={!shouldReduceMotion ? { x: "100%" } : undefined}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
               onClick={(e) => e.stopPropagation()}
-              className="fixed right-0 top-0 flex h-full w-72 flex-col bg-white px-6 py-8 dark:bg-[#0D1117]"
+              className="fixed right-0 top-0 flex h-full w-80 max-w-[85vw] flex-col bg-white px-6 py-8 dark:bg-[#0D1117]"
             >
               <div className="mb-8 flex justify-end">
                 <button onClick={closeMobile} className="rounded-lg p-2 text-fcn-text-light dark:text-fcn-text-dark" aria-label="Close menu">
@@ -133,7 +133,7 @@ export const Navbar = () => {
                     key={link.href}
                     href={link.href}
                     onClick={(e) => { handleNavClick(e, link.href); closeMobile(); }}
-                    className="rounded-lg px-4 py-3 text-base font-medium text-fcn-text-light transition hover:bg-fcn-primary/10 dark:text-fcn-text-dark"
+                    className="rounded-lg px-4 py-4 text-base font-medium text-fcn-text-light transition hover:bg-fcn-primary/10 dark:text-fcn-text-dark"
                   >
                     {link.label}
                   </a>

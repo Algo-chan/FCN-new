@@ -114,7 +114,7 @@ export const HeroSection = () => {
             Now Live in Dire Dawa, Ethiopia
           </motion.div>
 
-          <h1 className="mb-4 text-4xl font-extrabold leading-tight tracking-tight text-white sm:text-5xl lg:text-6xl">
+          <h1 className="mb-4 text-3xl font-extrabold leading-tight tracking-tight text-white sm:text-5xl lg:text-6xl">
             {words.map((word, i) => (
               <motion.span
                 key={word}
@@ -132,7 +132,7 @@ export const HeroSection = () => {
             initial={shouldReduceMotion ? false : { opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: shouldReduceMotion ? 0 : 0.6 }}
-            className="mx-auto mb-2 max-w-lg text-base leading-relaxed text-gray-300 lg:mx-0"
+            className="mx-auto mb-2 max-w-lg text-sm leading-relaxed text-gray-300 sm:text-base lg:mx-0"
           >
             Get a full hospital experience from home. Remote consultation, AI-powered health checks, nurse-dispatched home visits, and e-prescriptions — all on one platform built for Ethiopia.
           </motion.p>
@@ -150,18 +150,18 @@ export const HeroSection = () => {
             initial={shouldReduceMotion ? false : { opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: shouldReduceMotion ? 0 : 0.9 }}
-            className="flex flex-wrap items-center gap-4"
+            className="flex flex-col gap-3 sm:flex-row sm:items-center sm:flex-wrap sm:gap-4"
           >
             <Link to="/register" onClick={() => playTransition()}>
               <motion.div whileHover={shouldReduceMotion ? {} : { scale: 1.05 }} whileTap={{ scale: 0.98 }}>
-                <Button size="lg" className="bg-gradient-to-r from-fcn-primary to-fcn-accent text-white shadow-lg shadow-fcn-accent/25 hover:shadow-fcn-accent/40">
+                <Button size="lg" className="w-full sm:w-auto bg-gradient-to-r from-fcn-primary to-fcn-accent text-white shadow-lg shadow-fcn-accent/25 hover:shadow-fcn-accent/40">
                   Get Care Now
                   <motion.span className="ml-2 inline-block" whileHover={shouldReduceMotion ? {} : { x: 3 }}><ArrowRight className="h-4 w-4" /></motion.span>
                 </Button>
               </motion.div>
             </Link>
             <a href="#how-it-works" onClick={(e) => { e.preventDefault(); document.getElementById("how-it-works")?.scrollIntoView({ behavior: "smooth" }); }}>
-              <Button variant="ghost" size="lg" className="text-white hover:bg-white/10">
+              <Button variant="ghost" size="lg" className="w-full sm:w-auto text-white hover:bg-white/10">
                 <Play className="mr-2 h-4 w-4" /> Watch How It Works
               </Button>
             </a>
@@ -172,7 +172,7 @@ export const HeroSection = () => {
             initial={shouldReduceMotion ? false : { opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: shouldReduceMotion ? 0 : 1.2 }}
-            className="mt-8 flex flex-wrap items-center gap-4 text-sm text-gray-400"
+            className="mt-8 flex flex-wrap items-center gap-3 text-xs text-gray-400 sm:gap-4 sm:text-sm"
           >
             <span>🏥 3 Partner Hospitals</span>
             <span className="hidden sm:inline">·</span>
@@ -183,7 +183,7 @@ export const HeroSection = () => {
         </div>
 
         {/* Right column — Phone mockup */}
-        <div className="flex-1">
+        <div className="hidden flex-1 sm:block">
           <div ref={phoneRef} className="mx-auto w-64 sm:w-72" style={{ willChange: "transform" }}>
             <div className="rounded-[2.5rem] border-4 border-gray-600 bg-gray-900 p-3 shadow-2xl">
               <div className="overflow-hidden rounded-[2rem] bg-white dark:bg-[#0D1117]">

@@ -1,6 +1,6 @@
 import { useState, useMemo, useCallback, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useReducedMotion } from "framer-motion";
 import { clsx } from "clsx";
 import {
@@ -33,9 +33,12 @@ const typeOptions = [
 
 const BookAppointmentPage = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const shouldReduceMotion = useReducedMotion();
   const { addToast } = useNotifications();
   const { isPaymentEnabled, isFreePeriod, isLoading: settingsLoading } = useSystemSettings();
+
+  const preselectedDoctorId = searchParams.get("doctor_id");
 
   const [step, setStep] = useState<Step>("doctor");
   const [search, setSearch] = useState("");
@@ -47,7 +50,6 @@ const BookAppointmentPage = () => {
   const [chiefComplaint, setChiefComplaint] = useState("");
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [confirmationType, setConfirmationType] = useState<"created" | "cancelled" | "rescheduled">("created");
-  const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
 
   const debouncedSearch = useDebounce(search, 300);
 
@@ -92,8 +94,7 @@ const BookAppointmentPage = () => {
       });
       return res.data;
     },
-    onSuccess: (result) => {
-      setCheckoutUrl(result?.chapa_checkout_url ?? null);
+    onSuccess: () => {
       setConfirmationType("created");
       setShowConfirmation(true);
     },
@@ -130,6 +131,15 @@ const BookAppointmentPage = () => {
     setSelectedTimeLabel("");
     setStep("datetime");
   }, []);
+
+  useEffect(() => {
+    if (preselectedDoctorId && doctors.length > 0 && !selectedDoctor) {
+      const doctor = doctors.find((d) => d.id === preselectedDoctorId);
+      if (doctor) {
+        handleDoctorSelect(doctor);
+      }
+    }
+  }, [preselectedDoctorId, doctors, selectedDoctor, handleDoctorSelect]);
 
   const handleBack = useCallback(() => {
     if (step === "datetime") { setStep("doctor"); return; }
@@ -453,7 +463,6 @@ const BookAppointmentPage = () => {
             navigate("/appointments");
           }}
           type={confirmationType}
-          checkoutUrl={checkoutUrl}
         />
       </div>
     </PageTransition>

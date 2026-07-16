@@ -40,7 +40,7 @@ export const FinalCTASection = () => {
   }, [shouldReduceMotion]);
 
   return (
-    <section ref={sectionRef} className="relative overflow-hidden bg-gradient-to-br from-fcn-primary to-fcn-accent py-24">
+    <section ref={sectionRef} className="relative overflow-hidden bg-gradient-to-br from-fcn-primary to-fcn-accent py-12 px-4 sm:py-24 sm:px-6">
       {/* Floating particles */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         {particles.map((p) => (
@@ -54,19 +54,19 @@ export const FinalCTASection = () => {
         viewport={{ once: true }}
         className="relative z-10 mx-auto max-w-3xl px-4 text-center sm:px-6"
       >
-        <h2 className="mb-4 text-3xl font-extrabold text-white sm:text-4xl">Ready to Experience Healthcare Without Walls?</h2>
-        <p className="mb-8 text-lg text-white/80">Join thousands of patients and doctors already using FCN in Dire Dawa</p>
-        <div className="flex flex-wrap items-center justify-center gap-4">
+        <h2 className="mb-4 text-2xl font-extrabold text-white sm:text-3xl md:text-4xl">Ready to Experience Healthcare Without Walls?</h2>
+        <p className="mb-8 text-sm text-white/80 sm:text-lg">Join thousands of patients and doctors already using FCN in Dire Dawa</p>
+        <div className="flex flex-col items-center justify-center gap-3 sm:flex-row sm:flex-wrap sm:gap-4">
           <Link to="/register" onClick={() => playTransition()}>
             <motion.div whileHover={shouldReduceMotion ? {} : { scale: 1.05 }}>
-              <Button className="bg-white text-fcn-primary hover:bg-white/90">Get Started Free</Button>
+              <Button className="w-full bg-white text-fcn-primary hover:bg-white/90 sm:w-auto">Get Started Free</Button>
             </motion.div>
           </Link>
           <a href="mailto:hello@fcn.health">
-            <Button variant="ghost" className="border border-white/40 text-white hover:bg-white/10">Talk to Our Team</Button>
+            <Button variant="ghost" className="w-full border border-white/40 text-white hover:bg-white/10 sm:w-auto">Talk to Our Team</Button>
           </a>
         </div>
-        <p className="mt-8 text-sm italic text-white/60">ጤናዎ ቅድሚያ የምንሰጠው ነው</p>
+        <p className="mt-8 text-xs italic text-white/60 sm:text-sm">ጤናዎ ቅድሚያ የምንሰጠው ነው</p>
       </motion.div>
     </section>
   );

@@ -8,6 +8,14 @@ interface RateLimitOptions {
   windowSeconds?: number;
 }
 
+const INCR_EXPIRE_SCRIPT = `
+local count = redis.call('INCR', KEYS[1])
+if count == 1 then
+  redis.call('EXPIRE', KEYS[1], ARGV[1])
+end
+return count
+`;
+
 export const redisRateLimit = (options: RateLimitOptions = {}) => {
   const keyPrefix = options.keyPrefix ?? "rate-limit";
   const maxRequests = options.maxRequests ?? 100;
@@ -18,11 +26,8 @@ export const redisRateLimit = (options: RateLimitOptions = {}) => {
     const key = `${keyPrefix}:${identifier}`;
 
     try {
-      const count = await redis.incr(key);
-
-      if (count === 1) {
-        await redis.expire(key, windowSeconds);
-      }
+      const result = await redis.eval(INCR_EXPIRE_SCRIPT, 1, key, windowSeconds.toString());
+      const count = Number(result);
 
       res.setHeader("X-RateLimit-Limit", maxRequests);
       res.setHeader("X-RateLimit-Remaining", Math.max(maxRequests - count, 0));
@@ -34,7 +39,7 @@ export const redisRateLimit = (options: RateLimitOptions = {}) => {
 
       next();
     } catch {
-      next();
+      errorResponse(res, "Service temporarily unavailable", 503, "RATE_LIMIT_UNAVAILABLE");
     }
   };
 };

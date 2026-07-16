@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { format, parseISO } from "date-fns";
@@ -35,7 +36,7 @@ const VitalBadge = ({ label, value, unit }: { label: string; value: number | nul
   );
 };
 
-const ActivePatientCard = ({ patient }: { patient: ActivePatient }) => (
+const ActivePatientCard = ({ patient, onView }: { patient: ActivePatient; onView: (patientId: string) => void }) => (
   <Card hoverable className="space-y-3">
     <div className="flex items-start gap-3">
       <Avatar name={patient.full_name} imageUrl={patient.photo_url} role="patient" size="md" />
@@ -48,7 +49,7 @@ const ActivePatientCard = ({ patient }: { patient: ActivePatient }) => (
           )}
         </div>
       </div>
-      <Button size="sm" variant="ghost" icon={<ChevronRight className="h-4 w-4" />}>
+      <Button size="sm" variant="ghost" icon={<ChevronRight className="h-4 w-4" />} onClick={() => onView(patient.patient_id)}>
         View
       </Button>
     </div>
@@ -103,6 +104,7 @@ const PreviousPatientRow = ({ patient }: { patient: PreviousPatient }) => (
 );
 
 const DoctorPatientsPage = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<Tab>("active");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
@@ -188,7 +190,7 @@ const DoctorPatientsPage = () => {
           ) : (
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {filteredActive.map((p: ActivePatient) => (
-                <ActivePatientCard key={p.patient_id} patient={p} />
+                <ActivePatientCard key={p.patient_id} patient={p} onView={(id) => navigate(`/doctor/patients/${id}`)} />
               ))}
             </div>
           )}

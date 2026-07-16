@@ -13,7 +13,7 @@ export const chapaWebhookController = async (req: Request, res: Response, next: 
     }
 
     const rawBody = (req as any).rawBody || JSON.stringify(req.body);
-    const secret = env.CHAPA_SECRET_KEY;
+    const secret = env.CHAPA_WEBHOOK_SECRET || env.CHAPA_SECRET_KEY;
     const isValid = chapaService.verifyWebhookSignature(signature, rawBody, secret);
 
     if (!isValid) {

@@ -39,7 +39,7 @@ export const TestimonialsSection = () => {
   const t = testimonials[current];
 
   return (
-    <section className="py-20">
+    <section className="py-10 px-4 sm:py-20 sm:px-6">
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={!shouldReduceMotion ? { opacity: 0, y: 20 } : undefined}
@@ -47,7 +47,7 @@ export const TestimonialsSection = () => {
           viewport={{ once: true, margin: "-80px" }}
           className="mb-12 text-center"
         >
-          <h2 className="text-3xl font-bold text-fcn-text-light dark:text-white">Real Stories, Real Care</h2>
+          <h2 className="text-2xl font-bold text-fcn-text-light dark:text-white sm:text-3xl">Real Stories, Real Care</h2>
           <p className="mt-2 text-fcn-text-light/60 dark:text-gray-400">Hear from patients who found FCN</p>
         </motion.div>
 
@@ -63,14 +63,14 @@ export const TestimonialsSection = () => {
               animate={{ opacity: 1, scale: 1 }}
               exit={!shouldReduceMotion ? { opacity: 0, scale: 0.96 } : undefined}
               transition={{ duration: shouldReduceMotion ? 0 : 0.4 }}
-              className="rounded-2xl border border-fcn-primary/10 bg-white p-8 text-center dark:bg-white/[0.03]"
+              className="rounded-2xl border border-fcn-primary/10 bg-white p-5 text-center dark:bg-white/[0.03] sm:p-8"
             >
               <Quote className="mx-auto mb-4 h-8 w-8 text-fcn-accent/40" />
-              <blockquote className="mb-6 text-lg italic leading-relaxed text-fcn-text-light dark:text-gray-200">
+              <blockquote className="mb-6 text-sm italic leading-relaxed text-fcn-text-light dark:text-gray-200 sm:text-lg">
                 &ldquo;{t.quote}&rdquo;
               </blockquote>
 
-              <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center overflow-hidden rounded-full border-2 border-fcn-accent/30">
+              <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border-2 border-fcn-accent/30 sm:h-14 sm:w-14">
                 <ImagePlaceholder query={t.imgQuery} alt={t.name} aspectRatio="1/1" rounded="full" className="h-full w-full" />
               </div>
               <p className="font-semibold text-fcn-text-light dark:text-white">{t.name}</p>
@@ -84,10 +84,10 @@ export const TestimonialsSection = () => {
           </AnimatePresence>
 
           {/* Navigation */}
-          <button onClick={prev} className="absolute left-0 top-1/2 -translate-x-4 -translate-y-1/2 rounded-full bg-white p-2 shadow-lg dark:bg-[#0D1117] dark:shadow-white/5" aria-label="Previous">
+          <button onClick={prev} className="absolute left-0 top-1/2 -translate-x-3 -translate-y-1/2 rounded-full bg-white p-2.5 shadow-lg dark:bg-[#0D1117] dark:shadow-white/5 sm:-translate-x-4 sm:p-2" aria-label="Previous">
             <ChevronLeft className="h-5 w-5 text-fcn-text-light dark:text-white" />
           </button>
-          <button onClick={next} className="absolute right-0 top-1/2 translate-x-4 -translate-y-1/2 rounded-full bg-white p-2 shadow-lg dark:bg-[#0D1117] dark:shadow-white/5" aria-label="Next">
+          <button onClick={next} className="absolute right-0 top-1/2 translate-x-3 -translate-y-1/2 rounded-full bg-white p-2.5 shadow-lg dark:bg-[#0D1117] dark:shadow-white/5 sm:translate-x-4 sm:p-2" aria-label="Next">
             <ChevronRight className="h-5 w-5 text-fcn-text-light dark:text-white" />
           </button>
 
@@ -97,7 +97,7 @@ export const TestimonialsSection = () => {
               <button
                 key={i}
                 onClick={() => setCurrent(i)}
-                className={`h-2 rounded-full transition-all ${i === current ? "w-6 bg-fcn-accent" : "w-2 bg-fcn-primary/20"}`}
+                className={`h-2.5 rounded-full transition-all ${i === current ? "w-6 bg-fcn-accent" : "w-2.5 bg-fcn-primary/20"}`}
                 aria-label={`Go to testimonial ${i + 1}`}
               />
             ))}

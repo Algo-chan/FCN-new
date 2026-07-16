@@ -1,7 +1,6 @@
 import { Prisma } from "@prisma/client";
 import type { NextFunction, Request, Response } from "express";
 import { ZodError } from "zod";
-import { env } from "../config/env";
 import { logger } from "../utils/logger";
 
 interface AppError extends Error {
@@ -37,16 +36,14 @@ export const errorMiddleware = (
 
   logger.error(message, {
     code,
-    statusCode,
-    stack: env.NODE_ENV === "production" ? undefined : error.stack
+    statusCode
   });
 
   return res.status(statusCode).json({
     success: false,
     error: {
       code,
-      message: env.NODE_ENV === "production" && statusCode === 500 ? "Internal server error" : message,
-      ...(env.NODE_ENV !== "production" && error.stack ? { stack: error.stack } : {})
+      message: statusCode === 500 ? "Internal server error" : message
     }
   });
 };

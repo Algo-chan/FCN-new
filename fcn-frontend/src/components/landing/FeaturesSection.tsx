@@ -19,19 +19,19 @@ const FeatureCard = ({ icon: Icon, title, body, delay }: FeatureCardProps) => {
       viewport={{ once: true, margin: "-60px" }}
       transition={{ delay: shouldReduceMotion ? 0 : delay, duration: shouldReduceMotion ? 0 : 0.4 }}
       whileHover={shouldReduceMotion ? {} : { y: -8, boxShadow: "0 20px 40px rgba(10,126,164,0.15)" }}
-      className="group rounded-2xl border border-fcn-primary/10 bg-white p-6 transition-shadow dark:bg-white/[0.03]"
+      className="group rounded-2xl border border-fcn-primary/10 bg-white p-4 transition-shadow dark:bg-white/[0.03] sm:p-6"
     >
       <m.div
         initial={shouldReduceMotion ? false : { scale: 0 }}
         whileInView={{ scale: 1 }}
         viewport={{ once: true }}
         transition={{ delay: shouldReduceMotion ? 0 : delay + 0.1, type: "spring" }}
-        className="mb-4 inline-flex rounded-xl bg-gradient-to-br from-fcn-primary/15 to-fcn-accent/15 p-3"
+        className="mb-3 inline-flex rounded-xl bg-gradient-to-br from-fcn-primary/15 to-fcn-accent/15 p-2 sm:mb-4 sm:p-3"
       >
-        <Icon className="h-6 w-6 text-fcn-primary" />
+        <Icon className="h-5 w-5 text-fcn-primary sm:h-6 sm:w-6" />
       </m.div>
-      <h3 className="mb-2 text-lg font-semibold text-fcn-text-light dark:text-white">{title}</h3>
-      <p className="text-sm leading-relaxed text-fcn-text-light/60 dark:text-gray-400">{body}</p>
+      <h3 className="mb-1 text-sm font-semibold text-fcn-text-light dark:text-white sm:mb-2 sm:text-lg">{title}</h3>
+      <p className="text-xs leading-relaxed text-fcn-text-light/60 dark:text-gray-400 sm:text-sm">{body}</p>
     </motion.div>
   );
 };
@@ -52,7 +52,7 @@ export const FeaturesSection = () => {
   ];
 
   return (
-    <section ref={ref} id="features" className="scroll-mt-20 py-20">
+    <section ref={ref} id="features" className="scroll-mt-20 py-10 px-4 sm:py-20 sm:px-6">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
@@ -60,10 +60,10 @@ export const FeaturesSection = () => {
           viewport={{ once: true, margin: "-80px" }}
           className="mb-14 text-center"
         >
-          <h2 className="text-3xl font-bold text-fcn-text-light dark:text-white">Everything You Need, One Platform</h2>
-          <p className="mt-2 text-fcn-text-light/60 dark:text-gray-400">From symptom check to medication delivery — FCN handles your complete healthcare journey</p>
+          <h2 className="text-2xl font-bold text-fcn-text-light dark:text-white sm:text-3xl">Everything You Need, One Platform</h2>
+          <p className="mt-2 text-sm text-fcn-text-light/60 dark:text-gray-400 sm:text-base">From symptom check to medication delivery — FCN handles your complete healthcare journey</p>
         </motion.div>
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
           {features.map((f, i) => (
             <FeatureCard key={f.title} {...f} delay={i * 0.08} />
           ))}

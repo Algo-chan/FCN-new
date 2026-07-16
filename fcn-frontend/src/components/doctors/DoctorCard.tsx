@@ -1,4 +1,5 @@
 import { motion, useReducedMotion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import { Building2, CalendarPlus, Star } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -13,6 +14,7 @@ interface DoctorCardProps {
 
 export const DoctorCard = ({ doctor, index, onClick }: DoctorCardProps) => {
   const shouldReduceMotion = useReducedMotion();
+  const navigate = useNavigate();
   const p = doctor.doctor_profile;
 
   const statusColors: Record<string, string> = {
@@ -124,7 +126,7 @@ export const DoctorCard = ({ doctor, index, onClick }: DoctorCardProps) => {
               size="sm"
               onClick={(e) => {
                 e.stopPropagation();
-                window.location.href = `/appointments/book?doctor_id=${doctor.id}`;
+                navigate(`/appointments/book?doctor_id=${doctor.id}`);
               }}
             >
               <CalendarPlus className="h-4 w-4" />

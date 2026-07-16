@@ -4,7 +4,7 @@ import { logActivity } from "../../utils/activity-logger";
 import { emailService } from "../auth/email.service";
 import { notificationService } from "../notifications/notification.service";
 import { ACTIVITY_ACTIONS } from "../../constants/activity-actions";
-import { redis } from "../../config/redis";
+import { redis, redisSet } from "../../config/redis";
 import { logger } from "../../utils/logger";
 import { MASTER_SPECIALTIES } from "../../constants/specialties";
 
@@ -570,15 +570,7 @@ export class AdminService {
     });
 
     try {
-      const pattern = `refresh:${userId}:*`;
-      let cursor = "0";
-      do {
-        const [nextCursor, keys] = await redis.scan(cursor, "MATCH", pattern, "COUNT", 100);
-        cursor = nextCursor;
-        if (keys.length > 0) {
-          await redis.del(...keys);
-        }
-      } while (cursor !== "0");
+      await redisSet(`blacklist:user:${userId}`, "1", 3 * 24 * 60 * 60);
     } catch (err) {
       logger.error("Failed to blacklist refresh tokens:", err);
     }

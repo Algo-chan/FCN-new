@@ -26,7 +26,7 @@ const envSchema = z.object({
   CLOUDINARY_CLOUD_NAME: z.string().optional().default(""),
   CLOUDINARY_API_KEY: z.string().optional().default(""),
   CLOUDINARY_API_SECRET: z.string().optional().default(""),
-  ANTHROPIC_API_KEY: z.string().optional().default(""),
+  GEMINI_API_KEY: z.string().optional().default(""),
   SMTP_HOST: requiredText("SMTP_HOST"),
   SMTP_PORT: z.coerce.number().int().positive().default(587),
   SMTP_USER: z.string().optional().default(""),
@@ -40,7 +40,9 @@ const envSchema = z.object({
   GOOGLE_CLIENT_SECRET: z.string().optional().default(""),
   GOOGLE_CALLBACK_URL: z.string().url().optional().or(z.literal("")).default(""),
   SESSION_SECRET: requiredText("SESSION_SECRET").min(32, "SESSION_SECRET must be at least 32 characters"),
-  CHAPA_SECRET_KEY: z.string().optional().default("")
+  CHAPA_SECRET_KEY: z.string().optional().default(""),
+  CHAPA_WEBHOOK_SECRET: z.string().optional().default(""),
+  BACKEND_URL: requiredText("BACKEND_URL").url("BACKEND_URL must be a valid URL")
 });
 
 const parsed = envSchema.safeParse(process.env);

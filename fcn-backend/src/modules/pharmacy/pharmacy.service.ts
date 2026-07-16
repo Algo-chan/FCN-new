@@ -535,8 +535,7 @@ class PharmacyService {
 
       const newDispenseCount = prescription.dispense_count + 1;
       const allMedicationsDispensed = medicationsDispensed.length >= prescription.medications.length;
-      const isOngoingOnly = prescription.medications.every((m) => true);
-      const isLastDispense = newDispenseCount > prescription.max_refills;
+      const isLastDispense = newDispenseCount >= prescription.max_refills;
 
       await tx.prescription.update({
         where: { id: prescriptionId },

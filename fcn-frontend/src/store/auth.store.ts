@@ -39,7 +39,6 @@ export const useAuthStore = create<AuthState>((set) => ({
       accessToken: tokens.accessToken,
       refreshToken: tokens.refreshToken,
       isAuthenticated: true,
-      onboardingCompleted: false,
       last_activity: now
     });
   },
