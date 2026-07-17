@@ -1,4 +1,8 @@
 {
-  "buildCommand": "rm -rf node_modules/.cache && npm run build",
-  "framework": "vite"
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
 }
