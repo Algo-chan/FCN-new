@@ -8,6 +8,10 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: "autoUpdate",
+      workbox: {
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
+        globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"]
+      },
       manifest: {
         name: "FCN - Foundation Care Network",
         short_name: "FCN",
@@ -29,6 +33,22 @@ export default defineConfig({
       }
     })
   ],
+  build: {
+    chunkSizeWarningLimit: 1000,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          "react-vendor": ["react", "react-dom", "react-router-dom"],
+          "ui-vendor": ["framer-motion", "lucide-react"],
+          "chart-vendor": ["recharts"],
+          "form-vendor": ["react-hook-form", "@hookform/resolvers", "zod"],
+          "query-vendor": ["@tanstack/react-query"],
+          "socket-vendor": ["socket.io-client"],
+          "gsap-vendor": ["gsap"]
+        }
+      }
+    }
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "src")
