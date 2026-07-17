@@ -9,7 +9,7 @@ export default defineConfig({
     VitePWA({
       registerType: "autoUpdate",
       workbox: {
-        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
+        maximumFileSizeToCacheInBytes: 10 * 1024 * 1024,
         globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"]
       },
       manifest: {
@@ -37,14 +37,23 @@ export default defineConfig({
     chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
-        manualChunks: {
-          "react-vendor": ["react", "react-dom", "react-router-dom"],
-          "ui-vendor": ["framer-motion", "lucide-react"],
-          "chart-vendor": ["recharts"],
-          "form-vendor": ["react-hook-form", "@hookform/resolvers", "zod"],
-          "query-vendor": ["@tanstack/react-query"],
-          "socket-vendor": ["socket.io-client"],
-          "gsap-vendor": ["gsap"]
+        manualChunks(id) {
+          if (id.includes("node_modules")) {
+            if (id.includes("react-dom") || id.includes("react/") || id.includes("react-router")) return "vendor-react";
+            if (id.includes("framer-motion") || id.includes("lucide-react") || id.includes("clsx") || id.includes("tailwind-merge")) return "vendor-ui";
+            if (id.includes("recharts") || id.includes("d3-")) return "vendor-charts";
+            if (id.includes("react-hook-form") || id.includes("@hookform") || id.includes("zod")) return "vendor-forms";
+            if (id.includes("@tanstack")) return "vendor-query";
+            if (id.includes("socket.io")) return "vendor-socket";
+            if (id.includes("gsap")) return "vendor-gsap";
+            if (id.includes("firebase")) return "vendor-firebase";
+            if (id.includes("leaflet") || id.includes("react-leaflet")) return "vendor-maps";
+            if (id.includes("jspdf") || id.includes("html2canvas")) return "vendor-pdf";
+            if (id.includes("date-fns")) return "vendor-date";
+            if (id.includes("axios")) return "vendor-http";
+            if (id.includes("howler")) return "vendor-audio";
+            return "vendor-misc";
+          }
         }
       }
     }
