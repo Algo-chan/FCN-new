@@ -67,6 +67,13 @@ const SessionRestorer = () => {
                   accessToken: data.data!.accessToken,
                   refreshToken: data.data!.refreshToken
                 });
+                if (user.role === "patient") {
+                  authService.getOnboardingStatus()
+                    .then(({ data: onboarding }) => {
+                      useAuthStore.getState().setOnboardingCompleted(onboarding.data?.completed ?? false);
+                    })
+                    .catch(() => {});
+                }
               }
             });
           }
