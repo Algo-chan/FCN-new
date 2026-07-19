@@ -4,8 +4,10 @@ WORKDIR /app
 
 COPY package*.json ./
 COPY src/prisma ./src/prisma
+ARG CACHEBUST=1
 RUN npm ci
 
+ARG CACHEBUST=1
 COPY tsconfig.json ./
 COPY server.ts ./
 COPY src ./src
