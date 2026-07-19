@@ -63,17 +63,18 @@ const SessionRestorer = () => {
             return authService.getMe().then(({ data: meData }) => {
               const user = meData.data;
               if (user) {
-                useAuthStore.getState().login(user, {
-                  accessToken: data.data!.accessToken,
-                  refreshToken: data.data!.refreshToken
-                });
+                const tokens = { accessToken: data.data!.accessToken, refreshToken: data.data!.refreshToken };
                 if (user.role === "patient") {
-                  authService.getOnboardingStatus()
+                  return authService.getOnboardingStatus()
                     .then(({ data: onboarding }) => {
                       useAuthStore.getState().setOnboardingCompleted(onboarding.data?.completed ?? false);
+                      useAuthStore.getState().login(user, tokens);
                     })
-                    .catch(() => {});
+                    .catch(() => {
+                      useAuthStore.getState().login(user, tokens);
+                    });
                 }
+                useAuthStore.getState().login(user, tokens);
               }
             });
           }
