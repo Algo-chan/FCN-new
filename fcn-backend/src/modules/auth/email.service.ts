@@ -15,7 +15,10 @@ export class EmailService {
     },
     tls: {
       rejectUnauthorized: false  // PPL Host compatibility
-    }
+    },
+    connectionTimeout: 10000,
+    greetingTimeout: 5000,
+    socketTimeout: 10000
   });
 
   private async send(to: string, subject: string, html: string): Promise<void> {

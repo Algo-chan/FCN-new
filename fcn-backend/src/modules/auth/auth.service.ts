@@ -100,11 +100,9 @@ export class AuthService {
     });
     await redisSet(`otp:register:data:${data.email}`, tempData, OTP_TTL_SECONDS);
 
-    try {
-      await this.sendOTP(data.email, "verification");
-    } catch (err) {
+    this.sendOTP(data.email, "verification").catch((err) => {
       logger.warn("Failed to send registration OTP email, but OTP is stored in Redis", { email: data.email, error: (err as Error).message });
-    }
+    });
   }
 
   async verifyRegistrationOTP(email: string, otp: string): Promise<boolean> {
@@ -225,15 +223,12 @@ export class AuthService {
 
     await redisSet(resendKey, String(resendCount + 1), OTP_LOCK_TTL_SECONDS);
 
-    try {
-      if (purpose === "registration") {
-        await this.sendOTP(email, "verification");
-      } else {
-        await this.sendOTP(email, "login");
-      }
-    } catch (err) {
+    const sendPromise = purpose === "registration"
+      ? this.sendOTP(email, "verification")
+      : this.sendOTP(email, "login");
+    sendPromise.catch((err) => {
       logger.warn("Failed to resend OTP email, but OTP is stored in Redis", { email, purpose, error: (err as Error).message });
-    }
+    });
   }
 
   async login(email: string, password: string): Promise<{ user?: SafeUser; tokens?: AuthTokens; requiresOTP: boolean; email: string }> {
@@ -258,11 +253,9 @@ export class AuthService {
       throw new AppError("Your account application was rejected", 403, "ACCOUNT_REJECTED");
     }
 
-    try {
-      await this.sendOTP(email, "login");
-    } catch (err) {
+    this.sendOTP(email, "login").catch((err) => {
       logger.warn("Failed to send login OTP email, but OTP is stored in Redis", { email, error: (err as Error).message });
-    }
+    });
     return { requiresOTP: true, email };
   }
 
@@ -363,7 +356,12 @@ export class AuthService {
       logger.info(`DEV OTP for ${email}: ${otp}`);
     }
 
-    await emailService.sendOTPEmail(email, otp, purpose === "login" ? "verification" : purpose);
+    try {
+      await emailService.sendOTPEmail(email, otp, purpose === "login" ? "verification" : purpose);
+    } catch (err) {
+      logger.warn(`SMTP failed for ${email}, falling back to log`, { error: (err as Error).message });
+      logger.info(`OTP for ${email}: ${otp}`);
+    }
   }
 
   async verifyOTP(email: string, otp: string, purpose: "verification" | "reset" | "login"): Promise<boolean> {
