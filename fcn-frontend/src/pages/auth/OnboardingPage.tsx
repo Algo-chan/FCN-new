@@ -175,7 +175,13 @@ const OnboardingPage = () => {
     }
   };
 
-  const handleSkip = () => {
+  const handleSkip = async () => {
+    try {
+      await authService.skipOnboarding();
+      useAuthStore.getState().setOnboardingCompleted(true);
+    } catch {
+      // ignore — user can still navigate
+    }
     navigate("/dashboard", { replace: true });
   };
 

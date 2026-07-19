@@ -109,5 +109,8 @@ export const authService = {
     api.post<ApiResponse<{ completed: boolean }>>("/onboarding/patient/step3", data),
 
   getOnboardingStatus: () =>
-    api.get<ApiResponse<OnboardingStatus>>("/onboarding/patient/status")
+    api.get<ApiResponse<OnboardingStatus>>("/onboarding/patient/status"),
+
+  skipOnboarding: () =>
+    postApi<{ completed: boolean }>("/onboarding/patient/skip")
 };

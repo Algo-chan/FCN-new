@@ -78,6 +78,23 @@ onboardingRoutes.post(
   }
 );
 
+onboardingRoutes.post(
+  "/patient/skip",
+  authMiddleware,
+  requireRole("patient"),
+  async (_req: Request, res: Response, next: NextFunction) => {
+    try {
+      await prisma.patientProfile.update({
+        where: { user_id: _req.user!.id },
+        data: { onboarding_completed: true }
+      });
+      successResponse(res, { completed: true });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
 onboardingRoutes.get(
   "/patient/status",
   authMiddleware,
