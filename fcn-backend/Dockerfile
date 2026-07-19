@@ -21,12 +21,10 @@ RUN apt-get update -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists
 RUN addgroup --system fcn && adduser --system --ingroup fcn fcn
 
 COPY package*.json ./
-RUN npm ci --omit=dev && npm cache clean --force
+COPY src/prisma ./src/prisma
+RUN npm ci --omit=dev && npx prisma generate && npm cache clean --force
 
 COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
-COPY --from=builder /app/src/prisma ./src/prisma
 COPY entrypoint.sh ./
 RUN chmod +x entrypoint.sh
 
