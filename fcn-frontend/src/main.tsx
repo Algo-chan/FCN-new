@@ -37,14 +37,9 @@ const SessionRestorer = () => {
 
   useEffect(() => {
     const lastActivity = Number(localStorage.getItem("fcn_last_activity")) || 0;
-    const elapsed = Date.now() - lastActivity;
+    const elapsed = lastActivity ? Date.now() - lastActivity : 0;
 
-    if (!lastActivity) {
-      useAuthStore.getState().setLoading(false);
-      return;
-    }
-
-    if (elapsed > INACTIVITY_LIMIT) {
+    if (lastActivity && elapsed > INACTIVITY_LIMIT) {
       useAuthStore.getState().logout();
       useAuthStore.getState().setLoading(false);
       navigate("/login", { replace: true });

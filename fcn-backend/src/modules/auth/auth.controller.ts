@@ -25,8 +25,8 @@ const REFRESH_COOKIE = "fcn_refresh_token";
 const cookieOptions = {
   httpOnly: true,
   secure: env.NODE_ENV === "production",
-  sameSite: "strict" as const,
-  path: "/api/v1/auth/refresh",
+  sameSite: "none" as const,
+  path: "/",
   maxAge: 7 * 24 * 60 * 60 * 1000
 };
 
@@ -100,7 +100,7 @@ export const refreshTokenController = async (req: Request, res: Response, next: 
 
     const tokens = await authService.refreshToken(refreshToken);
     res.cookie(REFRESH_COOKIE, tokens.refreshToken, cookieOptions);
-    successResponse(res, { accessToken: tokens.accessToken });
+    successResponse(res, { accessToken: tokens.accessToken, refreshToken: tokens.refreshToken });
   } catch (error) {
     next(error);
   }
