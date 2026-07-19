@@ -27,10 +27,11 @@ const envSchema = z.object({
   CLOUDINARY_API_KEY: z.string().optional().default(""),
   CLOUDINARY_API_SECRET: z.string().optional().default(""),
   GEMINI_API_KEY: z.string().optional().default(""),
-  SMTP_HOST: requiredText("SMTP_HOST"),
+  SMTP_HOST: z.string().optional().default(""),
   SMTP_PORT: z.coerce.number().int().positive().default(587),
   SMTP_USER: z.string().optional().default(""),
   SMTP_PASS: z.string().optional().default(""),
+  RESEND_API_KEY: z.string().optional().default(""),
   ENCRYPTION_KEY: z
     .string()
     .regex(/^[a-fA-F0-9]{64}$/, "ENCRYPTION_KEY must be a 32-byte hex string"),

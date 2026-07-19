@@ -1,34 +1,31 @@
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 import { env } from "../../config/env";
 import { logger } from "../../utils/logger";
 
 type OtpPurpose = "verification" | "reset";
 
 export class EmailService {
-  private transporter = nodemailer.createTransport({
-    host: env.SMTP_HOST,        // mail.fcncare.com
-    port: Number(env.SMTP_PORT), // 465
-    secure: true,                // true for port 465
-    auth: {
-      user: env.SMTP_USER,      // noreply@fcncare.com
-      pass: env.SMTP_PASS,      // your password
-    },
-    tls: {
-      rejectUnauthorized: false  // PPL Host compatibility
-    },
-    connectionTimeout: 10000,
-    greetingTimeout: 5000,
-    socketTimeout: 10000
-  });
+  private resend: Resend | null = null;
+
+  private getClient(): Resend | null {
+    if (!env.RESEND_API_KEY) {
+      return null;
+    }
+    if (!this.resend) {
+      this.resend = new Resend(env.RESEND_API_KEY);
+    }
+    return this.resend;
+  }
 
   private async send(to: string, subject: string, html: string): Promise<void> {
-    if (!env.SMTP_USER || !env.SMTP_PASS) {
-      logger.info("DEV EMAIL", { to, subject, html });
+    const client = this.getClient();
+    if (!client) {
+      logger.info("DEV EMAIL (no Resend key)", { to, subject, html });
       return;
     }
 
-    await this.transporter.sendMail({
-      from: `"FCN" <${env.SMTP_USER}>`,
+    await client.emails.send({
+      from: "FCN <noreply@fcncare.com>",
       to,
       subject,
       html
