@@ -39,3 +39,5 @@ fcn-backend/src/prisma/migrations/migration_lock.toml
 # Temp
 tmp/
 temp/
+
+.vercel
