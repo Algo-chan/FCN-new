@@ -1,4 +1,4 @@
-FROM node:20-alpine AS builder
+FROM node:20-slim AS builder
 
 WORKDIR /app
 
@@ -11,21 +11,26 @@ COPY server.ts ./
 COPY src ./src
 RUN npm run build
 
-FROM node:20-alpine AS runtime
+FROM node:20-slim AS runtime
 
 WORKDIR /app
 ENV NODE_ENV=production
 
-RUN addgroup -S fcn && adduser -S fcn -G fcn
+RUN apt-get update -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
+
+RUN addgroup --system fcn && adduser --system --ingroup fcn fcn
 
 COPY package*.json ./
 RUN npm ci --omit=dev && npm cache clean --force
 
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 COPY --from=builder /app/src/prisma ./src/prisma
 COPY entrypoint.sh ./
 RUN chmod +x entrypoint.sh
+
+RUN chown -R fcn:fcn /app
 
 USER fcn
 EXPOSE 5000
