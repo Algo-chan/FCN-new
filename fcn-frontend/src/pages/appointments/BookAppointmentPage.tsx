@@ -151,11 +151,11 @@ const BookAppointmentPage = () => {
   }, [createMutation]);
 
   const renderStepIndicator = () => (
-    <div className="mb-8 flex items-center justify-center gap-2">
+    <div className="mb-6 md:mb-8 flex items-center justify-center gap-1 md:gap-2">
       {(["doctor", "datetime", "confirm"] as Step[]).map((s, i) => (
-        <div key={s} className="flex items-center gap-2">
+        <div key={s} className="flex items-center gap-1 md:gap-2">
           <div className={clsx(
-            "flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-colors",
+            "flex h-7 w-7 md:h-8 md:w-8 items-center justify-center rounded-full text-xs font-bold transition-colors",
             step === s
               ? "bg-fcn-primary text-white"
               : ["doctor", "datetime"].includes(step) && ["doctor", "datetime"].includes(s)
@@ -170,7 +170,7 @@ const BookAppointmentPage = () => {
           )}>
             {s === "doctor" ? "Doctor" : s === "datetime" ? "Date & Time" : "Confirm"}
           </span>
-          {i < 2 && <div className="h-px w-8 bg-fcn-primary/20" />}
+          {i < 2 && <div className="h-px w-6 md:w-8 bg-fcn-primary/20" />}
         </div>
       ))}
     </div>
@@ -189,12 +189,12 @@ const BookAppointmentPage = () => {
 
   return (
     <PageTransition>
-      <div className="mx-auto max-w-4xl">
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
+      <div className="mx-auto max-w-4xl pb-24 md:pb-0">
+        <div className="mb-4 md:mb-6">
+          <h1 className="text-xl md:text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
             Book an Appointment
           </h1>
-          <p className="mt-1 text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">
+          <p className="mt-1 text-xs md:text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">
             Find and book a consultation with a healthcare provider.
           </p>
         </div>
@@ -227,7 +227,7 @@ const BookAppointmentPage = () => {
                 </p>
               </div>
             ) : (
-              <div className="grid gap-3 sm:grid-cols-2">
+              <div className="grid gap-3 grid-cols-1 sm:grid-cols-2">
                 {doctors.map((doctor) => (
                   <Card
                     key={doctor.id}
@@ -240,7 +240,7 @@ const BookAppointmentPage = () => {
                     )}
                   >
                     <div className="flex items-start gap-3">
-                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-fcn-primary/10 text-lg">
+                      <div className="flex h-10 w-10 md:h-12 md:w-12 shrink-0 items-center justify-center rounded-full bg-fcn-primary/10 text-lg">
                         {renderSpecialtyIcon(doctor.doctor_profile?.specialty ?? "")}
                       </div>
                       <div className="min-w-0 flex-1">
@@ -272,12 +272,12 @@ const BookAppointmentPage = () => {
 
         {/* Step 2: Select Date, Time & Type */}
         {step === "datetime" && (
-          <div className="space-y-6">
+          <div className="space-y-4 md:space-y-6">
             <div>
               <h3 className="mb-3 text-sm font-semibold text-fcn-text-light dark:text-fcn-text-dark">
                 Consultation Type
               </h3>
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-3 gap-2 md:gap-3">
                 {typeOptions.map((option) => {
                   const Icon = option.icon;
                   const isSelected = selectedType === option.value;
@@ -286,15 +286,15 @@ const BookAppointmentPage = () => {
                       key={option.value}
                       onClick={() => setSelectedType(option.value)}
                       className={clsx(
-                        "flex flex-col items-center gap-1.5 rounded-lg border p-3 text-center text-xs transition-all",
+                        "flex flex-col items-center gap-1 md:gap-1.5 rounded-lg border p-2 md:p-3 text-center text-[10px] md:text-xs transition-all",
                         isSelected
                           ? "border-fcn-primary bg-fcn-primary/10 text-fcn-primary"
                           : "border-fcn-primary/10 text-fcn-text-light/60 hover:border-fcn-primary/30 dark:text-fcn-text-dark/60"
                       )}
                     >
-                      <Icon className="h-5 w-5" />
+                      <Icon className="h-4 w-4 md:h-5 md:w-5" />
                       <span className="font-medium">{option.label}</span>
-                      <span className="text-[10px] text-fcn-text-light/40 dark:text-fcn-text-dark/40">
+                      <span className="text-[9px] md:text-[10px] text-fcn-text-light/40 dark:text-fcn-text-dark/40">
                         {option.desc}
                       </span>
                     </button>
@@ -347,7 +347,7 @@ const BookAppointmentPage = () => {
                           setSelectedTimeLabel(slot.label);
                         }}
                         className={clsx(
-                          "rounded-lg border px-3 py-2 text-xs font-medium transition-all",
+                          "rounded-lg border px-2 md:px-3 py-2 text-xs font-medium transition-all",
                           selectedTime === slot.time
                             ? "border-fcn-primary bg-fcn-primary text-white"
                             : "border-fcn-primary/20 text-fcn-text-light hover:border-fcn-primary/40 dark:text-fcn-text-dark"
@@ -365,7 +365,7 @@ const BookAppointmentPage = () => {
 
         {/* Step 3: Confirm */}
         {step === "confirm" && selectedDoctor && (
-          <div className="grid gap-6 md:grid-cols-5">
+          <div className="grid gap-4 md:gap-6 md:grid-cols-5">
             <div className="space-y-4 md:col-span-3">
               <div>
                 <h3 className="mb-2 text-sm font-semibold text-fcn-text-light dark:text-fcn-text-dark">
@@ -398,11 +398,11 @@ const BookAppointmentPage = () => {
         )}
 
         {/* Navigation Buttons */}
-        <div className="mt-8 flex items-center justify-between">
+        <div className="mt-6 md:mt-8 flex items-center justify-between">
           <div>
             {step !== "doctor" && (
               <Button variant="ghost" onClick={handleBack} icon={<ChevronLeft className="h-4 w-4" />}>
-                Back
+                <span className="hidden sm:inline">Back</span>
               </Button>
             )}
           </div>
@@ -430,6 +430,7 @@ const BookAppointmentPage = () => {
                 onClick={handleConfirmBooking}
                 loading={createMutation.isPending}
                 disabled={createMutation.isPending}
+                className="hidden md:flex"
               >
                 {createMutation.isPending ? "Booking..." : "Confirm Booking"}
               </Button>
@@ -439,7 +440,7 @@ const BookAppointmentPage = () => {
 
         {/* Mobile sticky bottom bar for confirm step */}
         {step === "confirm" && (
-          <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-fcn-primary/10 bg-white px-4 py-3 dark:bg-fcn-dark md:hidden">
+          <div className="fixed bottom-0 left-0 right-0 z-30 border-t border-fcn-primary/10 bg-white px-4 py-3 dark:bg-fcn-dark md:hidden">
             <div className="flex items-center justify-between">
               <div className="text-sm">
                 <span className="text-fcn-text-light/60 dark:text-fcn-text-dark/60">Total: </span>

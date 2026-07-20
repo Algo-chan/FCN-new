@@ -13,13 +13,13 @@ import { Spinner } from "@/components/ui/Spinner";
 import { TodayVisitCard } from "@/components/nurse-dashboard/TodayVisitCard";
 
 const StatCard = ({ label, value, icon, color }: { label: string; value: number; icon: React.ReactNode; color: string }) => (
-  <Card className="flex items-center gap-4 p-4">
-    <div className={`flex h-12 w-12 items-center justify-center rounded-lg ${color}`}>
+  <Card className="flex items-center gap-3 md:gap-4 p-3 md:p-4">
+    <div className={`flex h-10 w-10 md:h-12 md:w-12 items-center justify-center rounded-lg ${color}`}>
       {icon}
     </div>
-    <div>
-      <p className="text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">{value}</p>
-      <p className="text-xs text-fcn-text-light/60 dark:text-fcn-text-dark/60">{label}</p>
+    <div className="min-w-0">
+      <p className="text-lg md:text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">{value}</p>
+      <p className="text-[10px] md:text-xs text-fcn-text-light/60 dark:text-fcn-text-dark/60 truncate">{label}</p>
     </div>
   </Card>
 );
@@ -74,18 +74,18 @@ export const NurseDashboard = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       <div>
-        <h1 className="text-xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
+        <h1 className="text-base md:text-xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
           {greeting}, {firstName} 🏠
         </h1>
-        <p className="text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60 mt-1">
+        <p className="text-xs md:text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60 mt-1">
           {stats?.today_visits ?? 0} {visitLabelPlural} scheduled today
         </p>
       </div>
 
       {stats && (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <div className="grid grid-cols-1 gap-3 md:gap-4 sm:grid-cols-3">
           <StatCard
             label={`Today's ${visitLabelPlural}`}
             value={stats.today_visits}

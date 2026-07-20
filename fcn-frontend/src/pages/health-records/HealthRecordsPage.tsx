@@ -119,24 +119,24 @@ const HealthRecordsPage = () => {
 
   return (
     <PageTransition>
-      <div className="mx-auto max-w-6xl space-y-6 px-4 py-6">
+      <div className="mx-auto max-w-6xl space-y-4 md:space-y-6 px-3 md:px-4 py-4 md:py-6">
         {/* Header */}
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center justify-between gap-2 md:gap-3">
+          <div className="flex items-center gap-2 md:gap-3">
             {routePatientId && (
               <Link
                 to="/health-records/nurse"
-                className="flex h-9 w-9 items-center justify-center rounded-lg border border-fcn-primary/15 text-fcn-text-light/60 hover:bg-fcn-primary/5 dark:text-fcn-text-dark/60"
+                className="flex h-8 w-8 md:h-9 md:w-9 items-center justify-center rounded-lg border border-fcn-primary/15 text-fcn-text-light/60 hover:bg-fcn-primary/5 dark:text-fcn-text-dark/60"
                 aria-label="Back"
               >
                 <ArrowLeft className="h-4 w-4" />
               </Link>
             )}
             <div>
-              <h1 className="text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
+              <h1 className="text-xl md:text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
                 {routePatientId ? "Patient Vitals" : "Health Records"}
               </h1>
-              <p className="text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">
+              <p className="text-xs md:text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">
                 {routePatientId ? "Recording vitals for patient" : "Track and manage your vital signs"}
               </p>
             </div>
@@ -150,16 +150,16 @@ const HealthRecordsPage = () => {
                 loading={isExporting}
               >
                 <Download className="h-4 w-4" />
-                Export PDF
+                <span className="hidden sm:inline">Export PDF</span>
               </Button>
               <Button
                 size="sm"
                 onClick={() => setShowForm(!showForm)}
               >
                 {showForm ? (
-                  <><X className="h-4 w-4" /> Close</>
+                  <><X className="h-4 w-4" /> <span className="hidden sm:inline">Close</span></>
                 ) : (
-                  <><Plus className="h-4 w-4" /> Record Vitals</>
+                  <><Plus className="h-4 w-4" /> <span className="hidden sm:inline">Record Vitals</span></>
                 )}
               </Button>
             </div>
@@ -187,19 +187,19 @@ const HealthRecordsPage = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex flex-col items-center justify-center py-16 text-center"
+            className="flex flex-col items-center justify-center py-12 md:py-16 text-center"
           >
             <motion.div
               animate={{ scale: [1, 1.1, 1] }}
               transition={{ duration: 2, repeat: Infinity }}
-              className="mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-fcn-primary/20 to-fcn-accent/20"
+              className="mb-6 flex h-20 w-20 md:h-24 md:w-24 items-center justify-center rounded-full bg-gradient-to-br from-fcn-primary/20 to-fcn-accent/20"
             >
-              <Heart className="h-10 w-10 text-fcn-accent" />
+              <Heart className="h-8 w-8 md:h-10 md:w-10 text-fcn-accent" />
             </motion.div>
-            <h2 className="text-xl font-bold text-fcn-text-light dark:text-fcn-text-dark mb-2">
+            <h2 className="text-lg md:text-xl font-bold text-fcn-text-light dark:text-fcn-text-dark mb-2">
               Start tracking your health
             </h2>
-            <p className="max-w-sm text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60 mb-6">
+            <p className="max-w-sm text-xs md:text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60 mb-6 px-4">
               Record your first vitals to see your health trends over time
             </p>
             <Button size="lg" onClick={() => setShowForm(true)}>
@@ -228,7 +228,7 @@ const HealthRecordsPage = () => {
             exit={{ opacity: 0, height: 0 }}
             className="overflow-hidden"
           >
-            <div className="rounded-xl border border-fcn-primary/10 bg-white p-4 dark:bg-fcn-dark">
+            <div className="rounded-xl border border-fcn-primary/10 bg-white p-3 md:p-4 dark:bg-fcn-dark">
               <h3 className="mb-4 text-sm font-semibold text-fcn-text-light dark:text-fcn-text-dark">
                 Record New Vitals
               </h3>
@@ -239,7 +239,7 @@ const HealthRecordsPage = () => {
 
         {/* Summary Cards */}
         {hasVitals && (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-3">
             <VitalSummaryCard
               label="Blood Pressure"
               value={latestBp ? `${latestBp.systolic}/${latestBp.diastolic}` : "—"}

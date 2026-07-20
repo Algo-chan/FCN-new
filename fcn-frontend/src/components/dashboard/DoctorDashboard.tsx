@@ -14,14 +14,14 @@ import { PreviousPatientsSection } from "@/components/doctor-dashboard/PreviousP
 import { EarningsSummaryPanel } from "@/components/doctor-dashboard/EarningsSummaryPanel";
 
 const StatCard = ({ label, value, icon, color, subtitle }: { label: string; value: number; icon: React.ReactNode; color: string; subtitle?: string }) => (
-  <Card className="flex items-center gap-4 p-4">
-    <div className={`flex h-12 w-12 items-center justify-center rounded-lg ${color}`}>
+  <Card className="flex items-center gap-3 md:gap-4 p-3 md:p-4">
+    <div className={`flex h-10 w-10 md:h-12 md:w-12 items-center justify-center rounded-lg ${color}`}>
       {icon}
     </div>
-    <div className="flex-1">
-      <p className="text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">{value}</p>
-      <p className="text-xs text-fcn-text-light/60 dark:text-fcn-text-dark/60">{label}</p>
-      {subtitle && <p className="text-[10px] text-fcn-text-light/40 dark:text-fcn-text-dark/40 mt-0.5">{subtitle}</p>}
+    <div className="flex-1 min-w-0">
+      <p className="text-lg md:text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">{value}</p>
+      <p className="text-[10px] md:text-xs text-fcn-text-light/60 dark:text-fcn-text-dark/60 truncate">{label}</p>
+      {subtitle && <p className="text-[9px] md:text-[10px] text-fcn-text-light/40 dark:text-fcn-text-dark/40 mt-0.5 truncate">{subtitle}</p>}
     </div>
   </Card>
 );
@@ -72,14 +72,14 @@ export const DoctorDashboard = () => {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="space-y-4 md:space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 md:gap-4">
         <div>
-          <h1 className="text-xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
+          <h1 className="text-base md:text-xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
             {greeting}, Dr. {lastName} 👨‍⚕️
           </h1>
           {subtitle && (
-            <p className={clsx("text-sm mt-1", stats?.pending_requests ? "text-fcn-warning" : "text-fcn-text-light/60 dark:text-fcn-text-dark/60")}>
+            <p className={clsx("text-xs md:text-sm mt-1", stats?.pending_requests ? "text-fcn-warning" : "text-fcn-text-light/60 dark:text-fcn-text-dark/60")}>
               {subtitle}
             </p>
           )}
@@ -90,7 +90,7 @@ export const DoctorDashboard = () => {
       </div>
 
       {stats && (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-4">
           <StatCard
             label="Today's Appointments"
             value={stats.today_appointments}

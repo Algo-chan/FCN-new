@@ -14,7 +14,7 @@ import type { DoctorWithProfile, DoctorFullProfile } from "@/types";
 
 const SkeletonCard = () => (
   <Card className="animate-pulse overflow-hidden p-0">
-    <div className="h-44 bg-fcn-primary/10" />
+    <div className="h-36 md:h-44 bg-fcn-primary/10" />
     <div className="p-4 space-y-3">
       <div className="h-5 w-32 rounded bg-fcn-primary/10" />
       <div className="h-3 w-24 rounded bg-fcn-primary/10" />
@@ -93,24 +93,24 @@ const FindDoctorsPage = () => {
 
   return (
     <PageTransition>
-      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 space-y-6">
+      <div className="space-y-4 md:space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
           <div>
-            <h1 className="text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
+            <h1 className="text-xl md:text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
               Find Doctors
             </h1>
-            <p className="text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">
+            <p className="text-xs md:text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">
               Browse verified healthcare professionals
             </p>
           </div>
         </div>
 
-        <div className="sticky top-0 z-30 -mx-4 px-4 py-3 bg-white/80 dark:bg-fcn-dark/80 backdrop-blur-md border-b border-fcn-primary/5">
+        <div className="sticky top-0 z-30 -mx-3 px-3 py-3 bg-white/80 dark:bg-fcn-dark/80 backdrop-blur-md border-b border-fcn-primary/5 sm:-mx-4 sm:px-4">
           <DoctorFilters filters={filters} onChange={updateFilters} />
         </div>
 
         {meta && (
-          <p className="text-sm text-fcn-text-light/50 dark:text-fcn-text-dark/50">
+          <p className="text-xs md:text-sm text-fcn-text-light/50 dark:text-fcn-text-dark/50">
             Showing {doctors.length} doctor{doctors.length !== 1 ? "s" : ""}
             {meta.total > 0 && ` (${meta.total} total)`}
           </p>
@@ -123,7 +123,7 @@ const FindDoctorsPage = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5"
             >
               {Array.from({ length: 6 }).map((_, i) => (
                 <SkeletonCard key={i} />
@@ -135,15 +135,15 @@ const FindDoctorsPage = () => {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
-              className="flex flex-col items-center justify-center py-20"
+              className="flex flex-col items-center justify-center py-16 md:py-20"
             >
-              <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-fcn-primary/5">
-                <Frown className="h-10 w-10 text-fcn-primary/30" />
+              <div className="mb-4 flex h-16 w-16 md:h-20 md:w-20 items-center justify-center rounded-full bg-fcn-primary/5">
+                <Frown className="h-8 w-8 md:h-10 md:w-10 text-fcn-primary/30" />
               </div>
-              <h3 className="text-lg font-semibold text-fcn-text-light dark:text-fcn-text-dark">
+              <h3 className="text-base md:text-lg font-semibold text-fcn-text-light dark:text-fcn-text-dark">
                 No doctors found
               </h3>
-              <p className="mt-1 text-sm text-fcn-text-light/50 dark:text-fcn-text-dark/50 text-center max-w-sm">
+              <p className="mt-1 text-xs md:text-sm text-fcn-text-light/50 dark:text-fcn-text-dark/50 text-center max-w-sm px-4">
                 Try adjusting your filters or search terms to find available doctors.
               </p>
               <Button
@@ -164,7 +164,7 @@ const FindDoctorsPage = () => {
               animate={{ opacity: 1 }}
               exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -10 }}
               transition={{ duration: shouldReduceMotion ? 0 : 0.25 }}
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5"
             >
               <AnimatePresence>
                 {doctors.map((doc, i) => (
@@ -181,7 +181,7 @@ const FindDoctorsPage = () => {
         </AnimatePresence>
 
         {totalPages > 1 && (
-          <div className="flex items-center justify-center gap-2 pt-4">
+          <div className="flex items-center justify-center gap-1 md:gap-2 pt-4">
             <Button
               variant="secondary"
               size="sm"
@@ -189,22 +189,25 @@ const FindDoctorsPage = () => {
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               icon={<ChevronLeft className="h-4 w-4" />}
             >
-              Previous
+              <span className="hidden sm:inline">Previous</span>
             </Button>
-            {Array.from({ length: totalPages }).map((_, i) => (
-              <button
-                key={i + 1}
-                type="button"
-                onClick={() => setPage(i + 1)}
-                className={`flex h-8 w-8 items-center justify-center rounded-md text-sm font-medium transition ${
-                  page === i + 1
-                    ? "bg-fcn-accent text-white"
-                    : "text-fcn-text-light/60 hover:bg-fcn-primary/5 dark:text-fcn-text-dark/60"
-                }`}
-              >
-                {i + 1}
-              </button>
-            ))}
+            {Array.from({ length: Math.min(totalPages, 5) }).map((_, i) => {
+              const pageNum = i + 1;
+              return (
+                <button
+                  key={pageNum}
+                  type="button"
+                  onClick={() => setPage(pageNum)}
+                  className={`flex h-8 w-8 items-center justify-center rounded-md text-sm font-medium transition ${
+                    page === pageNum
+                      ? "bg-fcn-accent text-white"
+                      : "text-fcn-text-light/60 hover:bg-fcn-primary/5 dark:text-fcn-text-dark/60"
+                  }`}
+                >
+                  {pageNum}
+                </button>
+              );
+            })}
             <Button
               variant="secondary"
               size="sm"
@@ -212,7 +215,7 @@ const FindDoctorsPage = () => {
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               icon={<ChevronRight className="h-4 w-4" />}
             >
-              Next
+              <span className="hidden sm:inline">Next</span>
             </Button>
           </div>
         )}

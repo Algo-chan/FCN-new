@@ -60,7 +60,7 @@ const PharmacyPage = () => {
 
   return (
     <FadeIn>
-      <div className="space-y-6">
+      <div className="space-y-4 md:space-y-6">
         <motion.div
           className="flex items-center gap-3"
           initial={shouldReduceMotion ? false : { opacity: 0, y: -10 }}
@@ -70,13 +70,13 @@ const PharmacyPage = () => {
             animate={shouldReduceMotion ? {} : { y: [0, -5, 0] }}
             transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
           >
-            <Pill className="h-8 w-8 text-fcn-primary" />
+            <Pill className="h-6 w-6 md:h-8 md:w-8 text-fcn-primary" />
           </motion.div>
           <div>
-            <h1 className="text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
+            <h1 className="text-xl md:text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
               Pharmacy & Prescriptions
             </h1>
-            <p className="text-sm text-fcn-text-light/50 dark:text-fcn-text-dark/50">
+            <p className="text-xs md:text-sm text-fcn-text-light/50 dark:text-fcn-text-dark/50">
               Manage your medications and find partner pharmacies
             </p>
           </div>
@@ -90,7 +90,7 @@ const PharmacyPage = () => {
             <button
               key={t.id}
               onClick={() => setTab(t.id)}
-              className={`relative flex flex-1 items-center justify-center gap-2 rounded-md px-4 py-2.5 text-sm font-medium transition-colors ${
+              className={`relative flex flex-1 items-center justify-center gap-1 md:gap-2 rounded-md px-2 md:px-4 py-2 md:py-2.5 text-xs md:text-sm font-medium transition-colors ${
                 tab === t.id
                   ? "text-white"
                   : "text-fcn-text-light/60 hover:text-fcn-primary dark:text-fcn-text-dark/60"
@@ -111,12 +111,12 @@ const PharmacyPage = () => {
 
         {tab === "prescriptions" ? (
           <div className="space-y-4">
-            <div className="flex flex-wrap gap-2">
+            <div className="flex gap-1.5 overflow-x-auto hide-scrollbar pb-1">
               {statusFilters.map((f) => (
                 <button
                   key={f}
                   onClick={() => setStatusFilter(f)}
-                  className={`rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
+                  className={`shrink-0 whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
                     statusFilter === f
                       ? "bg-fcn-primary text-white"
                       : "bg-fcn-primary/10 text-fcn-primary hover:bg-fcn-primary/20"
@@ -142,17 +142,17 @@ const PharmacyPage = () => {
                 ))}
               </div>
             ) : filteredPrescriptions.length === 0 ? (
-              <Card className="p-8 text-center">
-                <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-fcn-primary/10">
-                  <svg viewBox="0 0 48 48" fill="none" className="h-10 w-10 text-fcn-primary/40">
+              <Card className="p-6 md:p-8 text-center">
+                <div className="mx-auto mb-4 flex h-16 w-16 md:h-20 md:w-20 items-center justify-center rounded-full bg-fcn-primary/10">
+                  <svg viewBox="0 0 48 48" fill="none" className="h-8 w-8 md:h-10 md:w-10 text-fcn-primary/40">
                     <rect x="19" y="6" width="10" height="36" rx="3" stroke="currentColor" strokeWidth="2" />
                     <rect x="6" y="19" width="36" height="10" rx="3" stroke="currentColor" strokeWidth="2" />
                   </svg>
                 </div>
-                <h3 className="text-lg font-medium text-fcn-text-light dark:text-fcn-text-dark">
+                <h3 className="text-base md:text-lg font-medium text-fcn-text-light dark:text-fcn-text-dark">
                   No prescriptions yet
                 </h3>
-                <p className="mt-1 text-sm text-fcn-text-light/50 dark:text-fcn-text-dark/50">
+                <p className="mt-1 text-xs md:text-sm text-fcn-text-light/50 dark:text-fcn-text-dark/50">
                   Your doctor will issue prescriptions during your consultations
                 </p>
                 <Button className="mt-4" onClick={() => window.location.href = "/appointments/book"}>
@@ -184,7 +184,7 @@ const PharmacyPage = () => {
             </div>
 
             {pharmaciesQuery.isLoading ? (
-              <div className="grid gap-4 sm:grid-cols-2">
+              <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
                 {[1, 2].map((i) => (
                   <Card key={i} className="animate-pulse">
                     <div className="h-5 w-2/3 rounded bg-fcn-primary/10" />
@@ -196,12 +196,12 @@ const PharmacyPage = () => {
                 ))}
               </div>
             ) : filteredPharmacies.length === 0 ? (
-              <Card className="p-8 text-center">
-                <ShoppingBag className="mx-auto mb-3 h-12 w-12 text-fcn-primary/30" />
-                <h3 className="text-lg font-medium">No partner pharmacies yet</h3>
+              <Card className="p-6 md:p-8 text-center">
+                <ShoppingBag className="mx-auto mb-3 h-10 w-10 md:h-12 md:w-12 text-fcn-primary/30" />
+                <h3 className="text-base md:text-lg font-medium">No partner pharmacies yet</h3>
               </Card>
             ) : (
-              <div className="grid gap-4 sm:grid-cols-2">
+              <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
                 {filteredPharmacies.map((pharmacy) => (
                   <PharmacyCard key={pharmacy.id} pharmacy={pharmacy} />
                 ))}

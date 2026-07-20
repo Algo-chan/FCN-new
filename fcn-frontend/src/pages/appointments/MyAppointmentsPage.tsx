@@ -187,22 +187,22 @@ const MyAppointmentsPage = () => {
   return (
     <PageTransition>
       <div className="mx-auto max-w-4xl">
-        <div className="mb-6 flex items-center justify-between">
+        <div className="mb-4 md:mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
           <div>
-            <h1 className="text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
+            <h1 className="text-xl md:text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
               My Appointments
             </h1>
-            <p className="mt-1 text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">
+            <p className="mt-1 text-xs md:text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">
               View and manage your appointments.
             </p>
           </div>
-          <Button onClick={() => window.location.href = "/appointments/book"}>
+          <Button onClick={() => window.location.href = "/appointments/book"} size="sm">
             Book New
           </Button>
         </div>
 
         {/* Tabs */}
-        <div className="mb-6 flex gap-1 rounded-lg border border-fcn-primary/10 bg-white/50 p-1 dark:bg-fcn-dark/50">
+        <div className="mb-4 md:mb-6 flex gap-1 rounded-lg border border-fcn-primary/10 bg-white/50 p-1 dark:bg-fcn-dark/50">
           {tabs.map((tab) => (
             <button
               key={tab.key}

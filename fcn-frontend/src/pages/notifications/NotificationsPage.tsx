@@ -118,10 +118,10 @@ const NotificationsPage = () => {
 
   return (
     <FadeIn>
-      <div className="mx-auto max-w-4xl space-y-6">
-        <div className="flex items-center justify-between">
+      <div className="mx-auto max-w-4xl space-y-4 md:space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
+            <h1 className="text-xl md:text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
               Notifications
             </h1>
             {totalUnread > 0 && (
@@ -137,7 +137,8 @@ const NotificationsPage = () => {
               loading={markAllMutation.isPending}
               disabled={totalUnread === 0}
             >
-              Mark All Read
+              <span className="hidden sm:inline">Mark All Read</span>
+              <span className="sm:hidden">Mark Read</span>
             </Button>
             <Button
               variant="ghost"
@@ -146,12 +147,13 @@ const NotificationsPage = () => {
               onClick={() => clearReadMutation.mutate()}
               loading={clearReadMutation.isPending}
             >
-              Clear Read
+              <span className="hidden sm:inline">Clear Read</span>
+              <span className="sm:hidden">Clear</span>
             </Button>
           </div>
         </div>
 
-        <div className="flex gap-1 overflow-x-auto rounded-lg border border-fcn-primary/20 p-1">
+        <div className="flex gap-1 overflow-x-auto rounded-lg border border-fcn-primary/20 p-1 hide-scrollbar">
           {groups.map((group) => {
             const unread = data?.counts?.[`${group}_unread` as keyof typeof data.counts] as number || 0;
             return (
@@ -159,7 +161,7 @@ const NotificationsPage = () => {
                 key={group}
                 onClick={() => { setActiveGroup(group); setPage(1); }}
                 className={clsx(
-                  "relative shrink-0 whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium transition-colors",
+                  "relative shrink-0 whitespace-nowrap rounded-md px-3 md:px-4 py-2 text-xs md:text-sm font-medium transition-colors",
                   activeGroup === group
                     ? "bg-fcn-primary text-white"
                     : "text-fcn-text-light/60 hover:bg-fcn-primary/10 hover:text-fcn-primary dark:text-fcn-text-dark/60"
@@ -167,7 +169,7 @@ const NotificationsPage = () => {
               >
                 {GROUP_LABELS[group] || group}
                 {unread > 0 && (
-                  <span className="ml-2 rounded-full bg-fcn-primary/20 px-2 py-0.5 text-[11px] font-bold">
+                  <span className="ml-1 md:ml-2 rounded-full bg-fcn-primary/20 px-1 md:px-2 py-0.5 text-[10px] md:text-[11px] font-bold">
                     {unread}
                   </span>
                 )}
@@ -181,32 +183,32 @@ const NotificationsPage = () => {
             <Loader2 className="h-8 w-8 animate-spin text-fcn-primary" />
           </div>
         ) : allNotifications.length === 0 ? (
-          <Card className="flex flex-col items-center gap-4 p-12 text-center">
+          <Card className="flex flex-col items-center gap-4 p-8 md:p-12 text-center">
             <motion.div
               animate={shouldReduceMotion ? {} : { y: [0, -8, 0] }}
               transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
             >
-              <Bell className="h-20 w-20 text-fcn-primary/30" />
+              <Bell className="h-14 w-14 md:h-20 md:w-20 text-fcn-primary/30" />
             </motion.div>
             <div>
-              <h2 className="text-xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
+              <h2 className="text-lg md:text-xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
                 You're all caught up!
               </h2>
-              <p className="mt-1 text-sm text-fcn-text-light/50 dark:text-fcn-text-dark/50">
+              <p className="mt-1 text-xs md:text-sm text-fcn-text-light/50 dark:text-fcn-text-dark/50">
                 {GROUP_EMPTY_MESSAGES[activeGroup] || "No new notifications right now."}
               </p>
               <p className="mt-1 text-xs text-fcn-text-light/30 dark:text-fcn-text-dark/30">
                 Check back after your next consultation.
               </p>
             </div>
-            <img src="/logo/fcn-logo-full.png" alt="FCN" className="h-6 w-auto opacity-40" />
+            <img src="/logo/fcn-logo-full.png" alt="FCN" className="h-5 md:h-6 w-auto opacity-40" />
           </Card>
         ) : (
-          <div className="space-y-6">
+          <div className="space-y-4 md:space-y-6">
             {activeGroup === "all" && groupedBySection ? (
               Object.entries(groupedBySection).map(([sectionLabel, sectionNotifs]) => (
                 <div key={sectionLabel}>
-                  <h2 className="mb-3 text-lg font-semibold text-fcn-text-light dark:text-fcn-text-dark">
+                  <h2 className="mb-3 text-base md:text-lg font-semibold text-fcn-text-light dark:text-fcn-text-dark">
                     {sectionLabel}
                   </h2>
                   <div className="overflow-hidden rounded-lg border border-fcn-primary/10">

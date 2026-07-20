@@ -141,15 +141,15 @@ const ProfilePage = () => {
   const statusVariant = user.status === "active" ? "success" : user.status === "pending" ? "warning" : "danger";
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       {/* Tab Navigation */}
-      <div className="relative flex gap-4 rounded-lg bg-fcn-primary/5 p-1 w-full">
+      <div className="relative flex gap-1 md:gap-4 rounded-lg bg-fcn-primary/5 p-1 w-full overflow-x-auto hide-scrollbar">
         {availableTabs.map((tab) => (
           <button
             key={tab.id}
             ref={(el) => { if (el) tabRefs.current.set(tab.id, el); else tabRefs.current.delete(tab.id); }}
             onClick={() => setActiveTab(tab.id)}
-            className={`relative z-10 flex flex-1 items-center justify-center gap-2 rounded-md px-4 py-2.5 text-sm font-medium transition-colors ${
+            className={`relative z-10 flex flex-1 items-center justify-center gap-1 md:gap-2 rounded-md px-2 md:px-4 py-2 md:py-2.5 text-xs md:text-sm font-medium transition-colors shrink-0 ${
               activeTab === tab.id ? "text-white" : "text-fcn-text-light/60 hover:text-fcn-text-light dark:text-fcn-text-dark/60 dark:hover:text-fcn-text-dark"
             }`}
           >
@@ -179,19 +179,19 @@ const ProfilePage = () => {
               <Spinner size="lg" />
             </div>
           ) : activeTab === "profile" ? (
-            <div className="space-y-6">
+            <div className="space-y-4 md:space-y-6">
               {/* Identity Card */}
               <Card>
                 <div className="flex flex-col items-center text-center">
                   <InitialsAvatar name={profileData?.user?.full_name ?? user.full_name} size="xl" role={user.role} />
-                  <h2 className="mt-4 text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">{profileData?.user?.full_name ?? user.full_name}</h2>
+                  <h2 className="mt-4 text-xl md:text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">{profileData?.user?.full_name ?? user.full_name}</h2>
                   <div className="mt-2 flex items-center gap-2">
                     <Badge variant={roleBadgeVariant[user.role] ?? "neutral"}>{roleLabels[user.role] ?? user.role}</Badge>
                     <Badge variant={statusVariant}>{statusLabel}</Badge>
                   </div>
-                  <div className="mt-3 space-y-1 text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">
+                  <div className="mt-3 space-y-1 text-xs md:text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">
                     {profileData?.user?.email && (
-                      <div className="flex items-center gap-2 justify-center"><Mail className="h-4 w-4" /><span>{profileData.user.email}</span></div>
+                      <div className="flex items-center gap-2 justify-center"><Mail className="h-4 w-4" /><span className="truncate max-w-[200px]">{profileData.user.email}</span></div>
                     )}
                     {profileData?.user?.phone && (
                       <div className="flex items-center gap-2 justify-center"><Phone className="h-4 w-4" /><span>{profileData.user.phone}</span></div>
@@ -206,7 +206,7 @@ const ProfilePage = () => {
               {/* Edit Profile Form */}
               <Card>
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-bold text-fcn-text-light dark:text-fcn-text-dark">Edit Profile</h3>
+                  <h3 className="text-base md:text-lg font-bold text-fcn-text-light dark:text-fcn-text-dark">Edit Profile</h3>
                   {!isEditing && (
                     <Button variant="ghost" size="sm" onClick={() => setIsEditing(true)}>Edit</Button>
                   )}
@@ -242,7 +242,7 @@ const ProfilePage = () => {
                       </div>
                       <div>
                         <span className="text-xs text-fcn-text-light/60 dark:text-fcn-text-dark/60">Email</span>
-                        <p className="text-sm font-medium text-fcn-text-light dark:text-fcn-text-dark">{profileData?.user?.email ?? "—"}</p>
+                        <p className="text-sm font-medium text-fcn-text-light dark:text-fcn-text-dark truncate">{profileData?.user?.email ?? "—"}</p>
                       </div>
                       <div>
                         <span className="text-xs text-fcn-text-light/60 dark:text-fcn-text-dark/60">Phone</span>
@@ -263,7 +263,7 @@ const ProfilePage = () => {
           ) : activeTab === "public" && myProfile && "specialty" in myProfile ? (
             <Card>
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-bold text-fcn-text-light dark:text-fcn-text-dark">Your Public Profile</h3>
+                <h3 className="text-base md:text-lg font-bold text-fcn-text-light dark:text-fcn-text-dark">Your Public Profile</h3>
                 <Button variant="ghost" size="sm" onClick={() => window.open(`/doctors/${user.id}`, "_blank")}>
                   View live →
                 </Button>
@@ -271,7 +271,7 @@ const ProfilePage = () => {
               <div className="rounded-lg border border-fcn-primary/10 overflow-hidden max-w-md mx-auto">
                 <iframe
                   src={`/doctors/${user.id}`}
-                  className="w-full h-[600px]"
+                  className="w-full h-[400px] md:h-[600px]"
                   title="Public Profile Preview"
                   sandbox="allow-scripts"
                 />
@@ -283,9 +283,9 @@ const ProfilePage = () => {
             <Card className="border-fcn-danger/30">
               <div className="flex items-center gap-2 mb-4">
                 <AlertTriangle className="h-5 w-5 text-fcn-danger" />
-                <h3 className="text-lg font-bold text-fcn-danger">Danger Zone</h3>
+                <h3 className="text-base md:text-lg font-bold text-fcn-danger">Danger Zone</h3>
               </div>
-              <p className="mb-4 text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">
+              <p className="mb-4 text-xs md:text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">
                 Once you delete your account, there is no going back. Please be certain.
               </p>
               <Button variant="danger" onClick={() => setShowDeletion(true)}>

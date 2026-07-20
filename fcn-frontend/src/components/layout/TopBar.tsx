@@ -4,7 +4,6 @@ import {
   LogOut,
   Menu,
   Moon,
-  Settings,
   Sun,
   User
 } from "lucide-react";
@@ -13,6 +12,7 @@ import { useUiStore } from "@/store/ui.store";
 import { useAuthStore } from "@/store/auth.store";
 import { useThemeMode } from "@/hooks/useThemeMode";
 import { useClickOutside } from "@/hooks/useClickOutside";
+import { useWindowSize } from "@/hooks/useWindowSize";
 import { NotificationBell } from "@/components/notifications/NotificationBell";
 import { useNotifications } from "@/hooks/useNotifications";
 import { useAuth } from "@/hooks/useAuth";
@@ -21,9 +21,12 @@ export const TopBar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const sidebarOpen = useUiStore((state) => state.sidebarOpen);
   const toggleSidebar = useUiStore((state) => state.toggleSidebar);
+  const setSidebar = useUiStore((state) => state.setSidebar);
   const { isDark, toggleTheme } = useThemeMode();
   const { user, logout } = useAuth();
   const { addToast } = useNotifications();
+  const { width } = useWindowSize();
+  const isMobile = width < 1024;
 
   const dropdownRef = useClickOutside<HTMLDivElement>(() => {
     setDropdownOpen(false);
@@ -35,16 +38,23 @@ export const TopBar = () => {
     addToast({ type: "success", title: "Logged out", message: "You have been logged out successfully." });
   }, [logout, addToast]);
 
+  const handleMenuClick = useCallback(() => {
+    if (isMobile) {
+      setSidebar(!sidebarOpen);
+    } else {
+      toggleSidebar();
+    }
+  }, [isMobile, sidebarOpen, setSidebar, toggleSidebar]);
+
   return (
     <header
       className={clsx(
-        "sticky top-0 z-30 flex h-16 items-center justify-between border-b border-fcn-primary/10 bg-white/80 backdrop-blur-md dark:bg-fcn-dark/80",
-        sidebarOpen ? "md:ml-0" : ""
+        "sticky top-0 z-30 flex h-16 items-center justify-between border-b border-fcn-primary/10 bg-white/80 backdrop-blur-md dark:bg-fcn-dark/80"
       )}
     >
       <div className="flex items-center gap-3 px-4">
         <button
-          onClick={toggleSidebar}
+          onClick={handleMenuClick}
           className="rounded-md p-2 text-fcn-text-light/50 hover:bg-fcn-primary/10 hover:text-fcn-primary dark:text-fcn-text-dark/50"
           aria-label="Toggle sidebar"
         >
@@ -58,10 +68,10 @@ export const TopBar = () => {
         </div>
       </div>
 
-      <div className="flex items-center gap-2 px-4">
+      <div className="flex items-center gap-1 px-4">
         <button
           onClick={toggleTheme}
-          className="rounded-md p-2 text-fcn-text-light/50 hover:bg-fcn-primary/10 hover:text-fcn-primary dark:text-fcn-text-dark/50"
+          className="hidden md:flex rounded-md p-2 text-fcn-text-light/50 hover:bg-fcn-primary/10 hover:text-fcn-primary dark:text-fcn-text-dark/50"
           aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
         >
           {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
@@ -106,14 +116,6 @@ export const TopBar = () => {
                     >
                       <User className="h-4 w-4" />
                       Profile
-                    </Link>
-                    <Link
-                      to="/admin/settings"
-                      onClick={() => setDropdownOpen(false)}
-                      className="flex items-center gap-3 rounded-md px-3 py-2 text-sm text-fcn-text-light/70 hover:bg-fcn-primary/5 hover:text-fcn-text-light dark:text-fcn-text-dark/70 dark:hover:text-fcn-text-dark"
-                    >
-                      <Settings className="h-4 w-4" />
-                      Settings
                     </Link>
                   </>
                 )}

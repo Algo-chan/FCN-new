@@ -20,13 +20,13 @@ import { SkeletonCard } from "@/components/dashboard/SkeletonCard";
 import { useNotifications } from "@/hooks/useNotifications";
 
 const StatCard = ({ label, value, icon, color }: { label: string; value: number; icon: React.ReactNode; color: string }) => (
-  <Card className="flex items-center gap-4">
-    <div className={`flex h-12 w-12 items-center justify-center rounded-lg ${color}`}>
+  <Card className="flex items-center gap-3 md:gap-4 p-3 md:p-4">
+    <div className={`flex h-10 w-10 md:h-12 md:w-12 items-center justify-center rounded-lg ${color}`}>
       {icon}
     </div>
-    <div>
-      <p className="text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">{value}</p>
-      <p className="text-xs text-fcn-text-light/60 dark:text-fcn-text-dark/60">{label}</p>
+    <div className="min-w-0">
+      <p className="text-lg md:text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">{value}</p>
+      <p className="text-[10px] md:text-xs text-fcn-text-light/60 dark:text-fcn-text-dark/60 truncate">{label}</p>
     </div>
   </Card>
 );
@@ -100,17 +100,17 @@ export const AdminDashboard = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
+        <h1 className="text-xl md:text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
           Admin Dashboard
         </h1>
-        <p className="mt-1 text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">
+        <p className="mt-1 text-xs md:text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">
           System overview and management
         </p>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-3">
         <StatCard
           label="Total Users"
           value={data.totalUsers}
