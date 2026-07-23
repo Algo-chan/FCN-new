@@ -9,9 +9,21 @@ export default defineConfig({
     VitePWA({
       registerType: "autoUpdate",
       showMaximumFileSizeToCacheInBytesWarning: true,
+      cleanupOutdatedCaches: true,
       workbox: {
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
-        globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"]
+        globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
+        navigateFallback: null,
+        runtimeCaching: [
+          {
+            urlPattern: /^https:\/\/app\.fcncare\.com\/.*$/i,
+            handler: "NetworkFirst",
+            options: {
+              cacheName: "runtime-cache",
+              expiration: { maxEntries: 100, maxAgeSeconds: 60 * 60 }
+            }
+          }
+        ]
       },
       manifest: {
         name: "FCN - Foundation Care Network",
