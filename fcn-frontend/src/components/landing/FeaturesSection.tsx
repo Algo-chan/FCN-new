@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { motion, useInView, useReducedMotion } from "framer-motion";
+import { motion, useInView, useReducedMotion } from "motion/react";
 import { Activity, Brain, FileHeart, Hospital, Pill, Video } from "lucide-react";
 
 interface FeatureCardProps {
@@ -17,26 +17,24 @@ const FeatureCard = ({ icon: Icon, title, body, delay }: FeatureCardProps) => {
       initial={shouldReduceMotion ? false : { opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
-      transition={{ delay: shouldReduceMotion ? 0 : delay, duration: shouldReduceMotion ? 0 : 0.4 }}
+      transition={{ delay: shouldReduceMotion ? 0 : delay, duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
       whileHover={shouldReduceMotion ? {} : { y: -8, boxShadow: "0 20px 40px rgba(10,126,164,0.15)" }}
-      className="group rounded-2xl border border-fcn-primary/10 bg-white p-4 transition-shadow dark:bg-white/[0.03] sm:p-6"
+      className="group cursor-default rounded-2xl border border-fcn-primary/10 bg-white p-4 transition-shadow dark:bg-white/[0.03] sm:p-6"
     >
-      <m.div
+      <motion.div
         initial={shouldReduceMotion ? false : { scale: 0 }}
         whileInView={{ scale: 1 }}
         viewport={{ once: true }}
-        transition={{ delay: shouldReduceMotion ? 0 : delay + 0.1, type: "spring" }}
+        transition={{ delay: shouldReduceMotion ? 0 : delay + 0.1, type: "spring", stiffness: 200, damping: 15 }}
         className="mb-3 inline-flex rounded-xl bg-gradient-to-br from-fcn-primary/15 to-fcn-accent/15 p-2 sm:mb-4 sm:p-3"
       >
         <Icon className="h-5 w-5 text-fcn-primary sm:h-6 sm:w-6" />
-      </m.div>
+      </motion.div>
       <h3 className="mb-1 text-sm font-semibold text-fcn-text-light dark:text-white sm:mb-2 sm:text-lg">{title}</h3>
       <p className="text-xs leading-relaxed text-fcn-text-light/60 dark:text-gray-400 sm:text-sm">{body}</p>
     </motion.div>
   );
 };
-
-const m = motion;
 
 export const FeaturesSection = () => {
   const ref = useRef<HTMLElement>(null);
@@ -58,6 +56,7 @@ export const FeaturesSection = () => {
           initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.5 }}
           className="mb-14 text-center"
         >
           <h2 className="text-2xl font-bold text-fcn-text-light dark:text-white sm:text-3xl">Everything You Need, One Platform</h2>

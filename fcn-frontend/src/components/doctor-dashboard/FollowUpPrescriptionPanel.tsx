@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "motion/react";
 import { clsx } from "clsx";
 import { Clock, AlertTriangle, X, Pill, Plus, Minus } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";

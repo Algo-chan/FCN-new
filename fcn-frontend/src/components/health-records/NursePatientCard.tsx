@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { clsx } from "clsx";
 import { Heart, Droplets, Thermometer, Wind, Activity, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";

@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { ChevronLeft, ChevronRight, Frown } from "lucide-react";
 import { doctorsService } from "@/services/doctors.service";
 import { DoctorCard } from "@/components/doctors/DoctorCard";

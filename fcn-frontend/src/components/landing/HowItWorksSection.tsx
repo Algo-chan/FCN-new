@@ -1,10 +1,7 @@
 import { useEffect, useRef } from "react";
-import { motion, useInView, useReducedMotion } from "framer-motion";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { motion, useInView, useReducedMotion } from "motion/react";
+import { animate } from "animejs";
 import { FileText, MessageCircle, Pill, Smartphone, Stethoscope, TestTube, UserCheck } from "lucide-react";
-
-gsap.registerPlugin(ScrollTrigger);
 
 const steps = [
   { icon: Smartphone, title: "Open FCN", desc: "Login or create your free account" },
@@ -23,42 +20,19 @@ export const HowItWorksSection = () => {
   const shouldReduceMotion = useReducedMotion();
 
   useEffect(() => {
-    if (shouldReduceMotion || !lineRef.current || !sectionRef.current) return;
+    if (shouldReduceMotion || !lineRef.current || !isInView) return;
 
-    const ctx = gsap.context(() => {
-      const length = lineRef.current!.getTotalLength();
-      gsap.set(lineRef.current, { strokeDasharray: length, strokeDashoffset: length });
+    const path = lineRef.current;
+    const length = path.getTotalLength();
+    path.style.strokeDasharray = String(length);
+    path.style.strokeDashoffset = String(length);
 
-      ScrollTrigger.create({
-        trigger: sectionRef.current,
-        start: "top center+=100",
-        end: "bottom center-=100",
-        scrub: 1,
-        onUpdate: (self) => {
-          if (lineRef.current) {
-            gsap.to(lineRef.current, {
-              strokeDashoffset: length * (1 - self.progress),
-              duration: 0,
-              overwrite: "auto"
-            });
-          }
-          // Activate step circles
-          const circles = sectionRef.current?.querySelectorAll(".step-circle");
-          circles?.forEach((el, i) => {
-            const progress = self.progress * (circles.length + 1);
-            const stepIdx = i / (circles.length - 1);
-            if (progress >= stepIdx) {
-              el.classList.add("active");
-            } else {
-              el.classList.remove("active");
-            }
-          });
-        }
-      });
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, [shouldReduceMotion]);
+    animate(path, {
+      strokeDashoffset: [length, 0],
+      duration: 1500,
+      easing: "easeInOut"
+    });
+  }, [shouldReduceMotion, isInView]);
 
   return (
     <section ref={sectionRef} id="how-it-works" className="scroll-mt-20 py-10 px-4 sm:py-20 sm:px-6">
@@ -67,6 +41,7 @@ export const HowItWorksSection = () => {
           initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.5 }}
           className="mb-14 text-center"
         >
           <h2 className="text-2xl font-bold text-fcn-text-light dark:text-white sm:text-3xl">How FCN Works</h2>
@@ -85,10 +60,10 @@ export const HowItWorksSection = () => {
                 initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-60px" }}
-                transition={{ delay: shouldReduceMotion ? 0 : i * 0.08 }}
+                transition={{ delay: shouldReduceMotion ? 0 : i * 0.08, duration: 0.4 }}
                 className="text-center"
               >
-                <div className={`step-circle mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full border-2 transition-all duration-500 ${isInView ? "border-fcn-primary bg-fcn-primary text-white" : "border-gray-600 text-gray-500"}`}>
+                <div className={`mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full border-2 transition-all duration-500 ${isInView ? "border-fcn-primary bg-fcn-primary text-white shadow-[0_0_20px_rgba(10,126,164,0.3)]" : "border-gray-600 text-gray-500"}`}>
                   <step.icon className="h-6 w-6" />
                 </div>
                 <p className="text-sm font-semibold text-fcn-text-light dark:text-white">{step.title}</p>
@@ -106,10 +81,10 @@ export const HowItWorksSection = () => {
               initial={shouldReduceMotion ? false : { opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, margin: "-40px" }}
-              transition={{ delay: shouldReduceMotion ? 0 : i * 0.06 }}
+              transition={{ delay: shouldReduceMotion ? 0 : i * 0.06, duration: 0.4 }}
               className="flex items-start gap-4"
             >
-              <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-fcn-primary bg-fcn-primary/10 text-fcn-primary sm:h-12 sm:w-12`}>
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-fcn-primary bg-fcn-primary/10 text-fcn-primary sm:h-12 sm:w-12">
                 <step.icon className="h-4 w-4 sm:h-5 sm:w-5" />
               </div>
               <div>

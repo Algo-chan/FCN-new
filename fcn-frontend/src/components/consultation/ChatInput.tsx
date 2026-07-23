@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, type KeyboardEvent } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 import { Paperclip, ArrowUp, X } from "lucide-react";
 import { format } from "date-fns";
 import { clsx } from "clsx";

@@ -1,5 +1,5 @@
 import { type PropsWithChildren } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "motion/react";
 
 interface FadeInProps extends PropsWithChildren {
   delay?: number;

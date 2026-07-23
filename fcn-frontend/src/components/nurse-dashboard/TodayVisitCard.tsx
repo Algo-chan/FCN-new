@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "motion/react";
 import { format, parseISO } from "date-fns";
 import { MapPin, AlertTriangle, ExternalLink } from "lucide-react";
 import { clsx } from "clsx";

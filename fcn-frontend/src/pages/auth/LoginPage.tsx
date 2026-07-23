@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useLocation, useSearchParams } from "react-router-dom";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import gsap from "gsap";
 import { Eye, EyeOff, Heart, Loader2, Lock, Mail, Stethoscope, Syringe } from "lucide-react";
 import { useAuthStore } from "@/store/auth.store";

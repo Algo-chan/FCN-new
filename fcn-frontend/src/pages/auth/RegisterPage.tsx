@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { Activity, Check, Lock, Mail, MapPin, Stethoscope, User } from "lucide-react";
 import { authService } from "@/services/auth.service";
 import { doctorsService } from "@/services/doctors.service";

@@ -1,14 +1,8 @@
-import { useEffect, type PropsWithChildren } from "react";
-import { motion, useReducedMotion } from "framer-motion";
-import { useSound } from "@/hooks/useSound";
+import { type PropsWithChildren } from "react";
+import { motion, useReducedMotion } from "motion/react";
 
 export const PageTransition = ({ children }: PropsWithChildren) => {
   const shouldReduceMotion = useReducedMotion();
-  const { playTransition } = useSound();
-
-  useEffect(() => {
-    playTransition();
-  }, [playTransition]);
 
   return (
     <motion.div

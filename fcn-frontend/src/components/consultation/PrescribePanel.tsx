@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 import { X, Plus, Minus, Pill, AlertCircle } from "lucide-react";
 import { clsx } from "clsx";
 import { consultationService } from "@/services/consultation.service";

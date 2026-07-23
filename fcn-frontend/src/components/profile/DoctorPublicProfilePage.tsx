@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "motion/react";
 import { CalendarPlus, Share2, Star, Building2, Phone, Mail, Clock, ChevronRight } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { profileService, type DoctorPublicProfile } from "@/services/profile.service";

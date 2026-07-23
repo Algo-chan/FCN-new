@@ -1,4 +1,4 @@
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "motion/react";
 import { formatDistanceToNow } from "date-fns";
 import {
   CalendarPlus, CalendarCheck, CalendarX, Bell, Video, CheckCircle, CalendarClock,

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useAuthStore } from "@/store/auth.store";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { Calendar, Users, Activity, Clock, ChevronDown, ChevronRight } from "lucide-react";
 import { clsx } from "clsx";
 import { format, parseISO } from "date-fns";

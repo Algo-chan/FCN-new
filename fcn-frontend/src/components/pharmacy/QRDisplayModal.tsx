@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { X, AlertTriangle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { pharmacyService } from "@/services/pharmacy.service";

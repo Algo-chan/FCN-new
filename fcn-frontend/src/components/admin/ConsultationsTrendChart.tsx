@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from "recharts";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { clsx } from "clsx";
 import type { TrendPoint } from "@/services/admin.service";
 import { Card } from "@/components/ui/Card";

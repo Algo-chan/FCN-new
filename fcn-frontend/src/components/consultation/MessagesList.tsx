@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 import { useInView } from "react-intersection-observer";
 import { format, isToday, isYesterday } from "date-fns";
 import type { Message } from "@/types";

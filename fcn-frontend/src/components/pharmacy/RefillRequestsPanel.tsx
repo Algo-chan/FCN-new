@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "motion/react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { CheckCircle, X, MessageSquare, Clock, AlertCircle } from "lucide-react";
 import { Card } from "@/components/ui/Card";

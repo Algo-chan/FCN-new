@@ -1,5 +1,5 @@
 import { useState, useMemo, type FormEvent } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 import {
   Heart, Droplets, Thermometer, Wind, Weight, Activity,
   Save, AlertTriangle, Ruler

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion } from "motion/react";
 import toast from "react-hot-toast";
 
 export function OfflineDetector() {

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import gsap from "gsap";
 import { Check, Heart, MapPin, ClipboardList, X, Plus, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 import { useAuthStore } from "@/store/auth.store";

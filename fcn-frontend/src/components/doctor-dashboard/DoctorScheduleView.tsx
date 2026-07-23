@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "motion/react";
 import { format, addDays, startOfWeek, addWeeks, subWeeks, isToday, parseISO, isBefore, addMinutes } from "date-fns";
 import { ChevronLeft, ChevronRight, Video, MapPin, User, Clock } from "lucide-react";
 import { clsx } from "clsx";

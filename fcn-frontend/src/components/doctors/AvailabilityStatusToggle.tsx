@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "motion/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { clsx } from "clsx";
 import { doctorsService } from "@/services/doctors.service";

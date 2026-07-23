@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState, type DragEvent } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "motion/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Camera, Trash2, Upload, X } from "lucide-react";
 import { clsx } from "clsx";

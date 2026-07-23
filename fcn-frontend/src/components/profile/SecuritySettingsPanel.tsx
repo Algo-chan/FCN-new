@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { Shield, ShieldCheck, Eye, EyeOff, ChevronRight, LogOut, FileText, AlertTriangle } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";

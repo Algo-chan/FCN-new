@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { AlertTriangle, Clock, MapPin, Stethoscope, Users } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { clsx } from "clsx";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";

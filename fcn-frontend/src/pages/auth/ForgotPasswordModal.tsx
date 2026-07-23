@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import gsap from "gsap";
 import { CheckCircle, Loader2, Mail, Lock, KeyRound } from "lucide-react";
 import { authService } from "@/services/auth.service";

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "motion/react";
 import gsap from "gsap";
 import { Clock, ClipboardList, Star, Wallet, LogOut, RefreshCw } from "lucide-react";
 import { authService } from "@/services/auth.service";

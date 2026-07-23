@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "motion/react";
 import { clsx } from "clsx";
 import { format } from "date-fns";
 import { Sparkles, Loader2 } from "lucide-react";

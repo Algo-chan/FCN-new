@@ -1,5 +1,5 @@
 import { type PropsWithChildren } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "motion/react";
 
 export const StaggerChildren = ({ children }: PropsWithChildren) => {
   const shouldReduceMotion = useReducedMotion();

@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { MapPin, Calendar, Clock, CheckCircle2, Users } from "lucide-react";
 import { format, parseISO } from "date-fns";
 import { getNurseStats, getTodayVisits, getUpcomingVisits, type TodayVisit, type UpcomingVisit } from "@/services/nurse-dashboard.service";

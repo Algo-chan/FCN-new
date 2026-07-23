@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { useReducedMotion } from "framer-motion";
+import { useReducedMotion } from "motion/react";
 import { clsx } from "clsx";
 import {
   Search, Stethoscope, MapPin, Clock, ChevronRight,

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import gsap from "gsap";
 import { AlertTriangle, X, ArrowLeft, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/Button";

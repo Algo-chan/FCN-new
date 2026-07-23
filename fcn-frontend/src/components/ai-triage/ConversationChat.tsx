@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "motion/react";
 import { ArrowUp, Sparkles, RotateCcw } from "lucide-react";
 import { clsx } from "clsx";
 import gsap from "gsap";
@@ -204,7 +204,7 @@ export const ConversationChat = ({
               key={idx}
               initial={shouldReduceMotion ? { opacity: 1 } : { scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.15, originX: isUser ? 1 : 0 }}
+              transition={{ duration: 0.15 }}
               className={clsx(
                 "flex items-end gap-2 px-4",
                 isUser ? "flex-row-reverse" : "flex-row"

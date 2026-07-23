@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { formatDistanceToNow } from "date-fns";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { clsx } from "clsx";
 import { hospitalsService } from "@/services/hospitals.service";
 import { useSound } from "@/hooks/useSound";

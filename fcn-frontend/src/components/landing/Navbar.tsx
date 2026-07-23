@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import { Link } from "react-router-dom";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { Menu, Moon, Sun, X } from "lucide-react";
 import { useScrollPosition } from "@/hooks/useScrollPosition";
 import { useTheme } from "@/hooks/useTheme";
@@ -41,7 +41,12 @@ export const Navbar = () => {
   const closeMobile = useCallback(() => setMobileOpen(false), []);
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${bgClasses}`}>
+    <motion.nav
+      initial={shouldReduceMotion ? false : { opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${bgClasses}`}
+    >
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2">
@@ -68,8 +73,10 @@ export const Navbar = () => {
 
         {/* Right side */}
         <div className="flex items-center gap-3">
-          <button
+          <motion.button
             onClick={toggleTheme}
+            whileHover={shouldReduceMotion ? {} : { scale: 1.1 }}
+            whileTap={shouldReduceMotion ? {} : { scale: 0.9 }}
             className={`rounded-full p-2 transition hover:bg-white/10 ${textClasses}`}
             aria-label="Toggle theme"
           >
@@ -81,14 +88,18 @@ export const Navbar = () => {
             >
               {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </motion.div>
-          </button>
+          </motion.button>
 
           <div className="hidden items-center gap-2 md:flex">
             <Link to="/login">
-              <Button variant="ghost" size="sm">Sign In</Button>
+              <motion.div whileHover={shouldReduceMotion ? {} : { scale: 1.03 }} whileTap={shouldReduceMotion ? {} : { scale: 0.97 }}>
+                <Button variant="ghost" size="sm">Sign In</Button>
+              </motion.div>
             </Link>
             <Link to="/register">
-              <Button size="sm" onClick={() => playTransition()}>Get Started</Button>
+              <motion.div whileHover={shouldReduceMotion ? {} : { scale: 1.03 }} whileTap={shouldReduceMotion ? {} : { scale: 0.97 }}>
+                <Button size="sm" onClick={() => playTransition()}>Get Started</Button>
+              </motion.div>
             </Link>
           </div>
 
@@ -128,15 +139,18 @@ export const Navbar = () => {
               </div>
 
               <div className="flex flex-col gap-2">
-                {navLinks.map((link) => (
-                  <a
+                {navLinks.map((link, i) => (
+                  <motion.a
                     key={link.href}
                     href={link.href}
+                    initial={shouldReduceMotion ? false : { opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: i * 0.05, duration: 0.3 }}
                     onClick={(e) => { handleNavClick(e, link.href); closeMobile(); }}
                     className="rounded-lg px-4 py-4 text-base font-medium text-fcn-text-light transition hover:bg-fcn-primary/10 dark:text-fcn-text-dark"
                   >
                     {link.label}
-                  </a>
+                  </motion.a>
                 ))}
               </div>
 
@@ -152,6 +166,6 @@ export const Navbar = () => {
           </motion.div>
         )}
       </AnimatePresence>
-    </nav>
+    </motion.nav>
   );
 };

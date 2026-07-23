@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "motion/react";
 import { X, ExternalLink } from "lucide-react";
 import type { MessagePayload } from "@/config/firebase";
 

@@ -44,7 +44,9 @@ api.interceptors.response.use(
   async (error: AxiosError<ApiResponse<unknown>>) => {
     const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean; _retryCount?: number } | undefined;
 
-    if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
+    const isAuthRoute = originalRequest?.url?.includes("/auth/login") || originalRequest?.url?.includes("/auth/register");
+
+    if (error.response?.status === 401 && originalRequest && !originalRequest._retry && !isAuthRoute) {
       if (isRefreshing) {
         return new Promise<string>((resolve, reject) => {
           failedQueue.push({ resolve, reject });

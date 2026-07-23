@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
-import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "motion/react";
 import { Sparkles, Loader2, Info, ChevronLeft, RefreshCw, Share2, Printer } from "lucide-react";
 import gsap from "gsap";
 import { useNavigate } from "react-router-dom";
