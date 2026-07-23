@@ -2,7 +2,6 @@ import { useRef } from "react";
 import { Link } from "react-router-dom";
 import { motion, useInView, useReducedMotion } from "framer-motion";
 import { CheckCircle } from "lucide-react";
-import { ImagePlaceholder } from "@/components/landing/ImagePlaceholder";
 import { Button } from "@/components/ui/Button";
 
 const bullets = [
@@ -26,12 +25,12 @@ export const ForHospitalsSection = () => {
           transition={{ duration: shouldReduceMotion ? 0 : 0.5 }}
           className="relative mb-8 hidden lg:mb-0 lg:block lg:w-1/2"
         >
-          <ImagePlaceholder
-            query="Dire Dawa General Hospital exterior, modern East African hospital architecture, daytime"
+          <img
+            src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800&h=600&fit=crop&auto=format"
             alt="Dire Dawa General Hospital"
-            aspectRatio="4/3"
-            rounded="2xl"
-            className="w-full"
+            loading="lazy"
+            className="w-full rounded-2xl object-cover"
+            style={{ aspectRatio: "4/3" }}
           />
           <motion.div
             initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.8 }}

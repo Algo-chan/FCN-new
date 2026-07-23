@@ -2,7 +2,6 @@ import { useRef } from "react";
 import { Link } from "react-router-dom";
 import { motion, useInView, useReducedMotion } from "framer-motion";
 import { CheckCircle } from "lucide-react";
-import { ImagePlaceholder } from "@/components/landing/ImagePlaceholder";
 import { Button } from "@/components/ui/Button";
 import { useSound } from "@/hooks/useSound";
 
@@ -28,12 +27,12 @@ export const ForDoctorsSection = () => {
           transition={{ duration: shouldReduceMotion ? 0 : 0.5 }}
           className="relative mb-8 hidden lg:mb-0 lg:block lg:w-1/2"
         >
-          <ImagePlaceholder
-            query="Confident Ethiopian female doctor in clinic, white coat, stethoscope, warm professional portrait, soft lighting"
-            alt="Ethiopian doctor using FCN"
-            aspectRatio="4/3"
-            rounded="2xl"
-            className="w-full"
+          <img
+            src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=800&h=600&fit=crop&auto=format"
+            alt="Doctor using FCN platform"
+            loading="lazy"
+            className="w-full rounded-2xl object-cover"
+            style={{ aspectRatio: "4/3" }}
           />
           <motion.div
             initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.8 }}
