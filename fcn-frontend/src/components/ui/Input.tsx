@@ -1,4 +1,5 @@
 import { forwardRef, type InputHTMLAttributes, type ReactNode } from "react";
+import { motion, useReducedMotion } from "motion/react";
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -11,6 +12,7 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 export const Input = forwardRef<HTMLInputElement, InputProps>(
   ({ label, error, icon, className, id, ...props }, ref) => {
     const inputId = id ?? props.name;
+    const shouldReduceMotion = useReducedMotion();
 
     return (
       <label className="block">
@@ -19,12 +21,14 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         ) : null}
         <span className="relative block">
           {icon ? <span className="absolute left-3 top-1/2 -translate-y-1/2 text-fcn-primary">{icon}</span> : null}
-          <input
+          <motion.input
             ref={ref}
             id={inputId}
+            whileFocus={shouldReduceMotion ? {} : { scale: 1.005 }}
+            transition={{ duration: 0.15 }}
             className={twMerge(
               clsx(
-                "h-11 w-full rounded-md border border-fcn-primary/20 bg-white px-3 text-sm text-fcn-text-light outline-none transition placeholder:text-fcn-text-light/45 focus:border-fcn-accent focus:ring-2 focus:ring-fcn-accent/30 dark:bg-fcn-dark dark:text-fcn-text-dark dark:placeholder:text-fcn-text-dark/45",
+                "h-11 w-full rounded-md border border-fcn-primary/20 bg-white px-3 text-sm text-fcn-text-light outline-none transition-all placeholder:text-fcn-text-light/45 focus:border-fcn-accent focus:ring-2 focus:ring-fcn-accent/30 focus:shadow-[0_0_0_3px_rgba(45,212,191,0.1)] dark:bg-fcn-dark dark:text-fcn-text-dark dark:placeholder:text-fcn-text-dark/45",
                 icon && "pl-10",
                 error && "border-fcn-danger focus:border-fcn-danger focus:ring-fcn-danger/25",
                 className
@@ -32,13 +36,18 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             )}
             aria-invalid={Boolean(error)}
             aria-describedby={error && inputId ? `${inputId}-error` : undefined}
-            {...props}
+            {...(props as any)}
           />
         </span>
         {error ? (
-          <span id={inputId ? `${inputId}-error` : undefined} className="mt-1 block text-sm text-fcn-danger">
+          <motion.span
+            initial={shouldReduceMotion ? false : { opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            id={inputId ? `${inputId}-error` : undefined}
+            className="mt-1 block text-sm text-fcn-danger"
+          >
             {error}
-          </span>
+          </motion.span>
         ) : null}
       </label>
     );

@@ -29,6 +29,7 @@ export const FAQSection = () => {
           initial={!shouldReduceMotion ? { opacity: 0, y: 20 } : undefined}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.5 }}
           className="mb-12 text-center"
         >
           <h2 className="text-2xl font-bold text-fcn-text-light dark:text-white sm:text-3xl">Frequently Asked Questions</h2>
@@ -36,46 +37,59 @@ export const FAQSection = () => {
         </motion.div>
 
         <div className="space-y-3">
-          {faqs.map((faq, i) => (
-            <motion.div
-              key={i}
-              initial={!shouldReduceMotion ? { opacity: 0, y: 10 } : undefined}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-40px" }}
-              transition={{ delay: shouldReduceMotion ? 0 : i * 0.05 }}
-              className={`overflow-hidden rounded-xl border transition-colors ${openIdx === i ? "border-fcn-accent/40 bg-fcn-accent/[0.02]" : "border-fcn-primary/10 bg-white dark:bg-white/[0.03]"}`}
-            >
-              <button
-                onClick={() => toggle(i)}
-                className="flex w-full items-center justify-between px-4 py-3 text-left sm:px-5 sm:py-4"
-                aria-expanded={openIdx === i}
+          {faqs.map((faq, i) => {
+            const isOpen = openIdx === i;
+            return (
+              <motion.div
+                key={i}
+                initial={!shouldReduceMotion ? { opacity: 0, y: 10 } : undefined}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-40px" }}
+                transition={{ delay: shouldReduceMotion ? 0 : i * 0.05, duration: 0.4 }}
+                className={`overflow-hidden rounded-xl border transition-all duration-300 ${isOpen ? "border-fcn-accent/40 bg-fcn-accent/[0.02] shadow-[0_0_20px_rgba(45,212,191,0.06)]" : "border-fcn-primary/10 bg-white dark:bg-white/[0.03] hover:border-fcn-primary/20"}`}
               >
-                <span className="pr-4 text-sm font-medium text-fcn-text-light dark:text-white">{faq.q}</span>
-                <motion.span
-                  animate={{ rotate: openIdx === i ? 180 : 0 }}
-                  transition={{ duration: shouldReduceMotion ? 0 : 0.2 }}
-                  className="shrink-0"
+                <button
+                  onClick={() => toggle(i)}
+                  className="flex w-full items-center justify-between px-4 py-3 text-left transition-colors sm:px-5 sm:py-4"
+                  aria-expanded={isOpen}
                 >
-                  <ChevronDown className="h-4 w-4 text-fcn-accent" />
-                </motion.span>
-              </button>
-              <AnimatePresence initial={false}>
-                {openIdx === i && (
-                  <motion.div
-                    initial={!shouldReduceMotion ? { height: 0, opacity: 0 } : undefined}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={!shouldReduceMotion ? { height: 0, opacity: 0 } : undefined}
-                    transition={{ duration: shouldReduceMotion ? 0 : 0.25, ease: "easeInOut" }}
-                    className="overflow-hidden"
+                  <span className={`pr-4 text-sm font-medium transition-colors ${isOpen ? "text-fcn-accent" : "text-fcn-text-light dark:text-white"}`}>
+                    {faq.q}
+                  </span>
+                  <motion.span
+                    animate={{ rotate: isOpen ? 180 : 0 }}
+                    transition={{ duration: shouldReduceMotion ? 0 : 0.25, ease: [0.25, 0.46, 0.45, 0.94] }}
+                    className="shrink-0"
                   >
-                    <div className="border-t border-fcn-accent/10 px-4 py-3 text-sm leading-relaxed text-fcn-text-light/70 dark:text-gray-400 sm:px-5 sm:py-4">
-                      {faq.a}
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.div>
-          ))}
+                    <ChevronDown className="h-4 w-4 text-fcn-accent" />
+                  </motion.span>
+                </button>
+                <AnimatePresence initial={false}>
+                  {isOpen && (
+                    <motion.div
+                      initial={!shouldReduceMotion ? { height: 0, opacity: 0 } : undefined}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={!shouldReduceMotion ? { height: 0, opacity: 0 } : undefined}
+                      transition={{
+                        height: { duration: shouldReduceMotion ? 0 : 0.3, ease: [0.25, 0.46, 0.45, 0.94] },
+                        opacity: { duration: shouldReduceMotion ? 0 : 0.2, delay: 0.05 }
+                      }}
+                      className="overflow-hidden"
+                    >
+                      <motion.div
+                        initial={!shouldReduceMotion ? { y: -8 } : undefined}
+                        animate={{ y: 0 }}
+                        transition={{ duration: 0.3, ease: "easeOut" }}
+                        className="border-t border-fcn-accent/10 px-4 py-3 text-sm leading-relaxed text-fcn-text-light/70 dark:text-gray-400 sm:px-5 sm:py-4"
+                      >
+                        {faq.a}
+                      </motion.div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            );
+          })}
         </div>
       </div>
     </section>
