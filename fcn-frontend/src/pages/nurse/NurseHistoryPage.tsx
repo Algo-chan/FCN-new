@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import { format, parseISO } from "date-fns";
 import { Clock, Search, MapPin, CheckCircle2 } from "lucide-react";
 import { getVisitHistory } from "@/services/nurse-dashboard.service";

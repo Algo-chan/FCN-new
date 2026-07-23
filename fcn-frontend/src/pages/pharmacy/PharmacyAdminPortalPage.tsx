@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { motion, useReducedMotion } from "motion/react";
+import { motion, useReducedMotion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { QrCode, ClipboardList, Download, Pill } from "lucide-react";
 import { Card } from "@/components/ui/Card";

@@ -1,11 +1,19 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { animate } from "animejs";
-import { ArrowRight, ChevronDown, Play } from "lucide-react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import gsap from "gsap";
+import { ArrowRight, ChevronDown, Play, Sparkles } from "lucide-react";
 import { useSound } from "@/hooks/useSound";
 import { Button } from "@/components/ui/Button";
-import { BackgroundElements } from "@/components/animations/BackgroundElements";
+
+const particles = Array.from({ length: 10 }, (_, i) => ({
+  id: i,
+  x: Math.random() * 100,
+  y: Math.random() * 100,
+  size: 3 + Math.random() * 4,
+  duration: 4 + Math.random() * 6,
+  delay: Math.random() * 4
+}));
 
 const words = ["Healthcare", "Without", "Walls"];
 
@@ -22,65 +30,60 @@ export const HeroSection = () => {
   useEffect(() => {
     if (shouldReduceMotion) return;
 
-    // Heartbeat line draw + loop
-    if (heartbeatRef.current) {
-      const path = heartbeatRef.current;
-      const length = path.getTotalLength();
-      path.style.strokeDasharray = String(length);
-      path.style.strokeDashoffset = "0";
+    const ctx = gsap.context(() => {
+      // Heartbeat line infinite draw
+      if (heartbeatRef.current) {
+        const length = heartbeatRef.current.getTotalLength();
+        gsap.set(heartbeatRef.current, { strokeDasharray: length, strokeDashoffset: 0 });
+        gsap.to(heartbeatRef.current, {
+          strokeDashoffset: -length,
+          duration: 3,
+          ease: "none",
+          repeat: -1
+        });
+      }
 
-      animate(path, {
-        strokeDashoffset: [-length, 0],
-        duration: 3000,
-        easing: "linear",
-        loop: true
-      });
-    }
-
-    // Floating particles
-    if (particlesRef.current) {
-      const particleEls = particlesRef.current.querySelectorAll(".hero-particle");
-      particleEls.forEach((el) => {
-        const yDelta = -(15 + Math.random() * 20);
-        animate(el, {
-          translateY: [0, yDelta, 0],
-          opacity: [0.2, 0.6, 0.2],
-          duration: 3000 + Math.random() * 3000,
-          easing: "easeInOut",
-          loop: true,
-          delay: Math.random() * 2000
+      // Floating particles
+      particlesRef.current?.querySelectorAll(".particle").forEach((el) => {
+        gsap.to(el, {
+          y: -30 - Math.random() * 20,
+          opacity: 0.3 + Math.random() * 0.4,
+          duration: 3 + Math.random() * 4,
+          ease: "sine.inOut",
+          yoyo: true,
+          repeat: -1,
+          delay: Math.random() * 3
         });
       });
-    }
 
-    // Phone floating
-    if (phoneRef.current) {
-      animate(phoneRef.current, {
-        translateY: [0, -8, 0],
-        rotate: [0, -1.5, 0],
-        duration: 4000,
-        easing: "easeInOut",
-        loop: true
-      });
-    }
+      // Phone floating
+      if (phoneRef.current) {
+        gsap.to(phoneRef.current, {
+          y: -8,
+          rotation: -1.5,
+          duration: 4,
+          ease: "sine.inOut",
+          yoyo: true,
+          repeat: -1
+        });
+      }
+    }, sectionRef);
 
     // Floating notifications after delay
     const t1 = setTimeout(() => setNotif1(true), 2000);
     const t2 = setTimeout(() => setNotif2(true), 3500);
 
     return () => {
+      ctx.revert();
       clearTimeout(t1);
       clearTimeout(t2);
     };
   }, [shouldReduceMotion]);
 
   return (
-    <section ref={sectionRef} id="hero" className="sticky top-0 h-screen overflow-hidden bg-gradient-to-br from-[#0D1117] via-[#0A2540] to-fcn-primary z-0">
+    <section ref={sectionRef} id="hero" className="relative min-h-screen overflow-hidden bg-gradient-to-br from-[#0D1117] via-[#0A2540] to-fcn-primary">
       {/* Background grid */}
       <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)", backgroundSize: "60px 60px" }} />
-
-      {/* Animated background elements */}
-      <BackgroundElements />
 
       {/* Animated heartbeat */}
       <svg className="absolute left-0 top-1/2 w-full opacity-[0.08]" viewBox="0 0 1200 60" preserveAspectRatio="none">
@@ -89,38 +92,35 @@ export const HeroSection = () => {
 
       {/* Particles */}
       <div ref={particlesRef} className="pointer-events-none absolute inset-0 overflow-hidden">
-        {Array.from({ length: 10 }, (_, i) => ({
-          id: i,
-          x: Math.random() * 100,
-          y: Math.random() * 100,
-          size: 3 + Math.random() * 4
-        })).map((p) => (
-          <div key={p.id} className="hero-particle absolute rounded-full bg-fcn-accent/30" style={{ left: `${p.x}%`, top: `${p.y}%`, width: p.size, height: p.size }} />
+        {particles.map((p) => (
+          <div key={p.id} className="particle absolute rounded-full bg-fcn-accent/30" style={{ left: `${p.x}%`, top: `${p.y}%`, width: p.size, height: p.size, animationDelay: `${p.delay}s` }} />
         ))}
       </div>
 
       <div className="relative z-10 mx-auto flex min-h-screen max-w-7xl flex-col items-center gap-8 px-4 pt-28 pb-12 sm:px-6 lg:flex-row lg:px-8">
         {/* Left column */}
         <div className="flex-1 text-center lg:text-left">
-          {/* Badge — step 1 */}
           <motion.div
             initial={shouldReduceMotion ? false : { opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0, duration: 0.4 }}
             className="mb-4 inline-flex items-center gap-2 rounded-full bg-fcn-accent/20 px-4 py-1.5 text-xs font-medium text-fcn-accent"
           >
-            <span className="inline-block">🇪🇹</span>
+            <motion.span
+              animate={shouldReduceMotion ? {} : { scale: [1, 1.03, 1] }}
+              transition={{ repeat: Infinity, duration: 2 }}
+            >
+              🇪🇹
+            </motion.span>
             Now Live in Dire Dawa, Ethiopia
           </motion.div>
 
-          {/* Headline — step 2 */}
           <h1 className="mb-4 text-3xl font-extrabold leading-tight tracking-tight text-white sm:text-5xl lg:text-6xl">
             {words.map((word, i) => (
               <motion.span
                 key={word}
                 initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: shouldReduceMotion ? 0 : 0.15 + i * 0.15, duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+                transition={{ delay: shouldReduceMotion ? 0 : 0.2 + i * 0.15, duration: shouldReduceMotion ? 0 : 0.5 }}
                 className={`mr-3 inline-block ${word === "Walls" ? "bg-gradient-to-r from-fcn-primary to-fcn-accent bg-clip-text text-transparent" : "text-white"}`}
               >
                 {word}
@@ -128,11 +128,10 @@ export const HeroSection = () => {
             ))}
           </h1>
 
-          {/* Subtitle — step 3 */}
           <motion.p
             initial={shouldReduceMotion ? false : { opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: shouldReduceMotion ? 0 : 0.6, duration: 0.4 }}
+            transition={{ delay: shouldReduceMotion ? 0 : 0.6 }}
             className="mx-auto mb-2 max-w-lg text-sm leading-relaxed text-gray-300 sm:text-base lg:mx-0"
           >
             Get a full hospital experience from home. Remote consultation, AI-powered health checks, nurse-dispatched home visits, and e-prescriptions — all on one platform built for Ethiopia.
@@ -141,21 +140,20 @@ export const HeroSection = () => {
           <motion.p
             initial={shouldReduceMotion ? false : { opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: shouldReduceMotion ? 0 : 0.75, duration: 0.3 }}
+            transition={{ delay: shouldReduceMotion ? 0 : 0.8 }}
             className="mb-6 text-sm italic text-fcn-accent/80"
           >
             ጤና ለሁሉም
           </motion.p>
 
-          {/* CTA buttons — step 4 */}
           <motion.div
             initial={shouldReduceMotion ? false : { opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: shouldReduceMotion ? 0 : 0.9, duration: 0.4 }}
+            transition={{ delay: shouldReduceMotion ? 0 : 0.9 }}
             className="flex flex-col gap-3 sm:flex-row sm:items-center sm:flex-wrap sm:gap-4"
           >
             <Link to="/register" onClick={() => playTransition()}>
-              <motion.div whileHover={shouldReduceMotion ? {} : { scale: 1.05 }} whileTap={{ scale: 0.97 }}>
+              <motion.div whileHover={shouldReduceMotion ? {} : { scale: 1.05 }} whileTap={{ scale: 0.98 }}>
                 <Button size="lg" className="w-full sm:w-auto bg-gradient-to-r from-fcn-primary to-fcn-accent text-white shadow-lg shadow-fcn-accent/25 hover:shadow-fcn-accent/40">
                   Get Care Now
                   <motion.span className="ml-2 inline-block" whileHover={shouldReduceMotion ? {} : { x: 3 }}><ArrowRight className="h-4 w-4" /></motion.span>
@@ -163,19 +161,17 @@ export const HeroSection = () => {
               </motion.div>
             </Link>
             <a href="#how-it-works" onClick={(e) => { e.preventDefault(); document.getElementById("how-it-works")?.scrollIntoView({ behavior: "smooth" }); }}>
-              <motion.div whileHover={shouldReduceMotion ? {} : { scale: 1.03 }} whileTap={{ scale: 0.98 }}>
-                <Button variant="ghost" size="lg" className="w-full sm:w-auto text-white hover:bg-white/10">
-                  <Play className="mr-2 h-4 w-4" /> Watch How It Works
-                </Button>
-              </motion.div>
+              <Button variant="ghost" size="lg" className="w-full sm:w-auto text-white hover:bg-white/10">
+                <Play className="mr-2 h-4 w-4" /> Watch How It Works
+              </Button>
             </a>
           </motion.div>
 
-          {/* Trust indicators — step 5 */}
+          {/* Trust indicators */}
           <motion.div
             initial={shouldReduceMotion ? false : { opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: shouldReduceMotion ? 0 : 1.1, duration: 0.4 }}
+            transition={{ delay: shouldReduceMotion ? 0 : 1.2 }}
             className="mt-8 flex flex-wrap items-center gap-3 text-xs text-gray-400 sm:gap-4 sm:text-sm"
           >
             <span>🏥 3 Partner Hospitals</span>
@@ -186,16 +182,9 @@ export const HeroSection = () => {
           </motion.div>
         </div>
 
-        {/* Right column — Phone mockup — step 6 */}
+        {/* Right column — Phone mockup */}
         <div className="hidden flex-1 sm:block">
-          <motion.div
-            ref={phoneRef}
-            initial={shouldReduceMotion ? false : { opacity: 0, x: 40, y: 20 }}
-            animate={{ opacity: 1, x: 0, y: 0 }}
-            transition={{ delay: shouldReduceMotion ? 0 : 0.7, duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="mx-auto w-64 sm:w-72"
-            style={{ willChange: "transform" }}
-          >
+          <div ref={phoneRef} className="mx-auto w-64 sm:w-72" style={{ willChange: "transform" }}>
             <div className="rounded-[2.5rem] border-4 border-gray-600 bg-gray-900 p-3 shadow-2xl">
               <div className="overflow-hidden rounded-[2rem] bg-white dark:bg-[#0D1117]">
                 {/* Phone top bar */}
@@ -238,7 +227,7 @@ export const HeroSection = () => {
                 </div>
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
 
@@ -268,11 +257,11 @@ export const HeroSection = () => {
         )}
       </AnimatePresence>
 
-      {/* Scroll indicator — step 7 */}
+      {/* Scroll indicator */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1.3 }}
+        transition={{ delay: 1.5 }}
         className="absolute bottom-6 left-1/2 -translate-x-1/2 text-center"
       >
         <motion.div animate={shouldReduceMotion ? {} : { y: [0, 6, 0] }} transition={{ repeat: Infinity, duration: 1.5 }}>

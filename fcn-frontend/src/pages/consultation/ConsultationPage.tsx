@@ -1,7 +1,7 @@
 import { useEffect, useCallback, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import { MessageCircle, User, Pill, FileText, LogOut, CheckCircle } from "lucide-react";
 import { format } from "date-fns";
 import toast from "react-hot-toast";

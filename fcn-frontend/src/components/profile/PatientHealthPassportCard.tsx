@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import gsap from "gsap";
 import { HeartPulse, Pencil, User, X, Save, ChevronRight } from "lucide-react";
 import { Card } from "@/components/ui/Card";

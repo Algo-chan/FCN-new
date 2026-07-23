@@ -1,5 +1,7 @@
-import { useRef } from "react";
-import { motion, useInView, useReducedMotion } from "motion/react";
+import { useEffect, useRef } from "react";
+import { motion, useInView, useReducedMotion } from "framer-motion";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { clsx } from "clsx";
 import { Building2, GraduationCap, HeartPulse, Stethoscope, ShieldCheck } from "lucide-react";
 
@@ -17,7 +19,7 @@ const cardVariants = {
     opacity: 1,
     y: 0,
     scale: 1,
-    transition: { delay: i * 0.09, duration: 0.45, ease: [0.25, 0.46, 0.45, 0.94] as const }
+    transition: { delay: i * 0.09, duration: 0.45, ease: [0.25, 0.46, 0.45, 0.94] }
   })
 };
 
@@ -26,19 +28,32 @@ export const TrustBar = () => {
   const isInView = useInView(sectionRef, { once: true, margin: "-60px" });
   const shouldReduceMotion = useReducedMotion();
 
+  useEffect(() => {
+    if (shouldReduceMotion || !sectionRef.current) return;
+
+    const ctx = gsap.context(() => {
+      ScrollTrigger.create({
+        trigger: sectionRef.current,
+        start: "top center",
+        onEnter: () => {
+          gsap.fromTo(
+            sectionRef.current!.querySelector(".trust-shine"),
+            { x: "-100%" },
+            { x: "200%", duration: 1.2, ease: "power2.out" }
+          );
+        }
+      });
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, [shouldReduceMotion]);
+
   return (
     <section
       ref={sectionRef}
-      id="trust"
-      className="relative overflow-hidden rounded-t-3xl bg-white py-10 shadow-[0_-8px_30px_rgba(0,0,0,0.08)] dark:bg-fcn-dark dark:shadow-[0_-8px_30px_rgba(0,0,0,0.3)] sm:py-16"
+      className="relative overflow-hidden border-y border-white/10 bg-gradient-to-b from-white/40 to-white/20 py-10 dark:from-white/[0.03] dark:to-white/[0.01]"
     >
-      {/* Shimmer effect */}
-      <motion.div
-        initial={shouldReduceMotion ? false : { x: "-100%" }}
-        animate={isInView ? { x: "200%" } : {}}
-        transition={{ duration: 1.2, ease: "easeOut", delay: 0.3 }}
-        className="pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent via-fcn-accent/8 to-transparent"
-      />
+      <div className="trust-shine pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-fcn-accent/8 to-transparent" />
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mb-10 text-center">

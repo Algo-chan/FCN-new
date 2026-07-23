@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { motion, AnimatePresence, useReducedMotion } from "motion/react";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { useMutation } from "@tanstack/react-query";
 import { QrCode, Hash, CheckCircle, XCircle, AlertTriangle, Search, User, Stethoscope, Calendar, Pill, FileText } from "lucide-react";
 import { Card } from "@/components/ui/Card";

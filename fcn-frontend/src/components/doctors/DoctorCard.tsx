@@ -1,4 +1,4 @@
-import { motion, useReducedMotion } from "motion/react";
+import { motion, useReducedMotion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Building2, CalendarPlus, Star } from "lucide-react";
 import { Card } from "@/components/ui/Card";

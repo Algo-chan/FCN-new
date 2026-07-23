@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 import { getSettings, updateSetting, manualCleanup, clearAllNotifications } from "@/services/admin.service";
 import { useSound } from "@/hooks/useSound";

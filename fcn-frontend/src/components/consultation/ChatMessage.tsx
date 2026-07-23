@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence } from "framer-motion";
 import { FileText, ExternalLink, AlertCircle } from "lucide-react";
 import { format } from "date-fns";
 import type { Message } from "@/types";
@@ -92,7 +92,7 @@ export function ChatMessage({ message, isSender, showAvatar, isNew }: ChatMessag
     <motion.div
       initial={isNew ? { scale: 0.8, opacity: 0 } : undefined}
       animate={isNew ? { scale: 1, opacity: 1 } : undefined}
-      transition={{ duration: 0.15 }}
+      transition={{ duration: 0.15, originX: isSender ? 1 : 0 }}
       className={clsx(
         "flex items-end gap-2 px-4",
         isSender ? "flex-row-reverse" : "flex-row"

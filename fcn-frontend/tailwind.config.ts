@@ -39,18 +39,13 @@ const config: Config = {
         "fade-in": {
           "0%": { opacity: "0" },
           "100%": { opacity: "1" }
-        },
-        shimmer: {
-          "0%": { transform: "translateX(-100%)" },
-          "100%": { transform: "translateX(200%)" }
         }
       },
       animation: {
         "pulse-glow": "pulse-glow 2s ease-in-out infinite",
         float: "float 4s ease-in-out infinite",
         "slide-up": "slide-up 0.35s ease-out both",
-        "fade-in": "fade-in 0.3s ease-out both",
-        shimmer: "shimmer 1.2s ease-out"
+        "fade-in": "fade-in 0.3s ease-out both"
       }
     }
   },

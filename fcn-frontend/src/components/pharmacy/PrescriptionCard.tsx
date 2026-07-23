@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { motion, useReducedMotion } from "motion/react";
+import { motion, useReducedMotion } from "framer-motion";
 import { Calendar, ChevronDown, ChevronUp, Clock, Pill, Printer, ShieldAlert, Timer, AlertCircle } from "lucide-react";
 import { clsx } from "clsx";
 import { Card } from "@/components/ui/Card";

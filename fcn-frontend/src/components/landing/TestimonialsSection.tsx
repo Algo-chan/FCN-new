@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Quote } from "lucide-react";
 import { ImagePlaceholder } from "@/components/landing/ImagePlaceholder";
 
@@ -19,26 +19,16 @@ const testimonials: Testimonial[] = [
 
 export const TestimonialsSection = () => {
   const [current, setCurrent] = useState(0);
-  const [direction, setDirection] = useState(1);
   const [isPaused, setIsPaused] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval>>();
   const shouldReduceMotion = useReducedMotion();
 
   const goTo = useCallback((i: number) => {
-    const nextIdx = (i + testimonials.length) % testimonials.length;
-    setDirection(nextIdx > current ? 1 : -1);
-    setCurrent(nextIdx);
-  }, [current]);
-
-  const next = useCallback(() => {
-    setDirection(1);
-    setCurrent((prev) => (prev + 1) % testimonials.length);
+    setCurrent((i + testimonials.length) % testimonials.length);
   }, []);
 
-  const prev = useCallback(() => {
-    setDirection(-1);
-    setCurrent((prev) => (prev - 1 + testimonials.length) % testimonials.length);
-  }, []);
+  const next = useCallback(() => goTo(current + 1), [current, goTo]);
+  const prev = useCallback(() => goTo(current - 1), [current, goTo]);
 
   useEffect(() => {
     if (isPaused || shouldReduceMotion) return;
@@ -48,32 +38,13 @@ export const TestimonialsSection = () => {
 
   const t = testimonials[current];
 
-  const slideVariants = {
-    enter: (dir: number) => ({
-      x: dir > 0 ? 80 : -80,
-      opacity: 0,
-      scale: 0.97
-    }),
-    center: {
-      x: 0,
-      opacity: 1,
-      scale: 1
-    },
-    exit: (dir: number) => ({
-      x: dir > 0 ? -80 : 80,
-      opacity: 0,
-      scale: 0.97
-    })
-  };
-
   return (
-    <section className="bg-white py-10 px-4 dark:bg-fcn-dark sm:py-20 sm:px-6">
+    <section className="py-10 px-4 sm:py-20 sm:px-6">
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={!shouldReduceMotion ? { opacity: 0, y: 20 } : undefined}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.5 }}
           className="mb-12 text-center"
         >
           <h2 className="text-2xl font-bold text-fcn-text-light dark:text-white sm:text-3xl">Real Stories, Real Care</h2>
@@ -85,15 +56,13 @@ export const TestimonialsSection = () => {
           onMouseLeave={() => setIsPaused(false)}
           className="relative"
         >
-          <AnimatePresence mode="wait" custom={direction}>
+          <AnimatePresence mode="wait">
             <motion.div
               key={current}
-              custom={direction}
-              variants={shouldReduceMotion ? undefined : slideVariants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{ duration: shouldReduceMotion ? 0 : 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
+              initial={!shouldReduceMotion ? { opacity: 0, scale: 0.96 } : undefined}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={!shouldReduceMotion ? { opacity: 0, scale: 0.96 } : undefined}
+              transition={{ duration: shouldReduceMotion ? 0 : 0.4 }}
               className="rounded-2xl border border-fcn-primary/10 bg-white p-5 text-center dark:bg-white/[0.03] sm:p-8"
             >
               <Quote className="mx-auto mb-4 h-8 w-8 text-fcn-accent/40" />
@@ -115,32 +84,19 @@ export const TestimonialsSection = () => {
           </AnimatePresence>
 
           {/* Navigation */}
-          <motion.button
-            onClick={prev}
-            whileHover={shouldReduceMotion ? {} : { scale: 1.1 }}
-            whileTap={shouldReduceMotion ? {} : { scale: 0.95 }}
-            className="absolute left-0 top-1/2 -translate-x-3 -translate-y-1/2 rounded-full bg-white p-2.5 shadow-lg transition-shadow hover:shadow-xl dark:bg-[#0D1117] dark:shadow-white/5 sm:-translate-x-4 sm:p-2"
-            aria-label="Previous"
-          >
+          <button onClick={prev} className="absolute left-0 top-1/2 -translate-x-3 -translate-y-1/2 rounded-full bg-white p-2.5 shadow-lg dark:bg-[#0D1117] dark:shadow-white/5 sm:-translate-x-4 sm:p-2" aria-label="Previous">
             <ChevronLeft className="h-5 w-5 text-fcn-text-light dark:text-white" />
-          </motion.button>
-          <motion.button
-            onClick={next}
-            whileHover={shouldReduceMotion ? {} : { scale: 1.1 }}
-            whileTap={shouldReduceMotion ? {} : { scale: 0.95 }}
-            className="absolute right-0 top-1/2 translate-x-3 -translate-y-1/2 rounded-full bg-white p-2.5 shadow-lg transition-shadow hover:shadow-xl dark:bg-[#0D1117] dark:shadow-white/5 sm:translate-x-4 sm:p-2"
-            aria-label="Next"
-          >
+          </button>
+          <button onClick={next} className="absolute right-0 top-1/2 translate-x-3 -translate-y-1/2 rounded-full bg-white p-2.5 shadow-lg dark:bg-[#0D1117] dark:shadow-white/5 sm:translate-x-4 sm:p-2" aria-label="Next">
             <ChevronRight className="h-5 w-5 text-fcn-text-light dark:text-white" />
-          </motion.button>
+          </button>
 
           {/* Dots */}
           <div className="mt-6 flex justify-center gap-2">
             {testimonials.map((_, i) => (
-              <motion.button
+              <button
                 key={i}
-                onClick={() => goTo(i)}
-                whileHover={shouldReduceMotion ? {} : { scale: 1.3 }}
+                onClick={() => setCurrent(i)}
                 className={`h-2.5 rounded-full transition-all ${i === current ? "w-6 bg-fcn-accent" : "w-2.5 bg-fcn-primary/20"}`}
                 aria-label={`Go to testimonial ${i + 1}`}
               />

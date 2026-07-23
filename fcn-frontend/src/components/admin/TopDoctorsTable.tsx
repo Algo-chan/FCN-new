@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { ArrowUpDown, Star, ChevronRight } from "lucide-react";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import { clsx } from "clsx";
 import type { TopDoctor } from "@/services/admin.service";
 import { Card } from "@/components/ui/Card";

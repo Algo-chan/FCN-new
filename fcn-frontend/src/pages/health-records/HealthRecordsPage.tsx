@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import { ArrowLeft, Heart, Droplets, Thermometer, Wind, Activity, Weight, Download, Plus, X, Sparkles } from "lucide-react";
 import { PageTransition } from "@/components/animations/PageTransition";
 import { VitalSummaryCard } from "@/components/health-records/VitalSummaryCard";

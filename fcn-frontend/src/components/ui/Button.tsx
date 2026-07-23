@@ -1,5 +1,4 @@
 import { type ButtonHTMLAttributes, type ReactNode } from "react";
-import { motion, useReducedMotion } from "motion/react";
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { Spinner } from "@/components/ui/Spinner";
@@ -34,28 +33,21 @@ export const Button = ({
   className,
   type = "button",
   ...props
-}: ButtonProps) => {
-  const shouldReduceMotion = useReducedMotion();
-
-  return (
-    <motion.button
-      type={type}
-      disabled={disabled || loading}
-      whileHover={shouldReduceMotion || disabled ? {} : { scale: 1.02 }}
-      whileTap={shouldReduceMotion || disabled ? {} : { scale: 0.97 }}
-      transition={{ duration: 0.15 }}
-      className={twMerge(
-        clsx(
-          "inline-flex items-center justify-center gap-2 rounded-md font-medium transition duration-200 focus:outline-none focus:ring-2 focus:ring-fcn-accent focus:ring-offset-2 focus:ring-offset-transparent disabled:cursor-not-allowed disabled:opacity-60",
-          variantClasses[variant],
-          sizeClasses[size],
-          className
-        )
-      )}
-      {...(props as any)}
-    >
-      {loading ? <Spinner size="sm" color="border-current" /> : icon}
-      {children}
-    </motion.button>
-  );
-};
+}: ButtonProps) => (
+  <button
+    type={type}
+    disabled={disabled || loading}
+    className={twMerge(
+      clsx(
+        "inline-flex items-center justify-center gap-2 rounded-md font-medium transition duration-200 focus:outline-none focus:ring-2 focus:ring-fcn-accent focus:ring-offset-2 focus:ring-offset-transparent disabled:cursor-not-allowed disabled:opacity-60",
+        variantClasses[variant],
+        sizeClasses[size],
+        className
+      )
+    )}
+    {...props}
+  >
+    {loading ? <Spinner size="sm" color="border-current" /> : icon}
+    {children}
+  </button>
+);

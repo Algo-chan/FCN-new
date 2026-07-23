@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback, useLayoutEffect } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { User, HeartPulse, Stethoscope, Eye, Shield, AlertTriangle, Save, Phone, Mail, Calendar } from "lucide-react";
 import { profileService, type FullProfile } from "@/services/profile.service";

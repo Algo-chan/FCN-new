@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { motion, AnimatePresence, useReducedMotion } from "motion/react";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { format, parseISO } from "date-fns";
 import {
   MapPin, Phone, AlertTriangle, CheckCircle, ChevronDown, ChevronUp,

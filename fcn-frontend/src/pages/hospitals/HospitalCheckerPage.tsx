@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, motion } from "framer-motion";
 import { Building2, LayoutGrid, MapIcon, SlidersHorizontal } from "lucide-react";
 import { clsx } from "clsx";
 import { hospitalsService } from "@/services/hospitals.service";

@@ -1,5 +1,5 @@
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import type { RegistrationTrendPoint } from "@/services/admin.service";
 import { Card } from "@/components/ui/Card";
 

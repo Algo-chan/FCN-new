@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { format, parseISO, isBefore, addDays } from "date-fns";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { clsx } from "clsx";
 import {
   CalendarClock, Clock, Video, MapPin, User, XCircle, ArrowLeftRight,

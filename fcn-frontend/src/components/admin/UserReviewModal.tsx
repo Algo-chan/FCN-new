@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { gsap } from "gsap";
 import { CheckCircle, XCircle, AlertTriangle, Copy, ExternalLink, UserX, ThumbsUp, ChevronDown } from "lucide-react";
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence } from "framer-motion";
 import { getUserReview, approveUser, rejectUser } from "@/services/admin.service";
 import { useSound } from "@/hooks/useSound";
 import { useNotifications } from "@/hooks/useNotifications";

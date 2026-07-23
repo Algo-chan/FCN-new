@@ -1,4 +1,4 @@
-import { motion, useReducedMotion } from "motion/react";
+import { motion, useReducedMotion } from "framer-motion";
 import type { Role } from "@/types";
 
 interface InitialsAvatarProps {

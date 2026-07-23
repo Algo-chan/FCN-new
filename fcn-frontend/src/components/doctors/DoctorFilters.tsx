@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from "react";
-import { motion, useReducedMotion } from "motion/react";
+import { motion, useReducedMotion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { Search, X, Building2 } from "lucide-react";
 import { clsx } from "clsx";

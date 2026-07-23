@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { motion, useReducedMotion } from "motion/react";
+import { motion, useReducedMotion } from "framer-motion";
 import { Check } from "lucide-react";
 import { clsx } from "clsx";
 import { useSound } from "@/hooks/useSound";
@@ -62,7 +62,7 @@ const cardVariants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.4, ease: "easeOut" as const }
+    transition: { duration: 0.4, ease: "easeOut" }
   }
 };
 

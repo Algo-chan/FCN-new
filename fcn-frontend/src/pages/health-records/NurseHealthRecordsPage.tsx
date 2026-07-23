@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import { Search, Stethoscope, Activity, Users } from "lucide-react";
 import { PageTransition } from "@/components/animations/PageTransition";
 import { NursePatientCard } from "@/components/health-records/NursePatientCard";

@@ -14,7 +14,7 @@ import {
   Cell,
   CartesianGrid
 } from "recharts";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import { clsx } from "clsx";
 import { TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { classifyBP, classifyGlucose, classifyTemperature } from "@/utils/vitals-classifier";

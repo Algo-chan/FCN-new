@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import { format, parseISO } from "date-fns";
 import { FileText, Pill, Clock, CheckCircle2, XCircle, AlertCircle, Search } from "lucide-react";
 import { clsx } from "clsx";

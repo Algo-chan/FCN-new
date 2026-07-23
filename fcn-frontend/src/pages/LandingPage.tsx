@@ -1,6 +1,8 @@
-import { useCallback, useState } from "react";
-import { AnimatePresence } from "motion/react";
-import { LoadingScreen } from "@/components/animations/LoadingScreen";
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useReducedMotion } from "framer-motion";
+import { PageTransition } from "@/components/animations/PageTransition";
 import { Navbar } from "@/components/landing/Navbar";
 import { HeroSection } from "@/components/landing/HeroSection";
 import { TrustBar } from "@/components/landing/TrustBar";
@@ -14,40 +16,43 @@ import { FAQSection } from "@/components/landing/FAQSection";
 import { FinalCTASection } from "@/components/landing/FinalCTASection";
 import { Footer } from "@/components/landing/Footer";
 
-const LandingPage = () => {
-  const [loading, setLoading] = useState(true);
+gsap.registerPlugin(ScrollTrigger);
 
-  const handleLoadingComplete = useCallback(() => {
-    setLoading(false);
-  }, []);
+const LandingPage = () => {
+  const shouldReduceMotion = useReducedMotion();
+  const pageRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (shouldReduceMotion) return;
+
+    const ctx = gsap.context(() => {
+      // All GSAP animations are handled within individual section components
+      // This ensures proper cleanup on unmount
+    }, pageRef);
+
+    return () => {
+      ctx.revert();
+      ScrollTrigger.getAll().forEach((st) => st.kill());
+    };
+  }, [shouldReduceMotion]);
 
   return (
-    <>
-      <AnimatePresence>
-        {loading && <LoadingScreen onComplete={handleLoadingComplete} />}
-      </AnimatePresence>
-
-      <div className={`min-h-screen bg-fcn-light text-fcn-text-light transition-opacity duration-500 dark:bg-fcn-dark dark:text-fcn-text-dark ${loading ? "overflow-hidden h-screen" : ""}`}>
+    <PageTransition>
+      <div ref={pageRef} className="min-h-screen bg-fcn-light text-fcn-text-light dark:bg-fcn-dark dark:text-fcn-text-dark">
         <Navbar />
-
-        {/* Hero — pinned behind, sticky */}
         <HeroSection />
-
-        {/* All sections slide OVER the hero */}
-        <div className="relative z-10">
-          <TrustBar />
-          <StatsSection />
-          <FeaturesSection />
-          <HowItWorksSection />
-          <ForHospitalsSection />
-          <ForDoctorsSection />
-          <TestimonialsSection />
-          <FAQSection />
-          <FinalCTASection />
-          <Footer />
-        </div>
+        <TrustBar />
+        <StatsSection />
+        <FeaturesSection />
+        <HowItWorksSection />
+        <ForHospitalsSection />
+        <ForDoctorsSection />
+        <TestimonialsSection />
+        <FAQSection />
+        <FinalCTASection />
+        <Footer />
       </div>
-    </>
+    </PageTransition>
   );
 };
 

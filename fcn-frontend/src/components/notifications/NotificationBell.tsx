@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from "react";
-import { motion, AnimatePresence, useReducedMotion } from "motion/react";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { Bell, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { clsx } from "clsx";

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { motion, useReducedMotion } from "motion/react";
+import { motion, useReducedMotion } from "framer-motion";
 import { format, parseISO, isBefore, addMinutes } from "date-fns";
 import { Video, MapPin, User, Activity, Stethoscope, AlertTriangle, FileText } from "lucide-react";
 import { clsx } from "clsx";

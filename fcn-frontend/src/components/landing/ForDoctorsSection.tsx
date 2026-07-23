@@ -1,8 +1,10 @@
 import { useRef } from "react";
-import { motion, useInView, useReducedMotion } from "motion/react";
+import { Link } from "react-router-dom";
+import { motion, useInView, useReducedMotion } from "framer-motion";
 import { CheckCircle } from "lucide-react";
 import { ImagePlaceholder } from "@/components/landing/ImagePlaceholder";
 import { Button } from "@/components/ui/Button";
+import { useSound } from "@/hooks/useSound";
 
 const bullets = [
   "Flexible scheduling — work when you want",
@@ -14,15 +16,16 @@ export const ForDoctorsSection = () => {
   const ref = useRef<HTMLElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
   const shouldReduceMotion = useReducedMotion();
+  const { playTransition } = useSound();
 
   return (
-    <section ref={ref} id="for-doctors" className="scroll-mt-20 bg-fcn-light py-10 px-4 dark:bg-[#111827] sm:py-20 sm:px-6">
+    <section ref={ref} id="for-doctors" className="scroll-mt-20 py-10 px-4 sm:py-20 sm:px-6">
       <div className="mx-auto max-w-7xl items-center gap-12 px-4 sm:px-6 lg:flex lg:flex-row-reverse lg:px-8">
         {/* Right - Image (reversed) */}
         <motion.div
           initial={shouldReduceMotion ? false : { opacity: 0, x: 40 }}
           animate={isInView ? { opacity: 1, x: 0 } : {}}
-          transition={{ duration: shouldReduceMotion ? 0 : 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+          transition={{ duration: shouldReduceMotion ? 0 : 0.5 }}
           className="relative mb-8 hidden lg:mb-0 lg:block lg:w-1/2"
         >
           <ImagePlaceholder
@@ -35,7 +38,7 @@ export const ForDoctorsSection = () => {
           <motion.div
             initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.8 }}
             animate={isInView ? { opacity: 1, scale: 1 } : {}}
-            transition={{ delay: shouldReduceMotion ? 0 : 0.4, type: "spring", stiffness: 200, damping: 15 }}
+            transition={{ delay: shouldReduceMotion ? 0 : 0.4 }}
             className="absolute -bottom-4 -left-4 rounded-2xl border border-white/20 bg-white/80 px-4 py-3 backdrop-blur-lg dark:bg-[#0D1117]/80"
           >
             <p className="flex items-center gap-2 text-sm font-medium text-fcn-text-light dark:text-white">
@@ -48,7 +51,7 @@ export const ForDoctorsSection = () => {
         <motion.div
           initial={shouldReduceMotion ? false : { opacity: 0, x: -40 }}
           animate={isInView ? { opacity: 1, x: 0 } : {}}
-          transition={{ delay: shouldReduceMotion ? 0 : 0.15, duration: shouldReduceMotion ? 0 : 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+          transition={{ delay: shouldReduceMotion ? 0 : 0.15, duration: shouldReduceMotion ? 0 : 0.5 }}
           className="lg:w-1/2"
         >
           <p className="mb-2 text-xs font-semibold tracking-widest text-fcn-accent">FOR DOCTORS</p>
@@ -64,13 +67,11 @@ export const ForDoctorsSection = () => {
             ))}
           </ul>
           <div className="flex flex-col gap-3 sm:flex-row">
-            <motion.div whileHover={shouldReduceMotion ? {} : { scale: 1.03 }} whileTap={shouldReduceMotion ? {} : { scale: 0.97 }}>
+            <Link to="/register" onClick={() => playTransition()}>
               <Button>Join as a Doctor</Button>
-            </motion.div>
+            </Link>
             <a href="#faq">
-              <motion.div whileHover={shouldReduceMotion ? {} : { scale: 1.03 }} whileTap={shouldReduceMotion ? {} : { scale: 0.97 }}>
-                <Button variant="ghost">Learn More</Button>
-              </motion.div>
+              <Button variant="ghost">Learn More</Button>
             </a>
           </div>
         </motion.div>

@@ -1,4 +1,4 @@
-import { motion, useReducedMotion } from "motion/react";
+import { motion, useReducedMotion } from "framer-motion";
 import { clsx } from "clsx";
 import { format } from "date-fns";
 import { Eye, ArrowRight } from "lucide-react";

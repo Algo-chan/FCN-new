@@ -1,5 +1,5 @@
 import { useEffect, useRef, type ReactNode } from "react";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import { clsx } from "clsx";
 import toast from "react-hot-toast";
 import { Share2 } from "lucide-react";
