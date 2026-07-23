@@ -258,11 +258,6 @@ export class AuthService {
       throw new AppError("Your account application was rejected", 403, "ACCOUNT_REJECTED");
     }
 
-    if (user.role === "super_admin") {
-      await prisma.user.update({ where: { id: user.id }, data: { last_login_at: new Date() } });
-      return { user: await this.getMe(user.id), tokens: this.generateTokenPair(user.id, user.role, user.status), requiresOTP: false, email };
-    }
-
     try {
       await this.sendOTP(email, "login");
     } catch (err) {

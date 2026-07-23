@@ -1,34 +1,43 @@
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
 import { env } from "../../config/env";
 import { logger } from "../../utils/logger";
 
 type OtpPurpose = "verification" | "reset";
 
 export class EmailService {
-  private resend: Resend | null = null;
+  private transporter: nodemailer.Transporter | null = null;
 
-  private getClient(): Resend | null {
-    if (!env.RESEND_API_KEY) {
+  private getTransporter(): nodemailer.Transporter | null {
+    if (!env.SMTP_HOST || !env.SMTP_USER || !env.SMTP_PASS) {
+      logger.warn("SMTP not configured — emails will not be sent");
       return null;
     }
-    if (!this.resend) {
-      this.resend = new Resend(env.RESEND_API_KEY);
+    if (!this.transporter) {
+      this.transporter = nodemailer.createTransport({
+        host: env.SMTP_HOST,
+        port: env.SMTP_PORT || 465,
+        secure: true,
+        auth: {
+          user: env.SMTP_USER,
+          pass: env.SMTP_PASS,
+        },
+      });
     }
-    return this.resend;
+    return this.transporter;
   }
 
   private async send(to: string, subject: string, html: string): Promise<void> {
-    const client = this.getClient();
-    if (!client) {
-      logger.info("DEV EMAIL (no Resend key)", { to, subject, html });
+    const transport = this.getTransporter();
+    if (!transport) {
+      logger.warn("SMTP not configured — skipping email", { to, subject });
       return;
     }
 
-    await client.emails.send({
-      from: "FCN <noreply@fcncare.com>",
+    await transport.sendMail({
+      from: env.SMTP_FROM || `"FCN" <${env.SMTP_USER}>`,
       to,
       subject,
-      html
+      html,
     });
   }
 
