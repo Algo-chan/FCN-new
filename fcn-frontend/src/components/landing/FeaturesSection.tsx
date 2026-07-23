@@ -50,7 +50,7 @@ export const FeaturesSection = () => {
   ];
 
   return (
-    <section ref={ref} id="features" className="scroll-mt-20 py-10 px-4 sm:py-20 sm:px-6">
+    <section ref={ref} id="features" className="scroll-mt-20 bg-white py-10 px-4 dark:bg-fcn-dark sm:py-20 sm:px-6">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}

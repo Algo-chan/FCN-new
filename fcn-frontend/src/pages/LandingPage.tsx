@@ -29,17 +29,23 @@ const LandingPage = () => {
 
       <div className={`min-h-screen bg-fcn-light text-fcn-text-light transition-opacity duration-500 dark:bg-fcn-dark dark:text-fcn-text-dark ${loading ? "overflow-hidden h-screen" : ""}`}>
         <Navbar />
+
+        {/* Hero — pinned behind, sticky */}
         <HeroSection />
-        <TrustBar />
-        <StatsSection />
-        <FeaturesSection />
-        <HowItWorksSection />
-        <ForHospitalsSection />
-        <ForDoctorsSection />
-        <TestimonialsSection />
-        <FAQSection />
-        <FinalCTASection />
-        <Footer />
+
+        {/* All sections slide OVER the hero */}
+        <div className="relative z-10">
+          <TrustBar />
+          <StatsSection />
+          <FeaturesSection />
+          <HowItWorksSection />
+          <ForHospitalsSection />
+          <ForDoctorsSection />
+          <TestimonialsSection />
+          <FAQSection />
+          <FinalCTASection />
+          <Footer />
+        </div>
       </div>
     </>
   );

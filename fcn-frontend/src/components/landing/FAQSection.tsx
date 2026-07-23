@@ -23,7 +23,7 @@ export const FAQSection = () => {
   const toggle = (i: number) => setOpenIdx(openIdx === i ? null : i);
 
   return (
-    <section id="faq" className="scroll-mt-20 py-10 px-4 sm:py-20 sm:px-6">
+    <section id="faq" className="scroll-mt-20 bg-fcn-light py-10 px-4 dark:bg-[#111827] sm:py-20 sm:px-6">
       <div className="mx-auto max-w-lg px-4 sm:max-w-3xl sm:px-6 lg:px-8">
         <motion.div
           initial={!shouldReduceMotion ? { opacity: 0, y: 20 } : undefined}

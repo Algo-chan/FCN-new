@@ -67,7 +67,7 @@ export const TestimonialsSection = () => {
   };
 
   return (
-    <section className="py-10 px-4 sm:py-20 sm:px-6">
+    <section className="bg-white py-10 px-4 dark:bg-fcn-dark sm:py-20 sm:px-6">
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={!shouldReduceMotion ? { opacity: 0, y: 20 } : undefined}

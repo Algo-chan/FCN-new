@@ -16,7 +16,7 @@ export const ForDoctorsSection = () => {
   const shouldReduceMotion = useReducedMotion();
 
   return (
-    <section ref={ref} id="for-doctors" className="scroll-mt-20 py-10 px-4 sm:py-20 sm:px-6">
+    <section ref={ref} id="for-doctors" className="scroll-mt-20 bg-fcn-light py-10 px-4 dark:bg-[#111827] sm:py-20 sm:px-6">
       <div className="mx-auto max-w-7xl items-center gap-12 px-4 sm:px-6 lg:flex lg:flex-row-reverse lg:px-8">
         {/* Right - Image (reversed) */}
         <motion.div

@@ -75,7 +75,7 @@ export const HeroSection = () => {
   }, [shouldReduceMotion]);
 
   return (
-    <section ref={sectionRef} id="hero" className="relative min-h-screen overflow-hidden bg-gradient-to-br from-[#0D1117] via-[#0A2540] to-fcn-primary">
+    <section ref={sectionRef} id="hero" className="sticky top-0 h-screen overflow-hidden bg-gradient-to-br from-[#0D1117] via-[#0A2540] to-fcn-primary z-0">
       {/* Background grid */}
       <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)", backgroundSize: "60px 60px" }} />
 

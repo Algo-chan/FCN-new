@@ -20,7 +20,7 @@ export const Footer = () => {
 
   return (
     <ScrollReveal>
-      <footer className="border-t border-white/10 bg-white/50 dark:bg-[#0D1117]/80">
+      <footer className="border-t border-white/10 bg-white dark:bg-[#0D1117]">
         <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-16 lg:px-8">
           <div className="grid gap-8 grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 lg:gap-10">
             {/* Brand */}

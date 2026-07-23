@@ -29,7 +29,8 @@ export const TrustBar = () => {
   return (
     <section
       ref={sectionRef}
-      className="relative overflow-hidden border-y border-white/10 bg-gradient-to-b from-white/40 to-white/20 py-10 dark:from-white/[0.03] dark:to-white/[0.01]"
+      id="trust"
+      className="relative overflow-hidden rounded-t-3xl bg-white py-10 shadow-[0_-8px_30px_rgba(0,0,0,0.08)] dark:bg-fcn-dark dark:shadow-[0_-8px_30px_rgba(0,0,0,0.3)] sm:py-16"
     >
       {/* Shimmer effect */}
       <motion.div

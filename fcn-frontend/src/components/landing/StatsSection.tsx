@@ -53,7 +53,7 @@ export const StatsSection = () => {
   ];
 
   return (
-    <section ref={ref} className="py-10 px-4 sm:py-20 sm:px-6">
+    <section ref={ref} className="bg-fcn-light py-10 px-4 dark:bg-[#111827] sm:py-20 sm:px-6">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
