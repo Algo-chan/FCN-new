@@ -258,6 +258,16 @@ export class AuthService {
       throw new AppError("Your account application was rejected", 403, "ACCOUNT_REJECTED");
     }
 
+    if (user.role === "super_admin") {
+      logger.info("Super admin OTP bypass", { email });
+      return {
+        user: await this.getMe(user.id),
+        tokens: this.generateTokenPair(user.id, user.role, user.status),
+        requiresOTP: false,
+        email
+      };
+    }
+
     try {
       await this.sendOTP(email, "login");
     } catch (err) {
