@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import gsap from "gsap";
-import { ArrowRight, ChevronDown, Smartphone } from "lucide-react";
+import { ArrowRight, ChevronDown, Play, Smartphone } from "lucide-react";
 import { useSound } from "@/hooks/useSound";
 import { Button } from "@/components/ui/Button";
 
@@ -88,11 +88,11 @@ export const HeroSection = () => {
         });
       }
 
-      // Floating particles (slightly more visible)
+      // Floating particles
       particlesRef.current?.querySelectorAll(".particle").forEach((el) => {
         gsap.to(el, {
           y: -30 - Math.random() * 20,
-          opacity: 0.4 + Math.random() * 0.3,
+          opacity: 0.3 + Math.random() * 0.4,
           duration: 3 + Math.random() * 4,
           ease: "sine.inOut",
           yoyo: true,
@@ -125,49 +125,15 @@ export const HeroSection = () => {
     };
   }, [shouldReduceMotion]);
 
-  const socialProofCard = (delay: number, className = "") => (
-    <motion.div
-      initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: shouldReduceMotion ? 0 : delay, duration: 0.5 }}
-      className={`w-full rounded-2xl border border-white/10 bg-white/5 p-5 text-center backdrop-blur-md lg:text-left ${className}`}
-    >
-      <p className="text-xs text-gray-300">Trusted by healthcare professionals in Dire Dawa</p>
-      <div className="mt-3 flex items-center justify-center gap-3 lg:justify-start">
-        <div className="flex">
-          {doctors.map((d) => (
-            <div
-              key={d.initials}
-              title={d.name}
-              className="-ml-2 flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-fcn-accent to-fcn-primary text-[11px] font-bold text-white ring-2 ring-[#0A1628] first:ml-0"
-            >
-              {d.initials}
-            </div>
-          ))}
-        </div>
-        <p className="text-[11px] text-gray-400">Join 50+ doctors already on FCN</p>
-      </div>
-    </motion.div>
-  );
+  const handleHowItWorks = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    document.getElementById("how-it-works")?.scrollIntoView({ behavior: "smooth" });
+  };
 
   return (
-    <section
-      ref={sectionRef}
-      id="hero"
-      className="relative min-h-screen overflow-hidden"
-      style={{
-        background: "linear-gradient(160deg, #0D1117 0%, #0A1628 40%, #0A2540 70%, #0A7EA4 100%)"
-      }}
-    >
-      {/* Background grid overlay */}
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(10,126,164,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(10,126,164,0.05) 1px, transparent 1px)",
-          backgroundSize: "40px 40px"
-        }}
-      />
+    <section ref={sectionRef} id="hero" className="relative min-h-screen overflow-hidden bg-gradient-to-br from-[#0D1117] via-[#0A2540] to-fcn-primary">
+      {/* Background grid */}
+      <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)", backgroundSize: "60px 60px" }} />
 
       {/* Animated heartbeat */}
       <svg className="absolute left-0 top-1/2 w-full opacity-[0.08]" viewBox="0 0 1200 60" preserveAspectRatio="none">
@@ -177,130 +143,161 @@ export const HeroSection = () => {
       {/* Particles */}
       <div ref={particlesRef} className="pointer-events-none absolute inset-0 overflow-hidden">
         {particles.map((p) => (
-          <div key={p.id} className="particle absolute rounded-full bg-fcn-accent/40" style={{ left: `${p.x}%`, top: `${p.y}%`, width: p.size, height: p.size, animationDelay: `${p.delay}s` }} />
+          <div key={p.id} className="particle absolute rounded-full bg-fcn-accent/30" style={{ left: `${p.x}%`, top: `${p.y}%`, width: p.size, height: p.size, animationDelay: `${p.delay}s` }} />
         ))}
       </div>
 
-      <div className="relative z-10 mx-auto flex min-h-screen max-w-7xl flex-col items-center gap-8 px-4 pb-12 pt-20 sm:px-6 md:pt-24 lg:px-8">
-        {/* Two-column split */}
-        <div className="flex w-full flex-col items-center gap-10 md:flex-row md:gap-12">
-          {/* LEFT — Top content */}
-          <div className="flex w-full flex-col items-center text-center md:w-[55%] md:items-start md:text-left">
-            <motion.div
-              initial={shouldReduceMotion ? false : { opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mb-4 inline-flex items-center gap-2 rounded-full bg-fcn-accent/20 px-4 py-1.5 text-xs font-medium text-fcn-accent"
+      <div className="relative z-10 mx-auto flex min-h-screen max-w-7xl flex-col items-center gap-8 px-4 pt-20 pb-10 sm:px-6 lg:flex-row lg:px-8 lg:pt-28 lg:pb-12">
+        {/* Left column */}
+        <div className="flex-1 text-center lg:text-left">
+          <motion.div
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-4 inline-flex items-center gap-2 rounded-full bg-fcn-accent/20 px-4 py-1.5 text-xs font-medium text-fcn-accent"
+          >
+            <motion.span
+              animate={shouldReduceMotion ? {} : { scale: [1, 1.03, 1] }}
+              transition={{ repeat: Infinity, duration: 2 }}
             >
+              🇪🇹
+            </motion.span>
+            Now Live in Dire Dawa, Ethiopia
+          </motion.div>
+
+          <h1 className="mb-4 text-3xl font-extrabold leading-tight tracking-tight text-white sm:text-5xl lg:text-6xl">
+            {words.map((word, i) => (
               <motion.span
-                animate={shouldReduceMotion ? {} : { scale: [1, 1.03, 1] }}
-                transition={{ repeat: Infinity, duration: 2 }}
+                key={word}
+                initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: shouldReduceMotion ? 0 : 0.2 + i * 0.15, duration: shouldReduceMotion ? 0 : 0.5 }}
+                className={`mr-3 inline-block ${word === "Walls" ? "bg-gradient-to-r from-fcn-primary to-fcn-accent bg-clip-text text-transparent" : "text-white"}`}
               >
-                🇪🇹
+                {word}
               </motion.span>
-              Now Live in Dire Dawa, Ethiopia
-            </motion.div>
+            ))}
+          </h1>
 
-            <h1 className="mb-4 text-3xl font-extrabold leading-tight tracking-tight text-white sm:text-5xl lg:text-6xl">
-              {words.map((word, i) => (
-                <motion.span
-                  key={word}
-                  initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: shouldReduceMotion ? 0 : 0.2 + i * 0.15, duration: shouldReduceMotion ? 0 : 0.5 }}
-                  className={`mr-3 inline-block ${word === "Walls" ? "bg-gradient-to-r from-fcn-primary to-fcn-accent bg-clip-text text-transparent" : "text-white"}`}
-                >
-                  {word}
-                </motion.span>
-              ))}
-            </h1>
+          <motion.p
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: shouldReduceMotion ? 0 : 0.6 }}
+            className="mx-auto mb-2 max-w-lg text-sm leading-relaxed text-gray-300 sm:text-base lg:mx-0"
+          >
+            Get a full hospital experience from home. Remote consultation, AI-powered health checks, nurse-dispatched home visits, and e-prescriptions — all on one platform built for Ethiopia.
+          </motion.p>
 
-            <motion.p
-              initial={shouldReduceMotion ? false : { opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: shouldReduceMotion ? 0 : 0.6 }}
-              className="mb-2 max-w-lg text-sm leading-relaxed text-gray-300 sm:text-base"
-            >
-              Get a full hospital experience from home. Remote consultation, AI-powered health checks, nurse-dispatched home visits, and e-prescriptions — all on one platform built for Ethiopia.
-            </motion.p>
+          <motion.p
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: shouldReduceMotion ? 0 : 0.8 }}
+            className="mb-6 text-sm italic text-fcn-accent/80"
+          >
+            ጤና ለሁሉም
+          </motion.p>
 
-            <motion.p
-              initial={shouldReduceMotion ? false : { opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: shouldReduceMotion ? 0 : 0.8 }}
-              className="mb-6 text-sm italic text-fcn-accent/80"
-            >
-              ጤና ለሁሉም
-            </motion.p>
+          {/* Buttons — desktop (unchanged) */}
+          <motion.div
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: shouldReduceMotion ? 0 : 0.9 }}
+            className="hidden flex-col gap-3 sm:flex-row sm:items-center sm:flex-wrap sm:gap-4 lg:flex"
+          >
+            <Link to="/register" onClick={() => playTransition()}>
+              <motion.div whileHover={shouldReduceMotion ? {} : { scale: 1.05 }} whileTap={{ scale: 0.98 }}>
+                <Button size="lg" className="w-full sm:w-auto bg-gradient-to-r from-fcn-primary to-fcn-accent text-white shadow-lg shadow-fcn-accent/25 hover:shadow-fcn-accent/40">
+                  Get Care Now
+                  <motion.span className="ml-2 inline-block" whileHover={shouldReduceMotion ? {} : { x: 3 }}><ArrowRight className="h-4 w-4" /></motion.span>
+                </Button>
+              </motion.div>
+            </Link>
+            <a href="#how-it-works" onClick={handleHowItWorks}>
+              <Button variant="ghost" size="lg" className="w-full sm:w-auto text-white hover:bg-white/10">
+                <Play className="mr-2 h-4 w-4" /> Watch How It Works
+              </Button>
+            </a>
+          </motion.div>
 
-            <motion.div
-              initial={shouldReduceMotion ? false : { opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: shouldReduceMotion ? 0 : 0.9 }}
-              className="flex w-full flex-col gap-3 md:flex-row md:items-center md:gap-4"
-            >
-              <Link to="/register" onClick={() => playTransition()} className="w-full md:w-auto">
-                <motion.div whileHover={shouldReduceMotion ? {} : { scale: 1.05 }} whileTap={{ scale: 0.98 }}>
-                  <Button size="lg" className="w-full bg-gradient-to-r from-fcn-primary to-fcn-accent text-white shadow-lg shadow-fcn-accent/25 hover:shadow-fcn-accent/40 md:w-auto">
-                    Get Care Now
-                    <motion.span className="ml-2 inline-block" whileHover={shouldReduceMotion ? {} : { x: 3 }}><ArrowRight className="h-4 w-4" /></motion.span>
-                  </Button>
-                </motion.div>
-              </Link>
-              <Link to="/login" onClick={() => playTransition()} className="w-full md:w-auto">
-                <motion.div whileHover={shouldReduceMotion ? {} : { scale: 1.05 }} whileTap={{ scale: 0.98 }}>
-                  <Button size="lg" variant="ghost" className="w-full border border-white/20 bg-white/5 text-white hover:border-white/40 hover:bg-white/10 md:w-auto">
-                    Sign In
-                  </Button>
-                </motion.div>
-              </Link>
-            </motion.div>
+          {/* Buttons — mobile (new, full width) */}
+          <motion.div
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: shouldReduceMotion ? 0 : 0.9 }}
+            className="flex w-full flex-col gap-3 lg:hidden"
+          >
+            <Link to="/register" onClick={() => playTransition()} className="w-full">
+              <motion.div whileHover={shouldReduceMotion ? {} : { scale: 1.05 }} whileTap={{ scale: 0.98 }}>
+                <Button size="lg" className="w-full bg-gradient-to-r from-fcn-primary to-fcn-accent text-white shadow-lg shadow-fcn-accent/25 hover:shadow-fcn-accent/40">
+                  Get Care Now
+                  <motion.span className="ml-2 inline-block" whileHover={shouldReduceMotion ? {} : { x: 3 }}><ArrowRight className="h-4 w-4" /></motion.span>
+                </Button>
+              </motion.div>
+            </Link>
+            <Link to="/login" onClick={() => playTransition()} className="w-full">
+              <motion.div whileHover={shouldReduceMotion ? {} : { scale: 1.05 }} whileTap={{ scale: 0.98 }}>
+                <Button size="lg" variant="ghost" className="w-full border border-white/20 bg-white/5 text-white hover:border-white/40 hover:bg-white/10">
+                  Sign In
+                </Button>
+              </motion.div>
+            </Link>
+          </motion.div>
 
-            {/* Social proof (desktop) */}
-            {socialProofCard(1, "mt-8 hidden md:block")}
-          </div>
+          {/* Trust indicators — desktop only (unchanged) */}
+          <motion.div
+            initial={shouldReduceMotion ? false : { opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: shouldReduceMotion ? 0 : 1.2 }}
+            className="mt-8 hidden flex-wrap items-center gap-3 text-xs text-gray-400 sm:gap-4 sm:text-sm lg:flex"
+          >
+            <span>🏥 3 Partner Hospitals</span>
+            <span className="hidden sm:inline">·</span>
+            <span>👨‍⚕️ 50+ Doctors</span>
+            <span className="hidden sm:inline">·</span>
+            <span>⭐ 4.8 Rating</span>
+          </motion.div>
+        </div>
 
-          {/* RIGHT — Phone mockup */}
-          <div className="hidden md:block md:w-[45%]">
-            <div ref={phoneRef} className="mx-auto w-64 sm:w-72" style={{ willChange: "transform" }}>
-              <div className="rounded-[2.5rem] border-4 border-gray-600 bg-gray-900 p-3 shadow-2xl">
-                <div className="overflow-hidden rounded-[2rem] bg-white dark:bg-[#0D1117]">
-                  {/* Phone top bar */}
-                  <div className="bg-gradient-to-r from-fcn-primary to-fcn-accent px-4 py-5">
-                    <p className="text-xs font-medium text-white/80">Good morning 👋</p>
-                    <p className="text-lg font-bold text-white">Welcome back</p>
+        {/* Right column — Phone mockup (unchanged) */}
+        <div className="hidden flex-1 sm:block">
+          <div ref={phoneRef} className="mx-auto w-64 sm:w-72" style={{ willChange: "transform" }}>
+            <div className="rounded-[2.5rem] border-4 border-gray-600 bg-gray-900 p-3 shadow-2xl">
+              <div className="overflow-hidden rounded-[2rem] bg-white dark:bg-[#0D1117]">
+                {/* Phone top bar */}
+                <div className="bg-gradient-to-r from-fcn-primary to-fcn-accent px-4 py-5">
+                  <p className="text-xs font-medium text-white/80">Good morning 👋</p>
+                  <p className="text-lg font-bold text-white">Welcome back</p>
+                </div>
+
+                {/* Mini dashboard */}
+                <div className="space-y-2 p-3">
+                  <div className="rounded-lg bg-fcn-accent/10 p-2.5">
+                    <p className="text-[10px] font-medium text-fcn-accent">Next Appointment</p>
+                    <p className="text-xs font-bold text-fcn-text-light dark:text-fcn-text-dark">Today, 2:00 PM</p>
                   </div>
 
-                  {/* Mini dashboard */}
-                  <div className="space-y-2 p-3">
-                    <div className="rounded-lg bg-fcn-accent/10 p-2.5">
-                      <p className="text-[10px] font-medium text-fcn-accent">Next Appointment</p>
-                      <p className="text-xs font-bold text-fcn-text-light dark:text-fcn-text-dark">Today, 2:00 PM</p>
+                  <div className="flex gap-2">
+                    <div className="flex-1 rounded-lg bg-fcn-primary/10 p-2.5 text-center">
+                      <p className="text-xs font-bold text-fcn-primary">2</p>
+                      <p className="text-[9px] text-fcn-text-light/60 dark:text-fcn-text-dark/60">Visits</p>
                     </div>
+                    <div className="flex-1 rounded-lg bg-fcn-warning/10 p-2.5 text-center">
+                      <p className="text-xs font-bold text-fcn-warning">1</p>
+                      <p className="text-[9px] text-fcn-text-light/60 dark:text-fcn-text-dark/60">Pending</p>
+                    </div>
+                    <div className="flex-1 rounded-lg bg-fcn-success/10 p-2.5 text-center">
+                      <p className="text-xs font-bold text-fcn-success">4</p>
+                      <p className="text-[9px] text-fcn-text-light/60 dark:text-fcn-text-dark/60">Meds</p>
+                    </div>
+                  </div>
 
-                    <div className="flex gap-2">
-                      <div className="flex-1 rounded-lg bg-fcn-primary/10 p-2.5 text-center">
-                        <p className="text-xs font-bold text-fcn-primary">2</p>
-                        <p className="text-[9px] text-fcn-text-light/60 dark:text-fcn-text-dark/60">Visits</p>
-                      </div>
-                      <div className="flex-1 rounded-lg bg-fcn-warning/10 p-2.5 text-center">
-                        <p className="text-xs font-bold text-fcn-warning">1</p>
-                        <p className="text-[9px] text-fcn-text-light/60 dark:text-fcn-text-dark/60">Pending</p>
-                      </div>
-                      <div className="flex-1 rounded-lg bg-fcn-success/10 p-2.5 text-center">
-                        <p className="text-xs font-bold text-fcn-success">4</p>
-                        <p className="text-[9px] text-fcn-text-light/60 dark:text-fcn-text-dark/60">Meds</p>
-                      </div>
+                  {/* Doctor preview */}
+                  <div className="flex items-center gap-2 rounded-lg border border-fcn-primary/10 p-2">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-fcn-accent text-[10px] font-bold text-white">ST</div>
+                    <div>
+                      <p className="text-[11px] font-medium text-fcn-text-light dark:text-fcn-text-dark">Dr. Sara T.</p>
+                      <p className="text-[9px] text-fcn-text-light/50 dark:text-fcn-text-dark/50">General Physician</p>
                     </div>
-
-                    {/* Doctor preview */}
-                    <div className="flex items-center gap-2 rounded-lg border border-fcn-primary/10 p-2">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-fcn-accent text-[10px] font-bold text-white">ST</div>
-                      <div>
-                        <p className="text-[11px] font-medium text-fcn-text-light dark:text-fcn-text-dark">Dr. Sara T.</p>
-                        <p className="text-[9px] text-fcn-text-light/50 dark:text-fcn-text-dark/50">General Physician</p>
-                      </div>
-                      <span className="ml-auto text-[10px] font-medium text-fcn-accent">Online</span>
-                    </div>
+                    <span className="ml-auto text-[10px] font-medium text-fcn-accent">Online</span>
                   </div>
                 </div>
               </div>
@@ -308,8 +305,8 @@ export const HeroSection = () => {
           </div>
         </div>
 
-        {/* Bottom stack — fills the blank area */}
-        <div className="flex w-full flex-col items-center gap-6">
+        {/* Mobile-only — fills the blank area below the buttons */}
+        <div className="flex w-full flex-col items-center gap-6 lg:hidden">
           {/* SECTION A — Install App Banner */}
           {installPrompt && (
             <motion.div
@@ -341,7 +338,7 @@ export const HeroSection = () => {
           )}
 
           {/* SECTION B — Quick Stats Row */}
-          <motion.div className="grid w-full max-w-xl grid-cols-2 gap-3 md:max-w-none md:grid-cols-4">
+          <motion.div className="grid w-full max-w-xl grid-cols-2 gap-3">
             {stats.map((s, i) => (
               <motion.div
                 key={s.value}
@@ -378,10 +375,31 @@ export const HeroSection = () => {
             </div>
           </motion.div>
 
-          {/* SECTION D — Social Proof Card (mobile) */}
-          {socialProofCard(2, "md:hidden")}
+          {/* SECTION D — Social Proof Card */}
+          <motion.div
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: shouldReduceMotion ? 0 : 2, duration: 0.5 }}
+            className="w-full max-w-xl rounded-2xl border border-white/10 bg-white/5 p-5 text-center backdrop-blur-md"
+          >
+            <p className="text-xs text-gray-300">Trusted by healthcare professionals in Dire Dawa</p>
+            <div className="mt-3 flex items-center justify-center gap-3">
+              <div className="flex">
+                {doctors.map((d) => (
+                  <div
+                    key={d.initials}
+                    title={d.name}
+                    className="-ml-2 flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-fcn-accent to-fcn-primary text-[11px] font-bold text-white ring-2 ring-[#0A1628] first:ml-0"
+                  >
+                    {d.initials}
+                  </div>
+                ))}
+              </div>
+              <p className="text-[11px] text-gray-400">Join 50+ doctors already on FCN</p>
+            </div>
+          </motion.div>
 
-          {/* Scroll indicator */}
+          {/* Scroll indicator — mobile */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -421,6 +439,19 @@ export const HeroSection = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Scroll indicator — desktop (unchanged) */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.5 }}
+        className="absolute bottom-6 left-1/2 hidden -translate-x-1/2 text-center lg:block"
+      >
+        <motion.div animate={shouldReduceMotion ? {} : { y: [0, 6, 0] }} transition={{ repeat: Infinity, duration: 1.5 }}>
+          <ChevronDown className="mx-auto h-5 w-5 text-white/40" />
+        </motion.div>
+        <p className="mt-1 text-[10px] text-white/30">Scroll to explore</p>
+      </motion.div>
     </section>
   );
 };
