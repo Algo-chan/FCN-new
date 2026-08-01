@@ -28,6 +28,10 @@ const config: Config = {
           "0%, 100%": { boxShadow: "0 0 0 rgba(10, 126, 164, 0)" },
           "50%": { boxShadow: "0 0 24px rgba(45, 212, 191, 0.45)" }
         },
+        "pulse-border": {
+          "0%, 100%": { borderColor: "rgba(45, 212, 191, 0.35)" },
+          "50%": { borderColor: "rgba(45, 212, 191, 0.9)" }
+        },
         float: {
           "0%, 100%": { transform: "translateY(0)" },
           "50%": { transform: "translateY(-8px)" }
@@ -43,6 +47,7 @@ const config: Config = {
       },
       animation: {
         "pulse-glow": "pulse-glow 2s ease-in-out infinite",
+        "pulse-border": "pulse-border 2.5s ease-in-out infinite",
         float: "float 4s ease-in-out infinite",
         "slide-up": "slide-up 0.35s ease-out both",
         "fade-in": "fade-in 0.3s ease-out both"
