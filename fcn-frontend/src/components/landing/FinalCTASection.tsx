@@ -26,16 +26,20 @@ export const FinalCTASection = () => {
     if (shouldReduceMotion) return;
 
     const ctx = gsap.context(() => {
+      const infiniteTweens: gsap.core.Tween[] = [];
+
       sectionRef.current?.querySelectorAll(".cta-particle").forEach((el) => {
-        gsap.to(el, {
-          y: -25 - Math.random() * 15,
-          opacity: 0.4 + Math.random() * 0.3,
-          duration: 3 + Math.random() * 3,
-          ease: "sine.inOut",
-          yoyo: true,
-          repeat: -1,
-          delay: Math.random() * 3
-        });
+        infiniteTweens.push(
+          gsap.to(el, {
+            y: -25 - Math.random() * 15,
+            opacity: 0.4 + Math.random() * 0.3,
+            duration: 3 + Math.random() * 3,
+            ease: "sine.inOut",
+            yoyo: true,
+            repeat: -1,
+            delay: Math.random() * 3
+          })
+        );
       });
 
       // Pause infinite ambient loops when the section scrolls out of view
@@ -44,10 +48,8 @@ export const FinalCTASection = () => {
         start: "top bottom",
         end: "bottom top",
         onToggle: (self) => {
-          ctx.getTweens().forEach((t: gsap.core.Tween) => {
-            if (t.repeat() === -1) {
-              self.isActive ? t.play() : t.pause();
-            }
+          infiniteTweens.forEach((t) => {
+            self.isActive ? t.play() : t.pause();
           });
         }
       });

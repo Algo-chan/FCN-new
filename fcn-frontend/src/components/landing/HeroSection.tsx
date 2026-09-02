@@ -34,41 +34,49 @@ export const HeroSection = () => {
     if (shouldReduceMotion) return;
 
     const ctx = gsap.context(() => {
+      const infiniteTweens: gsap.core.Tween[] = [];
+
       // Heartbeat line infinite draw
       if (heartbeatRef.current) {
         const length = heartbeatRef.current.getTotalLength();
         gsap.set(heartbeatRef.current, { strokeDasharray: length, strokeDashoffset: 0 });
-        gsap.to(heartbeatRef.current, {
-          strokeDashoffset: -length,
-          duration: 3,
-          ease: "none",
-          repeat: -1
-        });
+        infiniteTweens.push(
+          gsap.to(heartbeatRef.current, {
+            strokeDashoffset: -length,
+            duration: 3,
+            ease: "none",
+            repeat: -1
+          })
+        );
       }
 
       // Floating particles
       particlesRef.current?.querySelectorAll(".particle").forEach((el) => {
-        gsap.to(el, {
-          y: -30 - Math.random() * 20,
-          opacity: 0.3 + Math.random() * 0.4,
-          duration: 3 + Math.random() * 4,
-          ease: "sine.inOut",
-          yoyo: true,
-          repeat: -1,
-          delay: Math.random() * 3
-        });
+        infiniteTweens.push(
+          gsap.to(el, {
+            y: -30 - Math.random() * 20,
+            opacity: 0.3 + Math.random() * 0.4,
+            duration: 3 + Math.random() * 4,
+            ease: "sine.inOut",
+            yoyo: true,
+            repeat: -1,
+            delay: Math.random() * 3
+          })
+        );
       });
 
       // Phone floating
       if (phoneRef.current) {
-        gsap.to(phoneRef.current, {
-          y: -8,
-          rotation: -1.5,
-          duration: 4,
-          ease: "sine.inOut",
-          yoyo: true,
-          repeat: -1
-        });
+        infiniteTweens.push(
+          gsap.to(phoneRef.current, {
+            y: -8,
+            rotation: -1.5,
+            duration: 4,
+            ease: "sine.inOut",
+            yoyo: true,
+            repeat: -1
+          })
+        );
       }
 
       // Pause infinite ambient loops when the hero scrolls out of view
@@ -77,10 +85,8 @@ export const HeroSection = () => {
         start: "top bottom",
         end: "bottom top",
         onToggle: (self) => {
-          ctx.getTweens().forEach((t: gsap.core.Tween) => {
-            if (t.repeat() === -1) {
-              self.isActive ? t.play() : t.pause();
-            }
+          infiniteTweens.forEach((t) => {
+            self.isActive ? t.play() : t.pause();
           });
         }
       });
