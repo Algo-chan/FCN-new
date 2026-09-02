@@ -1,51 +1,12 @@
 import { useRef } from "react";
 import { motion, useInView, useReducedMotion } from "framer-motion";
-import { Building2, GraduationCap, HeartPulse, ShieldCheck, Stethoscope, Users, Activity, Star } from "lucide-react";
 import { MOTION } from "@/styles/motion";
-
-const partners = [
-  { name: "Dire Dawa General Hospital", icon: Building2, hue: 190 },
-  { name: "Haramaya University Hospital", icon: GraduationCap, hue: 210 },
-  { name: "Dil-Chora Referral Hospital", icon: HeartPulse, hue: 170 },
-  { name: "Ethiopian Medical Association", icon: Stethoscope, hue: 200 },
-  { name: "Ministry of Health Ethiopia", icon: ShieldCheck, hue: 180 }
-];
-
-const stats = [
-  { value: "50K+", label: "Patients Served", icon: Users },
-  { value: "3", label: "Partner Hospitals", icon: Building2 },
-  { value: "50+", label: "Doctors", icon: Activity },
-  { value: "4.8", label: "Avg Rating", icon: Star }
-];
+import { LocationMap } from "./LocationMap";
 
 export const TrustBar = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const isInView = useInView(sectionRef, { once: true, margin: "-80px" });
   const shouldReduceMotion = useReducedMotion();
-
-  const containerVariants = {
-    hidden: {},
-    visible: { transition: { staggerChildren: 0.08 } }
-  };
-
-  const cardVariants = {
-    hidden: { opacity: 0, y: 30, scale: 0.95 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: { duration: 0.5, ease: MOTION.standard.ease }
-    }
-  };
-
-  const statVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.4, ease: MOTION.fast.ease }
-    }
-  };
 
   return (
     <section
@@ -78,111 +39,15 @@ export const TrustBar = () => {
           </h2>
         </motion.div>
 
-        {/* Partner icons — mobile: icon strip, desktop: full cards */}
+        {/* Interactive location map — glowing hospital nodes across Dire Dawa */}
         <motion.div
-          variants={shouldReduceMotion ? undefined : containerVariants}
-          initial="hidden"
-          animate={isInView ? "visible" : "hidden"}
+          initial={shouldReduceMotion ? false : { opacity: 0, y: 24 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: shouldReduceMotion ? 0 : 0.5, ease: MOTION.standard.ease }}
         >
-          {/* Mobile: icon + tiny label in a clean strip */}
-          <div className="flex items-center justify-between gap-2 sm:hidden">
-            {partners.map((p) => {
-              const Icon = p.icon;
-              return (
-                <motion.div
-                  key={p.name}
-                  variants={shouldReduceMotion ? undefined : cardVariants}
-                  className="group flex flex-1 flex-col items-center gap-1.5"
-                >
-                  <div
-                    className="flex h-11 w-11 items-center justify-center rounded-xl transition-all duration-300 group-hover:scale-110"
-                    style={{
-                      backgroundColor: `hsla(${p.hue}, 70%, 45%, 0.1)`,
-                      color: `hsl(${p.hue}, 70%, 45%)`
-                    }}
-                  >
-                    <Icon className="h-5 w-5" strokeWidth={1.5} />
-                  </div>
-                  <p className="w-full text-center text-[9px] font-medium leading-tight text-fcn-text-light/60 dark:text-gray-400">
-                    {p.name.length > 16 ? p.name.split(" ").slice(0, 2).join(" ") + "…" : p.name}
-                  </p>
-                </motion.div>
-              );
-            })}
-          </div>
-
-          {/* Desktop/tablet: full cards */}
-          <div className="hidden grid-cols-3 gap-3 sm:grid md:grid-cols-5 md:gap-5">
-            {partners.map((p) => {
-              const Icon = p.icon;
-              return (
-                <motion.div
-                  key={p.name}
-                  variants={shouldReduceMotion ? undefined : cardVariants}
-                  whileHover={shouldReduceMotion ? undefined : { y: -6, scale: 1.03, transition: { duration: 0.2 } }}
-                  className="group relative"
-                >
-                  <div className="relative overflow-hidden rounded-xl border border-white/20 bg-white/70 p-3 text-center shadow-sm backdrop-blur transition-all duration-300 hover:border-fcn-accent/30 hover:shadow-[0_12px_40px_rgba(10,126,164,0.12)] dark:border-white/5 dark:bg-fcn-dark/60 dark:hover:shadow-[0_12px_40px_rgba(45,212,191,0.08)] sm:px-5 sm:py-5">
-                    <div
-                      className="pointer-events-none absolute inset-0 rounded-xl opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-                      style={{ boxShadow: `inset 0 0 30px hsla(${p.hue}, 70%, 50%, 0.05)` }}
-                    />
-                    <div
-                      className="mx-auto mb-2 flex h-9 w-9 items-center justify-center rounded-lg transition-all duration-300 group-hover:shadow-[0_0_24px_rgba(10,126,164,0.2)] sm:mb-3 sm:h-11 sm:w-11"
-                      style={{
-                        backgroundColor: `hsla(${p.hue}, 70%, 45%, 0.1)`,
-                        color: `hsl(${p.hue}, 70%, 45%)`
-                      }}
-                    >
-                      <Icon className="h-5 w-5 transition-transform duration-300 group-hover:scale-110" strokeWidth={1.5} />
-                    </div>
-                    <p className="text-xs font-medium leading-tight text-fcn-text-light dark:text-fcn-text-dark sm:text-sm">
-                      {p.name}
-                    </p>
-                    <p className="mt-1 hidden text-[10px] text-fcn-text-light/40 dark:text-fcn-text-dark/40 sm:block">
-                      Partner Institution
-                    </p>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
+          <LocationMap />
         </motion.div>
 
-        {/* Stats strip */}
-        <motion.div
-          variants={shouldReduceMotion ? undefined : containerVariants}
-          initial="hidden"
-          animate={isInView ? "visible" : "hidden"}
-          className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4"
-        >
-          {stats.map((s) => {
-            const Icon = s.icon;
-            return (
-              <motion.div
-                key={s.label}
-                variants={shouldReduceMotion ? undefined : statVariants}
-                className="group relative flex items-center gap-3 overflow-hidden rounded-xl border border-white/10 bg-white/70 px-4 py-3 backdrop-blur transition-colors dark:bg-white/[0.03]"
-              >
-                <span className="absolute inset-y-0 left-0 w-0.5 rounded-full bg-gradient-to-b from-fcn-primary to-fcn-accent opacity-0 transition-opacity group-hover:opacity-100" />
-                <Icon className="h-5 w-5 shrink-0 text-fcn-accent" />
-                <div className="text-left">
-                  <p className="text-sm font-bold text-fcn-text-light dark:text-white sm:text-base">{s.value}</p>
-                  <p className="text-[10px] text-fcn-text-light/50 dark:text-gray-400 sm:text-xs">{s.label}</p>
-                </div>
-              </motion.div>
-            );
-          })}
-        </motion.div>
-
-        <motion.p
-          initial={shouldReduceMotion ? false : { opacity: 0 }}
-          animate={isInView ? { opacity: 1 } : {}}
-          transition={{ delay: 0.8, duration: 0.5 }}
-          className="mt-8 text-center text-xs text-fcn-text-light/40 dark:text-fcn-text-dark/40"
-        >
-          Serving over 50,000+ patients across the region
-        </motion.p>
       </div>
     </section>
   );
