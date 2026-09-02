@@ -54,7 +54,7 @@ export const getAppointmentByIdController = async (req: Request, res: Response, 
     if (!req.params.id || typeof req.params.id !== "string") {
       throw new AppError("Appointment ID is required", 400, "ID_REQUIRED");
     }
-    const result = await appointmentsService.getAppointmentById(req.params.id);
+    const result = await appointmentsService.getAppointmentById(req.params.id, req.user!.id, req.user!.role);
     successResponse(res, result);
   } catch (error) {
     next(error);

@@ -1,4 +1,3 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { prisma } from "../../config/database";
 import { redis, redisGet, redisSet } from "../../config/redis";
 import { env } from "../../config/env";
@@ -10,14 +9,76 @@ import { notificationService } from "../notifications/notification.service";
 
 const INPUT_SANITIZE_RE = /<[^>]*>|(['";\-–])|(\b(SELECT|INSERT|UPDATE|DELETE|DROP|UNION|CREATE|ALTER|TRUNCATE|EXEC|EXECUTE)\b)/gi;
 
-const genAI = new GoogleGenerativeAI(env.GEMINI_API_KEY);
+const DEEPSEEK_API_URL = "https://api.deepseek.com/chat/completions";
+const DEEPSEEK_DEFAULT_MODEL = env.DEEPSEEK_MODEL || "deepseek-v4-flash";
 
-const GEMINI_DEFAULT_MODEL = "gemini-2.0-flash";
+interface DeepSeekMessage {
+  role: "system" | "user" | "assistant";
+  content: string;
+}
 
-async function getGeminiModel(systemInstruction: string) {
-  const raw = (await systemSettings.get("ai_model")) || GEMINI_DEFAULT_MODEL;
-  const model = raw.startsWith("gemini") ? raw : GEMINI_DEFAULT_MODEL;
-  return genAI.getGenerativeModel({ model, systemInstruction });
+interface DeepSeekResponse {
+  choices?: Array<{ message?: { content?: string } }>;
+  error?: { message?: string };
+}
+
+async function getDeepSeekModel(rawModel?: string | null): Promise<string> {
+  const configured = (await systemSettings.get("ai_model")) || DEEPSEEK_DEFAULT_MODEL;
+  const candidate = rawModel || configured;
+  const model = candidate.startsWith("deepseek") ? candidate : DEEPSEEK_DEFAULT_MODEL;
+  return model;
+}
+
+async function callDeepSeek(
+  model: string,
+  systemPrompt: string,
+  messages: DeepSeekMessage[]
+): Promise<string> {
+  if (!env.DEEPSEEK_API_KEY) {
+    throw new AppError("AI triage is not configured (missing DEEPSEEK_API_KEY).", 503, "AI_NOT_CONFIGURED");
+  }
+
+  const body = {
+    model,
+    messages: [
+      { role: "system" as const, content: systemPrompt },
+      ...messages
+    ],
+    temperature: 0.4,
+    max_tokens: 1024,
+    top_p: 0.9,
+    thinking: { type: "disabled" }
+  };
+
+  const response = await fetch(DEEPSEEK_API_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${env.DEEPSEEK_API_KEY}`
+    },
+    body: JSON.stringify(body)
+  });
+
+  if (!response.ok) {
+    let detail = "";
+    try {
+      const err = (await response.json()) as DeepSeekResponse;
+      detail = err?.error?.message || "";
+    } catch {
+      detail = "";
+    }
+    logger.error("DeepSeek API error", { status: response.status, detail });
+    throw new AppError("AI service request failed. Please try again.", 502, "AI_REQUEST_FAILED");
+  }
+
+  const result = (await response.json()) as DeepSeekResponse;
+  const aiResponse = result?.choices?.[0]?.message?.content?.trim() ?? "";
+
+  if (!aiResponse) {
+    throw new AppError("AI returned an empty response. Please try again.", 502, "AI_EMPTY_RESPONSE");
+  }
+
+  return aiResponse;
 }
 
 export interface PatientContext {
@@ -137,16 +198,12 @@ class AITriageService {
     const systemPrompt = buildSystemPrompt(language, patientContext);
     const roundPrompt = buildRoundPrompt(1, language);
 
-    const model = await getGeminiModel(systemPrompt + "\n\n" + roundPrompt);
-
-    const result = await model.generateContent(
-      `Patient's initial symptoms: ${sanitizedSymptoms}`
+    const model = await getDeepSeekModel();
+    const aiResponse = await callDeepSeek(
+      model,
+      systemPrompt + "\n\n" + roundPrompt,
+      [{ role: "user", content: `Patient's initial symptoms: ${sanitizedSymptoms}` }]
     );
-    const aiResponse = result.response.text();
-
-    if (!aiResponse) {
-      throw new AppError("AI returned an empty response. Please try again.", 502, "AI_EMPTY_RESPONSE");
-    }
 
     const assessment = await prisma.symptomAssessment.create({
       data: {
@@ -207,20 +264,17 @@ class AITriageService {
     const systemPrompt = buildSystemPrompt(assessment.language, patientContext);
     const roundPrompt = buildRoundPrompt(newRound, assessment.language);
 
-    const history = conversation.map((msg) => ({
-      role: msg.role === "assistant" ? "model" as const : "user" as const,
-      parts: [{ text: msg.content }]
+    const history = conversation.map((msg): DeepSeekMessage => ({
+      role: msg.role === "assistant" ? "assistant" : "user",
+      content: msg.content
     }));
 
-    const model = await getGeminiModel(systemPrompt + "\n\n" + roundPrompt);
-
-    const chat = model.startChat({ history });
-    const result = await chat.sendMessage(sanitizedMessage);
-    const aiResponse = result.response.text();
-
-    if (!aiResponse) {
-      throw new AppError("AI returned an empty response. Please try again.", 502, "AI_EMPTY_RESPONSE");
-    }
+    const model = await getDeepSeekModel();
+    const aiResponse = await callDeepSeek(
+      model,
+      systemPrompt + "\n\n" + roundPrompt,
+      [...history, { role: "user", content: sanitizedMessage }]
+    );
 
     conversation.push(
       { role: "user", content: sanitizedMessage, timestamp: new Date().toISOString() },
@@ -307,21 +361,19 @@ class AITriageService {
     const systemPrompt = buildSystemPrompt(assessment.language, patientContext);
     const roundPrompt = buildRoundPrompt(3, assessment.language);
 
-    const history = conversation.slice(0, -1).map((msg) => ({
-      role: msg.role === "assistant" ? "model" as const : "user" as const,
-      parts: [{ text: msg.content }]
+    const history = conversation.slice(0, -1).map((msg): DeepSeekMessage => ({
+      role: msg.role === "assistant" ? "assistant" : "user",
+      content: msg.content
     }));
 
-    const model = await getGeminiModel(systemPrompt + "\n\n" + roundPrompt);
+    const model = await getDeepSeekModel();
 
     const lastUserMsg = [...conversation].reverse().find((m) => m.role === "user");
-    const chat = model.startChat({ history });
-    const result = await chat.sendMessage(lastUserMsg?.content || "Please provide your final assessment now.");
-    const aiResponse = result.response.text();
-
-    if (!aiResponse) {
-      throw new AppError("AI returned an empty response. Please try again.", 502, "AI_EMPTY_RESPONSE");
-    }
+    const aiResponse = await callDeepSeek(
+      model,
+      systemPrompt + "\n\n" + roundPrompt,
+      [...history, { role: "user", content: lastUserMsg?.content || "Please provide your final assessment now." }]
+    );
 
     const parsed = this.parseFinalAssessment(aiResponse);
 

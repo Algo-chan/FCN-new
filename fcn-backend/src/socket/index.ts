@@ -57,7 +57,7 @@ export const initSocket = (server: HttpServer): Server => {
       try {
         const appointment = await prisma.appointment.findUnique({
           where: { id: appointmentId },
-          select: { patient_id: true, doctor_id: true }
+          select: { patient_id: true, doctor_id: true, nurse_id: true, status: true }
         });
 
         if (!appointment) {
@@ -65,10 +65,17 @@ export const initSocket = (server: HttpServer): Server => {
           return;
         }
 
+        const activeStatuses = ["confirmed", "scheduled", "in_session"];
+        if (!activeStatuses.includes(appointment.status as string)) {
+          socket.emit("error", { message: "You cannot join this consultation in its current state" });
+          return;
+        }
+
         const isPatient = appointment.patient_id === user.id;
         const isDoctor = appointment.doctor_id === user.id;
+        const isNurse = appointment.nurse_id != null && appointment.nurse_id === user.id;
 
-        if (!isPatient && !isDoctor) {
+        if (!isPatient && !isDoctor && !isNurse) {
           socket.emit("error", { message: "You are not authorized for this consultation" });
           return;
         }
@@ -164,7 +171,7 @@ export const initSocket = (server: HttpServer): Server => {
 
         const appointment = await prisma.appointment.findUnique({
           where: { id: appointmentId },
-          select: { status: true, patient_id: true, doctor_id: true }
+          select: { status: true, patient_id: true, doctor_id: true, nurse_id: true }
         });
 
         if (!appointment || appointment.status !== "in_session") {
@@ -172,7 +179,23 @@ export const initSocket = (server: HttpServer): Server => {
           return;
         }
 
-        const recipientId = appointment.patient_id === user.id ? appointment.doctor_id : appointment.patient_id;
+        const isPatient = appointment.patient_id === user.id;
+        const isDoctor = appointment.doctor_id === user.id;
+        const isNurse = appointment.nurse_id != null && appointment.nurse_id === user.id;
+
+        if (!isPatient && !isDoctor && !isNurse) {
+          socket.emit("error", { message: "You are not authorized for this consultation" });
+          return;
+        }
+
+        let recipientId: string;
+        if (isPatient) {
+          recipientId = appointment.doctor_id;
+        } else if (isDoctor) {
+          recipientId = appointment.patient_id;
+        } else {
+          recipientId = appointment.patient_id;
+        }
 
         const { encrypted, iv } = encrypt(messageText);
 
@@ -248,11 +271,20 @@ export const initSocket = (server: HttpServer): Server => {
 
         const appointment = await prisma.appointment.findUnique({
           where: { id: appointmentId },
-          select: { status: true, patient_id: true, doctor_id: true }
+          select: { status: true, patient_id: true, doctor_id: true, nurse_id: true }
         });
 
         if (!appointment || appointment.status !== "in_session") {
           ack({ error: "Cannot send files when consultation is not active" });
+          return;
+        }
+
+        const isPatient = appointment.patient_id === user.id;
+        const isDoctor = appointment.doctor_id === user.id;
+        const isNurse = appointment.nurse_id != null && appointment.nurse_id === user.id;
+
+        if (!isPatient && !isDoctor && !isNurse) {
+          ack({ error: "You are not authorized for this consultation" });
           return;
         }
 
@@ -294,7 +326,14 @@ export const initSocket = (server: HttpServer): Server => {
           });
         }
 
-        const recipientId = appointment.patient_id === user.id ? appointment.doctor_id : appointment.patient_id;
+        let recipientId: string;
+        if (isPatient) {
+          recipientId = appointment.doctor_id;
+        } else if (isDoctor) {
+          recipientId = appointment.patient_id;
+        } else {
+          recipientId = appointment.patient_id;
+        }
 
         const message = await prisma.message.create({
           data: {
@@ -342,6 +381,10 @@ export const initSocket = (server: HttpServer): Server => {
 
     socket.on("typing_start", ({ appointmentId }) => {
       const room = consultationRoom(appointmentId);
+      const socketsInRoom = io.sockets.adapter.rooms.get(room);
+      if (!socketsInRoom || !socketsInRoom.has(socket.id)) {
+        return;
+      }
       socket.to(room).emit("user_typing", {
         userId: user.id,
         userName: user.full_name
@@ -350,6 +393,10 @@ export const initSocket = (server: HttpServer): Server => {
 
     socket.on("typing_stop", ({ appointmentId }) => {
       const room = consultationRoom(appointmentId);
+      const socketsInRoom = io.sockets.adapter.rooms.get(room);
+      if (!socketsInRoom || !socketsInRoom.has(socket.id)) {
+        return;
+      }
       socket.to(room).emit("user_stopped_typing", {
         userId: user.id
       });

@@ -314,9 +314,9 @@ export const SystemSettingsPanel = ({ onNavigateToTab }: Props) => {
           />
           <SettingRow
             label="AI Model"
-            description="Claude model identifier"
+            description="DeepSeek model identifier (e.g. deepseek-v4-flash)"
             type="text"
-            value={getSetting("ai_model") || "claude-sonnet-4-20250514"}
+            value={getSetting("ai_model") || "deepseek-v4-flash"}
             onChange={(v) => updateMutation.mutate({ key: "ai_model", value: v })}
             saving={updateMutation.isPending}
           />

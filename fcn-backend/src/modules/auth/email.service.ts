@@ -4,6 +4,14 @@ import { logger } from "../../utils/logger";
 
 type OtpPurpose = "verification" | "reset";
 
+const escapeHtml = (input: string): string =>
+  String(input)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+
 export class EmailService {
   private resend: Resend | null = null;
 
@@ -39,7 +47,7 @@ export class EmailService {
       subject,
       this.shell(`
         <p style="margin:0 0 16px">Use this one-time code to ${purpose === "verification" ? "verify your FCN account" : "reset your FCN password"}.</p>
-        <div style="font-family:Consolas,monospace;font-size:34px;font-weight:800;letter-spacing:8px;color:#0A7EA4;text-align:center;padding:18px 0">${otp}</div>
+        <div style="font-family:Consolas,monospace;font-size:34px;font-weight:800;letter-spacing:8px;color:#0A7EA4;text-align:center;padding:18px 0">${escapeHtml(otp)}</div>
         <p style="margin:16px 0 0;color:#475569">This code expires in 10 minutes.</p>
         <p style="margin:8px 0 0;color:#475569">If you did not request this, ignore this email.</p>
       `)
@@ -51,9 +59,9 @@ export class EmailService {
       to,
       "Welcome to FCN - Healthcare Without Walls",
       this.shell(`
-        <h2 style="margin:0 0 12px;color:#1E293B">Welcome, ${fullName}</h2>
+        <h2 style="margin:0 0 12px;color:#1E293B">Welcome, ${escapeHtml(fullName)}</h2>
         <p style="margin:0 0 16px">FCN connects patients, clinicians, and health workers across Ethiopia with remote care, vitals tracking, e-prescriptions, and coordinated follow-up.</p>
-        <p style="margin:0 0 20px">Your role is registered as <strong>${role}</strong>.</p>
+        <p style="margin:0 0 20px">Your role is registered as <strong>${escapeHtml(role)}</strong>.</p>
         <a href="${env.FRONTEND_URL}" style="display:inline-block;background:#0A7EA4;color:white;padding:12px 18px;border-radius:8px;text-decoration:none;font-weight:700">Open FCN</a>
         <p style="margin:20px 0 0;color:#64748B">Medical care imagery: connected doctors, nurses, and patients receiving coordinated care beyond hospital walls.</p>
       `)
@@ -64,7 +72,7 @@ export class EmailService {
     await this.send(
       to,
       "Your FCN account has been approved!",
-      this.shell(`<h2 style="margin:0 0 12px;color:#1E293B">Congratulations, ${fullName}</h2><p>Your FCN account is approved. You can now sign in and start using the platform.</p><a href="${env.FRONTEND_URL}/login" style="display:inline-block;background:#0A7EA4;color:white;padding:12px 18px;border-radius:8px;text-decoration:none;font-weight:700">Login</a>`)
+      this.shell(`<h2 style="margin:0 0 12px;color:#1E293B">Congratulations, ${escapeHtml(fullName)}</h2><p>Your FCN account is approved. You can now sign in and start using the platform.</p><a href="${env.FRONTEND_URL}/login" style="display:inline-block;background:#0A7EA4;color:white;padding:12px 18px;border-radius:8px;text-decoration:none;font-weight:700">Login</a>`)
     );
   }
 
@@ -73,12 +81,12 @@ export class EmailService {
       to,
       "You have been added as an FCN Hospital Administrator",
       this.shell(`
-        <h2 style="margin:0 0 12px;color:#1E293B">Welcome, ${fullName}</h2>
-        <p style="margin:0 0 16px">You have been added as a Hospital Administrator for <strong>${hospitalName}</strong>.</p>
+        <h2 style="margin:0 0 12px;color:#1E293B">Welcome, ${escapeHtml(fullName)}</h2>
+        <p style="margin:0 0 16px">You have been added as a Hospital Administrator for <strong>${escapeHtml(hospitalName)}</strong>.</p>
         <p style="margin:0 0 8px">Use the following credentials to sign in:</p>
         <div style="background:#F8FFFE;border:1px solid rgba(10,126,164,0.16);border-radius:8px;padding:16px;margin:12px 0">
-          <p style="margin:0 0 4px"><strong>Email:</strong> ${to}</p>
-          <p style="margin:0"><strong>Temp Password:</strong> ${tempPassword}</p>
+          <p style="margin:0 0 4px"><strong>Email:</strong> ${escapeHtml(to)}</p>
+          <p style="margin:0"><strong>Temp Password:</strong> ${escapeHtml(tempPassword)}</p>
         </div>
         <p style="margin:16px 0 0;color:#F87171;font-size:13px">Please change your password on first login. This temporary password will expire in 48 hours.</p>
         <a href="${env.FRONTEND_URL}/login" style="display:inline-block;background:#0A7EA4;color:white;padding:12px 18px;border-radius:8px;text-decoration:none;font-weight:700;margin-top:12px">Sign In to FCN</a>
@@ -90,7 +98,7 @@ export class EmailService {
     await this.send(
       to,
       "FCN Account Application Update",
-      this.shell(`<h2 style="margin:0 0 12px;color:#1E293B">Hello, ${fullName}</h2><p>We could not approve your FCN application at this time.</p><p><strong>Reason:</strong> ${reason}</p><p>You may reapply after correcting the issue.</p>`)
+      this.shell(`<h2 style="margin:0 0 12px;color:#1E293B">Hello, ${escapeHtml(fullName)}</h2><p>We could not approve your FCN application at this time.</p><p><strong>Reason:</strong> ${escapeHtml(reason)}</p><p>You may reapply after correcting the issue.</p>`)
     );
   }
 

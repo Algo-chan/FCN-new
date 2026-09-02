@@ -260,11 +260,26 @@ export class AppointmentsService {
       }
     });
 
-    if (appointment.payment_status === "paid") {
+    if (appointment.payment_status === "paid" && appointment.payment_tx_ref) {
+      const refundResult = await chapaService.refundPayment(
+        appointment.payment_tx_ref,
+        Number(appointment.platform_fee_etb)
+      );
+
       await prisma.appointment.update({
         where: { id: appointmentId },
-        data: { payment_status: "refunded" }
+        data: {
+          payment_status: refundResult.refunded ? "refunded" : "failed"
+        }
       });
+
+      if (!refundResult.refunded) {
+        logger.warn("Appointment cancelled but refund failed", {
+          appointmentId,
+          txRef: appointment.payment_tx_ref,
+          message: refundResult.message
+        });
+      }
     }
 
     await notificationService.appointmentCancelled(
@@ -371,7 +386,7 @@ export class AppointmentsService {
     return this.mapAppointment(result);
   }
 
-  async getAppointmentById(appointmentId: string): Promise<AppointmentResult> {
+  async getAppointmentById(appointmentId: string, userId: string, userRole: string): Promise<AppointmentResult> {
     const appointment = await prisma.appointment.findUnique({
       where: { id: appointmentId },
       include: {
@@ -384,6 +399,14 @@ export class AppointmentsService {
 
     if (!appointment) {
       throw new AppError("Appointment not found", 404, "NOT_FOUND");
+    }
+
+    const isPatient = appointment.patient_id === userId && userRole === "patient";
+    const isDoctor = appointment.doctor_id === userId && userRole === "doctor";
+    const isAdmin = ["hospital_admin", "super_admin"].includes(userRole);
+
+    if (!isPatient && !isDoctor && !isAdmin) {
+      throw new AppError("You do not have permission to view this appointment", 403, "FORBIDDEN");
     }
 
     return this.mapAppointment(appointment);

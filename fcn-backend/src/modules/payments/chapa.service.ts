@@ -143,6 +143,44 @@ export class ChapaService {
     return { verified, amount: result.data.amount };
   }
 
+  async refundPayment(txRef: string, amount: number): Promise<{ refunded: boolean; message: string }> {
+    if (!CHAPA_SECRET_KEY) {
+      logger.warn("Chapa refund skipped: CHAPA_SECRET_KEY not configured", { txRef });
+      return { refunded: false, message: "Chapa not configured" };
+    }
+
+    try {
+      const response = await fetch(`${CHAPA_API_URL}/transaction/refund`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${CHAPA_SECRET_KEY}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          tx_ref: txRef,
+          amount: amount.toString()
+        })
+      });
+
+      const result = (await response.json()) as {
+        status: "success" | "failed";
+        message: string;
+        data?: { tx_ref?: string; refund_id?: string };
+      };
+
+      if (result.status !== "success") {
+        logger.error("Chapa refund failed", { txRef, chapaResponse: result });
+        return { refunded: false, message: result.message || "Refund failed" };
+      }
+
+      logger.info("Chapa refund processed", { txRef, refundId: result.data?.refund_id });
+      return { refunded: true, message: result.message };
+    } catch (error) {
+      logger.error("Chapa refund error", { txRef, error });
+      return { refunded: false, message: "Refund request failed" };
+    }
+  }
+
   verifyWebhookSignature(signature: string, body: string, secret: string): boolean {
     const expected = crypto.createHmac("sha256", secret).update(body).digest("hex");
     try {

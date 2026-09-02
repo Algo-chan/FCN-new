@@ -696,7 +696,7 @@ Recommended: See ${store.finalAssessment.recommended_specialty || "a doctor"}`;
                     </span>
                   </div>
                   <p className="text-xs text-fcn-text-light/60 dark:text-fcn-text-dark/60">
-                    Gemini AI will consider your{" "}
+                    The AI assistant will consider your{" "}
                     {patientProfile?.chronic_conditions?.length > 0
                       ? patientProfile.chronic_conditions.join(", ")
                       : "health profile"}{" "}
