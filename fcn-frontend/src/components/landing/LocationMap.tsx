@@ -27,14 +27,6 @@ const hubs: Hub[] = [
 
 const MAX_DOCTORS = 60;
 
-const partners = [
-  { name: "Dire Dawa General Hospital", icon: Building2, hue: 190 },
-  { name: "Haramaya University Hospital", icon: GraduationCap, hue: 210 },
-  { name: "Dil-Chora Referral Hospital", icon: HeartPulse, hue: 170 },
-  { name: "Ethiopian Medical Association", icon: Stethoscope, hue: 200 },
-  { name: "Ministry of Health Ethiopia", icon: ShieldCheck, hue: 180 }
-];
-
 export const LocationMap = () => {
   const [active, setActive] = useState<number | null>(null);
   const mapRef = useRef<HTMLDivElement>(null);
@@ -167,27 +159,6 @@ export const LocationMap = () => {
                   </div>
                 </motion.div>
               )}
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Institution logos — shown larger on large screens, hidden on small ones */}
-      <div className="mt-8 hidden grid-cols-2 gap-3 sm:grid lg:grid-cols-5 lg:gap-4">
-        {partners.map((p) => {
-          const Icon = p.icon;
-          return (
-            <div
-              key={p.name}
-              className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/70 px-4 py-3 backdrop-blur dark:bg-white/[0.03]"
-            >
-              <span
-                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg"
-                style={{ backgroundColor: `hsla(${p.hue}, 70%, 45%, 0.12)`, color: `hsl(${p.hue}, 70%, 45%)` }}
-              >
-                <Icon className="h-6 w-6" strokeWidth={1.6} />
-              </span>
-              <p className="text-sm font-semibold leading-tight text-fcn-text-light dark:text-fcn-text-dark">{p.name}</p>
             </div>
           );
         })}
