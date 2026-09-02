@@ -1,6 +1,27 @@
 import { useCallback, useMemo } from "react";
 import { Howl } from "howler";
 
+const NAV_SOUND_KEY = "fcn:navigation-sound";
+
+export const readNavSoundPref = (): boolean => {
+  if (typeof window === "undefined") {
+    return false;
+  }
+  const stored = window.localStorage.getItem(NAV_SOUND_KEY);
+  if (stored === null) {
+    return false;
+  }
+  return stored === "1";
+};
+
+export const writeNavSoundPref = (enabled: boolean) => {
+  try {
+    window.localStorage.setItem(NAV_SOUND_KEY, enabled ? "1" : "0");
+  } catch {
+    /* storage unavailable — ignore */
+  }
+};
+
 const canPlaySound = (): boolean => {
   if (typeof window === "undefined") {
     return false;
@@ -34,8 +55,11 @@ export const useSound = () => {
     []
   );
 
-  const play = useCallback((sound: Howl | null) => {
+  const play = useCallback((sound: Howl | null, opts?: { requirePref?: boolean }) => {
     if (!sound || !canPlaySound()) {
+      return;
+    }
+    if (opts?.requirePref && !readNavSoundPref()) {
       return;
     }
 
@@ -47,9 +71,11 @@ export const useSound = () => {
   }, []);
 
   return {
-    playTransition: () => play(sounds.transition),
+    playTransition: () => play(sounds.transition, { requirePref: true }),
     playNotification: () => play(sounds.notification),
     playSuccess: () => play(sounds.success),
-    playError: () => play(sounds.error)
+    playError: () => play(sounds.error),
+    navSoundEnabled: readNavSoundPref,
+    setNavSoundEnabled: writeNavSoundPref
   };
 };

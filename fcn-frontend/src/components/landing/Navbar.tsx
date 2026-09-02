@@ -6,6 +6,7 @@ import { useScrollPosition } from "@/hooks/useScrollPosition";
 import { useTheme } from "@/hooks/useTheme";
 import { useSound } from "@/hooks/useSound";
 import { Button } from "@/components/ui/Button";
+import { MOTION } from "@/styles/motion";
 
 const navLinks = [
   { label: "Features", href: "#features" },
@@ -77,7 +78,7 @@ export const Navbar = () => {
               key={isDark ? "moon" : "sun"}
               initial={!shouldReduceMotion ? { rotate: -90, opacity: 0 } : undefined}
               animate={{ rotate: 0, opacity: 1 }}
-              transition={{ duration: shouldReduceMotion ? 0 : 0.3 }}
+              transition={shouldReduceMotion ? { duration: 0 } : MOTION.spring}
             >
               {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </motion.div>

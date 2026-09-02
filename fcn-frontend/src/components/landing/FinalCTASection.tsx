@@ -2,8 +2,11 @@ import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { motion, useReducedMotion } from "framer-motion";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useSound } from "@/hooks/useSound";
 import { Button } from "@/components/ui/Button";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const particles = Array.from({ length: 10 }, (_, i) => ({
   id: i,
@@ -33,6 +36,20 @@ export const FinalCTASection = () => {
           repeat: -1,
           delay: Math.random() * 3
         });
+      });
+
+      // Pause infinite ambient loops when the section scrolls out of view
+      ScrollTrigger.create({
+        trigger: sectionRef.current,
+        start: "top bottom",
+        end: "bottom top",
+        onToggle: (self) => {
+          ctx.getTweens().forEach((t: gsap.core.Tween) => {
+            if (t.repeat() === -1) {
+              self.isActive ? t.play() : t.pause();
+            }
+          });
+        }
       });
     }, sectionRef);
 

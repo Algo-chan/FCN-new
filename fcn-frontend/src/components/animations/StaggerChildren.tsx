@@ -1,5 +1,6 @@
 import { type PropsWithChildren } from "react";
 import { motion, useReducedMotion } from "framer-motion";
+import { MOTION } from "@/styles/motion";
 
 export const StaggerChildren = ({ children }: PropsWithChildren) => {
   const shouldReduceMotion = useReducedMotion();
@@ -31,7 +32,7 @@ export const StaggerItem = ({ children }: PropsWithChildren) => {
         hidden: shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: 16 },
         show: { opacity: 1, y: 0 }
       }}
-      transition={{ duration: shouldReduceMotion ? 0 : 0.25, ease: "easeOut" }}
+      transition={{ duration: shouldReduceMotion ? 0 : MOTION.fast.duration, ease: MOTION.fast.ease }}
     >
       {children}
     </motion.div>

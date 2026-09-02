@@ -61,7 +61,7 @@ export const HowItWorksSection = () => {
   }, [shouldReduceMotion]);
 
   return (
-    <section ref={sectionRef} id="how-it-works" className="scroll-mt-20 py-10 px-4 sm:py-20 sm:px-6">
+    <section ref={sectionRef} id="how-it-works" className="scroll-mt-20 py-10 sm:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
@@ -98,26 +98,29 @@ export const HowItWorksSection = () => {
           </div>
         </div>
 
-        {/* Mobile vertical stack */}
-        <div className="space-y-4 lg:hidden">
-          {steps.map((step, i) => (
-            <motion.div
-              key={step.title}
-              initial={shouldReduceMotion ? false : { opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, margin: "-40px" }}
-              transition={{ delay: shouldReduceMotion ? 0 : i * 0.06 }}
-              className="flex items-start gap-4"
-            >
-              <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-fcn-primary bg-fcn-primary/10 text-fcn-primary sm:h-12 sm:w-12`}>
-                <step.icon className="h-4 w-4 sm:h-5 sm:w-5" />
-              </div>
-              <div>
-                <p className="font-semibold text-fcn-text-light dark:text-white">{step.title}</p>
-                <p className="text-xs text-fcn-text-light/60 dark:text-gray-400 sm:text-sm">{step.desc}</p>
-              </div>
-            </motion.div>
-          ))}
+        {/* Mobile vertical stack — a connected journey */}
+        <div className="relative lg:hidden">
+          <span className="absolute left-5 top-3 bottom-3 w-px bg-gradient-to-b from-fcn-primary/30 via-fcn-accent/40 to-fcn-primary/10" />
+          <div className="space-y-6">
+            {steps.map((step, i) => (
+              <motion.div
+                key={step.title}
+                initial={shouldReduceMotion ? false : { opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, margin: "-40px" }}
+                transition={{ delay: shouldReduceMotion ? 0 : i * 0.06 }}
+                className="relative flex items-start gap-4"
+              >
+                <span className={`relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-fcn-primary bg-fcn-primary text-white shadow-[0_0_0_4px_rgba(10,126,164,0.08)] sm:h-12 sm:w-12`}>
+                  <step.icon className="h-4 w-4 sm:h-5 sm:w-5" />
+                </span>
+                <div className="pt-1.5">
+                  <p className="text-sm font-semibold text-fcn-text-light dark:text-white sm:text-base">{step.title}</p>
+                  <p className="mt-0.5 text-xs text-fcn-text-light/60 dark:text-gray-400 sm:text-sm">{step.desc}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </div>
     </section>

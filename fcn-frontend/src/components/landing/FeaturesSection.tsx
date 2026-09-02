@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { motion, useInView, useReducedMotion, AnimatePresence } from "framer-motion";
 import { Activity, Brain, ChevronDown, FileHeart, Hospital, Pill, Video } from "lucide-react";
+import { MOTION } from "@/styles/motion";
 
 const features = [
   { icon: Video, title: "Remote Consultation", body: "Connect with licensed doctors via text, voice, or video — no waiting room required." },
@@ -24,11 +25,11 @@ export const FeaturesSection = () => {
 
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] } }
+    visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: MOTION.standard.ease } }
   };
 
   return (
-    <section ref={ref} id="features" className="scroll-mt-20 py-10 px-4 sm:py-20 sm:px-6">
+    <section ref={ref} id="features" className="scroll-mt-20 py-10 sm:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
@@ -72,7 +73,7 @@ export const FeaturesSection = () => {
                     </span>
                     <motion.div
                       animate={{ rotate: isOpen ? 180 : 0 }}
-                      transition={{ duration: 0.2 }}
+                      transition={{ duration: MOTION.accordion.duration }}
                       className="shrink-0"
                     >
                       <ChevronDown className="h-4 w-4 text-fcn-primary/40 dark:text-fcn-accent/40" />
@@ -84,7 +85,7 @@ export const FeaturesSection = () => {
                         initial={shouldReduceMotion ? false : { height: 0, opacity: 0 }}
                         animate={{ height: "auto", opacity: 1 }}
                         exit={shouldReduceMotion ? undefined : { height: 0, opacity: 0 }}
-                        transition={{ duration: 0.25, ease: [0.25, 0.46, 0.45, 0.94] }}
+                        transition={shouldReduceMotion ? { duration: 0 } : MOTION.accordion}
                         className="overflow-hidden"
                       >
                         <div className="px-3 pb-3 pt-1 text-xs leading-relaxed text-fcn-text-light/60 dark:text-gray-400">

@@ -18,7 +18,7 @@ export const ForDoctorsSection = () => {
   const { playTransition } = useSound();
 
   return (
-    <section ref={ref} id="for-doctors" className="scroll-mt-20 py-10 px-4 sm:py-20 sm:px-6">
+    <section ref={ref} id="for-doctors" className="scroll-mt-20 py-10 sm:py-20">
       <div className="mx-auto max-w-7xl items-center gap-12 px-4 sm:px-6 lg:flex lg:flex-row-reverse lg:px-8">
         {/* Right - Image (reversed) */}
         <motion.div
@@ -65,12 +65,12 @@ export const ForDoctorsSection = () => {
               </li>
             ))}
           </ul>
-          <div className="flex flex-col gap-3 sm:flex-row">
+          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
             <Link to="/register" onClick={() => playTransition()}>
-              <Button>Join as a Doctor</Button>
+              <Button className="w-full sm:w-auto">Join as a Doctor</Button>
             </Link>
             <a href="#faq">
-              <Button variant="ghost">Learn More</Button>
+              <Button variant="ghost" className="w-full sm:w-auto">Learn More</Button>
             </a>
           </div>
         </motion.div>

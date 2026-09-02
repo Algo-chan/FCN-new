@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
+import { MOTION } from "@/styles/motion";
 
 interface FAQItem {
   q: string;
@@ -23,7 +24,7 @@ export const FAQSection = () => {
   const toggle = (i: number) => setOpenIdx(openIdx === i ? null : i);
 
   return (
-    <section id="faq" className="scroll-mt-20 py-10 px-4 sm:py-20 sm:px-6">
+    <section id="faq" className="scroll-mt-20 py-10 sm:py-20">
       <div className="mx-auto max-w-lg px-4 sm:max-w-3xl sm:px-6 lg:px-8">
         <motion.div
           initial={!shouldReduceMotion ? { opacity: 0, y: 20 } : undefined}
@@ -53,7 +54,7 @@ export const FAQSection = () => {
                 <span className="pr-4 text-sm font-medium text-fcn-text-light dark:text-white">{faq.q}</span>
                 <motion.span
                   animate={{ rotate: openIdx === i ? 180 : 0 }}
-                  transition={{ duration: shouldReduceMotion ? 0 : 0.2 }}
+                  transition={{ duration: shouldReduceMotion ? 0 : MOTION.accordion.duration }}
                   className="shrink-0"
                 >
                   <ChevronDown className="h-4 w-4 text-fcn-accent" />
@@ -65,7 +66,7 @@ export const FAQSection = () => {
                     initial={!shouldReduceMotion ? { height: 0, opacity: 0 } : undefined}
                     animate={{ height: "auto", opacity: 1 }}
                     exit={!shouldReduceMotion ? { height: 0, opacity: 0 } : undefined}
-                    transition={{ duration: shouldReduceMotion ? 0 : 0.25, ease: "easeInOut" }}
+                    transition={shouldReduceMotion ? { duration: 0 } : MOTION.accordion}
                     className="overflow-hidden"
                   >
                     <div className="border-t border-fcn-accent/10 px-4 py-3 text-sm leading-relaxed text-fcn-text-light/70 dark:text-gray-400 sm:px-5 sm:py-4">

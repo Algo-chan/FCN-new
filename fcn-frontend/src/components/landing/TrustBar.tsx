@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import { motion, useInView, useReducedMotion } from "framer-motion";
 import { Building2, GraduationCap, HeartPulse, ShieldCheck, Stethoscope, Users, Activity, Star } from "lucide-react";
+import { MOTION } from "@/styles/motion";
 
 const partners = [
   { name: "Dire Dawa General Hospital", icon: Building2, hue: 190 },
@@ -33,7 +34,7 @@ export const TrustBar = () => {
       opacity: 1,
       y: 0,
       scale: 1,
-      transition: { duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }
+      transition: { duration: 0.5, ease: MOTION.standard.ease }
     }
   };
 
@@ -42,7 +43,7 @@ export const TrustBar = () => {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.4, ease: "easeOut" }
+      transition: { duration: 0.4, ease: MOTION.fast.ease }
     }
   };
 

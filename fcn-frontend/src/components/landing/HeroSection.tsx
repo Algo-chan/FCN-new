@@ -2,9 +2,12 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ArrowRight, ChevronDown, Play } from "lucide-react";
 import { useSound } from "@/hooks/useSound";
 import { Button } from "@/components/ui/Button";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const particles = Array.from({ length: 10 }, (_, i) => ({
   id: i,
@@ -67,6 +70,20 @@ export const HeroSection = () => {
           repeat: -1
         });
       }
+
+      // Pause infinite ambient loops when the hero scrolls out of view
+      ScrollTrigger.create({
+        trigger: sectionRef.current,
+        start: "top bottom",
+        end: "bottom top",
+        onToggle: (self) => {
+          ctx.getTweens().forEach((t: gsap.core.Tween) => {
+            if (t.repeat() === -1) {
+              self.isActive ? t.play() : t.pause();
+            }
+          });
+        }
+      });
     }, sectionRef);
 
     // Floating notifications after delay
