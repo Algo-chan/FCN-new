@@ -153,7 +153,7 @@ export const TrustBar = () => {
           variants={shouldReduceMotion ? undefined : containerVariants}
           initial="hidden"
           animate={isInView ? "visible" : "hidden"}
-          className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-4"
+          className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4"
         >
           {stats.map((s) => {
             const Icon = s.icon;
@@ -161,9 +161,10 @@ export const TrustBar = () => {
               <motion.div
                 key={s.label}
                 variants={shouldReduceMotion ? undefined : statVariants}
-                className="flex items-center justify-center gap-3 rounded-xl border border-white/10 bg-white/50 px-4 py-3 backdrop-blur dark:bg-white/[0.03]"
+                className="group relative flex items-center gap-3 overflow-hidden rounded-xl border border-white/10 bg-white/70 px-4 py-3 backdrop-blur transition-colors dark:bg-white/[0.03]"
               >
-                <Icon className="h-4 w-4 shrink-0 text-fcn-accent" />
+                <span className="absolute inset-y-0 left-0 w-0.5 rounded-full bg-gradient-to-b from-fcn-primary to-fcn-accent opacity-0 transition-opacity group-hover:opacity-100" />
+                <Icon className="h-5 w-5 shrink-0 text-fcn-accent" />
                 <div className="text-left">
                   <p className="text-sm font-bold text-fcn-text-light dark:text-white sm:text-base">{s.value}</p>
                   <p className="text-[10px] text-fcn-text-light/50 dark:text-gray-400 sm:text-xs">{s.label}</p>

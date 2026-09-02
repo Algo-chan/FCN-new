@@ -4,13 +4,7 @@ import { format } from "date-fns";
 import { Eye, ArrowRight } from "lucide-react";
 import type { SupportedLanguage } from "@/types";
 import { Badge } from "@/components/ui/Badge";
-
-const languageLabels: Record<string, { name: string; flag: string }> = {
-  en: { name: "English", flag: "🇬🇧" },
-  am: { name: "አማርኛ", flag: "🇪🇹" },
-  so: { name: "Soomaali", flag: "🇸🇴" },
-  om: { name: "Afaan Oromoo", flag: "🇪🇹" }
-};
+import { languageLabels } from "@/constants/languages";
 
 const riskVariant = (level: string | null): "success" | "warning" | "danger" | "info" | "neutral" => {
   switch (level) {

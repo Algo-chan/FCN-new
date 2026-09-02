@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 import { clsx } from "clsx";
 import { SpO2Alert } from "@/components/health-records/SpO2Alert";
+import { fmtDate, formatTime } from "@/utils/formatters";
 
 interface VitalsRecord {
   id: string;
@@ -28,21 +29,6 @@ interface VitalsHistoryTableProps {
   records: VitalsRecord[];
   isLoading: boolean;
   pageSize?: number;
-}
-
-const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
-function fmtDate(d: string) {
-  const dt = new Date(d);
-  return `${months[dt.getMonth()]} ${dt.getDate()}, ${dt.getFullYear()}`;
-}
-
-function fmtTime(d: string) {
-  const dt = new Date(d);
-  const h = dt.getHours();
-  const m = dt.getMinutes().toString().padStart(2, "0");
-  const ampm = h >= 12 ? "PM" : "AM";
-  return `${h % 12 || 12}:${m} ${ampm}`;
 }
 
 export const VitalsHistoryTable = ({
@@ -242,7 +228,7 @@ export const VitalsHistoryTable = ({
                     )}
                   >
                     <TD className="sticky left-0 z-10 bg-white dark:bg-fcn-dark shadow-[2px_0_4px_rgba(0,0,0,0.05)]">{fmtDate(rec.recorded_at)}</TD>
-                    <TD>{fmtTime(rec.recorded_at)}</TD>
+                    <TD>{formatTime(rec.recorded_at)}</TD>
                     <TD>
                       {rec.bp_systolic ? `${rec.bp_systolic}/${rec.bp_diastolic ?? "—"}` : "—"}
                     </TD>

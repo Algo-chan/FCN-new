@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { UserReviewModal } from "./UserReviewModal";
 import { clsx } from "clsx";
+import { formatRole } from "@/utils/formatters";
 import type { User } from "@/types";
 
 const ROLE_OPTIONS = [
@@ -212,7 +213,7 @@ export const UserManagementTable = ({ filters, onFiltersChange }: Props) => {
                   </td>
                   <td className="px-4 py-3">
                     <Badge variant={roleBadgeVariant[user.role] || "neutral"} size="sm">
-                      {user.role.replace(/_/g, " ")}
+                      {formatRole(user.role)}
                     </Badge>
                   </td>
                   <td className="px-4 py-3">

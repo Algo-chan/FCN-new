@@ -4,6 +4,7 @@ import { ArrowUp, Sparkles, RotateCcw } from "lucide-react";
 import { clsx } from "clsx";
 import gsap from "gsap";
 import { useSound } from "@/hooks/useSound";
+import { parseMarkdown } from "@/utils/markdown";
 import type { ConversationMessage, SupportedLanguage, ParsedAssessment } from "@/types";
 
 const LANGUAGE_CONFIG_MAP: Record<string, { thinkingText: string; greeting: string; name: string; flag: string }> = {
@@ -12,20 +13,6 @@ const LANGUAGE_CONFIG_MAP: Record<string, { thinkingText: string; greeting: stri
   so: { thinkingText: "Calaamadahaaga waa la falanqeynayaa...", greeting: "Salaan! Waxaan ahay Kaaliyaha Caafimaadka AI ee FCN.", name: "Soomaali", flag: "🇸🇴" },
   om: { thinkingText: "Malattoolee keessan xiinxalaa jira...", greeting: "Akkam! Ani gargaaraa fayyaa AI FCN ti.", name: "Afaan Oromoo", flag: "🇪🇹" }
 };
-
-function parseMarkdown(text: string): string {
-  let html = text
-    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
-    .replace(/\*(.+?)\*/g, "<em>$1</em>")
-    .replace(/^- (.+)$/gm, "<li>$1</li>")
-    .replace(/\n\n/g, "</p><p>")
-    .replace(/\n/g, "<br/>");
-  if (html.includes("<li>")) {
-    html = html.replace(/(<li>.*<\/li>)/s, "<ul>$1</ul>");
-  }
-  html = "<p>" + html + "</p>";
-  return html;
-}
 
 function ThinkingBubble({ text }: { text: string }) {
   return (

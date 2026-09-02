@@ -1,4 +1,5 @@
 import { motion, useReducedMotion } from "framer-motion";
+import { getInitials } from "@/utils/formatters";
 import type { Role } from "@/types";
 
 interface InitialsAvatarProps {
@@ -23,12 +24,6 @@ const sizeClasses = {
   md: "h-10 w-10 text-sm",
   lg: "h-16 w-16 text-lg",
   xl: "h-24 w-24 text-2xl"
-};
-
-const getInitials = (name: string): string => {
-  const parts = name.trim().split(/\s+/);
-  if (parts.length === 1) return parts[0][0]?.toUpperCase() ?? "?";
-  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
 };
 
 export const InitialsAvatar = ({ name, size, role, className = "" }: InitialsAvatarProps) => {

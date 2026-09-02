@@ -16,6 +16,7 @@ import { useWindowSize } from "@/hooks/useWindowSize";
 import { NotificationBell } from "@/components/notifications/NotificationBell";
 import { useNotifications } from "@/hooks/useNotifications";
 import { useAuth } from "@/hooks/useAuth";
+import { getInitials } from "@/utils/formatters";
 
 export const TopBar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -86,12 +87,7 @@ export const TopBar = () => {
             aria-label="User menu"
           >
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-fcn-primary text-xs font-semibold text-white">
-              {user?.full_name
-                ?.split(" ")
-                .map((n) => n[0])
-                .join("")
-                .toUpperCase()
-                .slice(0, 2) ?? "U"}
+              {user?.full_name ? getInitials(user.full_name) : "U"}
             </div>
           </button>
 

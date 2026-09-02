@@ -1,4 +1,4 @@
-export type VitalStatus = "normal" | "warning" | "critical";
+import type { VitalStatus } from "@/types";
 
 export interface VitalClassification {
   status: VitalStatus;

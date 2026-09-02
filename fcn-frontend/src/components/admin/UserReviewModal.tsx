@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Avatar } from "@/components/ui/Avatar";
 import { Button } from "@/components/ui/Button";
 import { formatDistanceToNow } from "date-fns";
+import { formatRole } from "@/utils/formatters";
 
 interface Props {
   userId: string;
@@ -115,7 +116,7 @@ export const UserReviewModal = ({ userId, onDecision, onClose }: Props) => {
               <Avatar name={user.full_name} size="lg" role={user.role} />
               <h3 className="text-lg font-bold text-fcn-text-light dark:text-fcn-text-dark">{user.full_name}</h3>
               <Badge variant={user.role === "doctor" ? "success" : "warning"} size="sm">
-                {user.role.replace(/_/g, " ")}
+                {formatRole(user.role)}
               </Badge>
               <p className="mt-1 text-xs text-fcn-text-light/40">
                 Registered {formatDistanceToNow(new Date(review.registration_date), { addSuffix: true })}
@@ -368,7 +369,7 @@ export const UserReviewModal = ({ userId, onDecision, onClose }: Props) => {
                 >
                   <div className="rounded-lg bg-fcn-success/10 p-3">
                     <p className="text-sm font-medium text-fcn-success">
-                      Approve {user.full_name} as FCN {user.role.replace(/_/g, " ")}?
+                      Approve {user.full_name} as FCN {formatRole(user.role)}?
                     </p>
                     <p className="mt-1 text-xs text-fcn-text-light/60">
                       They will be notified and can immediately start using the platform.

@@ -11,18 +11,7 @@ import { Button } from "@/components/ui/Button";
 import { healthRecordsService } from "@/services/health-records.service";
 import { classifyVital, classifySpo2 } from "@/utils/vitals-classifier";
 import { generateVitalsReport, type VitalsPDFData } from "@/utils/pdf-generator";
-
-const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
-function fmtTimeAgo(d: string): string {
-  const diff = Date.now() - new Date(d).getTime();
-  const mins = Math.floor(diff / 60000);
-  if (mins < 1) return "Just now";
-  if (mins < 60) return `${mins}m ago`;
-  const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs}h ago`;
-  return `${Math.floor(hrs / 24)}d ago`;
-}
+import { fmtTimeAgo } from "@/utils/formatters";
 
 interface RouteParams {
   patientId: string;

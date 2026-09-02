@@ -2,14 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import gsap from "gsap";
-import { ArrowRight, ChevronDown, Play, Smartphone } from "lucide-react";
+import { ArrowRight, ChevronDown, Play } from "lucide-react";
 import { useSound } from "@/hooks/useSound";
 import { Button } from "@/components/ui/Button";
-
-interface BeforeInstallPromptEvent extends Event {
-  prompt: () => Promise<void>;
-  userChoice: Promise<{ outcome: "accepted" | "dismissed"; platform: string }>;
-}
 
 const particles = Array.from({ length: 10 }, (_, i) => ({
   id: i,
@@ -22,55 +17,15 @@ const particles = Array.from({ length: 10 }, (_, i) => ({
 
 const words = ["Healthcare", "Without", "Walls"];
 
-const stats = [
-  { value: "3+", label: "Hospitals in Dire Dawa" },
-  { value: "4", label: "Languages AI Support" },
-  { value: "FREE", label: "Pilot Period" },
-  { value: "50 ETB", label: "per consult" }
-];
-
-const features = [
-  { icon: "🏥", label: "Remote Consultation" },
-  { icon: "🤖", label: "AI in 4 Languages" },
-  { icon: "💊", label: "E-Prescriptions" },
-  { icon: "🏠", label: "Nurse Home Visits" },
-  { icon: "📊", label: "Health Records" },
-  { icon: "🔍", label: "Hospital Checker" }
-];
-
-const doctors = [
-  { initials: "ST", name: "Dr. Sara" },
-  { initials: "YA", name: "Dr. Yonas" },
-  { initials: "MK", name: "Dr. Meron" }
-];
-
 export const HeroSection = () => {
   const shouldReduceMotion = useReducedMotion();
   const { playTransition } = useSound();
   const [notif1, setNotif1] = useState(false);
   const [notif2, setNotif2] = useState(false);
-  const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const heartbeatRef = useRef<SVGPathElement>(null);
   const phoneRef = useRef<HTMLDivElement>(null);
   const particlesRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const handler = (e: Event) => {
-      e.preventDefault();
-      setInstallPrompt(e as BeforeInstallPromptEvent);
-    };
-    window.addEventListener("beforeinstallprompt", handler);
-    return () => window.removeEventListener("beforeinstallprompt", handler);
-  }, []);
-
-  const handleInstall = () => {
-    if (!installPrompt) {
-      return;
-    }
-    void installPrompt.prompt();
-    setInstallPrompt(null);
-  };
 
   useEffect(() => {
     if (shouldReduceMotion) return;
@@ -164,14 +119,14 @@ export const HeroSection = () => {
             Now Live in Dire Dawa, Ethiopia
           </motion.div>
 
-          <h1 className="mb-4 text-3xl font-extrabold leading-tight tracking-tight text-white sm:text-5xl lg:text-6xl">
+          <h1 className="mb-4 text-[2.6rem] font-extrabold leading-[1.05] tracking-tight text-white sm:text-5xl lg:text-6xl">
             {words.map((word, i) => (
               <motion.span
                 key={word}
                 initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: shouldReduceMotion ? 0 : 0.2 + i * 0.15, duration: shouldReduceMotion ? 0 : 0.5 }}
-                className={`mr-3 inline-block ${word === "Walls" ? "bg-gradient-to-r from-fcn-primary to-fcn-accent bg-clip-text text-transparent" : "text-white"}`}
+                className={`block sm:mr-3 sm:inline-block ${word === "Walls" ? "bg-gradient-to-r from-fcn-primary to-fcn-accent bg-clip-text text-transparent" : "text-white"}`}
               >
                 {word}
               </motion.span>
@@ -218,7 +173,7 @@ export const HeroSection = () => {
             </a>
           </motion.div>
 
-          {/* Buttons — mobile (new, full width) */}
+          {/* Buttons — mobile (streamlined: primary CTA only, secondary is one tap away in nav) */}
           <motion.div
             initial={shouldReduceMotion ? false : { opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
@@ -230,13 +185,6 @@ export const HeroSection = () => {
                 <Button size="lg" className="w-full bg-gradient-to-r from-fcn-primary to-fcn-accent text-white shadow-lg shadow-fcn-accent/25 hover:shadow-fcn-accent/40">
                   Get Care Now
                   <motion.span className="ml-2 inline-block" whileHover={shouldReduceMotion ? {} : { x: 3 }}><ArrowRight className="h-4 w-4" /></motion.span>
-                </Button>
-              </motion.div>
-            </Link>
-            <Link to="/login" onClick={() => playTransition()} className="w-full">
-              <motion.div whileHover={shouldReduceMotion ? {} : { scale: 1.05 }} whileTap={{ scale: 0.98 }}>
-                <Button size="lg" variant="ghost" className="w-full border border-white/20 bg-white/5 text-white hover:border-white/40 hover:bg-white/10">
-                  Sign In
                 </Button>
               </motion.div>
             </Link>
@@ -257,9 +205,9 @@ export const HeroSection = () => {
           </motion.div>
         </div>
 
-        {/* Right column — Phone mockup (unchanged) */}
-        <div className="hidden flex-1 sm:block">
-          <div ref={phoneRef} className="mx-auto w-64 sm:w-72" style={{ willChange: "transform" }}>
+        {/* Right column — Phone mockup (shown on all sizes; compact on mobile, anchored below CTA) */}
+        <div className="flex flex-1 items-center justify-center">
+          <div ref={phoneRef} className="mx-auto w-56 max-w-xs sm:w-72" style={{ willChange: "transform" }}>
             <div className="rounded-[2.5rem] border-4 border-gray-600 bg-gray-900 p-3 shadow-2xl">
               <div className="overflow-hidden rounded-[2rem] bg-white dark:bg-[#0D1117]">
                 {/* Phone top bar */}
@@ -303,114 +251,6 @@ export const HeroSection = () => {
               </div>
             </div>
           </div>
-        </div>
-
-        {/* Mobile-only — fills the blank area below the buttons */}
-        <div className="flex w-full flex-col items-center gap-6 lg:hidden">
-          {/* SECTION A — Install App Banner */}
-          {installPrompt && (
-            <motion.div
-              initial={shouldReduceMotion ? false : { opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: shouldReduceMotion ? 0 : 1.3 }}
-              className="w-full max-w-md animate-pulse-border rounded-2xl border-2 border-fcn-accent/40 bg-white/5 p-4 backdrop-blur"
-            >
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-fcn-accent/15">
-                  <Smartphone className="h-5 w-5 text-fcn-accent" />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-sm font-semibold text-white">📱 Install FCN as an App</p>
-                  <p className="mt-0.5 text-xs leading-relaxed text-gray-300">
-                    Add to your home screen for the best experience — works offline too
-                  </p>
-                </div>
-              </div>
-              <motion.button
-                whileHover={shouldReduceMotion ? {} : { scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={handleInstall}
-                className="mt-3 rounded-md border border-fcn-accent/40 bg-fcn-accent/10 px-4 py-1.5 text-xs font-medium text-fcn-accent transition hover:bg-fcn-accent/20"
-              >
-                Install Now
-              </motion.button>
-            </motion.div>
-          )}
-
-          {/* SECTION B — Quick Stats Row */}
-          <motion.div className="grid w-full max-w-xl grid-cols-2 gap-3">
-            {stats.map((s, i) => (
-              <motion.div
-                key={s.value}
-                initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: shouldReduceMotion ? 0 : 1 + i * 0.1, duration: 0.4 }}
-                className="relative rounded-xl bg-white/5 p-4"
-                style={{ border: "1px solid rgba(255,255,255,0.1)" }}
-              >
-                <span className="absolute inset-x-4 top-0 h-0.5 rounded-full bg-gradient-to-r from-fcn-primary to-fcn-accent" />
-                <p className="text-xl font-bold text-white">{s.value}</p>
-                <p className="mt-1 text-[11px] leading-snug text-white/50">{s.label}</p>
-              </motion.div>
-            ))}
-          </motion.div>
-
-          {/* SECTION C — Feature Pills Row */}
-          <motion.div
-            initial={shouldReduceMotion ? false : { opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: shouldReduceMotion ? 0 : 1.6, duration: 0.5 }}
-            className="hide-scrollbar w-full overflow-x-auto pb-1"
-          >
-            <div className="flex w-max gap-2 px-0.5">
-              {features.map((f) => (
-                <span
-                  key={f.label}
-                  className="flex items-center gap-1.5 whitespace-nowrap rounded-[20px] border border-fcn-primary/30 bg-fcn-primary/15 px-3.5 py-2 text-xs text-fcn-accent"
-                >
-                  <span>{f.icon}</span>
-                  {f.label}
-                </span>
-              ))}
-            </div>
-          </motion.div>
-
-          {/* SECTION D — Social Proof Card */}
-          <motion.div
-            initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: shouldReduceMotion ? 0 : 2, duration: 0.5 }}
-            className="w-full max-w-xl rounded-2xl border border-white/10 bg-white/5 p-5 text-center backdrop-blur-md"
-          >
-            <p className="text-xs text-gray-300">Trusted by healthcare professionals in Dire Dawa</p>
-            <div className="mt-3 flex items-center justify-center gap-3">
-              <div className="flex">
-                {doctors.map((d) => (
-                  <div
-                    key={d.initials}
-                    title={d.name}
-                    className="-ml-2 flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-fcn-accent to-fcn-primary text-[11px] font-bold text-white ring-2 ring-[#0A1628] first:ml-0"
-                  >
-                    {d.initials}
-                  </div>
-                ))}
-              </div>
-              <p className="text-[11px] text-gray-400">Join 50+ doctors already on FCN</p>
-            </div>
-          </motion.div>
-
-          {/* Scroll indicator — mobile */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.5 }}
-            className="mt-2 text-center"
-          >
-            <motion.div animate={shouldReduceMotion ? {} : { y: [0, 6, 0] }} transition={{ repeat: Infinity, duration: 1.5 }}>
-              <ChevronDown className="mx-auto h-5 w-5 text-white/40" />
-            </motion.div>
-            <p className="mt-1 text-[10px] text-white/30">Scroll to explore</p>
-          </motion.div>
         </div>
       </div>
 

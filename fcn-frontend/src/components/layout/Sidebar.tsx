@@ -33,6 +33,7 @@ import { useUiStore } from "@/store/ui.store";
 import { useAuthStore } from "@/store/auth.store";
 import { useWindowSize } from "@/hooks/useWindowSize";
 import type { Role } from "@/types";
+import { getInitials, formatRole } from "@/utils/formatters";
 
 interface NavItem {
   label: string;
@@ -343,19 +344,14 @@ export const Sidebar = () => {
         {(!sidebarCollapsed || isMobile) && user && (
           <div className="flex items-center gap-3 truncate">
             <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-fcn-primary text-xs font-semibold text-white">
-              {user.full_name
-                .split(" ")
-                .map((n) => n[0])
-                .join("")
-                .toUpperCase()
-                .slice(0, 2)}
+              {getInitials(user.full_name)}
             </div>
             <div className="min-w-0 flex-1 truncate">
               <p className="truncate text-sm font-medium text-fcn-text-light dark:text-fcn-text-dark">
                 {user.full_name}
               </p>
               <p className="truncate text-xs capitalize text-fcn-text-light/50 dark:text-fcn-text-dark/50">
-                {user.role.replace(/_/g, " ")}
+                {formatRole(user.role)}
               </p>
             </div>
           </div>
