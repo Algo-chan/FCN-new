@@ -250,21 +250,16 @@ const quadraticPoint = (from: [number, number], to: [number, number], control: [
   ];
 };
 
-const lineGeometry = (from: [number, number], to: [number, number], factor: number, dir: "north" | "east" | "west") => {
+const lineGeometry = (from: [number, number], to: [number, number], factor: number, outward: [number, number]) => {
   const midLat = (from[0] + to[0]) / 2;
   const midLng = (from[1] + to[1]) / 2;
   const dx = to[0] - from[0];
   const dy = to[1] - from[1];
   const len = Math.hypot(dx, dy) || 1;
-  const dist = len * 0.3 * factor;
-  let control: [number, number];
-  if (dir === "north") {
-    control = [midLat + dist, midLng];
-  } else if (dir === "east") {
-    control = [midLat, midLng + dist];
-  } else {
-    control = [midLat, midLng - dist];
-  }
+  // Bulge the control point outward, away from the network centroid, so lines
+  // bow around the outside of the cluster instead of cutting through it.
+  const dist = len * 0.4 * factor;
+  const control: [number, number] = [midLat + outward[0] * dist, midLng + outward[1] * dist];
   const steps = 48;
   const points: Array<[number, number]> = [];
   for (let i = 0; i <= steps; i++) {
@@ -280,11 +275,13 @@ interface CurvedLine {
   points: Array<[number, number]>;
 }
 
-// Perpendicular directions used for north-south lines (not the east-west road).
-const dupThreshold = 0.0004;
+// Network centroid (latitude-scaled for even longitude spacing), used so lines
+// bow outward away from the middle of the map.
+const netMidLat = hubs.reduce((sum, h) => sum + h.coords[0], 0) / hubs.length;
+const netMidLng = hubs.reduce((sum, h) => sum + h.coords[1], 0) / hubs.length;
+const netCos = Math.cos((netMidLat * Math.PI) / 180) || 1;
 
 const curvedLines: CurvedLine[] = (() => {
-  let prevTo: [number, number] | null = null;
   const out: Array<CurvedLine | null> = [];
   networkLines.forEach((line, i) => {
     const from = byName(line.from);
@@ -294,29 +291,22 @@ const curvedLines: CurvedLine[] = (() => {
       return;
     }
     let factor = 0.9 + (i % 4) * 0.15;
-    const dx = to[0] - from[0];
-    const dy = to[1] - from[1];
-    // Lines along the main east-west road (longitude changes more than latitude)
-    // arc north; north-south lines alternate east/west.
-    let dir: "north" | "east" | "west";
-    if (Math.abs(dy) >= Math.abs(dx)) {
-      dir = "north";
-    } else {
-      dir = i % 2 === 0 ? "east" : "west";
-    }
-    // If this target nearly duplicates the previous one (e.g. Delt and Yemariam
-    // sit next to each other, so their Dil Chora links would overlap), keep the
-    // line curving north but at a taller height so the two separate clearly.
-    if (
-      prevTo &&
-      Math.abs(to[0] - prevTo[0]) < dupThreshold &&
-      Math.abs(to[1] - prevTo[1]) < dupThreshold
-    ) {
-      dir = "north";
-      factor += 0.9;
-    }
-    prevTo = to;
-    out.push({ from, to, ...lineGeometry(from, to, factor, dir) });
+    // Outward unit direction pointing from the network center to this line's
+    // midpoint, so every line bulges away from the cluster (cuts cross the
+    // outside). Added a tiny lateral bias so neighboring lines fan apart.
+    const midLat = (from[0] + to[0]) / 2;
+    const midLng = (from[1] + to[1]) / 2;
+    let rx = midLat - netMidLat;
+    let ry = (midLng - netMidLng) * netCos;
+    const rLen = Math.hypot(rx, ry) || 1;
+    rx /= rLen;
+    ry /= rLen;
+    const lateral = i % 2 === 0 ? 1 : -1;
+    const outward: [number, number] = [
+      rx * 0.85 + -ry * 0.15 * lateral,
+      (ry * 0.85 + rx * 0.15 * lateral) / netCos,
+    ];
+    out.push({ from, to, ...lineGeometry(from, to, factor, outward) });
   });
   return out.filter((l): l is CurvedLine => l !== null);
 })();
