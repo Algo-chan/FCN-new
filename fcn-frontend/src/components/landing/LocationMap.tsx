@@ -206,6 +206,18 @@ const DarkModeFilter = () => {
   return null;
 };
 
+const FitBounds = () => {
+  const map = useMap();
+
+  useEffect(() => {
+    const coords = hubs.map((h) => [h.coords[0], h.coords[1]] as [number, number]);
+    const bounds = L.latLngBounds(coords);
+    map.fitBounds(bounds, { padding: [85, 85], maxZoom: 15 });
+  }, [map]);
+
+  return null;
+};
+
 const byName = (name: string) => hubs.find((h) => h.name === name)?.coords;
 const DI = "#2DD4BF";
 
@@ -312,7 +324,7 @@ export const LocationMap = () => {
 
   if (!loaded) {
     return (
-      <div className="flex h-64 items-center justify-center rounded-2xl bg-fcn-primary/5 sm:h-80 lg:h-96">
+      <div className="flex h-72 items-center justify-center rounded-2xl bg-fcn-primary/5 sm:h-96 lg:h-[440px] xl:h-[500px]">
         <div className="h-8 w-8 animate-spin rounded-full border-2 border-fcn-primary border-r-transparent" />
       </div>
     );
@@ -326,18 +338,19 @@ export const LocationMap = () => {
       ref={containerRef}
       className="relative overflow-hidden rounded-2xl border border-fcn-primary/10"
     >
-      <div className="h-64 sm:h-80 lg:h-96">
+      <div className="h-72 sm:h-96 lg:h-[440px] xl:h-[500px]">
         <MapContainer
           center={center}
           zoom={zoom}
           className="h-full w-full"
           zoomControl={true}
-          scrollWheelZoom={true}
+          scrollWheelZoom={false}
         >
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           />
+          <FitBounds />
           <DarkModeFilter />
           <NetworkLines />
           <TravelingDots />
