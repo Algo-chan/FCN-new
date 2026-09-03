@@ -212,7 +212,7 @@ const FitBounds = () => {
   useEffect(() => {
     const coords = hubs.map((h) => [h.coords[0], h.coords[1]] as [number, number]);
     const bounds = L.latLngBounds(coords);
-    map.fitBounds(bounds, { padding: [140, 140], maxZoom: 12.5 });
+    map.fitBounds(bounds, { padding: [130, 130], maxZoom: 13 });
   }, [map]);
 
   return null;
@@ -303,9 +303,9 @@ const NetworkLines = () => (
 
 const dotIcon = L.divIcon({
   className: "",
-  html: `<svg viewBox="0 0 24 24" width="13" height="13" style="overflow:visible;filter:drop-shadow(0 0 4px rgba(239,68,68,0.8));"><path d="M12 21s-7.5-4.7-9.8-9C0.4 8.4 1.8 5 5.2 5 7.2 5 8.8 6.2 12 9c3.2-2.8 4.8-4 6.8-4 3.4 0 4.8 3.4 3 7-2.3 4.3-9.8 9-9.8 9z" fill="#EF4444"/></svg>`,
-  iconSize: [13, 13],
-  iconAnchor: [6, 7],
+  html: `<div style="width:9px;height:9px;background:#FFFFFF;border:2px solid ${DI};border-radius:50%;box-shadow:0 0 8px 2px hsla(171,72%,55%,0.8);"></div>`,
+  iconSize: [9, 9],
+  iconAnchor: [4, 4],
 });
 
 const TravelingDots = () => {
@@ -356,7 +356,7 @@ export const LocationMap = () => {
 
   if (!loaded) {
     return (
-      <div className="flex h-72 items-center justify-center rounded-2xl bg-fcn-primary/5 sm:h-96 lg:h-[500px] xl:h-[560px]">
+      <div className="flex h-72 items-center justify-center rounded-2xl bg-fcn-primary/5 sm:h-96 lg:h-[440px] xl:h-[500px]">
         <div className="h-8 w-8 animate-spin rounded-full border-2 border-fcn-primary border-r-transparent" />
       </div>
     );
@@ -370,7 +370,7 @@ export const LocationMap = () => {
       ref={containerRef}
       className="relative overflow-hidden rounded-2xl border border-fcn-primary/10"
     >
-      <div className="h-72 sm:h-96 lg:h-[500px] xl:h-[560px]">
+      <div className="h-72 sm:h-96 lg:h-[440px] xl:h-[500px]">
         <MapContainer
           center={center}
           zoom={zoom}
