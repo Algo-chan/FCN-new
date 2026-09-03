@@ -249,13 +249,12 @@ const quadraticPoint = (from: [number, number], to: [number, number], control: [
   ];
 };
 
-const lineGeometry = (from: [number, number], to: [number, number], n: number) => {
+const lineGeometry = (from: [number, number], to: [number, number]) => {
   const midLat = (from[0] + to[0]) / 2;
   const midLng = (from[1] + to[1]) / 2;
-  // Bulge the control point south by a small distance that varies per line so
-  // neighboring lines sit on slightly different arcs (a little air between them).
-  const drop = 0.006 + (n % 5) * 0.002;
-  const control: [number, number] = [midLat - drop, midLng];
+  // Bulge the control point south by a small fixed distance so every line bows
+  // the same gentle downward arc.
+  const control: [number, number] = [midLat - 0.006, midLng];
   const steps = 40;
   const points: Array<[number, number]> = [];
   for (let i = 0; i <= steps; i++) {
@@ -273,14 +272,14 @@ interface CurvedLine {
 
 const curvedLines: CurvedLine[] = (() => {
   const out: Array<CurvedLine | null> = [];
-  networkLines.forEach((line, i) => {
+  networkLines.forEach((line) => {
     const from = byName(line.from);
     const to = byName(line.to);
     if (!from || !to) {
       out.push(null);
       return;
     }
-    out.push({ from, to, ...lineGeometry(from, to, i) });
+    out.push({ from, to, ...lineGeometry(from, to) });
   });
   return out.filter((l): l is CurvedLine => l !== null);
 })();
