@@ -160,18 +160,6 @@
   animation: pulse-red-border 1.5s ease-in-out infinite;
 }
 
-/* Animated "data stream" dashed connection lines on the partner map */
-.fcn-network-line {
-  stroke-dasharray: 8 10;
-  animation: network-dash 1.6s linear infinite;
-}
-
-@keyframes network-dash {
-  to {
-    stroke-dashoffset: -18;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

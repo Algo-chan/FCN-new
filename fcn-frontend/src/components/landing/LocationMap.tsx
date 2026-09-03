@@ -227,28 +227,73 @@ const networkLines: Array<{ from: string; to: string }> = [
   { from: "Number One Health Center", to: "Alfa Pharmacy" },
 ];
 
+const staticLines: Array<[number, number][]> = networkLines
+  .map((line) => {
+    const from = byName(line.from);
+    const to = byName(line.to);
+    return from && to ? [from, to] : null;
+  })
+  .filter((l): l is [number, number][] => l !== null);
+
 const NetworkLines = () => (
   <>
-    {networkLines.map((line, i) => {
-      const from = byName(line.from);
-      const to = byName(line.to);
-      if (!from || !to) return null;
-      return (
-        <Polyline
-          key={i}
-          positions={[from, to]}
-          pathOptions={{
-            color: DI,
-            weight: 1.6,
-            opacity: 0.55,
-            className: "fcn-network-line",
-            interactive: false,
-          }}
-        />
-      );
-    })}
+    {staticLines.map((positions, i) => (
+      <Polyline
+        key={i}
+        positions={positions}
+        pathOptions={{
+          color: DI,
+          weight: 1.5,
+          opacity: 0.4,
+          interactive: false,
+        }}
+      />
+    ))}
   </>
 );
+
+const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+
+const dotIcon = L.divIcon({
+  className: "",
+  html: `<div style="width:9px;height:9px;background:#FFFFFF;border:2px solid ${DI};border-radius:50%;box-shadow:0 0 8px 2px hsla(171,72%,55%,0.8);"></div>`,
+  iconSize: [9, 9],
+  iconAnchor: [4, 4],
+});
+
+const TravelingDots = () => {
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let raf = 0;
+    const start = performance.now();
+    const duration = 4000;
+    const loop = (now: number) => {
+      const t = ((now - start) % duration) / duration;
+      setProgress(t);
+      raf = requestAnimationFrame(loop);
+    };
+    if (!reduceMotion) {
+      raf = requestAnimationFrame(loop);
+    }
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
+  return (
+    <>
+      {staticLines.map(([from, to], i) => {
+        // Stagger each line and alternate direction so packets flow both ways.
+        const offset = (i * 0.13) % 1;
+        const dir = i % 2 === 0 ? 1 : -1;
+        const raw = (progress * dir + offset) % 1;
+        const t = raw < 0 ? raw + 1 : raw;
+        const position: [number, number] = [lerp(from[0], to[0], t), lerp(from[1], to[1], t)];
+        return <Marker key={i} position={position} icon={dotIcon} interactive={false} keyboard={false} zIndexOffset={500} />;
+      })}
+    </>
+  );
+};
 
 export const LocationMap = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -292,6 +337,7 @@ export const LocationMap = () => {
           />
           <DarkModeFilter />
           <NetworkLines />
+          <TravelingDots />
           <HubMarkers />
         </MapContainer>
       </div>
