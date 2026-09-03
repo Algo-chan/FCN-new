@@ -280,6 +280,22 @@ interface CurvedLine {
 // Latitude scale so perpendicular offsets are even across the map.
 const netCos = Math.cos((9.594 * Math.PI) / 180) || 1;
 
+// Strong north-arching route used for the Dil Chora -> HIKMA Pharmacy link so
+// it passes overhead (above Art Hospital) rather than cutting across the other
+// lines directly.
+const overheadGeometry = (from: [number, number], to: [number, number]) => {
+  const midLat = (from[0] + to[0]) / 2;
+  const midLng = (from[1] + to[1]) / 2;
+  // Push the control well above the line so the arc clears the cluster below.
+  const control: [number, number] = [midLat + 0.02, midLng];
+  const steps = 48;
+  const points: Array<[number, number]> = [];
+  for (let i = 0; i <= steps; i++) {
+    points.push(quadraticPoint(from, to, control, i / steps));
+  }
+  return { control, points };
+};
+
 const curvedLines: CurvedLine[] = (() => {
   const fromCounts = new Map<string, number>();
   const out: Array<CurvedLine | null> = [];
@@ -288,6 +304,11 @@ const curvedLines: CurvedLine[] = (() => {
     const to = byName(line.to);
     if (!from || !to) {
       out.push(null);
+      return;
+    }
+    // Dil Chora -> HIKMA uses the overhead northern route above Art Hospital.
+    if (line.from === "Dil Chora Referral Hospital" && line.to === "HIKMA Pharmacy") {
+      out.push({ from, to, ...overheadGeometry(from, to) });
       return;
     }
     // Lines sharing the same source (e.g. Dil Chora links) are spread across
