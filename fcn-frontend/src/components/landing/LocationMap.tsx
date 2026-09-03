@@ -212,7 +212,7 @@ const FitBounds = () => {
   useEffect(() => {
     const coords = hubs.map((h) => [h.coords[0], h.coords[1]] as [number, number]);
     const bounds = L.latLngBounds(coords);
-    map.fitBounds(bounds, { padding: [130, 130], maxZoom: 13 });
+    map.fitBounds(bounds, { padding: [40, 40], maxZoom: 16 });
   }, [map]);
 
   return null;
@@ -239,9 +239,9 @@ const networkLines: Array<{ from: string; to: string }> = [
   { from: "Number One Health Center", to: "Alfa Pharmacy" },
 ];
 
-// Quadratic bezier so each connection arcs upward (toward the top/north of the
-// map), reading like the network is live with the connection moving through the
-// air. The dot follows the exact same curve as the drawn line.
+// Quadratic bezier so each connection arcs in a chosen direction (relative to
+// the map: north, east or west), reading like the network is live with the
+// connection moving through the air. The dot follows the exact same curve.
 const quadraticPoint = (from: [number, number], to: [number, number], control: [number, number], t: number): [number, number] => {
   const u = 1 - t;
   return [
@@ -250,15 +250,21 @@ const quadraticPoint = (from: [number, number], to: [number, number], control: [
   ];
 };
 
-const lineGeometry = (from: [number, number], to: [number, number], factor: number) => {
+const lineGeometry = (from: [number, number], to: [number, number], factor: number, dir: "north" | "east" | "west") => {
   const midLat = (from[0] + to[0]) / 2;
+  const midLng = (from[1] + to[1]) / 2;
   const dx = to[0] - from[0];
   const dy = to[1] - from[1];
   const len = Math.hypot(dx, dy) || 1;
-  // Push the control point toward the top (increasing latitude), scaled to the
-  // segment length and a per-line factor so parallel links fan out cleanly.
   const dist = len * 0.3 * factor;
-  const control: [number, number] = [midLat + dist, (from[1] + to[1]) / 2];
+  let control: [number, number];
+  if (dir === "north") {
+    control = [midLat + dist, midLng];
+  } else if (dir === "east") {
+    control = [midLat, midLng + dist];
+  } else {
+    control = [midLat, midLng - dist];
+  }
   const steps = 48;
   const points: Array<[number, number]> = [];
   for (let i = 0; i <= steps; i++) {
@@ -274,13 +280,25 @@ interface CurvedLine {
   points: Array<[number, number]>;
 }
 
+// Mid-latitude of the whole network, used to tell which side each line sits on.
+const netMidLat = hubs.reduce((sum, h) => sum + h.coords[0], 0) / hubs.length;
+
 const curvedLines: CurvedLine[] = networkLines
   .map((line, i) => {
     const from = byName(line.from);
     const to = byName(line.to);
     if (!from || !to) return null;
     const factor = 0.9 + (i % 4) * 0.15;
-    return { from, to, ...lineGeometry(from, to, factor) };
+    // Lines on the lower (south) half of the network arc north; the rest alternate
+    // between east and west so the curves spread in different directions.
+    const lineMid = (from[0] + to[0]) / 2;
+    let dir: "north" | "east" | "west";
+    if (lineMid < netMidLat) {
+      dir = "north";
+    } else {
+      dir = i % 2 === 0 ? "east" : "west";
+    }
+    return { from, to, ...lineGeometry(from, to, factor, dir) };
   })
   .filter((l): l is CurvedLine => l !== null);
 
