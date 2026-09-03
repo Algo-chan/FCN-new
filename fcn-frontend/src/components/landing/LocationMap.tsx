@@ -282,6 +282,8 @@ const netMidLng = hubs.reduce((sum, h) => sum + h.coords[1], 0) / hubs.length;
 const netCos = Math.cos((netMidLat * Math.PI) / 180) || 1;
 
 const curvedLines: CurvedLine[] = (() => {
+  let prevTo: [number, number] | null = null;
+  let groupFlip = 1;
   const out: Array<CurvedLine | null> = [];
   networkLines.forEach((line, i) => {
     const from = byName(line.from);
@@ -290,10 +292,23 @@ const curvedLines: CurvedLine[] = (() => {
       out.push(null);
       return;
     }
-    let factor = 0.9 + (i % 4) * 0.15;
-    // Outward unit direction pointing from the network center to this line's
-    // midpoint, so every line bulges away from the cluster (cuts cross the
-    // outside). Added a tiny lateral bias so neighboring lines fan apart.
+    // Detect a near-duplicate target (Delt and Yemariam share almost the same
+    // coordinates, so their Dil Chora links would overlap). When found, flip the
+    // lateral direction so the two lines bulge apart by a large distance instead
+    // of sticking together.
+    const isDup =
+      prevTo !== null &&
+      Math.abs(to[0] - prevTo[0]) < 0.001 &&
+      Math.abs(to[1] - prevTo[1]) < 0.001;
+    if (isDup) {
+      groupFlip = -groupFlip;
+    }
+    prevTo = to;
+
+    const factor = isDup ? 1.3 : 0.9 + (i % 4) * 0.15;
+
+    // Outward unit direction from the network center to this line's midpoint,
+    // so lines bulge away from the cluster.
     const midLat = (from[0] + to[0]) / 2;
     const midLng = (from[1] + to[1]) / 2;
     let rx = midLat - netMidLat;
@@ -301,10 +316,13 @@ const curvedLines: CurvedLine[] = (() => {
     const rLen = Math.hypot(rx, ry) || 1;
     rx /= rLen;
     ry /= rLen;
-    const lateral = i % 2 === 0 ? 1 : -1;
+
+    // Strong lateral (perpendicular) bias so the duplicate lines separate by a
+    // large margin. groupFlip alternates which side each stuck line bows to.
+    const lateral = groupFlip;
     const outward: [number, number] = [
-      rx * 0.85 + -ry * 0.15 * lateral,
-      (ry * 0.85 + rx * 0.15 * lateral) / netCos,
+      rx * 0.45 - ry * 0.55 * lateral,
+      (ry * 0.45 + rx * 0.55 * lateral) / netCos,
     ];
     out.push({ from, to, ...lineGeometry(from, to, factor, outward) });
   });
