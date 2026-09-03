@@ -280,30 +280,47 @@ interface CurvedLine {
   points: Array<[number, number]>;
 }
 
-// Mid-latitude of the whole network, used to tell which side each line sits on.
-const netMidLat = hubs.reduce((sum, h) => sum + h.coords[0], 0) / hubs.length;
+// Perpendicular directions used for north-south lines (not the east-west road).
+const dupThreshold = 0.0004;
 
-const curvedLines: CurvedLine[] = networkLines
-  .map((line, i) => {
+const curvedLines: CurvedLine[] = (() => {
+  let prevTo: [number, number] | null = null;
+  let prevDir: "north" | "east" | "west" = "east";
+  const out: Array<CurvedLine | null> = [];
+  networkLines.forEach((line, i) => {
     const from = byName(line.from);
     const to = byName(line.to);
-    if (!from || !to) return null;
+    if (!from || !to) {
+      out.push(null);
+      return;
+    }
     const factor = 0.9 + (i % 4) * 0.15;
     const dx = to[0] - from[0];
     const dy = to[1] - from[1];
-    // Lines running along the main east-west road (longitude changes more than
-    // latitude) arc north, the natural "up" curve across them. North-south lines
-    // alternate between east and west so the curves spread in different
-    // directions.
+    // Lines along the main east-west road (longitude changes more than latitude)
+    // arc north; north-south lines alternate east/west.
     let dir: "north" | "east" | "west";
     if (Math.abs(dy) >= Math.abs(dx)) {
       dir = "north";
     } else {
       dir = i % 2 === 0 ? "east" : "west";
     }
-    return { from, to, ...lineGeometry(from, to, factor, dir) };
-  })
-  .filter((l): l is CurvedLine => l !== null);
+    // If this target nearly duplicates the previous one (e.g. Delt and Yemariam
+    // sit next to each other, so their Dil Chora links would overlap), flip the
+    // curve to the opposite lateral direction so the two lines separate clearly.
+    if (
+      prevTo &&
+      Math.abs(to[0] - prevTo[0]) < dupThreshold &&
+      Math.abs(to[1] - prevTo[1]) < dupThreshold
+    ) {
+      dir = prevDir === "east" ? "west" : "east";
+    }
+    prevTo = to;
+    prevDir = dir;
+    out.push({ from, to, ...lineGeometry(from, to, factor, dir) });
+  });
+  return out.filter((l): l is CurvedLine => l !== null);
+})();
 
 const NetworkLines = () => (
   <>
