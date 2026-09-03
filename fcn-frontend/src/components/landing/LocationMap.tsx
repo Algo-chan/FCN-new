@@ -212,7 +212,7 @@ const FitBounds = () => {
   useEffect(() => {
     const coords = hubs.map((h) => [h.coords[0], h.coords[1]] as [number, number]);
     const bounds = L.latLngBounds(coords);
-    map.fitBounds(bounds, { padding: [40, 40], maxZoom: 16 });
+    map.fitBounds(bounds, { padding: [15, 15], maxZoom: 18 });
   }, [map]);
 
   return null;
@@ -289,11 +289,14 @@ const curvedLines: CurvedLine[] = networkLines
     const to = byName(line.to);
     if (!from || !to) return null;
     const factor = 0.9 + (i % 4) * 0.15;
-    // Lines on the lower (south) half of the network arc north; the rest alternate
-    // between east and west so the curves spread in different directions.
-    const lineMid = (from[0] + to[0]) / 2;
+    const dx = to[0] - from[0];
+    const dy = to[1] - from[1];
+    // Lines running along the main east-west road (longitude changes more than
+    // latitude) arc north, the natural "up" curve across them. North-south lines
+    // alternate between east and west so the curves spread in different
+    // directions.
     let dir: "north" | "east" | "west";
-    if (lineMid < netMidLat) {
+    if (Math.abs(dy) >= Math.abs(dx)) {
       dir = "north";
     } else {
       dir = i % 2 === 0 ? "east" : "west";
