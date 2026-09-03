@@ -48,7 +48,7 @@ export const Navbar = () => {
         <Link to="/" className="flex items-center gap-2">
           <img
             src="/logo/fcn-logo-full.png"
-            alt="FCN Logo"
+            alt="Fast Care Now Logo"
             className="h-8 w-auto sm:h-9"
           />
         </Link>

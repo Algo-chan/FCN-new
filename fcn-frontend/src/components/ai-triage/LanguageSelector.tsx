@@ -91,7 +91,7 @@ export const LanguageSelector = ({ onSelect }: LanguageSelectorProps) => {
     >
       <img
         src="/logo/fcn-logo-full.png"
-        alt="FCN Logo"
+        alt="Fast Care Now Logo"
         className="mb-6 h-20 w-auto"
       />
 
@@ -162,7 +162,7 @@ export const LanguageSelector = ({ onSelect }: LanguageSelectorProps) => {
       </motion.div>
 
       <p className="mt-4 text-center text-xs text-fcn-text-light/50 dark:text-fcn-text-dark/50">
-        FCN's AI Health Assistant will respond entirely in your chosen language
+        Fast Care Now's AI Health Assistant will respond entirely in your chosen language
       </p>
     </motion.div>
   );

@@ -60,7 +60,7 @@ export class ChapaService {
       callback_url: `${CHAPA_CALLBACK_BASE}/${txRef}`,
       return_url: `${env.FRONTEND_URL}/appointments?payment_ref=${txRef}`,
       customization: {
-        title: "FCN Appointment Payment",
+        title: "Fast Care Now Appointment Payment",
         description: `Appointment booking fee - ETB ${amount.toFixed(2)}`
       }
     };

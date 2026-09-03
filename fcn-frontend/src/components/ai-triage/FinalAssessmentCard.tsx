@@ -311,7 +311,7 @@ export const FinalAssessmentCard = ({
           {assessment.disclaimer}
         </p>
         <div className="mt-2 flex items-center gap-2 text-xs text-fcn-text-light/50 dark:text-fcn-text-dark/50">
-          <img src="/logo/fcn-logo-full.png" alt="FCN" className="h-5 w-auto" />
+          <img src="/logo/fcn-logo-full.png" alt="Fast Care Now" className="h-5 w-auto" />
           Powered by Claude AI
         </div>
       </motion.div>

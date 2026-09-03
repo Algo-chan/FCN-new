@@ -11,7 +11,7 @@ interface Testimonial {
 const testimonials: Testimonial[] = [
   { quote: "I didn't have to leave my house when I had a fever. The doctor responded in 10 minutes and the medicine was at my door the next day.", name: "Hanna T.", role: "Patient, Dire Dawa" },
   { quote: "My mother has diabetes and can't travel easily. The nurse comes to check her vitals every week now. This changed everything for our family.", name: "Dawit M.", role: "Patient's Son, Dire Dawa" },
-  { quote: "As a doctor, FCN lets me see more patients without the overhead of a full clinic. The platform just works, even on slow connections.", name: "Dr. Sara T.", role: "General Physician" },
+  { quote: "As a doctor, Fast Care Now lets me see more patients without the overhead of a full clinic. The platform just works, even on slow connections.", name: "Dr. Sara T.", role: "General Physician" },
   { quote: "The AI symptom checker told me to go to the hospital immediately when I thought it was nothing. It potentially saved my life.", name: "Yonas A.", role: "Patient, Dire Dawa" }
 ];
 
@@ -46,7 +46,7 @@ export const TestimonialsSection = () => {
           className="mb-12 text-center"
         >
           <h2 className="text-2xl font-bold text-fcn-text-light dark:text-white sm:text-3xl">Real Stories, Real Care</h2>
-          <p className="mt-2 text-fcn-text-light/60 dark:text-gray-400">Hear from patients who found FCN</p>
+          <p className="mt-2 text-fcn-text-light/60 dark:text-gray-400">Hear from patients who found Fast Care Now</p>
         </motion.div>
 
         <div

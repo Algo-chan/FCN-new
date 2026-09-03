@@ -233,12 +233,12 @@ const RegisterPage = () => {
         <div className="absolute left-8 top-8 z-10">
           <img
             src="/logo/fcn-logo-full.png"
-            alt="FCN Logo"
+            alt="Fast Care Now Logo"
             className="h-10 w-auto"
           />
         </div>
         <div className="relative z-10 flex h-full flex-col justify-center px-16 pb-24">
-          <h1 className="mb-6 text-5xl font-bold leading-tight text-white">Join FCN Today</h1>
+          <h1 className="mb-6 text-5xl font-bold leading-tight text-white">Join Fast Care Now Today</h1>
           <p className="max-w-md text-lg text-white/70">Connect with patients, access AI-powered diagnostics, and deliver quality healthcare across Ethiopia.</p>
         </div>
       </div>
@@ -336,7 +336,7 @@ const RegisterPage = () => {
             {phase === "role" && (
               <motion.div key="role" initial={!shouldReduceMotion ? { opacity: 0, x: 40 } : undefined} animate={{ opacity: 1, x: 0 }} exit={!shouldReduceMotion ? { opacity: 0, x: -40 } : undefined} className="space-y-4">
                 <div className="mb-2 text-center">
-                  <h2 className="text-xl font-bold text-fcn-text-light dark:text-fcn-text-dark">I am joining FCN as...</h2>
+                  <h2 className="text-xl font-bold text-fcn-text-light dark:text-fcn-text-dark">I am joining Fast Care Now as...</h2>
                   <p className="text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">Step 2 of 3 — Select your role</p>
                 </div>
 
@@ -435,7 +435,7 @@ const RegisterPage = () => {
 
                 <label className="flex items-start gap-2 text-sm">
                   <input type="checkbox" checked={agreeTerms} onChange={(e) => setAgreeTerms(e.target.checked)} className="mt-0.5 h-4 w-4 rounded border-fcn-primary/30 text-fcn-primary focus:ring-fcn-accent" />
-                  <span className="text-fcn-text-light/70 dark:text-fcn-text-dark/70">I agree to FCN Terms of Service and Privacy Policy</span>
+                  <span className="text-fcn-text-light/70 dark:text-fcn-text-dark/70">I agree to Fast Care Now Terms of Service and Privacy Policy</span>
                 </label>
 
                 <div className="flex gap-3">

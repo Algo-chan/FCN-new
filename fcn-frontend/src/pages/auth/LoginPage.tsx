@@ -179,7 +179,7 @@ const LoginPage = () => {
         <div className="absolute left-8 top-8 z-10">
           <img
             src="/logo/fcn-logo-full.png"
-            alt="FCN Logo"
+            alt="Fast Care Now Logo"
             className="h-10 w-auto"
           />
         </div>
@@ -223,7 +223,7 @@ const LoginPage = () => {
               <motion.div key="login-form" initial={!shouldReduceMotion ? { opacity: 0, x: 20 } : undefined} animate={{ opacity: 1, x: 0 }} exit={!shouldReduceMotion ? { opacity: 0, x: -20 } : undefined}>
                 <div className="mb-8 text-center">
                   <h2 className="text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">Welcome back</h2>
-                  <p className="mt-1 text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">Sign in to your FCN account</p>
+                  <p className="mt-1 text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">Sign in to your Fast Care Now account</p>
                 </div>
 
                 {false && (

@@ -58,7 +58,7 @@ export const StatsSection = () => {
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           className="mb-12 text-center"
         >
-          <h2 className="text-2xl font-bold text-fcn-text-light dark:text-white sm:text-3xl">FCN by the Numbers</h2>
+          <h2 className="text-2xl font-bold text-fcn-text-light dark:text-white sm:text-3xl">CCN by the Numbers</h2>
           <p className="mt-2 text-fcn-text-light/60 dark:text-gray-400">Growing healthcare access across Dire Dawa</p>
         </motion.div>
         <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-4">

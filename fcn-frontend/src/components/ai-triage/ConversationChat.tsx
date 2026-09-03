@@ -8,10 +8,10 @@ import { parseMarkdown } from "@/utils/markdown";
 import type { ConversationMessage, SupportedLanguage, ParsedAssessment } from "@/types";
 
 const LANGUAGE_CONFIG_MAP: Record<string, { thinkingText: string; greeting: string; name: string; flag: string }> = {
-  en: { thinkingText: "Analyzing your symptoms...", greeting: "Hello! I am FCN's AI Health Assistant.", name: "English", flag: "🇬🇧" },
-  am: { thinkingText: "ምልክቶችዎን በመተንተን ላይ...", greeting: "ሰላም! እኔ የ FCN የጤና AI ረዳት ነኝ።", name: "አማርኛ", flag: "🇪🇹" },
-  so: { thinkingText: "Calaamadahaaga waa la falanqeynayaa...", greeting: "Salaan! Waxaan ahay Kaaliyaha Caafimaadka AI ee FCN.", name: "Soomaali", flag: "🇸🇴" },
-  om: { thinkingText: "Malattoolee keessan xiinxalaa jira...", greeting: "Akkam! Ani gargaaraa fayyaa AI FCN ti.", name: "Afaan Oromoo", flag: "🇪🇹" }
+  en: { thinkingText: "Analyzing your symptoms...", greeting: "Hello! I am Fast Care Now's AI Health Assistant.", name: "English", flag: "🇬🇧" },
+  am: { thinkingText: "ምልክቶችዎን በመተንተን ላይ...", greeting: "ሰላም! እኔ የ Fast Care Now የጤና AI ረዳት ነኝ።", name: "አማርኛ", flag: "🇪🇹" },
+  so: { thinkingText: "Calaamadahaaga waa la falanqeynayaa...", greeting: "Salaan! Waxaan ahay Kaaliyaha Caafimaadka AI ee Fast Care Now.", name: "Soomaali", flag: "🇸🇴" },
+  om: { thinkingText: "Malattoolee keessan xiinxalaa jira...", greeting: "Akkam! Ani gargaaraa fayyaa AI Fast Care Now ti.", name: "Afaan Oromoo", flag: "🇪🇹" }
 };
 
 function ThinkingBubble({ text }: { text: string }) {
@@ -135,7 +135,7 @@ export const ConversationChat = ({
         <div className="flex items-center gap-2">
           <Sparkles className="h-4 w-4 text-fcn-accent" />
           <span className="text-sm font-semibold text-fcn-text-light dark:text-fcn-text-dark">
-            FCN AI Health Assistant
+            Fast Care Now AI Health Assistant
           </span>
         </div>
         <div className="flex items-center gap-3">

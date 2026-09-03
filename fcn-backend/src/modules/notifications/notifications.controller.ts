@@ -73,7 +73,7 @@ export const sendTestNotificationController = async (req: Request, res: Response
       userId: req.user!.id,
       type: "welcome",
       title: "\u{1F3E5} Test Notification",
-      message: "This is a test notification from the FCN admin panel.",
+      message: "This is a test notification from the Fast Care Now admin panel.",
       actionUrl: "/notifications",
       channels: ["in_app", "fcm"],
       priority: "high"

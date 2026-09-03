@@ -345,7 +345,7 @@ export function PatientHealthPassport({ context, isLoading }: HealthPassportProp
         <div className="flex items-center gap-2 rounded-lg border border-gray-700 bg-gray-800/30 px-3 py-2">
           <User className="h-4 w-4 text-teal-400" />
           <span className="text-xs text-gray-300">
-            {appointmentHistory.total} consultations on FCN
+            {appointmentHistory.total} consultations on Fast Care Now
           </span>
           <span className="text-xs text-gray-500">
             ({appointmentHistory.completed} completed)

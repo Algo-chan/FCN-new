@@ -24,6 +24,7 @@ import HospitalOccupancyPage from "@/pages/hospital-admin/HospitalOccupancyPage"
 import HospitalDoctorsPage from "@/pages/hospital-admin/HospitalDoctorsPage";
 import LandingPage from "@/pages/LandingPage";
 import NotFoundPage from "@/pages/NotFoundPage";
+import SearchPage from "@/pages/SearchPage";
 import NotificationsPage from "@/pages/notifications/NotificationsPage";
 import PharmacyPage from "@/pages/pharmacy/PharmacyPage";
 import PharmacyAdminPortalPage from "@/pages/pharmacy/PharmacyAdminPortalPage";
@@ -109,6 +110,7 @@ const SuperAdminRoute = () => <ProtectedRoute allowedRoles={["super_admin"]} />;
 export const AppRouter = () => (
   <Routes>
     <Route path="/" element={<LandingPage />} />
+    <Route path="/search" element={<SearchPage />} />
     <Route path="/login" element={<LoginPage />} />
     <Route path="/register" element={<RegisterPage />} />
     <Route path="/auth/callback" element={<AuthCallbackPage />} />

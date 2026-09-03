@@ -141,7 +141,7 @@ export function MessagesList({
           {!hasMoreMessages && messages.length > 0 && (
             <div className="px-4 pb-2 text-center">
               <p className="text-[10px] text-gray-600">
-                Some older messages were removed per FCN&apos;s 30-day retention policy
+                Some older messages were removed per Fast Care Now&apos;s 30-day retention policy
               </p>
             </div>
           )}

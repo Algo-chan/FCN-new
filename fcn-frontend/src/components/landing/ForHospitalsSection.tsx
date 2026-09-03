@@ -54,7 +54,7 @@ export const ForHospitalsSection = () => {
           <p className="mb-2 text-xs font-semibold tracking-widest text-fcn-accent">FOR HOSPITALS</p>
           <h2 className="mb-4 text-xl font-bold text-fcn-text-light dark:text-white sm:text-3xl">Reduce Overcrowding. Improve Patient Flow.</h2>
           <p className="mb-6 text-sm text-fcn-text-light/60 dark:text-gray-400 sm:text-base">
-            Partner with FCN to give patients visibility into your real-time capacity, reduce unnecessary walk-ins, and route appropriate cases to remote consultation first.
+            Partner with Fast Care Now to give patients visibility into your real-time capacity, reduce unnecessary walk-ins, and route appropriate cases to remote consultation first.
           </p>
           <ul className="mb-8 space-y-3">
             {bullets.map((b) => (
@@ -63,7 +63,7 @@ export const ForHospitalsSection = () => {
               </li>
             ))}
           </ul>
-          <a href="mailto:partnerships@fcn.health">
+          <a href="mailto:partnerships@fcncare.com">
             <Button>Partner With Us</Button>
           </a>
         </motion.div>

@@ -52,7 +52,7 @@ export const QRDisplayModal = ({ prescriptionId, onClose }: QRDisplayModalProps)
         >
           <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <img src="/logo/fcn-logo-full.png" alt="FCN" className="h-6 w-auto" />
+              <img src="/logo/fcn-logo-full.png" alt="Fast Care Now" className="h-6 w-auto" />
               <span className="text-sm font-medium text-fcn-text-light/60 dark:text-fcn-text-dark/60">
                 Show this to the pharmacist
               </span>
@@ -116,12 +116,12 @@ export const QRDisplayModal = ({ prescriptionId, onClose }: QRDisplayModalProps)
 
               <div className="flex items-center justify-center gap-1.5 rounded-lg bg-fcn-success/5 p-2 text-xs text-fcn-success">
                 <span>🔒</span>
-                <span>Cryptographically verified by FCN &middot; Cannot be forged</span>
+                <span>Cryptographically verified by Fast Care Now &middot; Cannot be forged</span>
               </div>
 
               <div className="border-t border-fcn-primary/10 pt-3 text-center">
                 <p className="text-[10px] text-fcn-text-light/30 dark:text-fcn-text-dark/30">
-                  Foundation Care Network &middot; Compassion. Connection. Care.
+                  Fast Care Now &middot; Compassion. Connection. Care.
                 </p>
               </div>
             </motion.div>

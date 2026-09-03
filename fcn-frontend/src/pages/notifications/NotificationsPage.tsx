@@ -201,7 +201,7 @@ const NotificationsPage = () => {
                 Check back after your next consultation.
               </p>
             </div>
-            <img src="/logo/fcn-logo-full.png" alt="FCN" className="h-5 md:h-6 w-auto opacity-40" />
+            <img src="/logo/fcn-logo-full.png" alt="Fast Care Now" className="h-5 md:h-6 w-auto opacity-40" />
           </Card>
         ) : (
           <div className="space-y-4 md:space-y-6">

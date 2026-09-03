@@ -4,6 +4,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useReducedMotion } from "framer-motion";
 import { PageTransition } from "@/components/animations/PageTransition";
 import { Navbar } from "@/components/landing/Navbar";
+import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { HeroSection } from "@/components/landing/HeroSection";
 import { TrustBar } from "@/components/landing/TrustBar";
 import { FeaturesSection } from "@/components/landing/FeaturesSection";
@@ -39,6 +40,9 @@ const LandingPage = () => {
     <PageTransition>
       <div ref={pageRef} className="min-h-screen bg-fcn-light text-fcn-text-light dark:bg-fcn-dark dark:text-fcn-text-dark">
         <Navbar />
+        <div className="mx-auto w-full max-w-7xl px-4 pt-20 sm:px-6 lg:px-8">
+          <Breadcrumbs />
+        </div>
         <HeroSection />
         <TrustBar />
         <FeaturesSection />

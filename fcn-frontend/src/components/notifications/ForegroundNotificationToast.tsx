@@ -50,7 +50,7 @@ export const ForegroundNotificationToast = ({ title, body, payload, onDismiss }:
       <div className="flex items-start gap-3 p-3">
         <img
           src="/logo/fcn-logo-full.png"
-          alt="FCN"
+          alt="Fast Care Now"
           className="mt-0.5 h-6 w-auto shrink-0"
         />
 

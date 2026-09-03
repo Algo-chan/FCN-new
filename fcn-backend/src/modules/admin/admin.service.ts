@@ -430,7 +430,7 @@ export class AdminService {
           where: { id: dp.hospital_id ?? undefined },
         });
         if (!hospitalRegistered || hospitalRegistered.status !== "active") {
-          flags.push("Hospital not found in FCN database");
+          flags.push("Hospital not found in Fast Care Now database");
         }
       } else {
         flags.push("No hospital affiliation provided");
@@ -501,7 +501,7 @@ export class AdminService {
       userId,
       type: "account_approved",
       title: "Account Approved!",
-      message: "Your FCN account has been approved. You can now start accepting patients.",
+      message: "Your Fast Care Now account has been approved. You can now start accepting patients.",
       actionUrl: "/dashboard",
       channels: ["in_app", "fcm"],
       priority: "high",
@@ -538,7 +538,7 @@ export class AdminService {
       userId,
       type: "account_rejected",
       title: "Account Update",
-      message: `Your FCN account could not be approved. Reason: ${reason}`,
+      message: `Your Fast Care Now account could not be approved. Reason: ${reason}`,
       channels: ["in_app"],
       priority: "normal",
     });
@@ -579,7 +579,7 @@ export class AdminService {
       userId,
       type: "account_suspended",
       title: "Account Suspended",
-      message: `Your FCN account has been suspended. Reason: ${reason}`,
+      message: `Your Fast Care Now account has been suspended. Reason: ${reason}`,
       channels: ["in_app"],
       priority: "high",
     });
@@ -609,7 +609,7 @@ export class AdminService {
       userId,
       type: "account_reactivated",
       title: "Account Reactivated",
-      message: "Your FCN account has been reactivated. You can now use the platform.",
+      message: "Your Fast Care Now account has been reactivated. You can now use the platform.",
       actionUrl: "/dashboard",
       channels: ["in_app", "fcm"],
       priority: "high",

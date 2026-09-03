@@ -258,12 +258,12 @@ export class ProfileService {
     }
 
     const subjectMap: Record<string, string> = {
-      enable_2fa: "Enable 2FA on FCN",
-      disable_2fa: "Disable 2FA on FCN",
+      enable_2fa: "Enable 2FA on Fast Care Now",
+      disable_2fa: "Disable 2FA on Fast Care Now",
       delete_account: "Confirm Account Deletion"
     };
 
-    const subject = subjectMap[purpose] || "FCN Verification Code";
+    const subject = subjectMap[purpose] || "Fast Care Now Verification Code";
     const isDeletion = purpose === "delete_account";
     const codeColor = isDeletion ? "#F87171" : "#2DD4BF";
     const warning = isDeletion
@@ -274,7 +274,7 @@ export class ProfileService {
       <div style="background:#F8FFFE;padding:32px;font-family:Inter,Arial,sans-serif;color:#1E293B">
         <div style="max-width:560px;margin:0 auto;background:#FFFFFF;border:1px solid rgba(10,126,164,0.16);border-radius:12px;overflow:hidden">
           <div style="background:#0A7EA4;color:#FFFFFF;padding:20px 24px">
-            <img src="${env.FRONTEND_URL}/logo/fcn-logo-full.png" alt="FCN" style="height:36px" />
+            <img src="${env.FRONTEND_URL}/assets/logo-fast-care-now.png" alt="Fast Care Now" style="height:36px" />
           </div>
           <div style="padding:24px">
             <p style="margin:0 0 16px;font-size:16px">Use this one-time code to ${purpose.replace(/_/g, " ")}.</p>
@@ -283,7 +283,7 @@ export class ProfileService {
             <p style="margin:8px 0 0;color:#475569">If you didn't request this, ignore this email.</p>
             ${warning}
           </div>
-          <div style="padding:16px 24px;background:#F8FFFE;color:#64748B;font-size:12px">FCN - Foundation Care Network</div>
+          <div style="padding:16px 24px;background:#F8FFFE;color:#64748B;font-size:12px">Fast Care Now</div>
         </div>
       </div>`;
 
@@ -378,24 +378,24 @@ export class ProfileService {
       <div style="background:#F8FFFE;padding:32px;font-family:Inter,Arial,sans-serif;color:#1E293B">
         <div style="max-width:560px;margin:0 auto;background:#FFFFFF;border:1px solid rgba(10,126,164,0.16);border-radius:12px;overflow:hidden">
           <div style="background:#DC2626;color:#FFFFFF;padding:20px 24px">
-            <div style="font-size:24px;font-weight:800">FCN</div>
+            <div style="font-size:24px;font-weight:800">Fast Care Now</div>
             <div style="font-size:13px;opacity:.9">Account Deletion Request</div>
           </div>
           <div style="padding:24px">
-            <p style="margin:0 0 16px;font-size:16px">You requested to delete your FCN account. Enter this code to confirm.</p>
+            <p style="margin:0 0 16px;font-size:16px">You requested to delete your Fast Care Now account. Enter this code to confirm.</p>
             <p style="margin:0 0 8px;color:#F87171;font-weight:700">WARNING: This action cannot be undone.</p>
             <p style="margin:0 0 16px;color:#F87171">All your health data will be anonymized per healthcare regulations.</p>
             <div style="font-family:Consolas,monospace;font-size:38px;font-weight:800;letter-spacing:10px;color:#DC2626;text-align:center;padding:20px 0">${otp}</div>
             <p style="margin:16px 0 0;color:#475569">This code expires in 10 minutes.</p>
             <p style="margin:8px 0 0;color:#475569">If you didn't request this, ignore this email.</p>
           </div>
-          <div style="padding:16px 24px;background:#F8FFFE;color:#64748B;font-size:12px">FCN - Foundation Care Network</div>
+          <div style="padding:16px 24px;background:#F8FFFE;color:#64748B;font-size:12px">Fast Care Now</div>
         </div>
       </div>`;
 
     const emailServiceModule = await import("../auth/email.service");
     const es = emailServiceModule.emailService;
-    await es.sendCustomEmail(email, "FCN Account Deletion Request", html);
+    await es.sendCustomEmail(email, "Fast Care Now Account Deletion Request", html);
 
     return { email_hint: masked };
   }
@@ -481,22 +481,22 @@ export class ProfileService {
         <div style="background:#F8FFFE;padding:32px;font-family:Inter,Arial,sans-serif;color:#1E293B">
           <div style="max-width:560px;margin:0 auto;background:#FFFFFF;border:1px solid rgba(10,126,164,0.16);border-radius:12px;overflow:hidden">
             <div style="background:#0A7EA4;color:#FFFFFF;padding:20px 24px">
-              <div style="font-size:24px;font-weight:800">FCN</div>
+              <div style="font-size:24px;font-weight:800">Fast Care Now</div>
               <div style="font-size:13px;opacity:.9">Account Deleted</div>
             </div>
             <div style="padding:24px">
               <h2 style="margin:0 0 12px;color:#1E293B">Account Deleted, ${userName}</h2>
-              <p style="margin:0 0 16px">Your FCN account has been deleted. We're sorry to see you go.</p>
+              <p style="margin:0 0 16px">Your Fast Care Now account has been deleted. We're sorry to see you go.</p>
               <p style="margin:0 0 8px;color:#64748B">Your medical records have been anonymized and retained per Ethiopian healthcare regulations.</p>
               <p style="margin:16px 0 0;color:#64748B;font-size:13px">If this was a mistake, please contact support at support@fcncare.com</p>
             </div>
-            <div style="padding:16px 24px;background:#F8FFFE;color:#64748B;font-size:12px">FCN - Foundation Care Network</div>
+            <div style="padding:16px 24px;background:#F8FFFE;color:#64748B;font-size:12px">Fast Care Now</div>
           </div>
         </div>`;
 
       const emailServiceModule = await import("../auth/email.service");
       const es = emailServiceModule.emailService;
-      await es.sendCustomEmail(userEmail, "Your FCN account has been deleted", html);
+      await es.sendCustomEmail(userEmail, "Your Fast Care Now account has been deleted", html);
     }
   }
 

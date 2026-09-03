@@ -26,6 +26,7 @@ import { doctorDashboardRoutes } from "./modules/doctor-dashboard/doctor-dashboa
 import { nurseDashboardRoutes } from "./modules/nurse-dashboard/nurse-dashboard.routes";
 import { profileRoutes } from "./modules/profile/profile.routes";
 import { waitlistRoutes } from "./modules/waitlist/waitlist.routes";
+import { searchRoutes } from "./modules/search/search.routes";
 import { successResponse } from "./utils/response";
 import { logger } from "./utils/logger";
 
@@ -92,5 +93,6 @@ app.use("/api/v1/nurse-dashboard", nurseDashboardRoutes);
 app.use("/api/v1/profile", profileRoutes);
 
 app.use("/api/v1/waitlist", waitlistRoutes);
+app.use("/search", searchRoutes);
 
 app.use(errorMiddleware);

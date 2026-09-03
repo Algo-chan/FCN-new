@@ -4,6 +4,7 @@ import { PageTransition } from "@/components/animations/PageTransition";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { TopBar } from "@/components/layout/TopBar";
 import { BottomNavBar } from "@/components/layout/BottomNavBar";
+import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { useUiStore } from "@/store/ui.store";
 import { useNotifications } from "@/hooks/useNotifications";
 import { useAuthStore } from "@/store/auth.store";
@@ -39,6 +40,7 @@ export const PageLayout = ({ children }: PropsWithChildren) => {
       <div className={clsx("min-h-screen transition-all duration-300", sidebarWidth)}>
         <TopBar />
         <main className="mx-auto w-full max-w-7xl px-3 py-4 sm:px-4 sm:py-6 md:px-6 lg:px-8 lg:py-8 pb-20 lg:pb-8">
+          <Breadcrumbs />
           <PageTransition>{children}</PageTransition>
         </main>
       </div>

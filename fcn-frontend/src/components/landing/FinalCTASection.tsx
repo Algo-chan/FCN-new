@@ -74,14 +74,14 @@ export const FinalCTASection = () => {
         className="relative z-10 mx-auto max-w-3xl px-4 text-center sm:px-6"
       >
         <h2 className="mb-4 text-2xl font-extrabold text-white sm:text-3xl md:text-4xl">Ready to Experience Healthcare Without Walls?</h2>
-        <p className="mb-8 text-sm text-white/80 sm:text-lg">Join thousands of patients and doctors already using FCN in Dire Dawa</p>
+        <p className="mb-8 text-sm text-white/80 sm:text-lg">Join thousands of patients and doctors already using Fast Care Now in Dire Dawa</p>
         <div className="flex flex-col items-center justify-center gap-3 sm:flex-row sm:flex-wrap sm:gap-4">
           <Link to="/register" onClick={() => playTransition()}>
             <motion.div whileHover={shouldReduceMotion ? {} : { scale: 1.05 }}>
               <Button className="w-full bg-white text-fcn-primary hover:bg-white/90 sm:w-auto">Get Started Free</Button>
             </motion.div>
           </Link>
-          <a href="mailto:hello@fcn.health">
+          <a href="mailto:hello@fcncare.com">
             <Button variant="ghost" className="w-full border border-white/40 text-white hover:bg-white/10 sm:w-auto">Talk to Our Team</Button>
           </a>
         </div>

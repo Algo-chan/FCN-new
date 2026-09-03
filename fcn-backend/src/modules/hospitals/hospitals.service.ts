@@ -47,7 +47,7 @@ const getRecommendation = (band: OccupancyBand): string => {
     case "moderate":
       return "Moderate wait — consider booking a remote consultation first";
     case "high":
-      return "Very busy — we strongly recommend a remote FCN consultation first to avoid a long wait";
+      return "Very busy — we strongly recommend a remote Fast Care Now consultation first to avoid a long wait";
   }
 };
 

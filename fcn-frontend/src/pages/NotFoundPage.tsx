@@ -21,7 +21,7 @@ export default function NotFoundPage() {
     <div className="min-h-screen bg-[#0D1117] flex flex-col items-center justify-center px-6 text-center">
       <img
         src="/logo/fcn-logo-full.png"
-        alt="FCN"
+        alt="Fast Care Now"
         className="h-12 mb-8 opacity-60"
       />
 

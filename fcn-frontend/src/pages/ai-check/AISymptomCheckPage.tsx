@@ -350,7 +350,7 @@ const AISymptomCheckPage = () => {
 
   const handleShareAssessment = () => {
     if (!store.finalAssessment) return;
-    const text = `FCN AI Assessment — ${new Date().toLocaleDateString()}
+    const text = `Fast Care Now AI Assessment — ${new Date().toLocaleDateString()}
 Risk Level: ${store.finalAssessment.risk_level}
 Symptoms: ${store.conversation.find((m) => m.role === "user")?.content?.split("\n")[0] || "N/A"}
 Recommended: See ${store.finalAssessment.recommended_specialty || "a doctor"}`;

@@ -29,7 +29,7 @@ export const ForDoctorsSection = () => {
         >
           <img
             src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=800&h=600&fit=crop&auto=format"
-            alt="Doctor using FCN platform"
+            alt="Doctor using Fast Care Now platform"
             loading="lazy"
             className="w-full rounded-2xl object-cover"
             style={{ aspectRatio: "4/3" }}
@@ -56,7 +56,7 @@ export const ForDoctorsSection = () => {
           <p className="mb-2 text-xs font-semibold tracking-widest text-fcn-accent">FOR DOCTORS</p>
           <h2 className="mb-4 text-xl font-bold text-fcn-text-light dark:text-white sm:text-3xl">Practice Medicine On Your Terms</h2>
           <p className="mb-6 text-sm text-fcn-text-light/60 dark:text-gray-400 sm:text-base">
-            Set your own hours. Consult from anywhere. Build a verified reputation. FCN handles the platform — you focus on patient care.
+            Set your own hours. Consult from anywhere. Build a verified reputation. Fast Care Now handles the platform — you focus on patient care.
           </p>
           <ul className="mb-8 space-y-3">
             {bullets.map((b) => (

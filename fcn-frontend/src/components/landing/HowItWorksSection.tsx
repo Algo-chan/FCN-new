@@ -7,7 +7,7 @@ import { FileText, MessageCircle, Pill, Smartphone, Stethoscope, TestTube, UserC
 gsap.registerPlugin(ScrollTrigger);
 
 const steps = [
-  { icon: Smartphone, title: "Open FCN", desc: "Login or create your free account" },
+  { icon: Smartphone, title: "Open Fast Care Now", desc: "Login or create your free account" },
   { icon: Stethoscope, title: "Book Doctor", desc: "Browse and book a doctor that fits your needs" },
   { icon: MessageCircle, title: "Consult", desc: "Chat, call, or video with your doctor remotely" },
   { icon: UserCheck, title: "Nurse Sent", desc: "If needed, a nurse visits your home for tests" },
@@ -69,7 +69,7 @@ export const HowItWorksSection = () => {
           viewport={{ once: true, margin: "-80px" }}
           className="mb-14 text-center"
         >
-          <h2 className="text-2xl font-bold text-fcn-text-light dark:text-white sm:text-3xl">How FCN Works</h2>
+          <h2 className="text-2xl font-bold text-fcn-text-light dark:text-white sm:text-3xl">How Fast Care Now Works</h2>
           <p className="mt-2 text-fcn-text-light/60 dark:text-gray-400">From home to healed, in 7 simple steps</p>
         </motion.div>
 

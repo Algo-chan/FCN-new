@@ -38,7 +38,7 @@ export const FeaturesSection = () => {
           className="mb-10 text-center sm:mb-14"
         >
           <h2 className="text-2xl font-bold text-fcn-text-light dark:text-white sm:text-3xl">Everything You Need, One Platform</h2>
-          <p className="mt-2 text-sm text-fcn-text-light/60 dark:text-gray-400 sm:text-base">From symptom check to medication delivery — FCN handles your complete healthcare journey</p>
+          <p className="mt-2 text-sm text-fcn-text-light/60 dark:text-gray-400 sm:text-base">From symptom check to medication delivery — Fast Care Now handles your complete healthcare journey</p>
         </motion.div>
 
         {/* Mobile: accordion list */}

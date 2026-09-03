@@ -47,10 +47,10 @@ const AdminPanelPage = () => {
     <div className="space-y-4 md:space-y-6">
       <div>
         <div className="flex items-center gap-2">
-          <img src="/logo/fcn-logo-full.png" alt="FCN" className="h-6 md:h-7 w-auto" />
+          <img src="/logo/fcn-logo-full.png" alt="Fast Care Now" className="h-6 md:h-7 w-auto" />
           <h1 className="text-lg md:text-xl font-bold text-fcn-text-light dark:text-fcn-text-dark">Admin Panel</h1>
         </div>
-        <p className="text-[10px] md:text-xs text-fcn-text-light/40">Foundation Care Network Control Center</p>
+        <p className="text-[10px] md:text-xs text-fcn-text-light/40">Fast Care Now Control Center</p>
         <p className="mt-1 text-[10px] md:text-xs text-fcn-text-light/40">
           Logged in as <span className="font-medium text-fcn-text-light dark:text-fcn-text-dark">{user?.full_name || "Admin"}</span>
         </p>

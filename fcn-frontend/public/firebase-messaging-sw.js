@@ -15,14 +15,14 @@ const messaging = firebase.messaging();
 messaging.onBackgroundMessage((payload) => {
   const { title, body, icon } = payload.notification || {};
 
-  self.registration.showNotification(title || 'FCN', {
+  self.registration.showNotification(title || 'Fast Care Now', {
     body: body || '',
-    icon: icon || '/logo/fcn-logo-full.png',
+    icon: icon || '/assets/logo-fast-care-now.png',
     badge: '/logo/fcn-badge.png',
     vibrate: [200, 100, 200],
     data: payload.data,
     actions: [
-      { action: 'open', title: 'Open FCN' },
+      { action: 'open', title: 'Open Fast Care Now' },
       { action: 'close', title: 'Dismiss' }
     ]
   });

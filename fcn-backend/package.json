@@ -1,7 +1,7 @@
-{
+﻿{
   "name": "fcn-backend",
   "version": "0.1.0",
-  "description": "Foundation Care Network backend API",
+  "description": "Fast Care Now backend API",
   "main": "dist/server.js",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only server.ts",

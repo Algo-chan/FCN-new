@@ -239,7 +239,7 @@ export const AccountDeletionFlow = ({ fullName, onCancel }: Props) => {
                   <AlertTriangle className="h-10 w-10 text-fcn-danger" />
                 </div>
               </div>
-              <h2 className="text-center text-xl font-bold text-fcn-danger">Delete Your FCN Account</h2>
+              <h2 className="text-center text-xl font-bold text-fcn-danger">Delete Your Fast Care Now Account</h2>
 
               <div className="rounded-lg bg-fcn-danger/5 border border-fcn-danger/10 p-4 space-y-2">
                 <p className="text-sm font-medium text-fcn-danger">What you will lose:</p>
@@ -473,10 +473,10 @@ export const AccountDeletionFlow = ({ fullName, onCancel }: Props) => {
               </div>
               <h2 className="text-xl font-bold text-fcn-text-light dark:text-fcn-text-dark">Account Deleted</h2>
               <p className="text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">
-                Your account has been successfully deleted. Thank you for using FCN.
+                Your account has been successfully deleted. Thank you for using Fast Care Now.
               </p>
               <p className="text-sm text-fcn-text-light/40 dark:text-fcn-text-dark/40">We're sorry to see you go.</p>
-              <img src="/logo/fcn-logo-full.png" alt="FCN" className="mx-auto h-8 opacity-50" />
+              <img src="/logo/fcn-logo-full.png" alt="Fast Care Now" className="mx-auto h-8 opacity-50" />
               <p className="text-xs text-fcn-text-light/30 dark:text-fcn-text-dark/30">Redirecting...</p>
             </motion.div>
           )}

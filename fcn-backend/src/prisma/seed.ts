@@ -26,7 +26,7 @@ async function main() {
         password_hash: passwordHash
       },
       create: {
-        full_name: "FCN Super Admin",
+        full_name: "Fast Care Now Super Admin",
         email: "admin@fcncare.com",
         phone: "+251911000000",
         password_hash: passwordHash,

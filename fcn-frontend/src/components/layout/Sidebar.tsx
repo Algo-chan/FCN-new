@@ -271,13 +271,13 @@ export const Sidebar = () => {
         {!sidebarCollapsed || isMobile ? (
           <img
             src="/logo/fcn-logo-full.png"
-            alt="FCN Logo"
+            alt="Fast Care Now Logo"
             className="h-8 w-auto"
           />
         ) : (
           <img
             src="/logo/fcn-logo-full.png"
-            alt="FCN Logo"
+            alt="Fast Care Now Logo"
             className="mx-auto h-8 w-auto"
           />
         )}

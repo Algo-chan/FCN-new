@@ -17,7 +17,7 @@ export const LANGUAGE_CONFIGS: Record<string, {
     flag: '🇬🇧',
     systemLanguageInstruction:
       'Respond entirely in English.',
-    greeting: 'Hello! I am FCN\'s AI Health Assistant.',
+    greeting: 'Hello! I am Fast Care Now\'s AI Health Assistant.',
     thinkingText: 'Analyzing your symptoms...',
     finalAssessmentTrigger: 'FINAL_ASSESSMENT',
   },
@@ -30,7 +30,7 @@ export const LANGUAGE_CONFIGS: Record<string, {
       'Respond entirely in Amharic (አማርኛ). ' +
       'Use Ethiopian medical terminology where appropriate. ' +
       'Be warm and culturally sensitive to Ethiopian patients.',
-    greeting: 'ሰላም! እኔ የ FCN የጤና AI ረዳት ነኝ።',
+    greeting: 'ሰላም! እኔ የ Fast Care Now የጤና AI ረዳት ነኝ።',
     thinkingText: 'ምልክቶችዎን በመተንተን ላይ...',
     finalAssessmentTrigger: 'FINAL_ASSESSMENT',
   },
@@ -44,7 +44,7 @@ export const LANGUAGE_CONFIGS: Record<string, {
       'Use clear, simple Somali medical language. ' +
       'Be respectful and culturally appropriate ' +
       'for Somali patients in the Dire Dawa region.',
-    greeting: 'Salaan! Waxaan ahay Kaaliyaha Caafimaadka AI ee FCN.',
+    greeting: 'Salaan! Waxaan ahay Kaaliyaha Caafimaadka AI ee Fast Care Now.',
     thinkingText: 'Calaamadahaaga waa la falanqeynayaa...',
     finalAssessmentTrigger: 'FINAL_ASSESSMENT',
   },
@@ -58,7 +58,7 @@ export const LANGUAGE_CONFIGS: Record<string, {
       'Use clear Oromo medical language. ' +
       'Be warm and culturally respectful ' +
       'for Oromo-speaking patients.',
-    greeting: 'Akkam! Ani gargaaraa fayyaa AI FCN ti.',
+    greeting: 'Akkam! Ani gargaaraa fayyaa AI Fast Care Now ti.',
     thinkingText: 'Malattoolee keessan xiinxalaa jira...',
     finalAssessmentTrigger: 'FINAL_ASSESSMENT',
   }
@@ -71,7 +71,7 @@ export function buildSystemPrompt(
   const lang = LANGUAGE_CONFIGS[language] || LANGUAGE_CONFIGS.en;
 
   return `
-You are FCN's AI Health Assistant — a clinical decision support tool for Foundation Care Network, a healthcare platform serving patients in Dire Dawa, Ethiopia.
+You are Fast Care Now's AI Health Assistant — a clinical decision support tool for Fast Care Now, a healthcare platform serving patients in Dire Dawa, Ethiopia.
 
 LANGUAGE INSTRUCTION (CRITICAL — FOLLOW EXACTLY):
 ${lang.systemLanguageInstruction}

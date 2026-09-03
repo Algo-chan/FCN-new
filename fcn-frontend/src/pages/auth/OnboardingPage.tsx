@@ -191,7 +191,7 @@ const OnboardingPage = () => {
       <div className="flex items-center justify-between px-6 py-4">
         <img
           src="/logo/fcn-logo-full.png"
-          alt="FCN Logo"
+          alt="Fast Care Now Logo"
           className="h-9 w-auto"
         />
         <div className="flex items-center gap-3">

@@ -268,7 +268,7 @@ export const SecuritySettingsPanel = ({ user }: Props) => {
           </Button>
         </div>
         <p className="mt-3 text-xs text-fcn-text-light/40 dark:text-fcn-text-dark/40">
-          FCN retains medical records per Ethiopian healthcare regulations even after account deletion.
+          Fast Care Now retains medical records per Ethiopian healthcare regulations even after account deletion.
         </p>
       </Card>
 

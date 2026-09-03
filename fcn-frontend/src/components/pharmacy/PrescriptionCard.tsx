@@ -61,7 +61,7 @@ export const PrescriptionCard = ({ prescription }: PrescriptionCardProps) => {
       p{margin:4px 0;color:#475569}
       .rx{font-family:monospace;font-size:20px;color:#0D1B3E}</style></head>
       <body>
-        <h1 style="color:#1E293B">FCN Prescription</h1>
+        <h1 style="color:#1E293B">Fast Care Now Prescription</h1>
         <p class="rx">${prescription.rx_reference}</p>
         <div id="qr">Loading QR...</div>
         <p>Dr. ${prescription.doctor_name}</p>

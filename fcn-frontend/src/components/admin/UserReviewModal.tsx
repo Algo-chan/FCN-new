@@ -369,7 +369,7 @@ export const UserReviewModal = ({ userId, onDecision, onClose }: Props) => {
                 >
                   <div className="rounded-lg bg-fcn-success/10 p-3">
                     <p className="text-sm font-medium text-fcn-success">
-                      Approve {user.full_name} as FCN {formatRole(user.role)}?
+                      Approve {user.full_name} as Fast Care Now {formatRole(user.role)}?
                     </p>
                     <p className="mt-1 text-xs text-fcn-text-light/60">
                       They will be notified and can immediately start using the platform.

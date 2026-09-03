@@ -90,7 +90,7 @@ const PendingApprovalPage = () => {
       <div className="mb-8">
         <img
           src="/logo/fcn-logo-full.png"
-          alt="FCN Logo"
+          alt="Fast Care Now Logo"
           className="h-10 w-auto"
         />
       </div>
@@ -146,7 +146,7 @@ const PendingApprovalPage = () => {
 
         <p className="mt-6 text-sm text-white/40">
           Have questions?{" "}
-          <a href="mailto:support@foundationcarenetwork.com" className="text-fcn-accent hover:underline">support@foundationcarenetwork.com</a>
+          <a href="mailto:support@fcncare.com" className="text-fcn-accent hover:underline">support@fcncare.com</a>
         </p>
       </div>
     </div>

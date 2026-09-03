@@ -9,10 +9,10 @@ interface FAQItem {
 }
 
 const faqs: FAQItem[] = [
-  { q: "Is FCN available outside Dire Dawa?", a: "FCN is currently piloting in Dire Dawa, Ethiopia. We plan to expand to additional cities based on pilot success and partner hospital availability." },
+  { q: "Is Fast Care Now available outside Dire Dawa?", a: "Fast Care Now is currently piloting in Dire Dawa, Ethiopia. We plan to expand to additional cities based on pilot success and partner hospital availability." },
   { q: "How much does a consultation cost?", a: "Standard remote consultations start at 50 ETB. Pricing may vary by doctor specialty and appointment type. Exact fees are always shown before you confirm a booking." },
   { q: "Is my health data safe?", a: "Yes. All consultation messages are encrypted, and your health records are only accessible to you and the doctors actively treating you. We never share your data with third parties." },
-  { q: "What if I don't have a smartphone?", a: "FCN currently requires an Android smartphone with internet access. We're exploring SMS and USSD support for feature phones in future phases." },
+  { q: "What if I don't have a smartphone?", a: "Fast Care Now currently requires an Android smartphone with internet access. We're exploring SMS and USSD support for feature phones in future phases." },
   { q: "Can I get a nurse to visit my home?", a: "Yes — if your doctor determines you need lab testing or vitals recorded in person, you can request a nurse home visit directly through the platform." },
   { q: "Is the AI symptom checker a replacement for seeing a doctor?", a: "No. The AI Symptom Checker provides guidance only and is not a medical diagnosis. It helps you understand urgency and prepares you for your doctor consultation." }
 ];
@@ -33,7 +33,7 @@ export const FAQSection = () => {
           className="mb-12 text-center"
         >
           <h2 className="text-2xl font-bold text-fcn-text-light dark:text-white sm:text-3xl">Frequently Asked Questions</h2>
-          <p className="mt-2 text-fcn-text-light/60 dark:text-gray-400">Everything you need to know about FCN</p>
+          <p className="mt-2 text-fcn-text-light/60 dark:text-gray-400">Everything you need to know about Fast Care Now</p>
         </motion.div>
 
         <div className="space-y-3">

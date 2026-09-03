@@ -2,7 +2,7 @@ import { Facebook, Heart, Instagram, Linkedin, Twitter } from "lucide-react";
 
 const links = [
   { title: "Platform", items: [{ label: "Features", href: "#features" }, { label: "How It Works", href: "#how-it-works" }, { label: "For Hospitals", href: "#for-hospitals" }, { label: "For Doctors", href: "#for-doctors" }, { label: "FAQ", href: "#faq" }] },
-  { title: "Company", items: [{ label: "About Us", href: "#" }, { label: "Careers", href: "#" }, { label: "Contact", href: "mailto:hello@fcn.health" }, { label: "Blog", href: "#" }] },
+  { title: "Company", items: [{ label: "About Us", href: "#" }, { label: "Careers", href: "#" }, { label: "Contact", href: "mailto:hello@fcncare.com" }, { label: "Blog", href: "#" }] },
   { title: "Legal", items: [{ label: "Privacy Policy", href: "#" }, { label: "Terms of Service", href: "#" }, { label: "Cookie Policy", href: "#" }] }
 ];
 
@@ -22,7 +22,7 @@ export const Footer = () => {
           <div>
             <img
               src="/logo/fcn-logo-full.png"
-              alt="FCN Logo"
+              alt="Fast Care Now Logo"
               className="mb-3 h-9 w-auto"
             />
             <div className="mt-4 flex gap-3">
@@ -56,7 +56,7 @@ export const Footer = () => {
           {/* Newsletter */}
           <div>
             <h4 className="mb-3 text-sm font-semibold text-fcn-text-light dark:text-white">Stay Updated</h4>
-            <p className="mb-3 text-sm text-fcn-text-light/50 dark:text-gray-400">Get the latest FCN news and updates</p>
+            <p className="mb-3 text-sm text-fcn-text-light/50 dark:text-gray-400">Get the latest Fast Care Now news and updates</p>
             <div className="flex flex-col gap-2 sm:flex-row">
               <input
                 type="email"
@@ -75,7 +75,7 @@ export const Footer = () => {
       {/* Bottom bar */}
       <div className="border-t border-white/10 py-6">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 text-center text-xs text-fcn-text-light/40 dark:text-gray-500 sm:flex-row sm:px-6 lg:px-8">
-          <p>&copy; 2025 Foundation Care Network. All rights reserved.</p>
+          <p>&copy; 2025 Fast Care Now. All rights reserved.</p>
           <p className="flex items-center gap-1">
             Made with <Heart className="h-3 w-3 text-fcn-danger" /> in Dire Dawa, Ethiopia
           </p>
