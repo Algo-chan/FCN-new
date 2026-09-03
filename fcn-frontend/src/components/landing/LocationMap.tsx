@@ -239,9 +239,8 @@ const networkLines: Array<{ from: string; to: string }> = [
   { from: "Number One Health Center", to: "Alfa Pharmacy" },
 ];
 
-// Quadratic bezier so each connection takes a short, direct route between two
-// points. The control point sits just off the straight segment (a small lane
-// offset), so lines stay short, don't cross long and neighbors fan apart.
+// One simple rule for every connection: each line arcs south (bulging toward
+// decreasing latitude / the bottom of the map). No per-line special-casing.
 const quadraticPoint = (from: [number, number], to: [number, number], control: [number, number], t: number): [number, number] => {
   const u = 1 - t;
   return [
@@ -250,18 +249,12 @@ const quadraticPoint = (from: [number, number], to: [number, number], control: [
   ];
 };
 
-const lineGeometry = (from: [number, number], to: [number, number], side: "left" | "right", spread: number) => {
+const lineGeometry = (from: [number, number], to: [number, number]) => {
   const midLat = (from[0] + to[0]) / 2;
   const midLng = (from[1] + to[1]) / 2;
-  const dx = to[0] - from[0];
-  const dy = (to[1] - from[1]) * netCos;
-  const len = Math.hypot(dx, dy) || 1;
-  // Perpendicular unit offset (normalized) so the bend is a small lane offset,
-  // not a big arch that crosses the map.
-  const px = -dy / len;
-  const py = dx / len;
-  const offset = 0.0012 * spread * (side === "left" ? 1 : -1);
-  const control: [number, number] = [midLat + px * offset, midLng + (py * offset) / netCos];
+  // Bulge the control point south by a small fixed distance so every line bows
+  // the same gentle downward arc.
+  const control: [number, number] = [midLat - 0.006, midLng];
   const steps = 40;
   const points: Array<[number, number]> = [];
   for (let i = 0; i <= steps; i++) {
@@ -277,49 +270,16 @@ interface CurvedLine {
   points: Array<[number, number]>;
 }
 
-// Latitude scale so perpendicular offsets are even across the map.
-const netCos = Math.cos((9.594 * Math.PI) / 180) || 1;
-
-// Strong north-arching route used for the Dil Chora -> HIKMA Pharmacy link so
-// it passes overhead (above Art Hospital) rather than cutting across the other
-// lines directly.
-const overheadGeometry = (from: [number, number], to: [number, number]) => {
-  const midLat = (from[0] + to[0]) / 2;
-  const midLng = (from[1] + to[1]) / 2;
-  // Push the control well above the line so the arc clears the cluster below.
-  const control: [number, number] = [midLat + 0.02, midLng];
-  const steps = 48;
-  const points: Array<[number, number]> = [];
-  for (let i = 0; i <= steps; i++) {
-    points.push(quadraticPoint(from, to, control, i / steps));
-  }
-  return { control, points };
-};
-
 const curvedLines: CurvedLine[] = (() => {
-  const fromCounts = new Map<string, number>();
   const out: Array<CurvedLine | null> = [];
-  networkLines.forEach((line, i) => {
+  networkLines.forEach((line) => {
     const from = byName(line.from);
     const to = byName(line.to);
     if (!from || !to) {
       out.push(null);
       return;
     }
-    // Dil Chora -> HIKMA uses the overhead northern route above Art Hospital.
-    if (line.from === "Dil Chora Referral Hospital" && line.to === "HIKMA Pharmacy") {
-      out.push({ from, to, ...overheadGeometry(from, to) });
-      return;
-    }
-    // Lines sharing the same source (e.g. Dil Chora links) are spread across
-    // alternating sides so they separate as parallel routes instead of stacking
-    // and crossing long. Spread grows as more share the source.
-    const key = line.from;
-    const n = fromCounts.get(key) ?? 0;
-    fromCounts.set(key, n + 1);
-    const side = n % 2 === 0 ? "left" : "right";
-    const spread = 1 + Math.floor(n / 2) * 1.5;
-    out.push({ from, to, ...lineGeometry(from, to, side, spread) });
+    out.push({ from, to, ...lineGeometry(from, to) });
   });
   return out.filter((l): l is CurvedLine => l !== null);
 })();
