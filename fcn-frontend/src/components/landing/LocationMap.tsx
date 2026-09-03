@@ -207,8 +207,7 @@ const DarkModeFilter = () => {
 };
 
 const byName = (name: string) => hubs.find((h) => h.name === name)?.coords;
-const RED = "#EF4444";
-const CURVE = 0.35;
+const DI = "#2DD4BF";
 
 // Connect every hospital/pharmacy to Dil Chora as the referral hub, plus a ring
 // between the public hospitals so the network reads clearly.
@@ -228,66 +227,24 @@ const networkLines: Array<{ from: string; to: string }> = [
   { from: "Number One Health Center", to: "Alfa Pharmacy" },
 ];
 
-// Sample a quadratic bezier so the connecting line arcs between the two points
-// instead of drawing a straight segment. Longitude is latitude-scaled so the
-// bulge stays visually even across the map. The control point is always pushed
-// toward the top of the map (increasing latitude / north) so the lines arc up
-// and fan out rather than crossing each other.
-const quadraticPoint = (from: [number, number], to: [number, number], control: [number, number], t: number): [number, number] => {
-  const u = 1 - t;
-  return [
-    u * u * from[0] + 2 * u * t * control[0] + t * t * to[0],
-    u * u * from[1] + 2 * u * t * control[1] + t * t * to[1],
-  ];
-};
-
-const lineGeometry = (from: [number, number], to: [number, number], factor: number) => {
-  const midLat = (from[0] + to[0]) / 2;
-  const cos = Math.cos((midLat * Math.PI) / 180) || 1;
-  const dx = to[0] - from[0];
-  const dy = (to[1] - from[1]) * cos;
-  const len = Math.hypot(dx, dy) || 1;
-  const dist = len * CURVE * factor;
-  const control: [number, number] = [midLat + dist, midLng(from, to)];
-  const points: Array<[number, number]> = [];
-  const steps = 48;
-  for (let i = 0; i <= steps; i++) {
-    points.push(quadraticPoint(from, to, control, i / steps));
-  }
-  return { control, points };
-};
-
-const midLng = (from: [number, number], to: [number, number]) => (from[1] + to[1]) / 2;
-
-interface CurvedLine {
-  from: [number, number];
-  to: [number, number];
-  control: [number, number];
-  points: Array<[number, number]>;
-}
-
-const curvedLines: CurvedLine[] = networkLines
-  .map((line, i) => {
+const staticLines: Array<{ from: [number, number]; to: [number, number] }> = networkLines
+  .map((line) => {
     const from = byName(line.from);
     const to = byName(line.to);
-    if (!from || !to) return null;
-    // Vary curvature slightly per line so parallel links from the same hub fan
-    // out at different heights instead of overlapping or colliding.
-    const factor = 0.85 + (i % 4) * 0.15;
-    return { from, to, ...lineGeometry(from, to, factor) };
+    return from && to ? { from, to } : null;
   })
-  .filter((l): l is CurvedLine => l !== null);
+  .filter((l): l is { from: [number, number]; to: [number, number] } => l !== null);
 
 const NetworkLines = () => (
   <>
-    {curvedLines.map((line, i) => (
+    {staticLines.map((line, i) => (
       <Polyline
         key={i}
-        positions={line.points}
+        positions={[line.from, line.to]}
         pathOptions={{
-          color: RED,
-          weight: 2.6,
-          opacity: 0.55,
+          color: DI,
+          weight: 2,
+          opacity: 0.5,
           interactive: false,
         }}
       />
@@ -295,9 +252,11 @@ const NetworkLines = () => (
   </>
 );
 
+const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+
 const dotIcon = L.divIcon({
   className: "",
-  html: `<div style="width:9px;height:9px;background:#FFFFFF;border:2px solid ${RED};border-radius:50%;box-shadow:0 0 8px 2px hsla(0,84%,60%,0.8);"></div>`,
+  html: `<div style="width:9px;height:9px;background:#FFFFFF;border:2px solid ${DI};border-radius:50%;box-shadow:0 0 8px 2px hsla(171,72%,55%,0.8);"></div>`,
   iconSize: [9, 9],
   iconAnchor: [4, 4],
 });
@@ -323,13 +282,16 @@ const TravelingDots = () => {
 
   return (
     <>
-      {curvedLines.map((line, i) => {
+      {staticLines.map((line, i) => {
         // Stagger each line and alternate direction so packets flow both ways.
         const offset = (i * 0.13) % 1;
         const dir = i % 2 === 0 ? 1 : -1;
         const raw = (progress * dir + offset) % 1;
         const t = raw < 0 ? raw + 1 : raw;
-        const position = quadraticPoint(line.from, line.to, line.control, t);
+        const position: [number, number] = [
+          lerp(line.from[0], line.to[0], t),
+          lerp(line.from[1], line.to[1], t),
+        ];
         return <Marker key={i} position={position} icon={dotIcon} interactive={false} keyboard={false} zIndexOffset={500} />;
       })}
     </>
