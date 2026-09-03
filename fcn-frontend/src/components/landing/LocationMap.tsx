@@ -212,7 +212,7 @@ const FitBounds = () => {
   useEffect(() => {
     const coords = hubs.map((h) => [h.coords[0], h.coords[1]] as [number, number]);
     const bounds = L.latLngBounds(coords);
-    map.fitBounds(bounds, { padding: [85, 85], maxZoom: 15 });
+    map.fitBounds(bounds, { padding: [140, 140], maxZoom: 12.5 });
   }, [map]);
 
   return null;
@@ -239,24 +239,61 @@ const networkLines: Array<{ from: string; to: string }> = [
   { from: "Number One Health Center", to: "Alfa Pharmacy" },
 ];
 
-const staticLines: Array<{ from: [number, number]; to: [number, number] }> = networkLines
-  .map((line) => {
+// Quadratic bezier so each connection arcs upward (toward the top/north of the
+// map), reading like the network is live with the connection moving through the
+// air. The dot follows the exact same curve as the drawn line.
+const quadraticPoint = (from: [number, number], to: [number, number], control: [number, number], t: number): [number, number] => {
+  const u = 1 - t;
+  return [
+    u * u * from[0] + 2 * u * t * control[0] + t * t * to[0],
+    u * u * from[1] + 2 * u * t * control[1] + t * t * to[1],
+  ];
+};
+
+const lineGeometry = (from: [number, number], to: [number, number], factor: number) => {
+  const midLat = (from[0] + to[0]) / 2;
+  const dx = to[0] - from[0];
+  const dy = to[1] - from[1];
+  const len = Math.hypot(dx, dy) || 1;
+  // Push the control point toward the top (increasing latitude), scaled to the
+  // segment length and a per-line factor so parallel links fan out cleanly.
+  const dist = len * 0.3 * factor;
+  const control: [number, number] = [midLat + dist, (from[1] + to[1]) / 2];
+  const steps = 48;
+  const points: Array<[number, number]> = [];
+  for (let i = 0; i <= steps; i++) {
+    points.push(quadraticPoint(from, to, control, i / steps));
+  }
+  return { control, points };
+};
+
+interface CurvedLine {
+  from: [number, number];
+  to: [number, number];
+  control: [number, number];
+  points: Array<[number, number]>;
+}
+
+const curvedLines: CurvedLine[] = networkLines
+  .map((line, i) => {
     const from = byName(line.from);
     const to = byName(line.to);
-    return from && to ? { from, to } : null;
+    if (!from || !to) return null;
+    const factor = 0.9 + (i % 4) * 0.15;
+    return { from, to, ...lineGeometry(from, to, factor) };
   })
-  .filter((l): l is { from: [number, number]; to: [number, number] } => l !== null);
+  .filter((l): l is CurvedLine => l !== null);
 
 const NetworkLines = () => (
   <>
-    {staticLines.map((line, i) => (
+    {curvedLines.map((line, i) => (
       <Polyline
         key={i}
-        positions={[line.from, line.to]}
+        positions={line.points}
         pathOptions={{
           color: DI,
-          weight: 2,
-          opacity: 0.5,
+          weight: 2.6,
+          opacity: 0.7,
           interactive: false,
         }}
       />
@@ -264,13 +301,11 @@ const NetworkLines = () => (
   </>
 );
 
-const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
-
 const dotIcon = L.divIcon({
   className: "",
-  html: `<div style="width:9px;height:9px;background:#FFFFFF;border:2px solid ${DI};border-radius:50%;box-shadow:0 0 8px 2px hsla(171,72%,55%,0.8);"></div>`,
-  iconSize: [9, 9],
-  iconAnchor: [4, 4],
+  html: `<svg viewBox="0 0 24 24" width="13" height="13" style="overflow:visible;filter:drop-shadow(0 0 4px rgba(239,68,68,0.8));"><path d="M12 21s-7.5-4.7-9.8-9C0.4 8.4 1.8 5 5.2 5 7.2 5 8.8 6.2 12 9c3.2-2.8 4.8-4 6.8-4 3.4 0 4.8 3.4 3 7-2.3 4.3-9.8 9-9.8 9z" fill="#EF4444"/></svg>`,
+  iconSize: [13, 13],
+  iconAnchor: [6, 7],
 });
 
 const TravelingDots = () => {
@@ -294,16 +329,13 @@ const TravelingDots = () => {
 
   return (
     <>
-      {staticLines.map((line, i) => {
+      {curvedLines.map((line, i) => {
         // Stagger each line and alternate direction so packets flow both ways.
         const offset = (i * 0.13) % 1;
         const dir = i % 2 === 0 ? 1 : -1;
         const raw = (progress * dir + offset) % 1;
         const t = raw < 0 ? raw + 1 : raw;
-        const position: [number, number] = [
-          lerp(line.from[0], line.to[0], t),
-          lerp(line.from[1], line.to[1], t),
-        ];
+        const position = quadraticPoint(line.from, line.to, line.control, t);
         return <Marker key={i} position={position} icon={dotIcon} interactive={false} keyboard={false} zIndexOffset={500} />;
       })}
     </>
@@ -324,7 +356,7 @@ export const LocationMap = () => {
 
   if (!loaded) {
     return (
-      <div className="flex h-72 items-center justify-center rounded-2xl bg-fcn-primary/5 sm:h-96 lg:h-[440px] xl:h-[500px]">
+      <div className="flex h-72 items-center justify-center rounded-2xl bg-fcn-primary/5 sm:h-96 lg:h-[500px] xl:h-[560px]">
         <div className="h-8 w-8 animate-spin rounded-full border-2 border-fcn-primary border-r-transparent" />
       </div>
     );
@@ -338,7 +370,7 @@ export const LocationMap = () => {
       ref={containerRef}
       className="relative overflow-hidden rounded-2xl border border-fcn-primary/10"
     >
-      <div className="h-72 sm:h-96 lg:h-[440px] xl:h-[500px]">
+      <div className="h-72 sm:h-96 lg:h-[500px] xl:h-[560px]">
         <MapContainer
           center={center}
           zoom={zoom}
