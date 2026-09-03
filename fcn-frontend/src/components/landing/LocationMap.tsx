@@ -285,7 +285,6 @@ const dupThreshold = 0.0004;
 
 const curvedLines: CurvedLine[] = (() => {
   let prevTo: [number, number] | null = null;
-  let prevDir: "north" | "east" | "west" = "east";
   const out: Array<CurvedLine | null> = [];
   networkLines.forEach((line, i) => {
     const from = byName(line.from);
@@ -294,7 +293,7 @@ const curvedLines: CurvedLine[] = (() => {
       out.push(null);
       return;
     }
-    const factor = 0.9 + (i % 4) * 0.15;
+    let factor = 0.9 + (i % 4) * 0.15;
     const dx = to[0] - from[0];
     const dy = to[1] - from[1];
     // Lines along the main east-west road (longitude changes more than latitude)
@@ -306,17 +305,17 @@ const curvedLines: CurvedLine[] = (() => {
       dir = i % 2 === 0 ? "east" : "west";
     }
     // If this target nearly duplicates the previous one (e.g. Delt and Yemariam
-    // sit next to each other, so their Dil Chora links would overlap), flip the
-    // curve to the opposite lateral direction so the two lines separate clearly.
+    // sit next to each other, so their Dil Chora links would overlap), keep the
+    // line curving north but at a taller height so the two separate clearly.
     if (
       prevTo &&
       Math.abs(to[0] - prevTo[0]) < dupThreshold &&
       Math.abs(to[1] - prevTo[1]) < dupThreshold
     ) {
-      dir = prevDir === "east" ? "west" : "east";
+      dir = "north";
+      factor += 0.9;
     }
     prevTo = to;
-    prevDir = dir;
     out.push({ from, to, ...lineGeometry(from, to, factor, dir) });
   });
   return out.filter((l): l is CurvedLine => l !== null);
