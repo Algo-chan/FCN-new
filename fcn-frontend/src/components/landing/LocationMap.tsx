@@ -252,9 +252,9 @@ const quadraticPoint = (from: [number, number], to: [number, number], control: [
 const lineGeometry = (from: [number, number], to: [number, number]) => {
   const midLat = (from[0] + to[0]) / 2;
   const midLng = (from[1] + to[1]) / 2;
-  // Bulge the control point south by a small fixed distance so every line bows
-  // the same gentle downward arc.
-  const control: [number, number] = [midLat - 0.006, midLng];
+  // Bulge the control point north by a small fixed distance so every line bows
+  // the same gentle upward arc.
+  const control: [number, number] = [midLat + 0.006, midLng];
   const steps = 40;
   const points: Array<[number, number]> = [];
   for (let i = 0; i <= steps; i++) {
