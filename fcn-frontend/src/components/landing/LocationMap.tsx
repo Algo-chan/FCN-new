@@ -239,9 +239,9 @@ const networkLines: Array<{ from: string; to: string }> = [
   { from: "Number One Health Center", to: "Alfa Pharmacy" },
 ];
 
-// Quadratic bezier so each connection arcs in a chosen direction (relative to
-// the map: north, east or west), reading like the network is live with the
-// connection moving through the air. The dot follows the exact same curve.
+// Quadratic bezier so each connection takes a short, direct route between two
+// points. The control point sits just off the straight segment (a small lane
+// offset), so lines stay short, don't cross long and neighbors fan apart.
 const quadraticPoint = (from: [number, number], to: [number, number], control: [number, number], t: number): [number, number] => {
   const u = 1 - t;
   return [
@@ -250,17 +250,19 @@ const quadraticPoint = (from: [number, number], to: [number, number], control: [
   ];
 };
 
-const lineGeometry = (from: [number, number], to: [number, number], factor: number, outward: [number, number]) => {
+const lineGeometry = (from: [number, number], to: [number, number], side: "left" | "right", spread: number) => {
   const midLat = (from[0] + to[0]) / 2;
   const midLng = (from[1] + to[1]) / 2;
   const dx = to[0] - from[0];
-  const dy = to[1] - from[1];
+  const dy = (to[1] - from[1]) * netCos;
   const len = Math.hypot(dx, dy) || 1;
-  // Bulge the control point outward, away from the network centroid, so lines
-  // bow around the outside of the cluster instead of cutting through it.
-  const dist = len * 0.4 * factor;
-  const control: [number, number] = [midLat + outward[0] * dist, midLng + outward[1] * dist];
-  const steps = 48;
+  // Perpendicular unit offset (normalized) so the bend is a small lane offset,
+  // not a big arch that crosses the map.
+  const px = -dy / len;
+  const py = dx / len;
+  const offset = 0.0012 * spread * (side === "left" ? 1 : -1);
+  const control: [number, number] = [midLat + px * offset, midLng + (py * offset) / netCos];
+  const steps = 40;
   const points: Array<[number, number]> = [];
   for (let i = 0; i <= steps; i++) {
     points.push(quadraticPoint(from, to, control, i / steps));
@@ -275,13 +277,11 @@ interface CurvedLine {
   points: Array<[number, number]>;
 }
 
-// Network centroid (latitude-scaled for even longitude spacing), used so lines
-// bow outward away from the middle of the map.
-const netMidLat = hubs.reduce((sum, h) => sum + h.coords[0], 0) / hubs.length;
-const netMidLng = hubs.reduce((sum, h) => sum + h.coords[1], 0) / hubs.length;
-const netCos = Math.cos((netMidLat * Math.PI) / 180) || 1;
+// Latitude scale so perpendicular offsets are even across the map.
+const netCos = Math.cos((9.594 * Math.PI) / 180) || 1;
 
 const curvedLines: CurvedLine[] = (() => {
+  const fromCounts = new Map<string, number>();
   const out: Array<CurvedLine | null> = [];
   networkLines.forEach((line, i) => {
     const from = byName(line.from);
@@ -290,26 +290,15 @@ const curvedLines: CurvedLine[] = (() => {
       out.push(null);
       return;
     }
-    const factor = 0.9 + (i % 4) * 0.15;
-
-    // Outward unit direction from the network center to this line's midpoint,
-    // so lines bow away from the cluster (cut across the outside).
-    const midLat = (from[0] + to[0]) / 2;
-    const midLng = (from[1] + to[1]) / 2;
-    let rx = midLat - netMidLat;
-    let ry = (midLng - netMidLng) * netCos;
-    const rLen = Math.hypot(rx, ry) || 1;
-    rx /= rLen;
-    ry /= rLen;
-
-    // Alternate a gentle perpendicular (lateral) bias per line so neighboring
-    // links fan apart instead of lying on top of each other.
-    const lateral = i % 2 === 0 ? 1 : -1;
-    const outward: [number, number] = [
-      rx * 0.85 - ry * 0.15 * lateral,
-      (ry * 0.85 + rx * 0.15 * lateral) / netCos,
-    ];
-    out.push({ from, to, ...lineGeometry(from, to, factor, outward) });
+    // Lines sharing the same source (e.g. Dil Chora links) are spread across
+    // alternating sides so they separate as parallel routes instead of stacking
+    // and crossing long. Spread grows as more share the source.
+    const key = line.from;
+    const n = fromCounts.get(key) ?? 0;
+    fromCounts.set(key, n + 1);
+    const side = n % 2 === 0 ? "left" : "right";
+    const spread = 1 + Math.floor(n / 2) * 1.5;
+    out.push({ from, to, ...lineGeometry(from, to, side, spread) });
   });
   return out.filter((l): l is CurvedLine => l !== null);
 })();
