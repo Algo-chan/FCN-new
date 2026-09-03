@@ -230,7 +230,9 @@ const networkLines: Array<{ from: string; to: string }> = [
 
 // Sample a quadratic bezier so the connecting line arcs between the two points
 // instead of drawing a straight segment. Longitude is latitude-scaled so the
-// perpendicular bulge stays visually even across the map.
+// bulge stays visually even across the map. The control point is always pushed
+// toward the top of the map (increasing latitude / north) so the lines arc up
+// and fan out rather than crossing each other.
 const quadraticPoint = (from: [number, number], to: [number, number], control: [number, number], t: number): [number, number] => {
   const u = 1 - t;
   return [
@@ -239,19 +241,14 @@ const quadraticPoint = (from: [number, number], to: [number, number], control: [
   ];
 };
 
-const lineGeometry = (from: [number, number], to: [number, number]) => {
+const lineGeometry = (from: [number, number], to: [number, number], factor: number) => {
   const midLat = (from[0] + to[0]) / 2;
   const cos = Math.cos((midLat * Math.PI) / 180) || 1;
   const dx = to[0] - from[0];
   const dy = (to[1] - from[1]) * cos;
   const len = Math.hypot(dx, dy) || 1;
-  const nx = -dy / len;
-  const ny = dx / len;
-  const dist = len * CURVE;
-  const control: [number, number] = [
-    midLat + nx * dist,
-    midLng(from, to) + (ny * dist) / cos,
-  ];
+  const dist = len * CURVE * factor;
+  const control: [number, number] = [midLat + dist, midLng(from, to)];
   const points: Array<[number, number]> = [];
   const steps = 48;
   for (let i = 0; i <= steps; i++) {
@@ -270,11 +267,14 @@ interface CurvedLine {
 }
 
 const curvedLines: CurvedLine[] = networkLines
-  .map((line) => {
+  .map((line, i) => {
     const from = byName(line.from);
     const to = byName(line.to);
     if (!from || !to) return null;
-    return { from, to, ...lineGeometry(from, to) };
+    // Vary curvature slightly per line so parallel links from the same hub fan
+    // out at different heights instead of overlapping or colliding.
+    const factor = 0.85 + (i % 4) * 0.15;
+    return { from, to, ...lineGeometry(from, to, factor) };
   })
   .filter((l): l is CurvedLine => l !== null);
 
@@ -286,7 +286,7 @@ const NetworkLines = () => (
         positions={line.points}
         pathOptions={{
           color: RED,
-          weight: 1.6,
+          weight: 2.6,
           opacity: 0.55,
           interactive: false,
         }}
@@ -294,8 +294,6 @@ const NetworkLines = () => (
     ))}
   </>
 );
-
-const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
 const dotIcon = L.divIcon({
   className: "",
