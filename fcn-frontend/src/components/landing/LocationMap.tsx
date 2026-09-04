@@ -128,6 +128,72 @@ const hubs: Hub[] = [
     doctors: 0,
     specialties: "Medicines · Prescriptions",
   },
+  {
+    name: "Addis Ketema Health Center",
+    short: "Public · Clinic",
+    kind: "hospital",
+    coords: [9.598, 41.8175],
+    hue: 205,
+    address: "Addis Ketema · West Dire Dawa",
+    wait: "~8 min",
+    doctors: 17,
+    specialties: "Primary care · Maternal & child",
+  },
+  {
+    name: "Genda Kore Health Center",
+    short: "Public · Clinic",
+    kind: "hospital",
+    coords: [9.6255, 41.858],
+    hue: 215,
+    address: "Genda Kore · North Dire Dawa",
+    wait: "~9 min",
+    doctors: 19,
+    specialties: "Primary care · Laboratory",
+  },
+  {
+    name: "Melka Jebdu Health Center",
+    short: "Public · Clinic",
+    kind: "hospital",
+    coords: [9.571, 41.904],
+    hue: 220,
+    address: "Melka Jebdu · Industrial zone",
+    wait: "~10 min",
+    doctors: 14,
+    specialties: "Primary care · Occupational health",
+  },
+  {
+    name: "Medina Pharmacy",
+    short: "Pharmacy",
+    kind: "pharmacy",
+    coords: [9.614, 41.873],
+    hue: 155,
+    address: "Airport Rd · North-east",
+    wait: "~0 min",
+    doctors: 0,
+    specialties: "Medicines · Prescriptions",
+  },
+  {
+    name: "Saba Pharmacy",
+    short: "Pharmacy · 24/7",
+    kind: "pharmacy",
+    coords: [9.586, 41.8225],
+    hue: 135,
+    address: "Addis Ketema Junction · West",
+    wait: "~0 min",
+    doctors: 0,
+    specialties: "Medicines · Prescriptions",
+  },
+  {
+    name: "Greenlife Pharmacy",
+    short: "Pharmacy",
+    kind: "pharmacy",
+    coords: [9.5695, 41.848],
+    hue: 165,
+    address: "South Dire Dawa · Chet-Le",
+    wait: "~0 min",
+    doctors: 0,
+    specialties: "Medicines · Prescriptions",
+  },
 ];
 
 const createHubIcon = (hub: Hub) =>
@@ -206,22 +272,26 @@ const FitBounds = () => {
 const byName = (name: string) => hubs.find((h) => h.name === name)?.coords;
 const DI = "#2DD4BF";
 
-// Connect every hospital/pharmacy to Dil Chora as the referral hub, plus a ring
-// between the public hospitals so the network reads clearly.
+// Connect the referral hospital out to the far-flung clinics and pharmacies,
+// then criss-cross north/south and east/west partners so every line arcs
+// clearly across the city without hugging neighbouring pins.
 const networkLines: Array<{ from: string; to: string }> = [
-  { from: "Dil Chora Referral Hospital", to: "Delt General Hospital" },
-  { from: "Dil Chora Referral Hospital", to: "Yemariam Work Hospital" },
-  { from: "Dil Chora Referral Hospital", to: "Art Hospital" },
-  { from: "Dil Chora Referral Hospital", to: "Number One Health Center" },
-  { from: "Dil Chora Referral Hospital", to: "Sabian General Hospital" },
-  { from: "Dil Chora Referral Hospital", to: "Abera Pharmacy" },
-  { from: "Dil Chora Referral Hospital", to: "HIKMA Pharmacy" },
-  { from: "Dil Chora Referral Hospital", to: "Alfa Pharmacy" },
-  { from: "Delt General Hospital", to: "Yemariam Work Hospital" },
-  { from: "Delt General Hospital", to: "HIKMA Pharmacy" },
-  { from: "Art Hospital", to: "Sabian General Hospital" },
-  { from: "Sabian General Hospital", to: "Alfa Pharmacy" },
+  { from: "Dil Chora Referral Hospital", to: "Genda Kore Health Center" },
+  { from: "Dil Chora Referral Hospital", to: "Melka Jebdu Health Center" },
+  { from: "Dil Chora Referral Hospital", to: "Addis Ketema Health Center" },
+  { from: "Dil Chora Referral Hospital", to: "Medina Pharmacy" },
+  { from: "Addis Ketema Health Center", to: "Number One Health Center" },
+  { from: "Addis Ketema Health Center", to: "Saba Pharmacy" },
+  { from: "Genda Kore Health Center", to: "Greenlife Pharmacy" },
+  { from: "Genda Kore Health Center", to: "HIKMA Pharmacy" },
+  { from: "Melka Jebdu Health Center", to: "Alfa Pharmacy" },
+  { from: "Melka Jebdu Health Center", to: "Greenlife Pharmacy" },
+  { from: "Number One Health Center", to: "Medina Pharmacy" },
   { from: "Number One Health Center", to: "Alfa Pharmacy" },
+  { from: "Sabian General Hospital", to: "HIKMA Pharmacy" },
+  { from: "Delt General Hospital", to: "Abera Pharmacy" },
+  { from: "Yemariam Work Hospital", to: "Abera Pharmacy" },
+  { from: "Art Hospital", to: "Saba Pharmacy" },
 ];
 
 // One simple rule for every connection: each line arcs south (bulging toward
@@ -288,9 +358,9 @@ const NetworkLines = () => (
 
 const dotIcon = L.divIcon({
   className: "",
-  html: `<div style="width:9px;height:9px;background:#FFFFFF;border:2px solid ${DI};border-radius:50%;box-shadow:0 0 8px 2px hsla(171,72%,55%,0.8);"></div>`,
-  iconSize: [9, 9],
-  iconAnchor: [4, 4],
+  html: `<div style="width:11px;height:11px;background:#FFFFFF;border:2.5px solid ${DI};border-radius:50%;box-shadow:0 0 10px 3px hsla(171,72%,55%,0.9);"></div>`,
+  iconSize: [11, 11],
+  iconAnchor: [5, 5],
 });
 
 const TravelingDots = () => {
