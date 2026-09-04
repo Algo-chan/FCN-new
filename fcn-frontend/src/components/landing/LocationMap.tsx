@@ -264,6 +264,7 @@ const FitBounds = () => {
     const coords = hubs.map((h) => [h.coords[0], h.coords[1]] as [number, number]);
     const bounds = L.latLngBounds(coords);
     map.fitBounds(bounds, { padding: [10, 10], maxZoom: 18 });
+    map.setZoom(map.getZoom() + 1);
   }, [map]);
 
   return null;
