@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { MapContainer, Marker, Polyline, Popup, TileLayer, useMap } from "react-leaflet";
 import L from "leaflet";
-import { useTheme } from "@/hooks/useTheme";
 
 interface Hub {
   name: string;
@@ -190,21 +189,7 @@ const HubMarkers = () => {
   );
 };
 
-const DarkModeFilter = () => {
-  const { isDark } = useTheme();
-  const map = useMap();
 
-  useEffect(() => {
-    const pane = map.getPane("tilePane");
-    if (pane) {
-      pane.style.filter = isDark
-        ? "invert(0.9) hue-rotate(180deg) brightness(0.95) contrast(0.85)"
-        : "";
-    }
-  }, [isDark, map]);
-
-  return null;
-};
 
 const FitBounds = () => {
   const map = useMap();
@@ -383,7 +368,7 @@ export const LocationMap = () => {
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           />
           <FitBounds />
-          <DarkModeFilter />
+
           <NetworkLines />
           <TravelingDots />
           <HubMarkers />

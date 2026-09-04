@@ -2,7 +2,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
 import L from "leaflet";
 import { clsx } from "clsx";
-import { useTheme } from "@/hooks/useTheme";
 import type { Hospital, OccupancyBand } from "@/types";
 
 interface HospitalMapProps {
@@ -76,21 +75,7 @@ const AnimatedMarkers = ({ hospitals, onSelect }: { hospitals: Hospital[]; onSel
   );
 };
 
-const DarkModeFilter = () => {
-  const { isDark } = useTheme();
-  const map = useMap();
 
-  useEffect(() => {
-    const pane = map.getPane("tilePane");
-    if (pane) {
-      pane.style.filter = isDark
-        ? "invert(0.9) hue-rotate(180deg) brightness(0.95) contrast(0.85)"
-        : "";
-    }
-  }, [isDark, map]);
-
-  return null;
-};
 
 const FlyToSelected = ({ selectedId, hospitals }: { selectedId?: string | null; hospitals: Hospital[] }) => {
   const map = useMap();
@@ -165,7 +150,7 @@ export const HospitalMap = ({
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
-        <DarkModeFilter />
+
         <AnimatedMarkers hospitals={validHospitals} onSelect={onSelect} />
         <FlyToSelected selectedId={selectedId} hospitals={validHospitals} />
       </MapContainer>
