@@ -23,7 +23,7 @@ export const Footer = () => {
             <img
               src="/logo/fcn-logo-full.png"
               alt="Fast Care Now Logo"
-              className="mb-3 h-14 w-auto"
+              className="mb-3 h-18 w-auto"
             />
             <div className="mt-4 flex gap-3">
               {socialIcons.map((s) => (
