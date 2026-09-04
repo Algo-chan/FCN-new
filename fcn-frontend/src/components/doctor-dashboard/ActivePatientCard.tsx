@@ -58,8 +58,8 @@ export const ActivePatientCard = ({ patient, index = 0 }: ActivePatientCardProps
                 {patient.blood_type && (
                   <span className={clsx(
                     "text-[10px] px-1.5 py-0.5 rounded font-bold",
-                    patient.blood_type === "O+" ? "bg-green-100 text-green-700" :
-                    patient.blood_type === "A+" ? "bg-blue-100 text-blue-700" :
+                    patient.blood_type === "O+" ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" :
+                    patient.blood_type === "A+" ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400" :
                     "bg-fcn-danger/10 text-fcn-danger"
                   )}>
                     {patient.blood_type}

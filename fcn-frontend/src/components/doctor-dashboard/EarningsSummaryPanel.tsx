@@ -6,8 +6,10 @@ import { TrendingUp, TrendingDown, Lock } from "lucide-react";
 import { getEarningsSummary } from "@/services/doctor-dashboard.service";
 import { Card } from "@/components/ui/Card";
 import { Spinner } from "@/components/ui/Spinner";
+import { useTheme } from "@/hooks/useTheme";
 
 export const EarningsSummaryPanel = () => {
+  const { isDark } = useTheme();
   const { data: res, isLoading } = useQuery({
     queryKey: ["earnings-summary"],
     queryFn: () => getEarningsSummary(),
@@ -88,7 +90,14 @@ export const EarningsSummaryPanel = () => {
                 <XAxis dataKey="month" tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 10 }} axisLine={false} tickLine={false} allowDecimals={false} />
                 <Tooltip
-                  contentStyle={{ fontSize: "12px", borderRadius: "8px", border: "none", boxShadow: "0 2px 8px rgba(0,0,0,0.1)" }}
+                  contentStyle={{
+                    fontSize: "12px",
+                    borderRadius: "8px",
+                    border: "none",
+                    boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+                    background: isDark ? "#111827" : "#ffffff",
+                    color: isDark ? "#E2E8F0" : "#1E293B",
+                  }}
                   labelStyle={{ fontWeight: 600 }}
                 />
                 <Bar dataKey="consultations" fill="#0A7EA4" radius={[4, 4, 0, 0]} animationDuration={1200} />

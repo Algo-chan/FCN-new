@@ -48,7 +48,7 @@ export const BottomNavBar = () => {
   const tabs = ROLE_TABS[user?.role ?? "patient"] ?? PATIENT_TABS;
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-white/10 bg-[#1E293B] px-2 pb-[env(safe-area-inset-bottom)]">
+    <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-black/10 bg-white px-2 pb-[env(safe-area-inset-bottom)] dark:border-white/10 dark:bg-[#1E293B]">
       <div className="flex h-[60px] items-center justify-around">
         {tabs.map((tab) => (
           <NavLink

@@ -38,7 +38,7 @@ interface VitalsChartProps {
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="rounded-lg border border-white/20 bg-white/90 px-3 py-2 shadow-lg backdrop-blur-md dark:bg-fcn-dark/90">
+    <div className="rounded-lg border border-black/10 bg-white/90 px-3 py-2 shadow-lg backdrop-blur-md dark:border-white/10 dark:bg-fcn-dark/90">
       <p className="mb-1 text-xs font-medium text-fcn-text-light dark:text-fcn-text-dark">{label}</p>
       {payload.map((entry: any, i: number) => {
         const cls = classifyVitalForTooltip(entry);

@@ -12,7 +12,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantClasses = {
   primary: "bg-fcn-primary text-white hover:shadow-[0_0_24px_rgba(45,212,191,0.35)]",
-  secondary: "bg-white text-fcn-text-light ring-1 ring-fcn-primary/20 hover:bg-fcn-light dark:bg-fcn-dark dark:text-fcn-text-dark",
+  secondary: "bg-white text-fcn-text-light ring-1 ring-fcn-primary/20 hover:bg-fcn-light dark:bg-fcn-dark dark:text-fcn-text-dark dark:ring-fcn-primary/30 dark:hover:bg-fcn-dark/80",
   ghost: "bg-transparent text-fcn-primary hover:bg-fcn-primary/10",
   danger: "bg-fcn-danger text-white hover:shadow-[0_0_20px_rgba(248,113,113,0.35)]"
 };

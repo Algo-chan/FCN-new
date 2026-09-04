@@ -23,7 +23,7 @@ const bloodTypeColors: Record<string, string> = {
   "B+": "bg-fcn-warning/10 text-fcn-warning border-fcn-warning/20",
   "B-": "bg-fcn-warning/10 text-fcn-warning border-fcn-warning/20",
   "AB+": "bg-fcn-danger/10 text-fcn-danger border-fcn-danger/20",
-  "AB-": "bg-amber-100 text-amber-700 border-amber-200"
+  "AB-": "bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-800"
 };
 
 const computeAge = (dob: string): number => {
@@ -185,7 +185,7 @@ export const PatientHealthPassportCard = ({ profile, onEdit }: Props) => {
               <div>
                 <span className="text-xs text-fcn-text-light/60 dark:text-fcn-text-dark/60">Blood Type</span>
                 {profile.blood_type ? (
-                  <div className={`mt-1 inline-flex items-center rounded-full border px-3 py-1 text-sm font-bold ${bloodTypeColors[profile.blood_type] ?? "bg-gray-100 text-gray-700"}`}>{profile.blood_type}</div>
+                  <div className={`mt-1 inline-flex items-center rounded-full border px-3 py-1 text-sm font-bold ${bloodTypeColors[profile.blood_type] ?? "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700"}`}>{profile.blood_type}</div>
                 ) : (
                   <p className="mt-1 text-sm text-fcn-text-light/40 dark:text-fcn-text-dark/40">—</p>
                 )}

@@ -37,7 +37,7 @@ const LandingPage = () => {
 
   return (
     <PageTransition>
-      <div ref={pageRef} className="min-h-screen bg-fcn-light text-fcn-text-light">
+      <div ref={pageRef} className="min-h-screen bg-fcn-light text-fcn-text-light dark:bg-fcn-dark dark:text-fcn-text-dark">
         <Navbar />
         <HeroSection />
         <TrustBar />

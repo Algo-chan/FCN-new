@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { clsx } from "clsx";
 import type { TrendPoint } from "@/services/admin.service";
 import { Card } from "@/components/ui/Card";
+import { useTheme } from "@/hooks/useTheme";
 
 interface Props {
   data: TrendPoint[];
@@ -37,6 +38,9 @@ const rangeOptions = [
 
 export const ConsultationsTrendChart = ({ data, loading, onDaysChange }: Props) => {
   const [activeRange, setActiveRange] = useState(30);
+  const { isDark } = useTheme();
+  const axisColor = isDark ? "rgba(226,232,240,0.6)" : "rgba(100,116,139,0.6)";
+  const gridColor = isDark ? "rgba(148,163,184,0.12)" : "rgba(10,126,164,0.08)";
 
   const handleRangeChange = (days: number) => {
     setActiveRange(days);
@@ -92,16 +96,16 @@ export const ConsultationsTrendChart = ({ data, loading, onDaysChange }: Props) 
                     <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(10,126,164,0.08)" />
+                <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
                 <XAxis
                   dataKey="date"
-                  tick={{ fontSize: 11, fill: "rgba(100,116,139,0.6)" }}
+                  tick={{ fontSize: 11, fill: axisColor }}
                   interval={Math.max(0, Math.floor(data.length / 5) - 1)}
                   axisLine={false}
                   tickLine={false}
                 />
                 <YAxis
-                  tick={{ fontSize: 11, fill: "rgba(100,116,139,0.6)" }}
+                  tick={{ fontSize: 11, fill: axisColor }}
                   axisLine={false}
                   tickLine={false}
                   allowDecimals={false}
@@ -115,7 +119,7 @@ export const ConsultationsTrendChart = ({ data, loading, onDaysChange }: Props) 
                   label={{
                     value: `Avg ${average}`,
                     position: "right",
-                    fill: "rgba(100,116,139,0.5)",
+                    fill: axisColor,
                     fontSize: 11,
                   }}
                 />

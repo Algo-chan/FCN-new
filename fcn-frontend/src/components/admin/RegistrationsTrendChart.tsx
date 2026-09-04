@@ -2,6 +2,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { motion } from "framer-motion";
 import type { RegistrationTrendPoint } from "@/services/admin.service";
 import { Card } from "@/components/ui/Card";
+import { useTheme } from "@/hooks/useTheme";
 
 interface Props {
   data: RegistrationTrendPoint[];
@@ -26,6 +27,10 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 };
 
 export const RegistrationsTrendChart = ({ data, loading }: Props) => {
+  const { isDark } = useTheme();
+  const axisColor = isDark ? "rgba(226,232,240,0.6)" : "rgba(100,116,139,0.6)";
+  const gridColor = isDark ? "rgba(148,163,184,0.12)" : "rgba(10,126,164,0.08)";
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -42,16 +47,16 @@ export const RegistrationsTrendChart = ({ data, loading }: Props) => {
           <div className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(10,126,164,0.08)" />
+                <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
                 <XAxis
                   dataKey="week"
-                  tick={{ fontSize: 10, fill: "rgba(100,116,139,0.6)" }}
+                  tick={{ fontSize: 10, fill: axisColor }}
                   interval={Math.max(0, Math.floor(data.length / 4) - 1)}
                   axisLine={false}
                   tickLine={false}
                 />
                 <YAxis
-                  tick={{ fontSize: 11, fill: "rgba(100,116,139,0.6)" }}
+                  tick={{ fontSize: 11, fill: axisColor }}
                   axisLine={false}
                   tickLine={false}
                   allowDecimals={false}
