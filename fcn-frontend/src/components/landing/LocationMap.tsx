@@ -263,7 +263,7 @@ const FitBounds = () => {
   useEffect(() => {
     const coords = hubs.map((h) => [h.coords[0], h.coords[1]] as [number, number]);
     const bounds = L.latLngBounds(coords);
-    map.fitBounds(bounds, { padding: [15, 15], maxZoom: 18 });
+    map.fitBounds(bounds, { padding: [10, 10], maxZoom: 18 });
   }, [map]);
 
   return null;
