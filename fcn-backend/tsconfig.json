@@ -11,10 +11,6 @@
     "skipLibCheck": true,
     "moduleResolution": "node",
     "resolveJsonModule": true,
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["src/*"]
-    },
     "types": ["node", "express"]
   },
   "include": ["server.ts", "src/**/*.ts"],
