@@ -4,8 +4,6 @@ Allow: /assets/
 Allow: /search
 Allow: /sitemap.xml
 
-Disallow: /login
-Disallow: /register
 Disallow: /onboarding
 Disallow: /dashboard
 Disallow: /profile

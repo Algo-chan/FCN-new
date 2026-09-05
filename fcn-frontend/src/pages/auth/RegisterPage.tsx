@@ -8,6 +8,7 @@ import { doctorsService } from "@/services/doctors.service";
 import { hospitalsService } from "@/services/hospitals.service";
 import { useAuthStore } from "@/store/auth.store";
 import { useSound } from "@/hooks/useSound";
+import { usePageMeta } from "@/hooks/usePageMeta";
 import { Button } from "@/components/ui/Button";
 import { Spinner } from "@/components/ui/Spinner";
 import { OTPVerification } from "@/components/auth/OTPVerification";
@@ -49,6 +50,12 @@ const calcStrength = (pw: string): { label: string; color: string; width: string
 const VITE_API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:5000/api/v1";
 
 const RegisterPage = () => {
+  usePageMeta({
+    title: "Register | Fast Care Now",
+    description: "Create your Fast Care Now account as a patient, doctor, nurse, or rural health officer. Join Ethiopia's platform for immediate, reliable healthcare.",
+    canonical: "https://fcncare.com/register"
+  });
+
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const shouldReduceMotion = useReducedMotion();

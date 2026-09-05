@@ -6,6 +6,7 @@ import { Eye, EyeOff, Heart, Loader2, Lock, Mail, Stethoscope, Syringe } from "l
 import { useAuthStore } from "@/store/auth.store";
 import { authService } from "@/services/auth.service";
 import { useSound } from "@/hooks/useSound";
+import { usePageMeta } from "@/hooks/usePageMeta";
 import { ForgotPasswordModal } from "@/pages/auth/ForgotPasswordModal";
 import { Button } from "@/components/ui/Button";
 import { OTPVerification } from "@/components/auth/OTPVerification";
@@ -21,6 +22,12 @@ const featurePills = [
 const avatarColors = ["#0A7EA4", "#2DD4BF", "#10B981"];
 
 const LoginPage = () => {
+  usePageMeta({
+    title: "Login | Fast Care Now",
+    description: "Sign in to your Fast Care Now account to book appointments, access remote consultations, and manage your healthcare.",
+    canonical: "https://fcncare.com/login"
+  });
+
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
