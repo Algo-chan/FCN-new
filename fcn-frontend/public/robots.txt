@@ -1,23 +1,5 @@
 User-agent: *
 Allow: /
-Allow: /assets/
-Allow: /search
-Allow: /sitemap.xml
-
-Disallow: /onboarding
-Disallow: /dashboard
-Disallow: /profile
-Disallow: /appointments
-Disallow: /consultation
-Disallow: /health-records
-Disallow: /notifications
-Disallow: /ai-check
-Disallow: /pharmacy
-Disallow: /doctors
 Disallow: /admin
-Disallow: /nurse
-Disallow: /doctor
-Disallow: /hospital-admin
-Disallow: /pharmacy-admin
-
+Disallow: /api/
 Sitemap: https://fcncare.com/sitemap.xml

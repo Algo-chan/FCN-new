@@ -26,21 +26,34 @@ export default defineConfig({
         ]
       },
       manifest: {
-        name: "Fast Care Now",
-        short_name: "Fast Care Now",
+        name: "Fast Care Now — FCN",
+        short_name: "FastCareNow",
+        description: "Ethiopia's digital healthcare platform. Book doctors, AI health checks, e-prescriptions. Now live in Dire Dawa.",
         theme_color: "#0A7EA4",
         background_color: "#0D1117",
         display: "standalone",
+        orientation: "portrait",
+        lang: "en",
+        categories: ["medical", "health", "lifestyle"],
+        screenshots: [
+          {
+            src: "/logo/fcn-logo-full.png",
+            type: "image/png",
+            sizes: "512x512"
+          }
+        ],
         icons: [
           {
-            src: "/icons/icon-192x192.png",
+            src: "/logo/fcn-logo-full.png",
             sizes: "192x192",
-            type: "image/png"
+            type: "image/png",
+            purpose: "any maskable"
           },
           {
-            src: "/icons/icon-512x512.png",
+            src: "/logo/fcn-logo-full.png",
             sizes: "512x512",
-            type: "image/png"
+            type: "image/png",
+            purpose: "any maskable"
           }
         ]
       }
