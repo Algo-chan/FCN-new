@@ -73,7 +73,7 @@ const RegisterPage = () => {
     hospital_name: "", hospital_id: "", nursing_license_number: "", coverage_zone: ""
   });
 
-  const { data: hospitalsResponse } = useQuery({
+  const { data: hospitalsResponse, isError: hospitalsError } = useQuery({
     queryKey: ["hospitals", "active"],
     queryFn: () => hospitalsService.getAllHospitals("active"),
     enabled: form.role === "doctor"
@@ -369,6 +369,7 @@ const RegisterPage = () => {
                           <option value="">Select a hospital...</option>
                           {hospitals.map((h) => <option key={h.id} value={h.id}>{h.name} — {h.location}</option>)}
                         </select>
+                        {hospitalsError && <p className="mt-1 text-xs text-fcn-danger">Couldn't load hospitals. Please refresh and try again.</p>}
                       </label>
 
                       <label className="block"><span className="mb-1 block text-sm font-medium">Specialty</span>
