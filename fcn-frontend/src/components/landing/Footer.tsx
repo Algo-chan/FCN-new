@@ -37,7 +37,7 @@ export const Footer = () => {
             <img
               src="/logo/fcn-logo-full.png"
               alt="Fast Care Now Logo"
-              className="h-18 w-auto"
+              className="h-9 w-auto"
             />
             <p className="mt-4 max-w-md text-sm leading-relaxed text-fcn-text-light/55 dark:text-fcn-text-dark/55">
               Fast Care Now connects patients with quality care — from booking appointments to
