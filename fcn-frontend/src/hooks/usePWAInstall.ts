@@ -9,10 +9,15 @@ const isStandaloneDisplay = (): boolean =>
   (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) ||
   Boolean((window.navigator as unknown as { standalone?: boolean }).standalone);
 
+const isIOSDevice = (): boolean =>
+  /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+  (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+
 export const usePWAInstall = () => {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [canInstall, setCanInstall] = useState(false);
   const [isInstalled, setIsInstalled] = useState<boolean>(isStandaloneDisplay);
+  const [isIOS] = useState<boolean>(() => !isStandaloneDisplay() && isIOSDevice());
 
   useEffect(() => {
     const onBeforeInstallPrompt = (event: Event) => {
@@ -44,5 +49,5 @@ export const usePWAInstall = () => {
     return true;
   }, [deferredPrompt]);
 
-  return { canInstall, isInstalled, promptInstall };
+  return { canInstall, isInstalled, isIOS, promptInstall };
 };

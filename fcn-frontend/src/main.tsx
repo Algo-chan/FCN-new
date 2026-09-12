@@ -8,6 +8,7 @@ import { ScrollToTop } from "@/components/layout/ScrollToTop";
 import { OfflineDetector } from "@/components/layout/OfflineDetector";
 import { useAuthStore } from "@/store/auth.store";
 import { SESSION_INACTIVITY_LIMIT_MS } from "@/constants/session";
+import { InstallPromptBanner } from "@/components/pwa/InstallPromptBanner";
 import "@/styles/globals.css";
 import "@/styles/animations.css";
 import "leaflet/dist/leaflet.css";
@@ -92,6 +93,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
         <SessionRestorer />
         <AppRouter />
         <OfflineDetector />
+        <InstallPromptBanner />
         <Toaster position="top-right" toastOptions={{ duration: 4000 }} />
       </BrowserRouter>
     </QueryClientProvider>

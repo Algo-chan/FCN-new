@@ -10,6 +10,7 @@ import { useAuthStore } from "@/store/auth.store";
 import { useSound } from "@/hooks/useSound";
 import { usePageMeta } from "@/hooks/usePageMeta";
 import { Button } from "@/components/ui/Button";
+import { INSTALL_PROMPT_KEY } from "@/components/pwa/InstallPromptBanner";
 import { Spinner } from "@/components/ui/Spinner";
 import { OTPVerification } from "@/components/auth/OTPVerification";
 
@@ -215,6 +216,7 @@ const RegisterPage = () => {
         useAuthStore.getState().setUser(result.user);
       }
       playSuccess();
+      localStorage.setItem(INSTALL_PROMPT_KEY, "1");
 
       if (result.requiresApproval) {
         navigate("/pending", { replace: true });
