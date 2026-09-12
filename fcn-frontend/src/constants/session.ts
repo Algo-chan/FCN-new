@@ -1,0 +1,1 @@
+export const SESSION_INACTIVITY_LIMIT_MS = 3 * 24 * 60 * 60 * 1000;

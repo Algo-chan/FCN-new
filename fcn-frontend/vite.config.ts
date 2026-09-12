@@ -7,31 +7,25 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
+      strategies: "injectManifest",
+      srcDir: "src",
+      filename: "sw.ts",
       registerType: "autoUpdate",
+      injectRegister: "auto",
       showMaximumFileSizeToCacheInBytesWarning: true,
       cleanupOutdatedCaches: true,
-      workbox: {
+      injectManifest: {
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
-        globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
-        navigateFallback: null,
-        runtimeCaching: [
-          {
-            urlPattern: /^https:\/\/app\.fcncare\.com\/.*$/i,
-            handler: "NetworkFirst",
-            options: {
-              cacheName: "runtime-cache",
-              expiration: { maxEntries: 100, maxAgeSeconds: 60 * 60 }
-            }
-          }
-        ]
-      },
+        globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"]
+},
       manifest: {
-        name: "Fast Care Now — FCN",
-        short_name: "FastCareNow",
+        name: "Fast Care",
+        short_name: "Fast Care",
         description: "Ethiopia's digital healthcare platform. Book doctors, AI health checks, e-prescriptions. Now live in Dire Dawa.",
-        theme_color: "#0A7EA4",
-        background_color: "#0D1117",
+        start_url: "/app",
         display: "standalone",
+        background_color: "#0D1117",
+        theme_color: "#0A7EA4",
         orientation: "portrait",
         lang: "en",
         categories: ["medical", "health", "lifestyle"],
@@ -44,16 +38,22 @@ export default defineConfig({
         ],
         icons: [
           {
-            src: "/logo/fcn-logo-full.png",
+            src: "/icons/icon-192x192.png",
             sizes: "192x192",
             type: "image/png",
-            purpose: "any maskable"
+            purpose: "any"
           },
           {
-            src: "/logo/fcn-logo-full.png",
+            src: "/icons/icon-512x512.png",
             sizes: "512x512",
             type: "image/png",
-            purpose: "any maskable"
+            purpose: "any"
+          },
+          {
+            src: "/icons/icon-512x512.png",
+            sizes: "512x512",
+            type: "image/png",
+            purpose: "maskable"
           }
         ]
       }

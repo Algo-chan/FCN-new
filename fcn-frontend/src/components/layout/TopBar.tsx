@@ -17,6 +17,7 @@ import { NotificationBell } from "@/components/notifications/NotificationBell";
 import { useNotifications } from "@/hooks/useNotifications";
 import { useAuth } from "@/hooks/useAuth";
 import { getInitials } from "@/utils/formatters";
+import { InstallAppButton } from "@/components/pwa/InstallAppButton";
 
 export const TopBar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -70,6 +71,8 @@ export const TopBar = () => {
       </div>
 
       <div className="flex items-center gap-1 px-4">
+        <InstallAppButton variant="ghost" size="sm" className="hidden md:inline-flex" />
+
         <button
           onClick={toggleTheme}
           className="hidden md:flex rounded-md p-2 text-fcn-text-light/50 hover:bg-fcn-primary/10 hover:text-fcn-primary dark:text-fcn-text-dark/50"

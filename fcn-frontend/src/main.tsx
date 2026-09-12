@@ -7,12 +7,11 @@ import { AppRouter } from "@/router";
 import { ScrollToTop } from "@/components/layout/ScrollToTop";
 import { OfflineDetector } from "@/components/layout/OfflineDetector";
 import { useAuthStore } from "@/store/auth.store";
+import { SESSION_INACTIVITY_LIMIT_MS } from "@/constants/session";
 import "@/styles/globals.css";
 import "@/styles/animations.css";
 import "leaflet/dist/leaflet.css";
 import "@/utils/leaflet-icon-fix";
-
-const INACTIVITY_LIMIT = 3 * 24 * 60 * 60 * 1000;
 
 const storedTheme = localStorage.getItem("fcn_theme") ?? "dark";
 document.documentElement.classList.toggle("dark", storedTheme === "dark");
@@ -26,12 +25,6 @@ const queryClient = new QueryClient({
   }
 });
 
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("/firebase-messaging-sw.js").catch(() => undefined);
-  });
-}
-
 const SessionRestorer = () => {
   const navigate = useNavigate();
 
@@ -39,7 +32,7 @@ const SessionRestorer = () => {
     const lastActivity = Number(localStorage.getItem("fcn_last_activity")) || 0;
     const elapsed = lastActivity ? Date.now() - lastActivity : 0;
 
-    if (lastActivity && elapsed > INACTIVITY_LIMIT) {
+    if (lastActivity && elapsed > SESSION_INACTIVITY_LIMIT_MS) {
       useAuthStore.getState().logout();
       useAuthStore.getState().setLoading(false);
       navigate("/login", { replace: true });

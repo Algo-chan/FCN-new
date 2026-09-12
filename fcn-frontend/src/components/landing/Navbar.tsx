@@ -6,6 +6,7 @@ import { useScrollPosition } from "@/hooks/useScrollPosition";
 import { useTheme } from "@/hooks/useTheme";
 import { useSound } from "@/hooks/useSound";
 import { Button } from "@/components/ui/Button";
+import { InstallAppButton } from "@/components/pwa/InstallAppButton";
 import { MOTION } from "@/styles/motion";
 
 const navLinks = [
@@ -85,6 +86,7 @@ export const Navbar = () => {
           </button>
 
           <div className="hidden items-center gap-2 md:flex">
+            <InstallAppButton size="sm" />
             <Link to="/login">
               <Button variant="ghost" size="sm">Sign In</Button>
             </Link>
@@ -142,6 +144,7 @@ export const Navbar = () => {
               </div>
 
               <div className="mt-auto flex flex-col gap-3">
+                <InstallAppButton size="sm" fullWidth />
                 <Link to="/login" onClick={closeMobile}>
                   <Button variant="secondary" className="w-full">Sign In</Button>
                 </Link>

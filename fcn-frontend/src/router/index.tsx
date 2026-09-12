@@ -23,6 +23,7 @@ import HospitalAdminDashboardPage from "@/pages/hospitals/HospitalAdminDashboard
 import HospitalOccupancyPage from "@/pages/hospital-admin/HospitalOccupancyPage";
 import HospitalDoctorsPage from "@/pages/hospital-admin/HospitalDoctorsPage";
 import LandingPage from "@/pages/LandingPage";
+import { LaunchPage } from "@/pages/LaunchPage";
 import NotFoundPage from "@/pages/NotFoundPage";
 import SearchPage from "@/pages/SearchPage";
 import NotificationsPage from "@/pages/notifications/NotificationsPage";
@@ -43,20 +44,8 @@ import NursePatientsPage from "@/pages/nurse/NursePatientsPage";
 import NurseHistoryPage from "@/pages/nurse/NurseHistoryPage";
 import NurseEscalationPage from "@/pages/nurse/NurseEscalationPage";
 import { useAuthStore } from "@/store/auth.store";
+import { getRoleDashboard } from "@/constants/roles";
 import type { Role } from "@/types";
-
-function getRoleDashboard(role: Role): string {
-  switch (role) {
-    case "hospital_admin":
-      return "/hospital-admin";
-    case "pharmacy_admin":
-      return "/pharmacy-admin";
-    case "super_admin":
-      return "/admin";
-    default:
-      return "/dashboard";
-  }
-}
 
 interface ProtectedRouteProps {
   allowedRoles?: Role[];
@@ -110,6 +99,7 @@ const SuperAdminRoute = () => <ProtectedRoute allowedRoles={["super_admin"]} />;
 export const AppRouter = () => (
   <Routes>
     <Route path="/" element={<LandingPage />} />
+    <Route path="/app" element={<LaunchPage />} />
     <Route path="/search" element={<SearchPage />} />
     <Route path="/login" element={<LoginPage />} />
     <Route path="/register" element={<RegisterPage />} />
