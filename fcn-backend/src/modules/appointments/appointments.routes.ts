@@ -1,11 +1,13 @@
 import { Router } from "express";
 import { authMiddleware } from "../../middleware/auth.middleware";
 import { requireRole } from "../../middleware/role.guard";
+import { requireHospitalScope } from "../../middleware/hospital-scope.middleware";
 import {
   createAppointmentController,
   getMyAppointmentsController,
   getDoctorAppointmentsController,
   getAppointmentByIdController,
+  getAdminAppointmentsController,
   cancelAppointmentController,
   rescheduleAppointmentController,
   startAppointmentController,
@@ -17,7 +19,7 @@ export const appointmentRoutes = Router();
 appointmentRoutes.post("/", authMiddleware, requireRole("patient"), createAppointmentController);
 appointmentRoutes.get("/", authMiddleware, getMyAppointmentsController);
 appointmentRoutes.get("/doctor", authMiddleware, requireRole("doctor"), getDoctorAppointmentsController);
-appointmentRoutes.get("/admin/all", authMiddleware, requireRole("super_admin", "hospital_admin"), getAppointmentByIdController);
+appointmentRoutes.get("/admin/all", authMiddleware, requireRole("super_admin", "hospital_admin"), requireHospitalScope, getAdminAppointmentsController);
 appointmentRoutes.get("/:id", authMiddleware, getAppointmentByIdController);
 appointmentRoutes.patch("/:id/cancel", authMiddleware, cancelAppointmentController);
 appointmentRoutes.patch("/:id/reschedule", authMiddleware, rescheduleAppointmentController);

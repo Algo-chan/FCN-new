@@ -60,5 +60,11 @@
   "resolutions": {
     "react": "^18.0.0",
     "react-dom": "^18.0.0"
+  },
+  "allowScripts": {
+    "@firebase/util@1.15.1": true,
+    "core-js@3.49.0": true,
+    "esbuild@0.21.5": true,
+    "protobufjs@7.6.5": true
   }
 }

@@ -227,6 +227,39 @@ export class AppointmentsService {
     };
   }
 
+  async getAdminAppointments(status?: string, hospitalId: string | null = null, page = 1, limit = 12): Promise<AppointmentListResult> {
+    const where: Prisma.AppointmentWhereInput = {};
+    if (status) {
+      where.status = status as AppointmentStatus;
+    }
+    if (hospitalId) {
+      where.doctor = { doctor_profile: { hospital_id: hospitalId } };
+    }
+
+    const [total, appointments] = await Promise.all([
+      prisma.appointment.count({ where }),
+      prisma.appointment.findMany({
+        where,
+        skip: (page - 1) * limit,
+        take: limit,
+        orderBy: { scheduled_at: "desc" },
+        include: {
+          doctor: {
+            select: { id: true, full_name: true, doctor_profile: { select: { specialty: true } } }
+          },
+          patient: { select: { id: true, full_name: true } }
+        }
+      })
+    ]);
+
+    return {
+      appointments: appointments.map((a) => this.mapAppointment(a)),
+      total,
+      page,
+      totalPages: Math.ceil(total / limit)
+    };
+  }
+
   async cancelAppointment(appointmentId: string, userId: string, userRole: string, reason?: string): Promise<void> {
     const appointment = await prisma.appointment.findUnique({
       where: { id: appointmentId },

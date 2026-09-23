@@ -61,6 +61,26 @@ export const getAppointmentByIdController = async (req: Request, res: Response, 
   }
 };
 
+export const getAdminAppointmentsController = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const query = GetAppointmentsQuerySchema.parse({ query: req.query }).query;
+    const result = await appointmentsService.getAdminAppointments(
+      query.status,
+      req.scopedHospitalId ?? null,
+      query.page,
+      query.limit
+    );
+    successResponse(res, result.appointments, 200, {
+      page: result.page,
+      limit: query.limit,
+      total: result.total,
+      totalPages: result.totalPages
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const cancelAppointmentController = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     if (!req.params.id || typeof req.params.id !== "string") {
