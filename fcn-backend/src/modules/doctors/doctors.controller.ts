@@ -11,7 +11,7 @@ import {
 export const getAllDoctorsController = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const query = GetDoctorsQuerySchema.parse(req.query);
-    const result = await doctorsService.getAllDoctors(query, req.user!.id);
+    const result = await doctorsService.getPublicDoctors(query);
     successResponse(res, result.doctors, 200, {
       page: result.page,
       limit: query.limit,
@@ -32,9 +32,18 @@ export const getAvailableSpecialtiesController = async (_req: Request, res: Resp
   }
 };
 
+export const getAvailableCitiesController = async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const data = await doctorsService.getAvailableCities();
+    successResponse(res, data);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const getDoctorByIdController = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const data = await doctorsService.getDoctorById(req.params.id);
+    const data = await doctorsService.getPublicDoctorById(req.params.id);
     successResponse(res, data);
   } catch (error) {
     next(error);

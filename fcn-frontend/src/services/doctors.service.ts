@@ -1,10 +1,16 @@
 import { api } from "@/services/api";
-import type { ApiResponse, DoctorWithProfile, DoctorFullProfile, TimeSlot, AvailabilityStatus } from "@/types";
+import type { ApiResponse, PublicDoctorCard, PublicDoctorDetail, TimeSlot, AvailabilityStatus } from "@/types";
 
 export interface GetDoctorsParams {
   specialty?: string;
   hospital_id?: string;
+  city?: string;
+  min_fee?: number;
+  max_fee?: number;
+  language?: string;
+  available_today?: boolean;
   available_now?: boolean;
+  verified_only?: boolean;
   search?: string;
   page?: number;
   limit?: number;
@@ -19,13 +25,16 @@ export interface UpdateDoctorProfileDto {
 
 export const doctorsService = {
   getAllDoctors: (params: GetDoctorsParams) =>
-    api.get<ApiResponse<DoctorWithProfile[]>>("/doctors", { params }).then((r) => r.data),
+    api.get<ApiResponse<PublicDoctorCard[]>>("/doctors", { params }).then((r) => r.data),
 
   getAvailableSpecialties: () =>
     api.get<ApiResponse<string[]>>("/doctors/specialties").then((r) => r.data?.data ?? []),
 
+  getAvailableCities: () =>
+    api.get<ApiResponse<string[]>>("/doctors/cities").then((r) => r.data?.data ?? []),
+
   getDoctorById: (id: string) =>
-    api.get<ApiResponse<DoctorFullProfile>>(`/doctors/${id}`).then((r) => r.data),
+    api.get<ApiResponse<PublicDoctorDetail>>(`/doctors/${id}`).then((r) => r.data),
 
   getDoctorAvailability: (id: string, date: string) =>
     api.get<ApiResponse<TimeSlot[]>>(`/doctors/${id}/availability`, { params: { date } }).then((r) => r.data),

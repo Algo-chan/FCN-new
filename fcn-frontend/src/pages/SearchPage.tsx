@@ -117,8 +117,13 @@ const SearchPage = () => {
 
       {results && results.doctors.length > 0 && (
         <section>
-          <h2 className="mb-3 flex items-center gap-2 text-base font-semibold text-fcn-text-light dark:text-fcn-text-dark">
-            <Stethoscope className="h-4 w-4 text-fcn-primary" /> Doctors ({results.doctors.length})
+          <h2 className="mb-3 flex items-center justify-between text-base font-semibold text-fcn-text-light dark:text-fcn-text-dark">
+            <span className="flex items-center gap-2">
+              <Stethoscope className="h-4 w-4 text-fcn-primary" /> Doctors ({results.doctors.length})
+            </span>
+            <Link to="/doctors" className="text-xs font-medium text-fcn-primary hover:text-fcn-accent">
+              Browse all doctors →
+            </Link>
           </h2>
           <div className="grid gap-2 sm:grid-cols-2">
             {results.doctors.map((d) => (

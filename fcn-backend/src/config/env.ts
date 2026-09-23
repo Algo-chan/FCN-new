@@ -6,10 +6,17 @@ dotenv.config();
 const requiredText = (name: string) =>
   z.string().trim().min(1, `${name} is required`);
 
+const featureFlag = (defaultValue: boolean) =>
+  z
+    .enum(["true", "false"])
+    .default(defaultValue ? "true" : "false")
+    .transform((value) => value === "true");
+
 const envSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   PORT: z.coerce.number().int().positive().default(5000),
   DATABASE_URL: requiredText("DATABASE_URL").url("DATABASE_URL must be a valid URL"),
+  DIRECT_URL: z.string().url("DIRECT_URL must be a valid URL").optional().or(z.literal("")).default(""),
   JWT_SECRET: requiredText("JWT_SECRET").min(64, "JWT_SECRET must be at least 64 characters"),
   JWT_REFRESH_SECRET: requiredText("JWT_REFRESH_SECRET").min(64, "JWT_REFRESH_SECRET must be at least 64 characters"),
   JWT_EXPIRES_IN: requiredText("JWT_EXPIRES_IN"),
@@ -28,7 +35,7 @@ const envSchema = z.object({
   CLOUDINARY_API_SECRET: z.string().optional().default(""),
   GEMINI_API_KEY: z.string().optional().default(""),
   DEEPSEEK_API_KEY: z.string().optional().default(""),
-  DEEPSEEK_MODEL: z.string().optional().default("deepseek-v4-flash"),
+  DEEPSEEK_MODEL: z.string().optional().default("deepseek-chat"),
   SMTP_HOST: z.string().optional().default(""),
   SMTP_PORT: z.coerce.number().int().positive().default(587),
   SMTP_USER: z.string().optional().default(""),
@@ -46,7 +53,8 @@ const envSchema = z.object({
   SESSION_SECRET: requiredText("SESSION_SECRET").min(32, "SESSION_SECRET must be at least 32 characters"),
   CHAPA_SECRET_KEY: z.string().optional().default(""),
   CHAPA_WEBHOOK_SECRET: z.string().optional().default(""),
-  BACKEND_URL: requiredText("BACKEND_URL").url("BACKEND_URL must be a valid URL")
+  BACKEND_URL: requiredText("BACKEND_URL").url("BACKEND_URL must be a valid URL"),
+  FEATURE_PUBLIC_DOCTORS: featureFlag(true)
 });
 
 const parsed = envSchema.safeParse(process.env);

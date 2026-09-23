@@ -213,6 +213,10 @@ model DoctorProfile {
   rating_count           Int                @default(0)
   years_experience       Int
   consultation_fee_etb   Decimal            @default(50) @db.Decimal(10, 2)
+  follow_up_fee_etb      Decimal?           @db.Decimal(10, 2)
+  city                   String?
+  verified               Boolean            @default(false)
+  verification_note      String?
   photo_url              String?
   photo_public_id        String?
   available_since        DateTime?
@@ -234,6 +238,8 @@ model DoctorProfile {
 
   @@index([specialty])
   @@index([availability_status])
+  @@index([city])
+  @@index([verified])
   @@map("doctor_profiles")
 }
 

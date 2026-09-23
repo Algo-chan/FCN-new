@@ -101,6 +101,7 @@ export const AppRouter = () => (
     <Route path="/" element={<LandingPage />} />
     <Route path="/app" element={<LaunchPage />} />
     <Route path="/search" element={<SearchPage />} />
+    <Route path="/doctors" element={<FindDoctorsPage />} />
     <Route path="/login" element={<LoginPage />} />
     <Route path="/register" element={<RegisterPage />} />
     <Route path="/auth/callback" element={<AuthCallbackPage />} />
@@ -119,7 +120,6 @@ export const AppRouter = () => (
 
     {/* ── Patient-only routes ─────────────────────────────────── */}
     <Route element={<PatientRoute />}>
-      <Route path="/doctors" element={<FindDoctorsPage />} />
       <Route path="/doctors/:id/details" element={<PageScaffold title="Doctor Details" section="Doctor" />} />
       <Route path="/appointments/book" element={<BookAppointmentPage />} />
       <Route path="/appointments" element={<MyAppointmentsPage />} />

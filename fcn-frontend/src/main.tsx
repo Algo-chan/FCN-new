@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, useNavigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { AppRouter } from "@/router";
+import { I18nProvider } from "@/i18n";
 import { ScrollToTop } from "@/components/layout/ScrollToTop";
 import { OfflineDetector } from "@/components/layout/OfflineDetector";
 import { useAuthStore } from "@/store/auth.store";
@@ -89,12 +90,14 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
-        <ScrollToTop />
-        <SessionRestorer />
-        <AppRouter />
-        <OfflineDetector />
-        <InstallPromptBanner />
-        <Toaster position="top-right" toastOptions={{ duration: 4000 }} />
+        <I18nProvider>
+          <ScrollToTop />
+          <SessionRestorer />
+          <AppRouter />
+          <OfflineDetector />
+          <InstallPromptBanner />
+          <Toaster position="top-right" toastOptions={{ duration: 4000 }} />
+        </I18nProvider>
       </BrowserRouter>
     </QueryClientProvider>
   </React.StrictMode>

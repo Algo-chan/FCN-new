@@ -97,6 +97,42 @@ export interface DoctorWithProfile {
   };
 }
 
+export interface PublicDoctorCard {
+  id: string;
+  full_name: string;
+  specialty: string;
+  city: string | null;
+  photo_url: string | null;
+  languages_spoken: string[];
+  consultation_fee_etb: number;
+  follow_up_fee_etb: number | null;
+  rating_average: number;
+  rating_count: number;
+  verified: boolean;
+  availability_status: AvailabilityStatus;
+  next_available_slot: string | null;
+  hospital_name: string | null;
+  hospital_location: string | null;
+}
+
+export interface PublicDoctorReview {
+  id: string;
+  rating: number;
+  review_text: string | null;
+  created_at: string;
+  patient_name: string;
+}
+
+export interface PublicDoctorDetail extends PublicDoctorCard {
+  bio: string | null;
+  years_experience: number;
+  clinic_address: string | null;
+  consultation_types: string[];
+  total_consultations: number;
+  estimated_response_time: string;
+  recent_ratings: PublicDoctorReview[];
+}
+
 export interface ConsultationRating {
   id: string;
   appointment_id: string;

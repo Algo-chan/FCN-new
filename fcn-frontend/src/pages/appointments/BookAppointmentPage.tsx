@@ -21,7 +21,7 @@ import { useNotifications } from "@/hooks/useNotifications";
 import { useSystemSettings } from "@/hooks/useSystemSettings";
 import { doctorsService } from "@/services/doctors.service";
 import { appointmentsService } from "@/services/appointments.service";
-import type { DoctorWithProfile, TimeSlot } from "@/types";
+import type { PublicDoctorCard, TimeSlot } from "@/types";
 
 type Step = "doctor" | "datetime" | "confirm";
 
@@ -42,7 +42,7 @@ const BookAppointmentPage = () => {
 
   const [step, setStep] = useState<Step>("doctor");
   const [search, setSearch] = useState("");
-  const [selectedDoctor, setSelectedDoctor] = useState<DoctorWithProfile | null>(null);
+  const [selectedDoctor, setSelectedDoctor] = useState<PublicDoctorCard | null>(null);
   const [selectedType, setSelectedType] = useState<string>("remote");
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [selectedTime, setSelectedTime] = useState<string>("");
@@ -106,8 +106,8 @@ const BookAppointmentPage = () => {
 
   const doctors = useMemo(() => {
     const d = doctorsData ?? [];
-    if (Array.isArray(d)) return d as DoctorWithProfile[];
-    if ((d as any)?.data) return (d as any).data as DoctorWithProfile[];
+    if (Array.isArray(d)) return d as PublicDoctorCard[];
+    if ((d as any)?.data) return (d as any).data as PublicDoctorCard[];
     return [];
   }, [doctorsData]);
 
@@ -120,11 +120,11 @@ const BookAppointmentPage = () => {
 
   const canProceedToDateTime = !!selectedDoctor;
   const canProceedToConfirm = !!selectedDoctor && !!selectedDate && !!selectedTime;
-  const totalFee = selectedDoctor?.doctor_profile?.consultation_fee_etb ?? 0;
+  const totalFee = selectedDoctor?.consultation_fee_etb ?? 0;
   const platformFee = Math.round(totalFee * 0.1);
   const grandTotal = totalFee + platformFee;
 
-  const handleDoctorSelect = useCallback((doctor: DoctorWithProfile) => {
+  const handleDoctorSelect = useCallback((doctor: PublicDoctorCard) => {
     setSelectedDoctor(doctor);
     setSelectedDate("");
     setSelectedTime("");
@@ -241,7 +241,7 @@ const BookAppointmentPage = () => {
                   >
                     <div className="flex items-start gap-3">
                       <div className="flex h-10 w-10 md:h-12 md:w-12 shrink-0 items-center justify-center rounded-full bg-fcn-primary/10 text-lg">
-                        {renderSpecialtyIcon(doctor.doctor_profile?.specialty ?? "")}
+                        {renderSpecialtyIcon(doctor.specialty ?? "")}
                       </div>
                       <div className="min-w-0 flex-1">
                         <p className="truncate text-sm font-semibold text-fcn-text-light dark:text-fcn-text-dark">
@@ -249,16 +249,16 @@ const BookAppointmentPage = () => {
                         </p>
                         <div className="mt-0.5 flex items-center gap-1 text-xs text-fcn-text-light/60 dark:text-fcn-text-dark/60">
                           <Stethoscope className="h-3 w-3" />
-                          {doctor.doctor_profile?.specialty}
+                          {doctor.specialty}
                         </div>
                         <div className="mt-1 flex items-center gap-2">
                           <Badge variant={
-                            doctor.doctor_profile?.availability_status === "available" ? "success" : "warning"
+                            doctor.availability_status === "available" ? "success" : "warning"
                           } size="sm">
-                            {doctor.doctor_profile?.availability_status === "available" ? "Available" : "Busy"}
+                            {doctor.availability_status === "available" ? "Available" : "Busy"}
                           </Badge>
                           <span className="text-xs text-fcn-text-light/40 dark:text-fcn-text-dark/40">
-                            ETB {doctor.doctor_profile?.consultation_fee_etb?.toFixed(0) ?? "—"}
+                            ETB {doctor.consultation_fee_etb?.toFixed(0) ?? "—"}
                           </span>
                         </div>
                       </div>
@@ -384,7 +384,7 @@ const BookAppointmentPage = () => {
             <div className="hidden md:block md:col-span-2">
               <BookingSummaryCard
                 doctorName={selectedDoctor.full_name}
-                specialty={selectedDoctor.doctor_profile?.specialty ?? ""}
+                specialty={selectedDoctor.specialty ?? ""}
                 appointmentType={selectedType}
                 date={selectedDate ? parseISO(selectedDate) : new Date()}
                 time={selectedTimeLabel}
