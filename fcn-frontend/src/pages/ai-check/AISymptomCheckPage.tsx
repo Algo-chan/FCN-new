@@ -37,7 +37,6 @@ import { AssessmentDetailModal } from "@/components/ai-triage/AssessmentDetailMo
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
-import { StickyActionButton } from "@/components/ui/StickyActionButton";
 import { useSound } from "@/hooks/useSound";
 import type { SupportedLanguage } from "@/types";
 
@@ -417,7 +416,7 @@ Recommended: See ${store.finalAssessment.recommended_specialty || "a doctor"}`;
   const commonTags = COMMON_SYMPTOM_TAGS[langCode] || COMMON_SYMPTOM_TAGS.en;
 
   return (
-    <div className="mx-auto max-w-5xl space-y-6 pb-36 md:pb-8">
+    <div className="mx-auto max-w-5xl space-y-6 pb-24 md:pb-8">
       {/* Page Header */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
@@ -836,18 +835,6 @@ Recommended: See ${store.finalAssessment.recommended_specialty || "a doctor"}`;
                   </p>
                 </div>
               </div>
-            </div>
-
-            {/* Mobile Sticky Action Button (Docked right above bottom navigation bar) */}
-            <div className="lg:hidden">
-              <StickyActionButton
-                label={starting ? "Analyzing..." : "Start AI Assessment"}
-                icon={<Sparkles className="h-5 w-5" />}
-                loading={starting}
-                disabled={symptoms.trim().length < 5 || starting}
-                onClick={handleStartAssessment}
-                subtitle={symptoms.trim().length < 5 ? "Enter at least 5 characters" : undefined}
-              />
             </div>
           </motion.div>
         ) : (
