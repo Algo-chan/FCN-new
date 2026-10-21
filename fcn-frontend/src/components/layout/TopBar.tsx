@@ -9,6 +9,8 @@ import {
   User,
   Settings,
   ShieldAlert,
+  ChevronDown,
+  Check,
 } from "lucide-react";
 import { clsx } from "clsx";
 import { useUiStore } from "@/store/ui.store";
@@ -28,7 +30,6 @@ const LANGUAGES: { code: Locale; name: string; nativeName: string; flag: string 
   { code: "en", name: "English", nativeName: "English", flag: "🇬🇧" },
   { code: "am", name: "Amharic", nativeName: "አማርኛ", flag: "🇪🇹" },
   { code: "om", name: "Oromo", nativeName: "Afaan Oromoo", flag: "🇪🇹" },
-  { code: "so", name: "Somali", nativeName: "Soomaali", flag: "🇸🇴" },
 ];
 
 const roleColors: Record<Role, { bg: string; text: string; dot: string }> = {
@@ -71,6 +72,7 @@ const roleColors: Record<Role, { bg: string; text: string; dot: string }> = {
 
 export const TopBar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [languageOpen, setLanguageOpen] = useState(false);
   const sidebarOpen = useUiStore((state) => state.sidebarOpen);
   const toggleSidebar = useUiStore((state) => state.toggleSidebar);
   const setSidebar = useUiStore((state) => state.setSidebar);
@@ -83,6 +85,7 @@ export const TopBar = () => {
 
   const dropdownRef = useClickOutside<HTMLDivElement>(() => {
     setDropdownOpen(false);
+    setLanguageOpen(false);
   });
 
   const handleLogout = useCallback(async () => {
@@ -244,38 +247,63 @@ export const TopBar = () => {
                   </span>
                 </button>
 
-                {/* Language Switcher Section */}
-                <div className="border-t border-slate-100 dark:border-white/10 my-1 pt-1.5 px-1">
-                  <div className="flex items-center justify-between mb-1.5 px-2 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
-                    <span className="flex items-center gap-1.5">
-                      <Globe className="h-3 w-3" />
-                      Language
-                    </span>
-                    <span className="text-teal-600 dark:text-teal-400 font-bold">
-                      {LANGUAGES.find((l) => l.code === locale)?.nativeName ?? "English"}
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-2 gap-1">
-                    {LANGUAGES.map((lang) => {
-                      const isSelected = locale === lang.code;
-                      return (
-                        <button
-                          key={lang.code}
-                          type="button"
-                          onClick={() => setLocale(lang.code)}
-                          className={clsx(
-                            "flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-[11px] font-semibold transition-all text-left",
-                            isSelected
-                              ? "bg-teal-500/15 text-teal-700 dark:text-teal-300 font-bold border border-teal-500/30 shadow-xs"
-                              : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 border border-transparent"
-                          )}
-                        >
-                          <span className="text-xs">{lang.flag}</span>
-                          <span className="truncate">{lang.nativeName}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
+                {/* Language Collapsible Button */}
+                <div>
+                  <button
+                    type="button"
+                    onClick={() => setLanguageOpen((prev) => !prev)}
+                    className="w-full flex items-center justify-between rounded-xl px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-white/10 transition-colors"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <Globe className="h-4 w-4 text-teal-600 dark:text-teal-400" />
+                      <span>Language</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-teal-500/10 text-teal-700 dark:text-teal-300 border border-teal-500/20">
+                        <span>{LANGUAGES.find((l) => l.code === locale)?.flag}</span>
+                        <span>{LANGUAGES.find((l) => l.code === locale)?.nativeName ?? "English"}</span>
+                      </span>
+                      <ChevronDown
+                        className={clsx(
+                          "w-3.5 h-3.5 text-slate-400 transition-transform duration-200",
+                          languageOpen && "rotate-180"
+                        )}
+                      />
+                    </div>
+                  </button>
+
+                  {/* Options that appear when the language button is tapped */}
+                  {languageOpen && (
+                    <div className="mt-1 mb-1 mx-1 p-1 bg-slate-50 dark:bg-white/5 rounded-xl space-y-0.5 border border-slate-100 dark:border-white/5 animate-in fade-in slide-in-from-top-1 duration-150">
+                      {LANGUAGES.map((lang) => {
+                        const isSelected = locale === lang.code;
+                        return (
+                          <button
+                            key={lang.code}
+                            type="button"
+                            onClick={() => {
+                              setLocale(lang.code);
+                            }}
+                            className={clsx(
+                              "w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all text-left",
+                              isSelected
+                                ? "bg-teal-500/15 text-teal-700 dark:text-teal-300 font-bold"
+                                : "text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-white/10"
+                            )}
+                          >
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm">{lang.flag}</span>
+                              <span className="font-semibold">{lang.nativeName}</span>
+                              <span className="text-[10px] text-slate-400">({lang.name})</span>
+                            </div>
+                            {isSelected && (
+                              <Check className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400 shrink-0" />
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
 
                 <div className="border-t border-slate-100 dark:border-white/10 my-1 pt-1">

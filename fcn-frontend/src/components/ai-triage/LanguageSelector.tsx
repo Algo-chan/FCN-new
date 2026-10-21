@@ -32,14 +32,6 @@ const languages: LanguageOption[] = [
     buttonText: "በአማርኛ ቀጥል →"
   },
   {
-    code: "so",
-    name: "Somali",
-    nativeName: "Soomaali",
-    flag: "🇸🇴",
-    subtitle: "Somali",
-    buttonText: "Ku sii wad Soomaali →"
-  },
-  {
     code: "om",
     name: "Oromo",
     nativeName: "Afaan Oromoo",
@@ -99,10 +91,10 @@ export const LanguageSelector = ({ onSelect }: LanguageSelectorProps) => {
         Choose Your Language
       </h1>
       <p className="mb-8 text-center text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">
-        English · አማርኛ · Soomaali · Afaan Oromoo
+        English · አማርኛ · Afaan Oromoo
       </p>
 
-      <div className="mb-6 grid w-full grid-cols-2 gap-3">
+      <div className="mb-6 grid w-full grid-cols-1 sm:grid-cols-3 gap-3">
         {languages.map((lang) => {
           const isSelected = selected === lang.code;
           return (
@@ -131,7 +123,7 @@ export const LanguageSelector = ({ onSelect }: LanguageSelectorProps) => {
               )}
 
               <span className="text-3xl">{lang.flag}</span>
-              <span className="text-lg font-semibold text-fcn-text-light dark:text-fcn-text-dark">
+              <span className="text-base font-semibold text-fcn-text-light dark:text-fcn-text-dark">
                 {lang.nativeName}
               </span>
               <span className="text-xs text-fcn-text-light/50 dark:text-fcn-text-dark/50">

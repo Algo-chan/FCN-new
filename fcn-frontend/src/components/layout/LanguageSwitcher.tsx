@@ -8,7 +8,6 @@ const LANGUAGES: { code: Locale; name: string; nativeName: string; flag: string 
   { code: "en", name: "English", nativeName: "English", flag: "🇬🇧" },
   { code: "am", name: "Amharic", nativeName: "አማርኛ", flag: "🇪🇹" },
   { code: "om", name: "Oromo", nativeName: "Afaan Oromoo", flag: "🇪🇹" },
-  { code: "so", name: "Somali", nativeName: "Soomaali", flag: "🇸🇴" },
 ];
 
 interface LanguageSwitcherProps {
