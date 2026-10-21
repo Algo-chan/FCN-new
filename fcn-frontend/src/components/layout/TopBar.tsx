@@ -137,13 +137,6 @@ export const TopBar = () => {
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse ml-0.5" />
           </Link>
 
-          <div className="hidden sm:flex flex-col">
-            <span className="text-xs text-slate-400 dark:text-slate-500 font-medium">Welcome back</span>
-            <span className="text-sm font-bold text-slate-800 dark:text-slate-100 leading-tight truncate max-w-[180px] lg:max-w-none">
-              {user?.full_name ?? "User"}
-            </span>
-          </div>
-
           {user && (
             <span
               className={clsx(
