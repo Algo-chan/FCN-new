@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useAuthStore } from "@/store/auth.store";
+import { Shield, Sparkles, TrendingUp, Users, Calendar, Activity } from "lucide-react";
 import {
   getAnalyticsOverview, getConsultationsTrend, getRegistrationsTrend,
   getTopDoctors,
@@ -9,6 +10,7 @@ import { AnalyticsOverviewCards } from "@/components/admin/AnalyticsOverviewCard
 import { ConsultationsTrendChart } from "@/components/admin/ConsultationsTrendChart";
 import { RegistrationsTrendChart } from "@/components/admin/RegistrationsTrendChart";
 import { TopDoctorsTable } from "@/components/admin/TopDoctorsTable";
+import { Badge } from "@/components/ui/Badge";
 
 const AdminPanelPage = () => {
   const user = useAuthStore((s) => s.user);
@@ -44,21 +46,34 @@ const AdminPanelPage = () => {
   }, []);
 
   return (
-    <div className="space-y-4 md:space-y-6">
-      <div>
-        <div className="flex items-center gap-2">
-          <img src="/logo/fcn-logo-full.png" alt="Fast Care Now" className="h-6 md:h-7 w-auto" />
-          <h1 className="text-lg md:text-xl font-bold text-fcn-text-light dark:text-fcn-text-dark">Admin Panel</h1>
+    <div className="mx-auto max-w-7xl space-y-6 pb-20 md:pb-8">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-700 text-white shadow-md shadow-indigo-600/20">
+            <Shield className="h-6 w-6" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h1 className="text-xl sm:text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
+                Operations & Analytics Center
+              </h1>
+              <Badge variant="primary" size="sm">Super Admin</Badge>
+            </div>
+            <p className="text-xs sm:text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">
+              National healthcare metrics, telemedicine throughput, and provider performance
+            </p>
+          </div>
         </div>
-        <p className="text-[10px] md:text-xs text-fcn-text-light/40">Fast Care Now Control Center</p>
-        <p className="mt-1 text-[10px] md:text-xs text-fcn-text-light/40">
-          Logged in as <span className="font-medium text-fcn-text-light dark:text-fcn-text-dark">{user?.full_name || "Admin"}</span>
-        </p>
+
+        <div className="text-xs text-fcn-text-light/50 dark:text-fcn-text-dark/50 self-start sm:self-auto">
+          Logged in as <strong className="text-fcn-text-light dark:text-fcn-text-dark">{user?.full_name || "Super Admin"}</strong>
+        </div>
       </div>
 
       {overview && <AnalyticsOverviewCards overview={overview} />}
 
-      <div className="grid grid-cols-1 gap-4 md:gap-6 lg:grid-cols-5">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-5">
         <div className="lg:col-span-3">
           <ConsultationsTrendChart
             data={consultations}
