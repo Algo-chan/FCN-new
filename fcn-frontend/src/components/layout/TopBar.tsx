@@ -121,8 +121,20 @@ export const TopBar = () => {
         </button>
 
         <div className="flex items-center gap-2.5">
-          <Link to="/dashboard" className="flex items-center gap-2 md:hidden">
-            <img src="/logo/fcn-logo-full.png" alt="Fast Care Now" className="h-7 w-auto" />
+          <Link
+            to="/dashboard"
+            className="flex items-center gap-1 md:hidden select-none group py-1 active:scale-95 transition-transform"
+            aria-label="Fast Care Dashboard"
+          >
+            <span className="text-lg font-black tracking-tight leading-none font-sans">
+              <span className="text-slate-900 dark:text-white group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
+                Fast
+              </span>
+              <span className="ml-1 bg-gradient-to-r from-teal-500 via-teal-400 to-sky-500 bg-clip-text text-transparent">
+                Care
+              </span>
+            </span>
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse ml-0.5" />
           </Link>
 
           <div className="hidden sm:flex flex-col">

@@ -51,8 +51,15 @@ export const Navbar = () => {
           <img
             src="/logo/fcn-logo-full.png"
             alt="Fast Care Now Logo"
-            className="h-8 w-auto sm:h-9 object-contain"
+            className="hidden sm:block h-8 w-auto sm:h-9 object-contain"
           />
+          <span className="sm:hidden flex items-center gap-1 text-lg font-black tracking-tight leading-none">
+            <span className="text-slate-900 dark:text-white">Fast</span>
+            <span className="bg-gradient-to-r from-teal-500 via-teal-400 to-sky-500 bg-clip-text text-transparent">
+              Care
+            </span>
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse ml-0.5" />
+          </span>
         </Link>
 
         {/* Desktop nav */}
