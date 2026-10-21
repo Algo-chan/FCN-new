@@ -31,7 +31,7 @@ export const PageLayout = ({ children }: PropsWithChildren) => {
 
   return (
     <div
-      className="min-h-screen bg-fcn-light text-fcn-text-light dark:bg-fcn-dark dark:text-fcn-text-dark"
+      className="min-h-screen bg-slate-50/70 text-slate-800 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-200"
       onClick={updateActivity}
       onKeyDown={updateActivity}
       role="none"
@@ -39,15 +39,20 @@ export const PageLayout = ({ children }: PropsWithChildren) => {
       <Sidebar />
       <div className={clsx("min-h-screen transition-all duration-300", sidebarWidth)}>
         <TopBar />
-        <main className="mx-auto w-full max-w-7xl px-3 py-4 sm:px-4 sm:py-6 md:px-6 lg:px-8 lg:py-8 pb-20 lg:pb-8">
+        <main className="mx-auto w-full max-w-7xl px-3 py-4 sm:px-4 sm:py-6 md:px-6 lg:px-8 lg:py-8 pb-28 lg:pb-8">
           <Breadcrumbs />
           <PageTransition>{children}</PageTransition>
         </main>
       </div>
 
-      <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-2">
+      {/* Floating Toasts (Raised above bottom nav on mobile) */}
+      <div className="fixed bottom-24 right-4 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none lg:bottom-4">
         {toasts.map((toast) => (
-          <button key={toast.id} onClick={() => removeToast(toast.id)} className="cursor-pointer text-left">
+          <button
+            key={toast.id}
+            onClick={() => removeToast(toast.id)}
+            className="cursor-pointer text-left pointer-events-auto transition-transform active:scale-98"
+          >
             <Toast toast={toast} />
           </button>
         ))}

@@ -8,26 +8,26 @@ interface Crumb {
 }
 
 const ROUTE_MAP: Record<string, string> = {
-  "dashboard": "Dashboard",
-  "hospitals": "Hospitals",
-  "notifications": "Notifications",
-  "profile": "Profile",
-  "doctors": "Find Doctors",
-  "appointments": "Appointments",
-  "consultation": "Consultation",
+  dashboard: "Dashboard",
+  hospitals: "Hospitals",
+  notifications: "Notifications",
+  profile: "Profile",
+  doctors: "Find Doctors",
+  appointments: "Appointments",
+  consultation: "Consultation",
   "health-records": "Health Records",
   "ai-check": "AI Symptom Check",
-  "pharmacy": "Pharmacy",
-  "doctor": "Doctor",
-  "nurse": "Nurse",
+  pharmacy: "Pharmacy",
+  doctor: "Doctor",
+  nurse: "Nurse",
   "hospital-admin": "Hospital Admin",
   "pharmacy-admin": "Pharmacy Admin",
-  "admin": "Admin",
-  "search": "Search",
-  "onboarding": "Onboarding",
-  "pending": "Pending Approval",
-  "login": "Login",
-  "register": "Register"
+  admin: "Admin",
+  search: "Search",
+  onboarding: "Onboarding",
+  pending: "Pending Approval",
+  login: "Login",
+  register: "Register",
 };
 
 function dumpJsonLd(crumbs: Crumb[]): void {
@@ -35,7 +35,7 @@ function dumpJsonLd(crumbs: Crumb[]): void {
     "@type": "ListItem",
     position: i + 1,
     name: c.name,
-    item: `https://fcncare.com${c.path}`
+    item: `https://fcncare.com${c.path}`,
   }));
 
   const script = document.createElement("script");
@@ -43,7 +43,7 @@ function dumpJsonLd(crumbs: Crumb[]): void {
   script.textContent = JSON.stringify({
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
-    itemListElement
+    itemListElement,
   });
   document.head.appendChild(script);
   setTimeout(() => script.remove(), 5000);
@@ -54,7 +54,7 @@ export const Breadcrumbs = () => {
   const pathSegments = location.pathname.split("/").filter(Boolean);
 
   const buildCrumbs = (): Crumb[] => {
-    const crumbs: Crumb[] = [{ name: "Home", path: "/" }];
+    const crumbs: Crumb[] = [{ name: "Home", path: "/dashboard" }];
     let currentPath = "";
 
     for (const seg of pathSegments) {
@@ -75,18 +75,24 @@ export const Breadcrumbs = () => {
   if (crumbs.length <= 1) return null;
 
   return (
-    <nav aria-label="Breadcrumb" className="mb-4">
-      <ol className="flex flex-wrap items-center gap-1 text-xs text-fcn-text-light/50 dark:text-fcn-text-dark/50">
+    <nav aria-label="Breadcrumb" className="mb-4 hidden sm:block">
+      <ol className="flex flex-wrap items-center gap-1.5 text-xs text-slate-400 dark:text-slate-500 font-medium">
         {crumbs.map((crumb, i) => (
-          <li key={crumb.path} className="flex items-center gap-1">
-            {i > 0 && <ChevronRight className="h-3 w-3" />}
+          <li key={crumb.path} className="flex items-center gap-1.5">
+            {i > 0 && <ChevronRight className="h-3 w-3 text-slate-300 dark:text-slate-600" />}
             {i === crumbs.length - 1 ? (
-              <span className="font-medium text-fcn-text-light/70 dark:text-fcn-text-dark/70" aria-current="page">
+              <span
+                className="font-bold text-slate-800 dark:text-slate-200"
+                aria-current="page"
+              >
                 {crumb.name}
               </span>
             ) : (
-              <Link to={crumb.path} className="transition hover:text-fcn-accent">
-                {i === 0 ? <Home className="h-3 w-3" /> : crumb.name}
+              <Link
+                to={crumb.path}
+                className="hover:text-teal-600 dark:hover:text-teal-400 transition-colors"
+              >
+                {i === 0 ? <Home className="h-3.5 w-3.5" /> : crumb.name}
               </Link>
             )}
           </li>

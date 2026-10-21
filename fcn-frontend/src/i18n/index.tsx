@@ -1,10 +1,12 @@
 import { createContext, useContext, useMemo, useState, type ReactNode } from "react";
 import en from "./translations/en";
 import am from "./translations/am";
+import om from "./translations/om";
+import so from "./translations/so";
 
-export type Locale = "en" | "am";
+export type Locale = "en" | "am" | "om" | "so";
 
-const dictionaries: Record<Locale, Record<string, string>> = { en, am };
+const dictionaries: Record<Locale, Record<string, string>> = { en, am, om, so };
 
 const LS_LOCALE_KEY = "fcn_locale";
 
@@ -28,7 +30,8 @@ function interpolate(template: string, params?: TranslateParams): string {
 }
 
 export const translate = (locale: Locale, key: string, params?: TranslateParams): string => {
-  const template = dictionaries[locale][key] ?? key;
+  const dictionary = dictionaries[locale] ?? dictionaries.en;
+  const template = dictionary[key] ?? dictionaries.en[key] ?? key;
   return interpolate(template, params);
 };
 
@@ -36,7 +39,10 @@ export const I18nProvider = ({ children }: { children: ReactNode }) => {
   const [locale, setLocaleState] = useState<Locale>(() => {
     try {
       const saved = localStorage.getItem(LS_LOCALE_KEY);
-      return saved === "am" ? "am" : "en";
+      if (saved && (saved === "en" || saved === "am" || saved === "om" || saved === "so")) {
+        return saved as Locale;
+      }
+      return "en";
     } catch {
       return "en";
     }

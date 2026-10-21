@@ -26,7 +26,7 @@ import {
   Users,
   User,
   Bell,
-  X
+  X,
 } from "lucide-react";
 import { clsx } from "clsx";
 import { useUiStore } from "@/store/ui.store";
@@ -38,7 +38,7 @@ import { getInitials, formatRole } from "@/utils/formatters";
 interface NavItem {
   label: string;
   path: string;
-  icon: React.ReactNode;
+  icon: string;
 }
 
 interface NavGroup {
@@ -82,29 +82,29 @@ const NAV_CONFIG: Record<Role, NavGroup[]> = {
         { label: "Find Doctors", icon: "Stethoscope", path: "/doctors" },
         { label: "Book Appointment", icon: "CalendarPlus", path: "/appointments/book" },
         { label: "My Appointments", icon: "CalendarCheck", path: "/appointments" },
-      ]
+      ],
     },
     {
       group: "HEALTH",
       items: [
         { label: "Health Records", icon: "HeartPulse", path: "/health-records" },
         { label: "AI Health Check", icon: "Sparkles", path: "/ai-check" },
-      ]
+      ],
     },
     {
       group: "SERVICES",
       items: [
         { label: "Consultation", icon: "MessageCircle", path: "/consultation" },
         { label: "Pharmacy & Rx", icon: "Pill", path: "/pharmacy" },
-      ]
+      ],
     },
     {
       group: "ACCOUNT",
       items: [
         { label: "Notifications", icon: "Bell", path: "/notifications" },
         { label: "Profile", icon: "User", path: "/profile" },
-      ]
-    }
+      ],
+    },
   ],
 
   doctor: [
@@ -115,22 +115,22 @@ const NAV_CONFIG: Record<Role, NavGroup[]> = {
         { label: "My Schedule", icon: "Calendar", path: "/doctor/schedule" },
         { label: "Appointment Requests", icon: "Inbox", path: "/appointments" },
         { label: "Consultations", icon: "MessageCircle", path: "/consultation" },
-      ]
+      ],
     },
     {
       group: "PATIENTS",
       items: [
         { label: "My Patients", icon: "Users", path: "/doctor/patients" },
         { label: "Prescriptions Issued", icon: "FileText", path: "/doctor/prescriptions" },
-      ]
+      ],
     },
     {
       group: "ACCOUNT",
       items: [
         { label: "Notifications", icon: "Bell", path: "/notifications" },
         { label: "Profile", icon: "User", path: "/profile" },
-      ]
-    }
+      ],
+    },
   ],
 
   nurse: [
@@ -141,15 +141,15 @@ const NAV_CONFIG: Record<Role, NavGroup[]> = {
         { label: "Today's Visits", icon: "MapPin", path: "/nurse/today" },
         { label: "My Patients", icon: "Users", path: "/nurse/patients" },
         { label: "Visit History", icon: "Clock", path: "/nurse/history" },
-      ]
+      ],
     },
     {
       group: "ACCOUNT",
       items: [
         { label: "Notifications", icon: "Bell", path: "/notifications" },
         { label: "Profile", icon: "User", path: "/profile" },
-      ]
-    }
+      ],
+    },
   ],
 
   rural_health_officer: [
@@ -161,15 +161,15 @@ const NAV_CONFIG: Record<Role, NavGroup[]> = {
         { label: "My Patients", icon: "Users", path: "/nurse/patients" },
         { label: "Specialist Escalation", icon: "ArrowUpCircle", path: "/nurse/escalation" },
         { label: "Visit History", icon: "Clock", path: "/nurse/history" },
-      ]
+      ],
     },
     {
       group: "ACCOUNT",
       items: [
         { label: "Notifications", icon: "Bell", path: "/notifications" },
         { label: "Profile", icon: "User", path: "/profile" },
-      ]
-    }
+      ],
+    },
   ],
 
   hospital_admin: [
@@ -179,15 +179,15 @@ const NAV_CONFIG: Record<Role, NavGroup[]> = {
         { label: "Dashboard", icon: "Home", path: "/hospital-admin" },
         { label: "Update Occupancy", icon: "Activity", path: "/hospital-admin/occupancy" },
         { label: "My Doctors", icon: "Stethoscope", path: "/hospital-admin/doctors" },
-      ]
+      ],
     },
     {
       group: "ACCOUNT",
       items: [
         { label: "Notifications", icon: "Bell", path: "/notifications" },
         { label: "Profile", icon: "User", path: "/profile" },
-      ]
-    }
+      ],
+    },
   ],
 
   pharmacy_admin: [
@@ -197,15 +197,15 @@ const NAV_CONFIG: Record<Role, NavGroup[]> = {
         { label: "Dashboard", icon: "Home", path: "/pharmacy-admin" },
         { label: "Verify Prescription", icon: "QrCode", path: "/pharmacy-admin/verify" },
         { label: "Dispense History", icon: "ClipboardList", path: "/pharmacy-admin/history" },
-      ]
+      ],
     },
     {
       group: "ACCOUNT",
       items: [
         { label: "Notifications", icon: "Bell", path: "/notifications" },
         { label: "Profile", icon: "User", path: "/profile" },
-      ]
-    }
+      ],
+    },
   ],
 
   super_admin: [
@@ -218,16 +218,54 @@ const NAV_CONFIG: Record<Role, NavGroup[]> = {
         { label: "Pharmacies", icon: "Pill", path: "/admin/pharmacies" },
         { label: "Settings", icon: "Settings", path: "/admin/settings" },
         { label: "Activity Logs", icon: "ClipboardList", path: "/admin/logs" },
-      ]
+      ],
     },
     {
       group: "ACCOUNT",
       items: [
         { label: "Notifications", icon: "Bell", path: "/notifications" },
         { label: "Profile", icon: "User", path: "/profile" },
-      ]
-    }
+      ],
+    },
   ],
+};
+
+const roleColors: Record<Role, { text: string; bg: string; activeGlow: string }> = {
+  patient: {
+    text: "text-teal-600 dark:text-teal-400",
+    bg: "bg-teal-500/10 dark:bg-teal-400/20",
+    activeGlow: "shadow-[0_2px_12px_rgba(20,184,166,0.25)]",
+  },
+  doctor: {
+    text: "text-sky-600 dark:text-sky-400",
+    bg: "bg-sky-500/10 dark:bg-sky-400/20",
+    activeGlow: "shadow-[0_2px_12px_rgba(14,165,233,0.25)]",
+  },
+  nurse: {
+    text: "text-emerald-600 dark:text-emerald-400",
+    bg: "bg-emerald-500/10 dark:bg-emerald-400/20",
+    activeGlow: "shadow-[0_2px_12px_rgba(16,185,129,0.25)]",
+  },
+  rural_health_officer: {
+    text: "text-amber-600 dark:text-amber-400",
+    bg: "bg-amber-500/10 dark:bg-amber-400/20",
+    activeGlow: "shadow-[0_2px_12px_rgba(245,158,11,0.25)]",
+  },
+  hospital_admin: {
+    text: "text-indigo-600 dark:text-indigo-400",
+    bg: "bg-indigo-500/10 dark:bg-indigo-400/20",
+    activeGlow: "shadow-[0_2px_12px_rgba(99,102,241,0.25)]",
+  },
+  pharmacy_admin: {
+    text: "text-purple-600 dark:text-purple-400",
+    bg: "bg-purple-500/10 dark:bg-purple-400/20",
+    activeGlow: "shadow-[0_2px_12px_rgba(168,85,247,0.25)]",
+  },
+  super_admin: {
+    text: "text-rose-600 dark:text-rose-400",
+    bg: "bg-rose-500/10 dark:bg-rose-400/20",
+    activeGlow: "shadow-[0_2px_12px_rgba(244,63,94,0.25)]",
+  },
 };
 
 export const Sidebar = () => {
@@ -239,9 +277,12 @@ export const Sidebar = () => {
   const { width } = useWindowSize();
   const isMobile = width < 1024;
 
+  const currentRole = user?.role ?? "patient";
+  const roleStyle = roleColors[currentRole] || roleColors.patient;
+
   const navGroups = useMemo(() => {
-    return NAV_CONFIG[user?.role ?? "patient"] ?? NAV_CONFIG.patient;
-  }, [user?.role]);
+    return NAV_CONFIG[currentRole] ?? NAV_CONFIG.patient;
+  }, [currentRole]);
 
   const handleToggleCollapse = useCallback(() => {
     setSidebarCollapsed(!sidebarCollapsed);
@@ -260,39 +301,43 @@ export const Sidebar = () => {
   const sidebarContent = (
     <aside
       className={clsx(
-        "flex h-full flex-col border-r border-fcn-primary/10 bg-white dark:bg-fcn-dark",
+        "flex h-full flex-col border-r border-slate-200/80 bg-white/95 dark:border-white/10 dark:bg-slate-900/95 backdrop-blur-md",
         isMobile
-          ? "fixed inset-y-0 left-0 z-50 w-72 transition-transform duration-300"
+          ? "fixed inset-y-0 left-0 z-50 w-72 transition-transform duration-300 shadow-2xl"
           : "fixed inset-y-0 left-0 z-40 transition-all duration-300",
         isMobile ? "translate-x-0" : sidebarCollapsed ? "w-[68px]" : "w-64"
       )}
     >
-      <div className="flex h-16 items-center justify-between border-b border-fcn-primary/10 px-4">
+      {/* Header with Logo */}
+      <div className="flex h-16 items-center justify-between border-b border-slate-200/80 px-4 dark:border-white/10">
         {!sidebarCollapsed || isMobile ? (
-          <img
-            src="/logo/fcn-logo-full.png"
-            alt="Fast Care Now Logo"
-            className="h-8 w-auto"
-          />
+          <div className="flex items-center gap-2">
+            <img
+              src="/logo/fcn-logo-full.png"
+              alt="Fast Care Now Logo"
+              className="h-8 w-auto object-contain"
+            />
+          </div>
         ) : (
           <img
             src="/logo/fcn-logo-full.png"
             alt="Fast Care Now Logo"
-            className="mx-auto h-8 w-auto"
+            className="mx-auto h-8 w-auto object-contain"
           />
         )}
+
         {isMobile ? (
           <button
             onClick={() => setSidebar(false)}
-            className="rounded-md p-1.5 text-fcn-text-light/50 hover:bg-fcn-primary/10 hover:text-fcn-primary dark:text-fcn-text-dark/50"
+            className="rounded-xl p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-white/10 dark:hover:text-slate-200"
             aria-label="Close sidebar"
           >
-            <X className="h-4 w-4" />
+            <X className="h-5 w-5" />
           </button>
         ) : (
           <button
             onClick={handleToggleCollapse}
-            className="rounded-md p-1.5 text-fcn-text-light/50 hover:bg-fcn-primary/10 hover:text-fcn-primary dark:text-fcn-text-dark/50"
+            className="rounded-xl p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-white/10 dark:hover:text-slate-200 transition-colors"
             aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
           >
             {sidebarCollapsed ? (
@@ -304,11 +349,12 @@ export const Sidebar = () => {
         )}
       </div>
 
-      <nav className="flex-1 overflow-y-auto p-2">
+      {/* Navigation Groups */}
+      <nav className="flex-1 overflow-y-auto px-2.5 py-4 space-y-5">
         {navGroups.map((group) => (
-          <div key={group.group} className="mb-4">
+          <div key={group.group}>
             {(!sidebarCollapsed || isMobile) && (
-              <p className="mb-1 px-3 text-[10px] font-semibold uppercase tracking-wider text-fcn-text-light/30 dark:text-fcn-text-dark/30">
+              <p className="mb-1.5 px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
                 {group.group}
               </p>
             )}
@@ -317,21 +363,60 @@ export const Sidebar = () => {
                 <li key={item.path}>
                   <NavLink
                     to={item.path}
-                    end={item.path === "/dashboard" || item.path === "/hospital-admin" || item.path === "/pharmacy-admin" || item.path === "/admin"}
+                    end={
+                      item.path === "/dashboard" ||
+                      item.path === "/hospital-admin" ||
+                      item.path === "/pharmacy-admin" ||
+                      item.path === "/admin"
+                    }
                     onClick={handleNavClick}
                     className={({ isActive }) =>
                       clsx(
-                        "flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors",
+                        "group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-all duration-150 select-none",
                         isActive
-                          ? "bg-fcn-primary/10 text-fcn-primary"
-                          : "text-fcn-text-light/60 hover:bg-fcn-primary/5 hover:text-fcn-text-light dark:text-fcn-text-dark/60 dark:hover:text-fcn-text-dark",
+                          ? clsx(
+                              roleStyle.bg,
+                              roleStyle.text,
+                              roleStyle.activeGlow,
+                              "font-bold"
+                            )
+                          : "text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-white/5 dark:hover:text-slate-100",
                         !isMobile && sidebarCollapsed && "justify-center px-2"
                       )
                     }
                     title={!isMobile && sidebarCollapsed ? item.label : undefined}
                   >
-                    {ICON_MAP[item.icon as string] ?? <Home className="h-5 w-5" />}
-                    {(!sidebarCollapsed || isMobile) && <span>{item.label}</span>}
+                    {({ isActive }) => (
+                      <>
+                        <span
+                          className={clsx(
+                            "flex-shrink-0 transition-transform duration-150 group-hover:scale-105",
+                            isActive ? roleStyle.text : "text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300"
+                          )}
+                        >
+                          {ICON_MAP[item.icon] ?? <Home className="h-5 w-5" />}
+                        </span>
+
+                        {(!sidebarCollapsed || isMobile) && (
+                          <span className="truncate">{item.label}</span>
+                        )}
+
+                        {isActive && (!sidebarCollapsed || isMobile) && (
+                          <span
+                            className={clsx(
+                              "ml-auto w-1.5 h-1.5 rounded-full",
+                              roleStyle.text.includes("teal") && "bg-teal-500",
+                              roleStyle.text.includes("sky") && "bg-sky-500",
+                              roleStyle.text.includes("emerald") && "bg-emerald-500",
+                              roleStyle.text.includes("amber") && "bg-amber-500",
+                              roleStyle.text.includes("indigo") && "bg-indigo-500",
+                              roleStyle.text.includes("purple") && "bg-purple-500",
+                              roleStyle.text.includes("rose") && "bg-rose-500"
+                            )}
+                          />
+                        )}
+                      </>
+                    )}
                   </NavLink>
                 </li>
               ))}
@@ -340,17 +425,18 @@ export const Sidebar = () => {
         ))}
       </nav>
 
-      <div className="border-t border-fcn-primary/10 p-3">
+      {/* User Footer */}
+      <div className="border-t border-slate-200/80 p-3 dark:border-white/10">
         {(!sidebarCollapsed || isMobile) && user && (
-          <div className="flex items-center gap-3 truncate">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-fcn-primary text-xs font-semibold text-white">
+          <div className="flex items-center gap-3 rounded-2xl bg-slate-50 dark:bg-white/[0.03] p-2.5">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-teal-500 to-sky-600 text-xs font-bold text-white shadow-sm">
               {getInitials(user.full_name)}
             </div>
-            <div className="min-w-0 flex-1 truncate">
-              <p className="truncate text-sm font-medium text-fcn-text-light dark:text-fcn-text-dark">
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-xs font-bold text-slate-800 dark:text-slate-100">
                 {user.full_name}
               </p>
-              <p className="truncate text-xs capitalize text-fcn-text-light/50 dark:text-fcn-text-dark/50">
+              <p className="truncate text-[11px] font-medium capitalize text-slate-400 dark:text-slate-500">
                 {formatRole(user.role)}
               </p>
             </div>
@@ -364,7 +450,7 @@ export const Sidebar = () => {
     return (
       <>
         <div
-          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden"
+          className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden transition-opacity"
           onClick={() => setSidebar(false)}
         />
         {sidebarContent}
