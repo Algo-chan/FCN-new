@@ -1,374 +1,319 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import {
-  ArrowRight,
-  Sparkles,
-  Stethoscope,
-  Activity,
-  ShieldCheck,
-  Building2,
-  Clock,
-  HeartPulse,
-  AlertCircle,
-  CheckCircle2,
-  ChevronDown,
-} from "lucide-react";
+import { ArrowRight, ChevronDown, Play } from "lucide-react";
 import { useSound } from "@/hooks/useSound";
 import { Button } from "@/components/ui/Button";
-import { clsx } from "clsx";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const particles = Array.from({ length: 8 }, (_, i) => ({
+const particles = Array.from({ length: 10 }, (_, i) => ({
   id: i,
-  x: 10 + i * 11,
-  y: 15 + (i * 23) % 70,
-  size: 3 + (i % 3) * 2,
+  x: Math.random() * 100,
+  y: Math.random() * 100,
+  size: 3 + Math.random() * 4,
+  duration: 4 + Math.random() * 6,
+  delay: Math.random() * 4
 }));
 
-interface SymptomPreset {
-  id: string;
-  name: string;
-  icon: string;
-  severity: "Emergency" | "Caution" | "Mild";
-  severityColor: string;
-  recommendation: string;
-  suggestedAction: string;
-  actionPath: string;
-}
-
-const PRESETS: SymptomPreset[] = [
-  {
-    id: "fever",
-    name: "High Fever (39°C)",
-    icon: "🌡️",
-    severity: "Caution",
-    severityColor: "text-amber-300 bg-amber-500/20 border-amber-500/40",
-    recommendation: "Virtual Doctor consultation recommended. Keep hydrated.",
-    suggestedAction: "Consult Doctor Now",
-    actionPath: "/doctors",
-  },
-  {
-    id: "chest",
-    name: "Chest Pressure",
-    icon: "💓",
-    severity: "Emergency",
-    severityColor: "text-rose-300 bg-rose-500/20 border-rose-500/40",
-    recommendation: "Dil Chora Hospital ER is open with available ICU capacity.",
-    suggestedAction: "Check Emergency Beds",
-    actionPath: "/hospitals",
-  },
-  {
-    id: "migraine",
-    name: "Severe Headache",
-    icon: "🤕",
-    severity: "Mild",
-    severityColor: "text-emerald-300 bg-emerald-500/20 border-emerald-500/40",
-    recommendation: "AI triage analysis and over-the-counter dosage guidance.",
-    suggestedAction: "Run Free AI Check",
-    actionPath: "/ai-check",
-  },
-];
+const words = ["Healthcare", "Without", "Walls"];
 
 export const HeroSection = () => {
   const shouldReduceMotion = useReducedMotion();
   const { playTransition } = useSound();
+  const [notif1, setNotif1] = useState(false);
+  const [notif2, setNotif2] = useState(false);
   const heartbeatRef = useRef<SVGPathElement>(null);
+  const phoneRef = useRef<HTMLDivElement>(null);
+  const particlesRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
-  const [selectedPreset, setSelectedPreset] = useState<SymptomPreset>(PRESETS[0]);
 
   useEffect(() => {
     if (shouldReduceMotion) return;
 
     const ctx = gsap.context(() => {
-      // Infinite ECG heartbeat trace
+      const infiniteTweens: gsap.core.Tween[] = [];
+
+      // Heartbeat line infinite draw
       if (heartbeatRef.current) {
         const length = heartbeatRef.current.getTotalLength();
         gsap.set(heartbeatRef.current, { strokeDasharray: length, strokeDashoffset: 0 });
-        gsap.to(heartbeatRef.current, {
-          strokeDashoffset: -length,
-          duration: 3.5,
-          ease: "none",
-          repeat: -1,
-        });
+        infiniteTweens.push(
+          gsap.to(heartbeatRef.current, {
+            strokeDashoffset: -length,
+            duration: 3,
+            ease: "none",
+            repeat: -1
+          })
+        );
       }
+
+      // Floating particles
+      particlesRef.current?.querySelectorAll(".particle").forEach((el) => {
+        infiniteTweens.push(
+          gsap.to(el, {
+            y: -30 - Math.random() * 20,
+            opacity: 0.3 + Math.random() * 0.4,
+            duration: 3 + Math.random() * 4,
+            ease: "sine.inOut",
+            yoyo: true,
+            repeat: -1,
+            delay: Math.random() * 3
+          })
+        );
+      });
+
+      // Phone floating
+      if (phoneRef.current) {
+        infiniteTweens.push(
+          gsap.to(phoneRef.current, {
+            y: -8,
+            rotation: -1.5,
+            duration: 4,
+            ease: "sine.inOut",
+            yoyo: true,
+            repeat: -1
+          })
+        );
+      }
+
+      // Pause infinite ambient loops when the hero scrolls out of view
+      ScrollTrigger.create({
+        trigger: sectionRef.current,
+        start: "top bottom",
+        end: "bottom top",
+        onToggle: (self) => {
+          infiniteTweens.forEach((t) => {
+            self.isActive ? t.play() : t.pause();
+          });
+        }
+      });
     }, sectionRef);
 
-    return () => ctx.revert();
+    // Floating notifications after delay
+    const t1 = setTimeout(() => setNotif1(true), 2000);
+    const t2 = setTimeout(() => setNotif2(true), 3500);
+
+    return () => {
+      ctx.revert();
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
   }, [shouldReduceMotion]);
 
-  return (
-    <section
-      ref={sectionRef}
-      id="hero"
-      className="relative min-h-screen overflow-hidden bg-gradient-to-br from-[#0B0F15] via-[#0D1824] to-[#0A2E33] text-white"
-    >
-      {/* Subtle background technical grid */}
-      <div
-        className="absolute inset-0 opacity-[0.03] pointer-events-none"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(255,255,255,0.2) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.2) 1px, transparent 1px)",
-          backgroundSize: "48px 48px",
-        }}
-      />
+  const handleHowItWorks = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    document.getElementById("how-it-works")?.scrollIntoView({ behavior: "smooth" });
+  };
 
-      {/* Ambient ECG heartbeat line */}
-      <svg
-        className="absolute left-0 top-1/2 -translate-y-1/2 w-full opacity-10 pointer-events-none"
-        viewBox="0 0 1200 60"
-        preserveAspectRatio="none"
-      >
-        <path
-          ref={heartbeatRef}
-          d="M0,30 L250,30 L380,30 L400,30 L415,8 L430,52 L445,16 L460,44 L475,25 L490,35 L510,30 L1200,30"
-          fill="none"
-          stroke="#2DD4BF"
-          strokeWidth="2.5"
-        />
+  return (
+    <section ref={sectionRef} id="hero" className="relative min-h-screen overflow-hidden bg-gradient-to-br from-[#0D1117] via-[#0A2540] to-fcn-primary">
+      {/* Background grid */}
+      <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)", backgroundSize: "60px 60px" }} />
+
+      {/* Animated heartbeat */}
+      <svg className="absolute left-0 top-1/2 w-full opacity-[0.08]" viewBox="0 0 1200 60" preserveAspectRatio="none">
+        <path ref={heartbeatRef} d="M0,30 L200,30 L400,30 L500,30 L520,5 L540,55 L560,15 L580,45 L600,25 L620,35 L640,30 L1200,30" fill="none" stroke="#2DD4BF" strokeWidth="2" />
       </svg>
 
-      {/* Floating subtle ambient particles */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+      {/* Particles */}
+      <div ref={particlesRef} className="pointer-events-none absolute inset-0 overflow-hidden">
         {particles.map((p) => (
-          <div
-            key={p.id}
-            className="absolute rounded-full bg-teal-400/20 blur-[1px]"
-            style={{
-              left: `${p.x}%`,
-              top: `${p.y}%`,
-              width: `${p.size}px`,
-              height: `${p.size}px`,
-            }}
-          />
+          <div key={p.id} className="particle absolute rounded-full bg-fcn-accent/30" style={{ left: `${p.x}%`, top: `${p.y}%`, width: p.size, height: p.size, animationDelay: `${p.delay}s` }} />
         ))}
       </div>
 
-      <div className="relative z-10 mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-center gap-10 px-4 pt-24 pb-16 sm:px-6 lg:flex-row lg:items-center lg:gap-12 lg:px-8 lg:pt-24 lg:pb-16">
-        {/* Left Column: Mission & Core Actions */}
+      <div className="relative z-10 mx-auto flex min-h-screen max-w-7xl flex-col items-center gap-8 px-4 pt-20 pb-10 sm:px-6 lg:flex-row lg:px-8 lg:pt-28 lg:pb-12">
+        {/* Left column */}
         <div className="flex-1 text-center lg:text-left">
-          {/* Live Regional Pill */}
           <motion.div
-            initial={shouldReduceMotion ? false : { opacity: 0, y: -10 }}
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-4 inline-flex items-center gap-2 rounded-full border border-teal-500/30 bg-teal-500/10 px-3.5 py-1 text-xs font-semibold text-teal-300 backdrop-blur-md"
+            className="mb-4 inline-flex items-center gap-2 rounded-full bg-fcn-accent/20 px-4 py-1.5 text-xs font-medium text-fcn-accent"
           >
-            <span className="flex h-2 w-2 relative">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-            </span>
-            <span>🇪🇹 Dire Dawa's Live Healthcare Network</span>
+            <motion.span
+              animate={shouldReduceMotion ? {} : { scale: [1, 1.03, 1] }}
+              transition={{ repeat: Infinity, duration: 2 }}
+            >
+              🇪🇹
+            </motion.span>
+            Now Live in Dire Dawa, Ethiopia
           </motion.div>
 
-          {/* Main Headline */}
-          <motion.h1
-            initial={shouldReduceMotion ? false : { opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-[2.25rem] sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.08]"
-          >
-            Hospital-Grade Care,{" "}
-            <span className="bg-gradient-to-r from-teal-400 via-teal-300 to-sky-400 bg-clip-text text-transparent">
-              Right In Your Pocket.
-            </span>
-          </motion.h1>
+          <h1 className="mb-4 text-[2.6rem] font-extrabold leading-[1.05] tracking-tight text-white sm:text-5xl lg:text-6xl">
+            {words.map((word, i) => (
+              <motion.span
+                key={word}
+                initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: shouldReduceMotion ? 0 : 0.2 + i * 0.15, duration: shouldReduceMotion ? 0 : 0.5 }}
+                className={`block sm:mr-3 sm:inline-block ${word === "Walls" ? "bg-gradient-to-r from-fcn-primary to-fcn-accent bg-clip-text text-transparent" : "text-white"}`}
+              >
+                {word}
+              </motion.span>
+            ))}
+          </h1>
 
-          {/* Subtitle */}
           <motion.p
             initial={shouldReduceMotion ? false : { opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1, duration: 0.5 }}
-            className="mt-3.5 sm:mt-4 text-sm sm:text-base leading-relaxed text-slate-300 max-w-xl mx-auto lg:mx-0 font-normal"
+            transition={{ delay: shouldReduceMotion ? 0 : 0.6 }}
+            className="mx-auto mb-2 max-w-lg text-sm leading-relaxed text-gray-300 sm:text-base lg:mx-0"
           >
-            Instant clinical AI triage, licensed Ethiopian doctors on video or voice, nurse-dispatched doorstep test kits, and real-time hospital ICU bed tracking.
+            Get a full hospital experience from home. Remote consultation, AI-powered health checks, nurse-dispatched home visits, and e-prescriptions — all on one platform built for Ethiopia.
           </motion.p>
 
           <motion.p
-            initial={shouldReduceMotion ? false : { opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="mt-2 text-xs font-semibold text-teal-300/80"
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: shouldReduceMotion ? 0 : 0.8 }}
+            className="mb-6 text-sm italic text-fcn-accent/80"
           >
-            ጤና ለሁሉም • ፈጣን የህክምና እርዳታ
+            ጤና ለሁሉም
           </motion.p>
 
-          {/* Action CTAs */}
+          {/* Buttons — desktop (unchanged) */}
           <motion.div
             initial={shouldReduceMotion ? false : { opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.25 }}
-            className="mt-6 flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-center lg:justify-start"
+            transition={{ delay: shouldReduceMotion ? 0 : 0.9 }}
+            className="hidden flex-col gap-3 sm:flex-row sm:items-center sm:flex-wrap sm:gap-4 lg:flex"
           >
-            <Link to="/ai-check" onClick={() => playTransition()} className="flex-1 sm:flex-none">
-              <Button
-                size="lg"
-                variant="action"
-                className="w-full sm:w-auto flex items-center justify-center gap-2 shadow-[0_4px_24px_rgba(20,184,166,0.35)]"
-              >
-                <Sparkles className="h-4 w-4 text-teal-200" />
-                <span>Start Free AI Check</span>
-                <ArrowRight className="h-4 w-4 ml-1" />
-              </Button>
+            <Link to="/register" onClick={() => playTransition()}>
+              <motion.div whileHover={shouldReduceMotion ? {} : { scale: 1.05 }} whileTap={{ scale: 0.98 }}>
+                <Button size="lg" className="w-full sm:w-auto bg-gradient-to-r from-fcn-primary to-fcn-accent text-white shadow-lg shadow-fcn-accent/25 hover:shadow-fcn-accent/40">
+                  Get Care Now
+                  <motion.span className="ml-2 inline-block" whileHover={shouldReduceMotion ? {} : { x: 3 }}><ArrowRight className="h-4 w-4" /></motion.span>
+                </Button>
+              </motion.div>
             </Link>
-
-            <Link to="/doctors" onClick={() => playTransition()} className="flex-1 sm:flex-none">
-              <Button
-                size="lg"
-                variant="secondary"
-                className="w-full sm:w-auto flex items-center justify-center gap-2 bg-white/10 hover:bg-white/15 text-white border-white/20 backdrop-blur-md"
-              >
-                <Stethoscope className="h-4 w-4 text-teal-300" />
-                <span>Consult a Doctor</span>
+            <a href="#how-it-works" onClick={handleHowItWorks}>
+              <Button variant="ghost" size="lg" className="w-full sm:w-auto text-white hover:bg-white/10">
+                <Play className="mr-2 h-4 w-4" /> Watch How It Works
               </Button>
+            </a>
+          </motion.div>
+
+          {/* Buttons — mobile (streamlined: primary CTA only, secondary is one tap away in nav) */}
+          <motion.div
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: shouldReduceMotion ? 0 : 0.9 }}
+            className="flex w-full flex-col gap-3 lg:hidden"
+          >
+            <Link to="/register" onClick={() => playTransition()} className="w-full">
+              <motion.div whileHover={shouldReduceMotion ? {} : { scale: 1.05 }} whileTap={{ scale: 0.98 }}>
+                <Button size="lg" className="w-full bg-gradient-to-r from-fcn-primary to-fcn-accent text-white shadow-lg shadow-fcn-accent/25 hover:shadow-fcn-accent/40">
+                  Get Care Now
+                  <motion.span className="ml-2 inline-block" whileHover={shouldReduceMotion ? {} : { x: 3 }}><ArrowRight className="h-4 w-4" /></motion.span>
+                </Button>
+              </motion.div>
             </Link>
           </motion.div>
 
-          {/* Real-time Trust Highlights */}
+          {/* Trust indicators — desktop only (unchanged) */}
           <motion.div
             initial={shouldReduceMotion ? false : { opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.35 }}
-            className="mt-8 flex flex-wrap items-center justify-center lg:justify-start gap-4 text-xs text-slate-400"
+            transition={{ delay: shouldReduceMotion ? 0 : 1.2 }}
+            className="mt-8 hidden flex-wrap items-center gap-3 text-xs text-gray-400 sm:gap-4 sm:text-sm lg:flex"
           >
-            <div className="flex items-center gap-1.5">
-              <ShieldCheck className="h-4 w-4 text-teal-400" />
-              <span>50+ Licensed MDs</span>
-            </div>
-            <span className="text-white/20">•</span>
-            <div className="flex items-center gap-1.5">
-              <Building2 className="h-4 w-4 text-sky-400" />
-              <span>3 Partner Hospitals</span>
-            </div>
-            <span className="text-white/20">•</span>
-            <div className="flex items-center gap-1.5">
-              <Clock className="h-4 w-4 text-amber-400" />
-              <span>&lt; 4m Average Wait</span>
-            </div>
+            <span>🏥 3 Partner Hospitals</span>
+            <span className="hidden sm:inline">·</span>
+            <span>👨‍⚕️ 50+ Doctors</span>
+            <span className="hidden sm:inline">·</span>
+            <span>⭐ 4.8 Rating</span>
           </motion.div>
         </div>
 
-        {/* Right Column: Interactive Live Clinical Intelligence Card (Replaces the fake phone mockup) */}
-        <motion.div
-          initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.2, duration: 0.5 }}
-          className="w-full max-w-md flex-1"
-        >
-          <div className="relative rounded-3xl border border-white/15 bg-slate-900/70 p-4 sm:p-5 backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.4)]">
-            {/* Top Card Header */}
-            <div className="flex items-center justify-between border-b border-white/10 pb-3 mb-3">
-              <div className="flex items-center gap-2">
-                <div className="h-8 w-8 rounded-lg bg-teal-500/20 text-teal-300 flex items-center justify-center">
-                  <HeartPulse className="h-4 w-4" />
+        {/* Right column — Phone mockup (shown on all sizes; compact on mobile, anchored below CTA) */}
+        <div className="flex flex-1 items-center justify-center">
+          <div ref={phoneRef} className="mx-auto w-56 max-w-xs sm:w-72" style={{ willChange: "transform" }}>
+            <div className="rounded-[2.5rem] border-4 border-gray-600 bg-gray-900 p-3 shadow-2xl">
+              <div className="overflow-hidden rounded-[2rem] bg-white dark:bg-[#0D1117]">
+                {/* Phone top bar */}
+                <div className="bg-gradient-to-r from-fcn-primary to-fcn-accent px-4 py-5">
+                  <p className="text-xs font-medium text-white/80">Good morning 👋</p>
+                  <p className="text-lg font-bold text-white">Welcome back</p>
                 </div>
-                <div>
-                  <p className="text-xs font-bold text-white tracking-tight leading-tight">Live Clinical Hub</p>
-                  <p className="text-[10px] text-teal-300/80 font-medium">Dire Dawa Central Node</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-1.5 rounded-full bg-emerald-500/15 px-2.5 py-0.5 border border-emerald-500/30 text-[10px] font-bold text-emerald-300">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                <span>ONLINE NOW</span>
-              </div>
-            </div>
 
-            {/* Interactive Symptom Tester Header */}
-            <div className="mb-2">
-              <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-                <Sparkles className="h-3 w-3 text-teal-400" />
-                <span>Interactive AI Severity Demo</span>
-              </p>
-              <p className="text-xs text-slate-300 mt-0.5">
-                Tap a symptom to see real-time triage recommendation:
-              </p>
-            </div>
+                {/* Mini dashboard */}
+                <div className="space-y-2 p-3">
+                  <div className="rounded-lg bg-fcn-accent/10 p-2.5">
+                    <p className="text-[10px] font-medium text-fcn-accent">Next Appointment</p>
+                    <p className="text-xs font-bold text-fcn-text-light dark:text-fcn-text-dark">Today, 2:00 PM</p>
+                  </div>
 
-            {/* Symptom Selectors */}
-            <div className="grid grid-cols-3 gap-1.5 mb-3">
-              {PRESETS.map((preset) => {
-                const isActive = selectedPreset.id === preset.id;
-                return (
-                  <button
-                    key={preset.id}
-                    type="button"
-                    onClick={() => setSelectedPreset(preset)}
-                    className={clsx(
-                      "flex flex-col items-center justify-center p-2 rounded-xl text-center transition-all select-none border text-xs",
-                      isActive
-                        ? "bg-teal-500/20 border-teal-400 text-white font-bold shadow-[0_0_15px_rgba(45,212,191,0.2)]"
-                        : "bg-white/5 border-white/10 text-slate-400 hover:bg-white/10 hover:text-slate-200"
-                    )}
-                  >
-                    <span className="text-base mb-1">{preset.icon}</span>
-                    <span className="text-[10px] leading-tight truncate max-w-full font-semibold">
-                      {preset.name.split(" ")[0]}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
+                  <div className="flex gap-2">
+                    <div className="flex-1 rounded-lg bg-fcn-primary/10 p-2.5 text-center">
+                      <p className="text-xs font-bold text-fcn-primary">2</p>
+                      <p className="text-[9px] text-fcn-text-light/60 dark:text-fcn-text-dark/60">Visits</p>
+                    </div>
+                    <div className="flex-1 rounded-lg bg-fcn-warning/10 p-2.5 text-center">
+                      <p className="text-xs font-bold text-fcn-warning">1</p>
+                      <p className="text-[9px] text-fcn-text-light/60 dark:text-fcn-text-dark/60">Pending</p>
+                    </div>
+                    <div className="flex-1 rounded-lg bg-fcn-success/10 p-2.5 text-center">
+                      <p className="text-xs font-bold text-fcn-success">4</p>
+                      <p className="text-[9px] text-fcn-text-light/60 dark:text-fcn-text-dark/60">Meds</p>
+                    </div>
+                  </div>
 
-            {/* Dynamic Clinical Triage Preview Box */}
-            <div className="rounded-2xl border border-white/10 bg-black/30 p-3 sm:p-3.5 mb-3">
-              <div className="flex items-center justify-between mb-1.5">
-                <span className="text-[11px] font-medium text-slate-400">Assessed Urgency:</span>
-                <span
-                  className={clsx(
-                    "px-2 py-0.5 rounded-full text-[10px] font-bold border",
-                    selectedPreset.severityColor
-                  )}
-                >
-                  {selectedPreset.severity}
-                </span>
-              </div>
-              <p className="text-xs text-slate-200 leading-snug">
-                {selectedPreset.recommendation}
-              </p>
-              <div className="mt-2.5 pt-2 border-t border-white/10 flex items-center justify-between">
-                <span className="text-[10px] text-teal-300 font-medium">Recommended Next Step:</span>
-                <Link
-                  to={selectedPreset.actionPath}
-                  onClick={() => playTransition()}
-                  className="text-xs font-bold text-teal-400 hover:text-teal-300 flex items-center gap-1 transition-colors"
-                >
-                  <span>{selectedPreset.suggestedAction}</span>
-                  <ArrowRight className="h-3 w-3" />
-                </Link>
-              </div>
-            </div>
-
-            {/* Live Hospital Occupancy Mini-Feed */}
-            <div className="rounded-xl bg-white/5 p-2.5 border border-white/5 flex items-center justify-between text-[11px]">
-              <div className="flex items-center gap-2 min-w-0">
-                <Building2 className="h-4 w-4 text-sky-400 shrink-0" />
-                <div className="min-w-0">
-                  <p className="text-slate-200 font-semibold truncate">Dil Chora General Hospital</p>
-                  <p className="text-[10px] text-emerald-400 font-medium">6 ICU Beds • ER Active</p>
+                  {/* Doctor preview */}
+                  <div className="flex items-center gap-2 rounded-lg border border-fcn-primary/10 p-2">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-fcn-accent text-[10px] font-bold text-white">ST</div>
+                    <div>
+                      <p className="text-[11px] font-medium text-fcn-text-light dark:text-fcn-text-dark">Dr. Sara T.</p>
+                      <p className="text-[9px] text-fcn-text-light/50 dark:text-fcn-text-dark/50">General Physician</p>
+                    </div>
+                    <span className="ml-auto text-[10px] font-medium text-fcn-accent">Online</span>
+                  </div>
                 </div>
               </div>
-              <Link
-                to="/hospitals"
-                className="text-[10px] font-bold text-slate-400 hover:text-teal-300 underline shrink-0 ml-2"
-              >
-                All Hospitals →
-              </Link>
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
 
-      {/* Micro scroll indicator */}
+      {/* Floating notifications */}
+      <AnimatePresence>
+        {notif1 && (
+          <motion.div
+            initial={shouldReduceMotion ? false : { opacity: 0, x: 40 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="pointer-events-none absolute bottom-32 right-4 z-20 hidden rounded-2xl bg-white px-4 py-3 shadow-xl dark:bg-[#111827] lg:block"
+          >
+            <p className="flex items-center gap-2 text-sm font-medium text-fcn-text-light dark:text-fcn-text-dark">
+              ✅ Appointment confirmed
+            </p>
+          </motion.div>
+        )}
+        {notif2 && (
+          <motion.div
+            initial={shouldReduceMotion ? false : { opacity: 0, x: -40 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="pointer-events-none absolute bottom-48 left-4 z-20 hidden rounded-2xl bg-white px-4 py-3 shadow-xl dark:bg-[#111827] lg:block"
+          >
+            <p className="flex items-center gap-2 text-sm font-medium text-fcn-text-light dark:text-fcn-text-dark">
+              🩺 Nurse arriving at 2pm
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Scroll indicator — desktop (unchanged) */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1 }}
-        className="absolute bottom-4 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-1 pointer-events-none opacity-60"
+        transition={{ delay: 1.5 }}
+        className="absolute bottom-6 left-1/2 hidden -translate-x-1/2 text-center lg:block"
       >
-        <span className="text-[10px] font-medium uppercase tracking-wider text-slate-400">Scroll to explore</span>
-        <ChevronDown className="h-4 w-4 text-slate-400 animate-bounce" />
+        <motion.div animate={shouldReduceMotion ? {} : { y: [0, 6, 0] }} transition={{ repeat: Infinity, duration: 1.5 }}>
+          <ChevronDown className="mx-auto h-5 w-5 text-white/40" />
+        </motion.div>
+        <p className="mt-1 text-[10px] text-white/30">Scroll to explore</p>
       </motion.div>
     </section>
   );
