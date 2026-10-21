@@ -4,6 +4,21 @@ import { defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
+  server: {
+    port: 5173,
+    proxy: {
+      "/api": {
+        target: process.env.VITE_BACKEND_TARGET || "https://fcn-backend.onrender.com",
+        changeOrigin: true,
+        secure: false
+      },
+      "/socket.io": {
+        target: process.env.VITE_BACKEND_TARGET || "https://fcn-backend.onrender.com",
+        changeOrigin: true,
+        ws: true
+      }
+    }
+  },
   plugins: [
     react(),
     VitePWA({
