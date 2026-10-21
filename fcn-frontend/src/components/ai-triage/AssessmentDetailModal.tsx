@@ -7,7 +7,7 @@ import { Modal } from "@/components/ui/Modal";
 import { Badge } from "@/components/ui/Badge";
 import { getAssessmentById } from "@/services/ai-triage.service";
 import { FinalAssessmentCard } from "./FinalAssessmentCard";
-import { parseMarkdown } from "@/utils/markdown";
+import { parseMarkdown, cleanAssessmentMessage } from "@/utils/markdown";
 import { languageLabels } from "@/constants/languages";
 import type { ConversationMessage, ParsedAssessment } from "@/types";
 
@@ -153,7 +153,7 @@ export const AssessmentDetailModal = ({ isOpen, onClose, assessmentId }: Assessm
                         )}
                       >
                         {msg.role === "assistant" ? (
-                          <div dangerouslySetInnerHTML={{ __html: parseMarkdown(msg.content) }} />
+                          <div dangerouslySetInnerHTML={{ __html: parseMarkdown(cleanAssessmentMessage(msg.content)) }} />
                         ) : (
                           <p className="whitespace-pre-wrap break-words">{msg.content}</p>
                         )}

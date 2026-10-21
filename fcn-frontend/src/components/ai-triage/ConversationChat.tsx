@@ -4,7 +4,7 @@ import { ArrowUp, Sparkles, RotateCcw } from "lucide-react";
 import { clsx } from "clsx";
 import gsap from "gsap";
 import { useSound } from "@/hooks/useSound";
-import { parseMarkdown } from "@/utils/markdown";
+import { parseMarkdown, cleanAssessmentMessage } from "@/utils/markdown";
 import type { ConversationMessage, SupportedLanguage, ParsedAssessment } from "@/types";
 
 const LANGUAGE_CONFIG_MAP: Record<string, { thinkingText: string; greeting: string; name: string; flag: string }> = {
@@ -215,7 +215,7 @@ export const ConversationChat = ({
                 )}
               >
                 {msg.role === "assistant" ? (
-                  <div dangerouslySetInnerHTML={{ __html: parseMarkdown(msg.content) }} />
+                  <div dangerouslySetInnerHTML={{ __html: parseMarkdown(cleanAssessmentMessage(msg.content)) }} />
                 ) : (
                   <p className="whitespace-pre-wrap break-words">{msg.content}</p>
                 )}

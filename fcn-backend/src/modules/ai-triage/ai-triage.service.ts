@@ -180,6 +180,33 @@ async function callAI(
 }
 
 
+export function extractConversationalMessage(aiResponse: string): string {
+  if (!aiResponse) return "";
+
+  // If there's no FINAL_ASSESSMENT or risk_level, return trimmed text
+  if (!aiResponse.includes("FINAL_ASSESSMENT") && !aiResponse.includes('"risk_level"')) {
+    return aiResponse.trim();
+  }
+
+  // 1. Remove FINAL_ASSESSMENT header
+  let cleaned = aiResponse.replace(/FINAL_ASSESSMENT/gi, "");
+
+  // 2. Remove markdown code fences (```json ... ``` or ``` ... ```)
+  cleaned = cleaned.replace(/```(?:json)?[\s\S]*?```/gi, "");
+
+  // 3. Remove standalone JSON objects containing risk_level
+  cleaned = cleaned.replace(/\{[\s\S]*?"risk_level"[\s\S]*?\}/gi, "");
+
+  cleaned = cleaned.trim();
+
+  // If no conversational message was left after JSON removal, provide a supportive default
+  if (!cleaned) {
+    return "I have completed your clinical assessment. Please review the detailed assessment, risk level, and recommended next steps below.";
+  }
+
+  return cleaned;
+}
+
 export interface PatientContext {
   full_name: string;
   age: number;
@@ -371,16 +398,19 @@ class AITriageService {
       [...history, { role: "user", content: sanitizedMessage }]
     );
 
-    conversation.push(
-      { role: "user", content: sanitizedMessage, timestamp: new Date().toISOString() },
-      { role: "assistant", content: aiResponse, round: newRound, timestamp: new Date().toISOString() }
-    );
-
     const isFinalRound = newRound >= maxRounds;
     const hasFinalAssessmentMarker = aiResponse.includes("FINAL_ASSESSMENT");
     const shouldComplete = isFinalRound || hasFinalAssessmentMarker;
 
     let parsed: ParsedAssessment | undefined;
+    const conversationalMessage = shouldComplete
+      ? extractConversationalMessage(aiResponse)
+      : aiResponse;
+
+    conversation.push(
+      { role: "user", content: sanitizedMessage, timestamp: new Date().toISOString() },
+      { role: "assistant", content: conversationalMessage, round: newRound, timestamp: new Date().toISOString() }
+    );
 
     if (shouldComplete) {
       parsed = this.parseFinalAssessment(aiResponse);
@@ -417,7 +447,7 @@ class AITriageService {
       });
     }
 
-    return { aiResponse, round: newRound, isComplete: shouldComplete, finalAssessment: parsed };
+    return { aiResponse: conversationalMessage, round: newRound, isComplete: shouldComplete, finalAssessment: parsed };
   }
 
   async completeAssessment(
@@ -443,8 +473,9 @@ class AITriageService {
 
     if (assessment.is_complete) {
       const existingParsed = this.parseFinalAssessment(assessment.final_assessment || "");
+      const cleanMsg = extractConversationalMessage(assessment.final_assessment || "");
       return {
-        aiResponse: assessment.final_assessment || "",
+        aiResponse: cleanMsg,
         round: assessment.round_count,
         isComplete: true,
         finalAssessment: existingParsed
@@ -468,9 +499,10 @@ class AITriageService {
     );
 
     const parsed = this.parseFinalAssessment(aiResponse);
+    const cleanMsg = extractConversationalMessage(aiResponse);
 
     conversation.push(
-      { role: "assistant", content: aiResponse, round: 3, timestamp: new Date().toISOString() }
+      { role: "assistant", content: cleanMsg, round: 3, timestamp: new Date().toISOString() }
     );
 
     await prisma.symptomAssessment.update({
@@ -496,16 +528,27 @@ class AITriageService {
 
     logger.info("AI triage assessment force-completed", { assessmentId, patientId, riskLevel: parsed.risk_level });
 
-    return { aiResponse, round: 3, isComplete: true, finalAssessment: parsed };
+    return { aiResponse: cleanMsg, round: 3, isComplete: true, finalAssessment: parsed };
   }
 
   parseFinalAssessment(aiResponse: string): ParsedAssessment {
     try {
-      const jsonMatch = aiResponse.match(/\{[\s\S]*"risk_level"[\s\S]*\}/);
-      if (!jsonMatch) {
+      let jsonString = "";
+      const codeBlockMatch = aiResponse.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+      if (codeBlockMatch && codeBlockMatch[1]) {
+        jsonString = codeBlockMatch[1].trim();
+      } else {
+        const jsonMatch = aiResponse.match(/\{[\s\S]*?"risk_level"[\s\S]*?\}/);
+        if (jsonMatch) {
+          jsonString = jsonMatch[0];
+        }
+      }
+
+      if (!jsonString) {
         throw new Error("No JSON block found in response");
       }
-      const parsed = JSON.parse(jsonMatch[0]) as ParsedAssessment;
+
+      const parsed = JSON.parse(jsonString) as ParsedAssessment;
       return {
         risk_level: parsed.risk_level || "MEDIUM",
         risk_explanation: parsed.risk_explanation || "",
@@ -601,7 +644,17 @@ class AITriageService {
 
     if (assessment.conversation && typeof assessment.conversation === "string") {
       try {
-        (assessment as any).conversation = JSON.parse(assessment.conversation as string);
+        const parsed = JSON.parse(assessment.conversation as string);
+        if (Array.isArray(parsed)) {
+          (assessment as any).conversation = parsed.map((msg: any) => {
+            if (msg.role === "assistant" && (msg.content?.includes("FINAL_ASSESSMENT") || msg.content?.includes('"risk_level"'))) {
+              return { ...msg, content: extractConversationalMessage(msg.content) };
+            }
+            return msg;
+          });
+        } else {
+          (assessment as any).conversation = parsed;
+        }
       } catch { }
     }
 
