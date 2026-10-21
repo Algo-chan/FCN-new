@@ -1,21 +1,33 @@
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { MapPin, Calendar, Clock, CheckCircle2, Users } from "lucide-react";
+import { MapPin, Calendar, Clock, CheckCircle2, Users, HeartHandshake, ChevronRight } from "lucide-react";
 import { format, parseISO } from "date-fns";
 import { getNurseStats, getTodayVisits, getUpcomingVisits, type TodayVisit, type UpcomingVisit } from "@/services/nurse-dashboard.service";
 import { TodayVisitCard } from "@/components/nurse-dashboard/TodayVisitCard";
 import { Card } from "@/components/ui/Card";
 import { Spinner } from "@/components/ui/Spinner";
 import { Badge } from "@/components/ui/Badge";
+import { Button } from "@/components/ui/Button";
 
-const StatCard = ({ icon: Icon, label, value, color }: { icon: typeof Clock; label: string; value: number; color: string }) => (
-  <Card className="flex items-center gap-4">
-    <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${color}`}>
-      <Icon className="h-6 w-6 text-white" />
+interface StatCardProps {
+  icon: typeof Clock;
+  label: string;
+  value: number;
+  gradient: string;
+}
+
+const StatCard = ({ icon: Icon, label, value, gradient }: StatCardProps) => (
+  <Card className="p-4 sm:p-5 rounded-2xl relative overflow-hidden flex items-center gap-3.5 transition-all hover:shadow-md hover:border-fcn-primary/20">
+    <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-white shadow-sm ${gradient}`}>
+      <Icon className="h-6 w-6" />
     </div>
-    <div>
-      <p className="text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">{value}</p>
-      <p className="text-xs text-fcn-text-light/50 dark:text-fcn-text-dark/50">{label}</p>
+    <div className="min-w-0 flex-1">
+      <p className="font-mono text-2xl sm:text-3xl font-extrabold text-fcn-text-light dark:text-fcn-text-dark">
+        {value}
+      </p>
+      <p className="text-xs font-semibold text-fcn-text-light/60 dark:text-fcn-text-dark/60 truncate">
+        {label}
+      </p>
     </div>
   </Card>
 );
@@ -41,39 +53,63 @@ const NurseTodayVisitsPage = () => {
   const upcomingData = (upcomingVisits as any)?.data ?? [];
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">Today's Visits</h1>
-        <p className="text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">
-          {format(new Date(), "EEEE, MMMM d, yyyy")}
-        </p>
+    <div className="mx-auto max-w-6xl space-y-6 pb-20 md:pb-8">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white shadow-md shadow-indigo-500/20">
+            <Calendar className="h-6 w-6" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h1 className="text-xl sm:text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
+                Today's Care Schedule
+              </h1>
+              <Badge variant="primary" size="sm">Field Active</Badge>
+            </div>
+            <p className="text-xs sm:text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">
+              {format(new Date(), "EEEE, MMMM d, yyyy")} • Community health visits
+            </p>
+          </div>
+        </div>
+
+        <a
+          href="/health-records/nurse"
+          className="inline-flex items-center gap-2 rounded-xl bg-fcn-primary px-4 py-2.5 text-xs sm:text-sm font-semibold text-white shadow-sm hover:bg-fcn-primary/90 transition-colors self-start sm:self-auto"
+        >
+          Record Vitals Directly
+        </a>
       </div>
 
       {loadingStats ? (
-        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="h-24 animate-pulse rounded-lg bg-fcn-primary/5" />
+            <div key={i} className="h-28 animate-pulse rounded-2xl bg-fcn-primary/5" />
           ))}
         </div>
       ) : statsData && (
-        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-          <StatCard icon={MapPin} label="Today's Visits" value={statsData.today_visits} color="bg-fcn-accent" />
-          <StatCard icon={Calendar} label="Upcoming" value={statsData.upcoming_visits} color="bg-fcn-primary" />
-          <StatCard icon={CheckCircle2} label="Completed This Week" value={statsData.completed_this_week} color="bg-fcn-success" />
-          <StatCard icon={Users} label="Patients Served" value={statsData.patients_served} color="bg-fcn-indigo" />
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+          <StatCard icon={MapPin} label="Today's Visits" value={statsData.today_visits} gradient="bg-gradient-to-br from-indigo-500 to-violet-600" />
+          <StatCard icon={Calendar} label="Upcoming" value={statsData.upcoming_visits} gradient="bg-gradient-to-br from-teal-500 to-emerald-600" />
+          <StatCard icon={CheckCircle2} label="Completed This Week" value={statsData.completed_this_week} gradient="bg-gradient-to-br from-emerald-500 to-teal-700" />
+          <StatCard icon={Users} label="Patients Served" value={statsData.patients_served} gradient="bg-gradient-to-br from-sky-500 to-blue-600" />
         </div>
       )}
 
       <div className="grid gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2 space-y-4">
-          <h2 className="text-lg font-semibold text-fcn-text-light dark:text-fcn-text-dark">Today's Schedule</h2>
+        {/* Today's Visits - Left 2 Columns */}
+        <div className="lg:col-span-2 space-y-3">
+          <h2 className="text-sm font-bold uppercase tracking-wider text-fcn-text-light/70 dark:text-fcn-text-dark/70 flex items-center gap-2">
+            <Clock className="h-4 w-4 text-fcn-primary" />
+            Scheduled for Today
+          </h2>
           {loadingToday ? (
-            <div className="flex items-center justify-center py-12"><Spinner size="lg" /></div>
+            <div className="flex items-center justify-center py-16"><Spinner size="lg" /></div>
           ) : todayData.length === 0 ? (
-            <Card className="flex flex-col items-center justify-center py-12 text-center">
-              <MapPin className="h-10 w-10 text-fcn-text-light/20 dark:text-fcn-text-dark/20 mb-3" />
-              <p className="font-semibold text-fcn-text-light dark:text-fcn-text-dark">No visits today</p>
-              <p className="text-sm text-fcn-text-light/50 dark:text-fcn-text-dark/50">Enjoy your free time</p>
+            <Card className="flex flex-col items-center justify-center py-12 text-center rounded-2xl">
+              <CheckCircle2 className="h-12 w-12 text-emerald-500/30 mb-3" />
+              <p className="text-base font-bold text-fcn-text-light dark:text-fcn-text-dark">No visits scheduled today</p>
+              <p className="text-xs text-fcn-text-light/50 dark:text-fcn-text-dark/50 mt-1">Check upcoming days or review patient medical records.</p>
             </Card>
           ) : (
             <div className="space-y-3">
@@ -84,42 +120,41 @@ const NurseTodayVisitsPage = () => {
           )}
         </div>
 
-        <div className="space-y-4">
-          <h2 className="text-lg font-semibold text-fcn-text-light dark:text-fcn-text-dark">Upcoming Visits</h2>
+        {/* Upcoming Visits - Right Column */}
+        <div className="space-y-3">
+          <h2 className="text-sm font-bold uppercase tracking-wider text-fcn-text-light/70 dark:text-fcn-text-dark/70 flex items-center gap-2">
+            <Calendar className="h-4 w-4 text-fcn-accent" />
+            Upcoming Days
+          </h2>
           {loadingUpcoming ? (
             <div className="flex items-center justify-center py-12"><Spinner size="lg" /></div>
           ) : upcomingData.length === 0 ? (
-            <Card className="flex flex-col items-center justify-center py-12 text-center">
-              <Clock className="h-10 w-10 text-fcn-text-light/20 dark:text-fcn-text-dark/20 mb-3" />
-              <p className="font-semibold text-fcn-text-light dark:text-fcn-text-dark">No upcoming visits</p>
+            <Card className="flex flex-col items-center justify-center py-10 text-center rounded-2xl">
+              <Clock className="h-10 w-10 text-fcn-text-light/20 dark:text-fcn-text-dark/20 mb-2" />
+              <p className="text-xs font-semibold text-fcn-text-light/60 dark:text-fcn-text-dark/60">No upcoming visits</p>
             </Card>
           ) : (
-            <div className="space-y-2">
+            <div className="space-y-2.5">
               {upcomingData.map((visit: UpcomingVisit) => (
-                <motion.div
-                  key={visit.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                >
-                  <Card hoverable className="space-y-2">
-                    <div className="flex items-center gap-2">
-                      <p className="text-sm font-medium text-fcn-text-light dark:text-fcn-text-dark truncate">{visit.patient_name}</p>
-                      <Badge variant={visit.status === "confirmed" ? "success" : "info"} size="sm">{visit.status}</Badge>
-                    </div>
-                    <div className="flex items-center gap-3 text-xs text-fcn-text-light/50 dark:text-fcn-text-dark/50">
-                      <span className="flex items-center gap-1">
-                        <Clock className="h-3 w-3" />
+                <Card key={visit.id} className="p-3.5 rounded-2xl hover:border-fcn-primary/20 transition-all">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <p className="text-sm font-bold text-fcn-text-light dark:text-fcn-text-dark">{visit.patient_name}</p>
+                      <p className="text-xs text-fcn-text-light/50 dark:text-fcn-text-dark/50 mt-0.5">
                         {format(parseISO(visit.scheduled_at), "MMM d, h:mm a")}
-                      </span>
-                    </div>
-                    {visit.home_address && (
-                      <p className="text-xs text-fcn-text-light/40 dark:text-fcn-text-dark/40 flex items-center gap-1 truncate">
-                        <MapPin className="h-3 w-3 shrink-0" />
-                        {visit.home_address}
                       </p>
-                    )}
-                  </Card>
-                </motion.div>
+                    </div>
+                    <Badge variant="info" size="sm">
+                      {visit.appointment_type.replace("_", " ")}
+                    </Badge>
+                  </div>
+                  {visit.home_address && (
+                    <p className="mt-2 text-xs text-fcn-text-light/60 dark:text-fcn-text-dark/60 flex items-center gap-1.5 truncate">
+                      <MapPin className="h-3 w-3 text-fcn-primary shrink-0" />
+                      {visit.home_address}
+                    </p>
+                  )}
+                </Card>
               ))}
             </div>
           )}
