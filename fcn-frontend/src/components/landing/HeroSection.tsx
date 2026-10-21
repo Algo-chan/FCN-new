@@ -1,106 +1,53 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { ArrowRight, ChevronDown, Play } from "lucide-react";
+import {
+  ArrowRight,
+  Play,
+  Stethoscope,
+  Activity,
+  Building2,
+  ShieldCheck,
+  Clock,
+  Lock,
+  ChevronDown,
+  CheckCircle2,
+} from "lucide-react";
 import { useSound } from "@/hooks/useSound";
 import { Button } from "@/components/ui/Button";
 
-gsap.registerPlugin(ScrollTrigger);
-
-const particles = Array.from({ length: 10 }, (_, i) => ({
+const particles = Array.from({ length: 8 }, (_, i) => ({
   id: i,
-  x: Math.random() * 100,
-  y: Math.random() * 100,
-  size: 3 + Math.random() * 4,
-  duration: 4 + Math.random() * 6,
-  delay: Math.random() * 4
+  x: 10 + i * 11,
+  y: 15 + (i * 23) % 70,
+  size: 3 + (i % 3) * 2,
 }));
-
-const words = ["Healthcare", "Without", "Walls"];
 
 export const HeroSection = () => {
   const shouldReduceMotion = useReducedMotion();
   const { playTransition } = useSound();
-  const [notif1, setNotif1] = useState(false);
-  const [notif2, setNotif2] = useState(false);
   const heartbeatRef = useRef<SVGPathElement>(null);
-  const phoneRef = useRef<HTMLDivElement>(null);
-  const particlesRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     if (shouldReduceMotion) return;
 
     const ctx = gsap.context(() => {
-      const infiniteTweens: gsap.core.Tween[] = [];
-
-      // Heartbeat line infinite draw
+      // Gentle ECG trace in background
       if (heartbeatRef.current) {
         const length = heartbeatRef.current.getTotalLength();
         gsap.set(heartbeatRef.current, { strokeDasharray: length, strokeDashoffset: 0 });
-        infiniteTweens.push(
-          gsap.to(heartbeatRef.current, {
-            strokeDashoffset: -length,
-            duration: 3,
-            ease: "none",
-            repeat: -1
-          })
-        );
+        gsap.to(heartbeatRef.current, {
+          strokeDashoffset: -length,
+          duration: 3.8,
+          ease: "none",
+          repeat: -1,
+        });
       }
-
-      // Floating particles
-      particlesRef.current?.querySelectorAll(".particle").forEach((el) => {
-        infiniteTweens.push(
-          gsap.to(el, {
-            y: -30 - Math.random() * 20,
-            opacity: 0.3 + Math.random() * 0.4,
-            duration: 3 + Math.random() * 4,
-            ease: "sine.inOut",
-            yoyo: true,
-            repeat: -1,
-            delay: Math.random() * 3
-          })
-        );
-      });
-
-      // Phone floating
-      if (phoneRef.current) {
-        infiniteTweens.push(
-          gsap.to(phoneRef.current, {
-            y: -8,
-            rotation: -1.5,
-            duration: 4,
-            ease: "sine.inOut",
-            yoyo: true,
-            repeat: -1
-          })
-        );
-      }
-
-      // Pause infinite ambient loops when the hero scrolls out of view
-      ScrollTrigger.create({
-        trigger: sectionRef.current,
-        start: "top bottom",
-        end: "bottom top",
-        onToggle: (self) => {
-          infiniteTweens.forEach((t) => {
-            self.isActive ? t.play() : t.pause();
-          });
-        }
-      });
     }, sectionRef);
 
-    // Floating notifications after delay
-    const t1 = setTimeout(() => setNotif1(true), 2000);
-    const t2 = setTimeout(() => setNotif2(true), 3500);
-
-    return () => {
-      ctx.revert();
-      clearTimeout(t1);
-      clearTimeout(t2);
-    };
+    return () => ctx.revert();
   }, [shouldReduceMotion]);
 
   const handleHowItWorks = (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -109,211 +56,237 @@ export const HeroSection = () => {
   };
 
   return (
-    <section ref={sectionRef} id="hero" className="relative min-h-screen overflow-hidden bg-gradient-to-br from-[#0D1117] via-[#0A2540] to-fcn-primary">
-      {/* Background grid */}
-      <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)", backgroundSize: "60px 60px" }} />
+    <section
+      ref={sectionRef}
+      id="hero"
+      className="relative min-h-screen overflow-hidden bg-gradient-to-br from-[#0B0F15] via-[#0D1824] to-[#0A2E33] text-white flex flex-col justify-between"
+    >
+      {/* Background technical grid */}
+      <div
+        className="absolute inset-0 opacity-[0.03] pointer-events-none"
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(255,255,255,0.2) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.2) 1px, transparent 1px)",
+          backgroundSize: "48px 48px",
+        }}
+      />
 
-      {/* Animated heartbeat */}
-      <svg className="absolute left-0 top-1/2 w-full opacity-[0.08]" viewBox="0 0 1200 60" preserveAspectRatio="none">
-        <path ref={heartbeatRef} d="M0,30 L200,30 L400,30 L500,30 L520,5 L540,55 L560,15 L580,45 L600,25 L620,35 L640,30 L1200,30" fill="none" stroke="#2DD4BF" strokeWidth="2" />
+      {/* Ambient ECG heartbeat line */}
+      <svg
+        className="absolute left-0 top-1/2 -translate-y-1/2 w-full opacity-10 pointer-events-none"
+        viewBox="0 0 1200 60"
+        preserveAspectRatio="none"
+      >
+        <path
+          ref={heartbeatRef}
+          d="M0,30 L280,30 L400,30 L415,8 L430,52 L445,16 L460,44 L475,25 L490,35 L510,30 L1200,30"
+          fill="none"
+          stroke="#2DD4BF"
+          strokeWidth="2.5"
+        />
       </svg>
 
-      {/* Particles */}
-      <div ref={particlesRef} className="pointer-events-none absolute inset-0 overflow-hidden">
+      {/* Floating subtle ambient particles */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
         {particles.map((p) => (
-          <div key={p.id} className="particle absolute rounded-full bg-fcn-accent/30" style={{ left: `${p.x}%`, top: `${p.y}%`, width: p.size, height: p.size, animationDelay: `${p.delay}s` }} />
+          <div
+            key={p.id}
+            className="absolute rounded-full bg-teal-400/20 blur-[1px]"
+            style={{
+              left: `${p.x}%`,
+              top: `${p.y}%`,
+              width: `${p.size}px`,
+              height: `${p.size}px`,
+            }}
+          />
         ))}
       </div>
 
-      <div className="relative z-10 mx-auto flex min-h-screen max-w-7xl flex-col items-center gap-8 px-4 pt-20 pb-10 sm:px-6 lg:flex-row lg:px-8 lg:pt-28 lg:pb-12">
-        {/* Left column */}
+      {/* Hero Content Container */}
+      <div className="relative z-10 mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-center gap-10 px-4 pt-24 pb-14 sm:px-6 lg:flex-row lg:items-center lg:gap-12 lg:px-8">
+        {/* Left Column: Psychological Reassurance & Mission */}
         <div className="flex-1 text-center lg:text-left">
+          {/* Regional indicator */}
           <motion.div
-            initial={shouldReduceMotion ? false : { opacity: 0, y: 10 }}
+            initial={shouldReduceMotion ? false : { opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-4 inline-flex items-center gap-2 rounded-full bg-fcn-accent/20 px-4 py-1.5 text-xs font-medium text-fcn-accent"
+            className="mb-4 inline-flex items-center gap-2 rounded-full border border-teal-500/30 bg-teal-500/10 px-3.5 py-1 text-xs font-semibold text-teal-300 backdrop-blur-md"
           >
-            <motion.span
-              animate={shouldReduceMotion ? {} : { scale: [1, 1.03, 1] }}
-              transition={{ repeat: Infinity, duration: 2 }}
-            >
-              🇪🇹
-            </motion.span>
-            Now Live in Dire Dawa, Ethiopia
+            <span className="flex h-2 w-2 relative">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+            </span>
+            <span>🇪🇹 Dire Dawa's Live Telehealth Network</span>
           </motion.div>
 
-          <h1 className="mb-4 text-[2.6rem] font-extrabold leading-[1.05] tracking-tight text-white sm:text-5xl lg:text-6xl">
-            {words.map((word, i) => (
-              <motion.span
-                key={word}
-                initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: shouldReduceMotion ? 0 : 0.2 + i * 0.15, duration: shouldReduceMotion ? 0 : 0.5 }}
-                className={`block sm:mr-3 sm:inline-block ${word === "Walls" ? "bg-gradient-to-r from-fcn-primary to-fcn-accent bg-clip-text text-transparent" : "text-white"}`}
-              >
-                {word}
-              </motion.span>
-            ))}
-          </h1>
+          {/* Main Headline (Concept 1: Relief & Peace of Mind) */}
+          <motion.h1
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mb-4 text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.08] text-white"
+          >
+            Doctor Care & Instant Answers,{" "}
+            <span className="bg-gradient-to-r from-teal-400 via-teal-300 to-sky-400 bg-clip-text text-transparent">
+              When You Need Them Most.
+            </span>
+          </motion.h1>
 
+          {/* Subtitle */}
           <motion.p
             initial={shouldReduceMotion ? false : { opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: shouldReduceMotion ? 0 : 0.6 }}
-            className="mx-auto mb-2 max-w-lg text-sm leading-relaxed text-gray-300 sm:text-base lg:mx-0"
+            transition={{ delay: 0.1, duration: 0.5 }}
+            className="mx-auto mb-2 max-w-lg text-sm sm:text-base leading-relaxed text-slate-300 lg:mx-0 font-normal"
           >
-            Get a full hospital experience from home. Remote consultation, AI-powered health checks, nurse-dispatched home visits, and e-prescriptions — all on one platform built for Ethiopia.
+            Check symptoms with AI in 30 seconds, consult certified Ethiopian doctors by video or phone, and have nurse visits or digital prescriptions delivered to your door.
           </motion.p>
 
           <motion.p
-            initial={shouldReduceMotion ? false : { opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: shouldReduceMotion ? 0 : 0.8 }}
-            className="mb-6 text-sm italic text-fcn-accent/80"
+            initial={shouldReduceMotion ? false : { opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.18 }}
+            className="mb-6 text-xs font-semibold text-teal-300/80"
           >
-            ጤና ለሁሉም
+            ጤና ለሁሉም • ፈጣን የህክምና እርዳታ
           </motion.p>
 
-          {/* Buttons — desktop (unchanged) */}
+          {/* Dual Action Buttons */}
           <motion.div
             initial={shouldReduceMotion ? false : { opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: shouldReduceMotion ? 0 : 0.9 }}
-            className="hidden flex-col gap-3 sm:flex-row sm:items-center sm:flex-wrap sm:gap-4 lg:flex"
+            transition={{ delay: 0.25 }}
+            className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center lg:justify-start gap-3"
           >
-            <Link to="/register" onClick={() => playTransition()}>
-              <motion.div whileHover={shouldReduceMotion ? {} : { scale: 1.05 }} whileTap={{ scale: 0.98 }}>
-                <Button size="lg" className="w-full sm:w-auto bg-gradient-to-r from-fcn-primary to-fcn-accent text-white shadow-lg shadow-fcn-accent/25 hover:shadow-fcn-accent/40">
-                  Get Care Now
-                  <motion.span className="ml-2 inline-block" whileHover={shouldReduceMotion ? {} : { x: 3 }}><ArrowRight className="h-4 w-4" /></motion.span>
-                </Button>
-              </motion.div>
+            <Link to="/register" onClick={() => playTransition()} className="flex-1 sm:flex-none">
+              <Button
+                size="lg"
+                variant="action"
+                className="w-full sm:w-auto flex items-center justify-center gap-2 shadow-[0_4px_24px_rgba(20,184,166,0.35)]"
+              >
+                <span>Get Care Now</span>
+                <ArrowRight className="h-4 w-4" />
+              </Button>
             </Link>
-            <a href="#how-it-works" onClick={handleHowItWorks}>
-              <Button variant="ghost" size="lg" className="w-full sm:w-auto text-white hover:bg-white/10">
-                <Play className="mr-2 h-4 w-4" /> Watch How It Works
+
+            <a href="#how-it-works" onClick={handleHowItWorks} className="flex-1 sm:flex-none">
+              <Button
+                variant="secondary"
+                size="lg"
+                className="w-full sm:w-auto flex items-center justify-center gap-2 bg-white/10 hover:bg-white/15 text-white border-white/20 backdrop-blur-md"
+              >
+                <Play className="h-4 w-4 text-teal-300" />
+                <span>Watch How It Works</span>
               </Button>
             </a>
           </motion.div>
 
-          {/* Buttons — mobile (streamlined: primary CTA only, secondary is one tap away in nav) */}
-          <motion.div
-            initial={shouldReduceMotion ? false : { opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: shouldReduceMotion ? 0 : 0.9 }}
-            className="flex w-full flex-col gap-3 lg:hidden"
-          >
-            <Link to="/register" onClick={() => playTransition()} className="w-full">
-              <motion.div whileHover={shouldReduceMotion ? {} : { scale: 1.05 }} whileTap={{ scale: 0.98 }}>
-                <Button size="lg" className="w-full bg-gradient-to-r from-fcn-primary to-fcn-accent text-white shadow-lg shadow-fcn-accent/25 hover:shadow-fcn-accent/40">
-                  Get Care Now
-                  <motion.span className="ml-2 inline-block" whileHover={shouldReduceMotion ? {} : { x: 3 }}><ArrowRight className="h-4 w-4" /></motion.span>
-                </Button>
-              </motion.div>
-            </Link>
-          </motion.div>
-
-          {/* Trust indicators — desktop only (unchanged) */}
+          {/* Trust Highlights */}
           <motion.div
             initial={shouldReduceMotion ? false : { opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: shouldReduceMotion ? 0 : 1.2 }}
-            className="mt-8 hidden flex-wrap items-center gap-3 text-xs text-gray-400 sm:gap-4 sm:text-sm lg:flex"
+            transition={{ delay: 0.35 }}
+            className="mt-8 flex flex-wrap items-center justify-center lg:justify-start gap-4 text-xs text-slate-400"
           >
             <span>🏥 3 Partner Hospitals</span>
-            <span className="hidden sm:inline">·</span>
-            <span>👨‍⚕️ 50+ Doctors</span>
-            <span className="hidden sm:inline">·</span>
-            <span>⭐ 4.8 Rating</span>
+            <span className="text-white/20">•</span>
+            <span>👨‍⚕️ 50+ Verified Doctors</span>
+            <span className="text-white/20">•</span>
+            <span>⭐ 4.8 Patient Rating</span>
           </motion.div>
         </div>
 
-        {/* Right column — Phone mockup (shown on all sizes; compact on mobile, anchored below CTA) */}
-        <div className="flex flex-1 items-center justify-center">
-          <div ref={phoneRef} className="mx-auto w-56 max-w-xs sm:w-72" style={{ willChange: "transform" }}>
-            <div className="rounded-[2.5rem] border-4 border-gray-600 bg-gray-900 p-3 shadow-2xl">
-              <div className="overflow-hidden rounded-[2rem] bg-white dark:bg-[#0D1117]">
-                {/* Phone top bar */}
-                <div className="bg-gradient-to-r from-fcn-primary to-fcn-accent px-4 py-5">
-                  <p className="text-xs font-medium text-white/80">Good morning 👋</p>
-                  <p className="text-lg font-bold text-white">Welcome back</p>
+        {/* Right Column: Reassurance Clinical Peace-of-Mind Card (Replaces fake phone mockup) */}
+        <motion.div
+          initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.2, duration: 0.5 }}
+          className="w-full max-w-md flex-1"
+        >
+          <div className="relative rounded-3xl border border-white/15 bg-slate-900/70 p-5 sm:p-6 backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.4)] text-left">
+            {/* Top Doctor Presence Badge */}
+            <div className="flex items-center justify-between border-b border-white/10 pb-4 mb-4">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-full bg-gradient-to-br from-teal-500 to-sky-600 text-white font-bold flex items-center justify-center text-sm shadow-sm ring-2 ring-teal-400/40">
+                  ST
                 </div>
-
-                {/* Mini dashboard */}
-                <div className="space-y-2 p-3">
-                  <div className="rounded-lg bg-fcn-accent/10 p-2.5">
-                    <p className="text-[10px] font-medium text-fcn-accent">Next Appointment</p>
-                    <p className="text-xs font-bold text-fcn-text-light dark:text-fcn-text-dark">Today, 2:00 PM</p>
+                <div>
+                  <div className="flex items-center gap-1.5">
+                    <p className="text-sm font-bold text-white leading-tight">Dr. Sara Tadesse</p>
+                    <CheckCircle2 className="h-3.5 w-3.5 text-teal-400" />
                   </div>
+                  <p className="text-[11px] text-slate-300">General Physician &amp; Pediatrics</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-1.5 rounded-full bg-emerald-500/15 px-2.5 py-1 border border-emerald-500/30 text-[10px] font-bold text-emerald-300">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                <span>ON DUTY</span>
+              </div>
+            </div>
 
-                  <div className="flex gap-2">
-                    <div className="flex-1 rounded-lg bg-fcn-primary/10 p-2.5 text-center">
-                      <p className="text-xs font-bold text-fcn-primary">2</p>
-                      <p className="text-[9px] text-fcn-text-light/60 dark:text-fcn-text-dark/60">Visits</p>
-                    </div>
-                    <div className="flex-1 rounded-lg bg-fcn-warning/10 p-2.5 text-center">
-                      <p className="text-xs font-bold text-fcn-warning">1</p>
-                      <p className="text-[9px] text-fcn-text-light/60 dark:text-fcn-text-dark/60">Pending</p>
-                    </div>
-                    <div className="flex-1 rounded-lg bg-fcn-success/10 p-2.5 text-center">
-                      <p className="text-xs font-bold text-fcn-success">4</p>
-                      <p className="text-[9px] text-fcn-text-light/60 dark:text-fcn-text-dark/60">Meds</p>
-                    </div>
-                  </div>
+            {/* Language Reassurance */}
+            <div className="mb-4 px-3 py-1.5 rounded-xl bg-white/5 border border-white/5 flex items-center justify-between text-[11px] text-slate-300">
+              <span className="text-slate-400">Consultation Languages:</span>
+              <span className="font-semibold text-teal-300">English • አማርኛ • Afaan Oromoo</span>
+            </div>
 
-                  {/* Doctor preview */}
-                  <div className="flex items-center gap-2 rounded-lg border border-fcn-primary/10 p-2">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-fcn-accent text-[10px] font-bold text-white">ST</div>
-                    <div>
-                      <p className="text-[11px] font-medium text-fcn-text-light dark:text-fcn-text-dark">Dr. Sara T.</p>
-                      <p className="text-[9px] text-fcn-text-light/50 dark:text-fcn-text-dark/50">General Physician</p>
-                    </div>
-                    <span className="ml-auto text-[10px] font-medium text-fcn-accent">Online</span>
-                  </div>
+            {/* The 3 Care Pillars (Quiet & Clear) */}
+            <div className="space-y-2.5 mb-4">
+              <div className="flex items-start gap-3 p-2.5 rounded-xl bg-white/5 border border-white/5">
+                <div className="h-8 w-8 rounded-lg bg-teal-500/20 text-teal-300 flex items-center justify-center shrink-0 mt-0.5">
+                  <Stethoscope className="h-4 w-4" />
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-white">Instant Doctor Consultation</p>
+                  <p className="text-[11px] text-slate-300 leading-snug">Connect via video, phone, or secure chat in under 4 minutes.</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3 p-2.5 rounded-xl bg-white/5 border border-white/5">
+                <div className="h-8 w-8 rounded-lg bg-emerald-500/20 text-emerald-300 flex items-center justify-center shrink-0 mt-0.5">
+                  <Activity className="h-4 w-4" />
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-white">Home Nurse Dispatch</p>
+                  <p className="text-[11px] text-slate-300 leading-snug">Licensed nurse arrives at your door for sample collection and vitals check.</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3 p-2.5 rounded-xl bg-white/5 border border-white/5">
+                <div className="h-8 w-8 rounded-lg bg-sky-500/20 text-sky-300 flex items-center justify-center shrink-0 mt-0.5">
+                  <Building2 className="h-4 w-4" />
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-white">Hospital ICU &amp; Bed Visibility</p>
+                  <p className="text-[11px] text-slate-300 leading-snug">Real-time emergency bed tracking at Dil Chora &amp; Sabian hospitals.</p>
                 </div>
               </div>
             </div>
+
+            {/* Bottom Confidentiality & Response Time */}
+            <div className="pt-3 border-t border-white/10 flex items-center justify-between text-[11px] text-slate-400">
+              <span className="flex items-center gap-1.5">
+                <Lock className="h-3.5 w-3.5 text-teal-400" />
+                <span>100% Confidential Care</span>
+              </span>
+              <span className="flex items-center gap-1.5 font-medium text-emerald-400">
+                <Clock className="h-3.5 w-3.5" />
+                <span>Avg Wait: ~3 mins</span>
+              </span>
+            </div>
           </div>
-        </div>
+        </motion.div>
       </div>
 
-      {/* Floating notifications */}
-      <AnimatePresence>
-        {notif1 && (
-          <motion.div
-            initial={shouldReduceMotion ? false : { opacity: 0, x: 40 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="pointer-events-none absolute bottom-32 right-4 z-20 hidden rounded-2xl bg-white px-4 py-3 shadow-xl dark:bg-[#111827] lg:block"
-          >
-            <p className="flex items-center gap-2 text-sm font-medium text-fcn-text-light dark:text-fcn-text-dark">
-              ✅ Appointment confirmed
-            </p>
-          </motion.div>
-        )}
-        {notif2 && (
-          <motion.div
-            initial={shouldReduceMotion ? false : { opacity: 0, x: -40 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="pointer-events-none absolute bottom-48 left-4 z-20 hidden rounded-2xl bg-white px-4 py-3 shadow-xl dark:bg-[#111827] lg:block"
-          >
-            <p className="flex items-center gap-2 text-sm font-medium text-fcn-text-light dark:text-fcn-text-dark">
-              🩺 Nurse arriving at 2pm
-            </p>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Scroll indicator — desktop (unchanged) */}
+      {/* Subtle Scroll Hint */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1.5 }}
-        className="absolute bottom-6 left-1/2 hidden -translate-x-1/2 text-center lg:block"
+        transition={{ delay: 1 }}
+        className="pb-4 hidden md:flex flex-col items-center gap-1 pointer-events-none opacity-50"
       >
-        <motion.div animate={shouldReduceMotion ? {} : { y: [0, 6, 0] }} transition={{ repeat: Infinity, duration: 1.5 }}>
-          <ChevronDown className="mx-auto h-5 w-5 text-white/40" />
-        </motion.div>
-        <p className="mt-1 text-[10px] text-white/30">Scroll to explore</p>
+        <span className="text-[10px] font-medium uppercase tracking-wider text-slate-400">Scroll to explore</span>
+        <ChevronDown className="h-3.5 w-3.5 text-slate-400 animate-bounce" />
       </motion.div>
     </section>
   );
