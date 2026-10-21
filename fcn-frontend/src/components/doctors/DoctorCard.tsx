@@ -1,12 +1,12 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { Building2, CalendarPlus, MapPin, Star, BadgeCheck, Clock } from "lucide-react";
-import { Card } from "@/components/ui/Card";
+import { Building2, CalendarPlus, MapPin, Star, BadgeCheck, Clock, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { ImagePlaceholder } from "@/components/ui/ImagePlaceholder";
 import { useTranslation } from "@/i18n";
 import { useAuthStore } from "@/store/auth.store";
 import type { PublicDoctorCard } from "@/types";
+import { clsx } from "clsx";
 
 interface DoctorCardProps {
   doctor: PublicDoctorCard;
@@ -29,21 +29,21 @@ export const DoctorCard = ({ doctor, index, onClick }: DoctorCardProps) => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const { t } = useTranslation();
 
-  const statusColors: Record<string, string> = {
-    available: "bg-fcn-success",
-    in_session: "bg-fcn-warning",
-    unavailable: "bg-fcn-text-light/30 dark:bg-fcn-text-dark/30"
-  };
-  const statusColor = statusColors[doctor.availability_status] ?? "bg-fcn-text-light/30";
-  const statusLabel =
-    doctor.availability_status === "available"
-      ? t("common.available")
-      : doctor.availability_status === "in_session"
-        ? t("common.inSession")
-        : t("common.unavailable");
-  const consultFee = doctor.consultation_fee_etb ? t("filter.etb") + " " + doctor.consultation_fee_etb : "—";
+  const isAvailable = doctor.availability_status === "available";
+  const isInSession = doctor.availability_status === "in_session";
 
-  const handleBook = () => {
+  const statusLabel = isAvailable
+    ? t("common.available")
+    : isInSession
+      ? t("common.inSession")
+      : t("common.unavailable");
+
+  const consultFee = doctor.consultation_fee_etb
+    ? `${doctor.consultation_fee_etb} ${t("filter.etb")}`
+    : "—";
+
+  const handleBook = (e: React.MouseEvent) => {
+    e.stopPropagation();
     if (!isAuthenticated) {
       navigate("/login", { state: { from: `/appointments/book?doctor_id=${doctor.id}` } });
       return;
@@ -53,142 +53,153 @@ export const DoctorCard = ({ doctor, index, onClick }: DoctorCardProps) => {
 
   return (
     <motion.div
-      initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
+      initial={shouldReduceMotion ? false : { opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.95 }}
       transition={{
         duration: shouldReduceMotion ? 0 : 0.3,
-        delay: shouldReduceMotion ? 0 : index * 0.05
+        delay: shouldReduceMotion ? 0 : Math.min(index * 0.05, 0.4),
       }}
       layout
+      className="h-full"
     >
-      <motion.div
-        whileHover={shouldReduceMotion ? {} : { translateY: -6 }}
-        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+      <div
+        role="button"
+        tabIndex={0}
+        onClick={onClick}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            onClick();
+          }
+        }}
+        className={clsx(
+          "group relative flex flex-col h-full rounded-[22px] border border-slate-200/80 bg-white overflow-hidden text-left transition-all duration-200 cursor-pointer select-none",
+          "hover:shadow-[0_12px_32px_rgba(13,148,136,0.15)] hover:border-teal-500/30",
+          "dark:border-white/10 dark:bg-slate-900/90 dark:hover:border-teal-400/30",
+          "active:scale-[0.99]"
+        )}
       >
-        <Card
-          className="group relative overflow-hidden p-0 cursor-pointer"
-          hoverable
-          onClick={onClick}
-        >
-          <div className="relative h-44 overflow-hidden">
-            {doctor.photo_url ? (
-              <img
-                src={doctor.photo_url}
-                alt={doctor.full_name}
-                className="h-full w-full object-cover object-top transition duration-500 group-hover:scale-105"
-              />
-            ) : (
-              <ImagePlaceholder
-                query={`Ethiopian doctor professional portrait, medical setting, ${doctor.specialty}`}
-                alt={doctor.full_name}
-                aspectRatio="4/3"
-                rounded="none"
-                className="h-full w-full"
-              />
-            )}
+        {/* Doctor Photo Header */}
+        <div className="relative h-44 w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
+          {doctor.photo_url ? (
+            <img
+              src={doctor.photo_url}
+              alt={doctor.full_name}
+              className="h-full w-full object-cover object-top transition duration-500 group-hover:scale-105"
+            />
+          ) : (
+            <ImagePlaceholder
+              query={`Ethiopian doctor portrait, professional clinic, ${doctor.specialty}`}
+              alt={doctor.full_name}
+              aspectRatio="4/3"
+              rounded="none"
+              className="h-full w-full"
+            />
+          )}
 
-            <div className="absolute bottom-3 left-3 flex items-center gap-1.5">
-              <span className={`flex h-2.5 w-2.5 rounded-full ${statusColor} ${doctor.availability_status === "available" ? "pulse-glow" : ""}`} />
-              <span className="text-xs font-medium text-white drop-shadow-md">{statusLabel}</span>
-            </div>
+          {/* Dark gradient overlay for readability of bottom chips */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
 
-            <div className="absolute top-3 right-3 flex items-center gap-1.5">
-              {doctor.verified && (
-                <span
-                  className="inline-flex items-center gap-0.5 rounded-full bg-fcn-success/90 px-2.5 py-0.5 text-xs font-medium text-white backdrop-blur-sm"
-                  title={t("common.verified")}
-                >
-                  <BadgeCheck className="h-3 w-3" />
-                  {t("common.verified").replace("✓ ", "")}
-                </span>
+          {/* Availability Status Chip */}
+          <div className="absolute bottom-3 left-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-950/70 backdrop-blur-md text-[11px] font-bold text-white shadow-sm">
+            <span
+              className={clsx(
+                "h-2 w-2 rounded-full",
+                isAvailable && "bg-emerald-400 animate-pulse",
+                isInSession && "bg-amber-400",
+                !isAvailable && !isInSession && "bg-slate-400"
               )}
-              <span className="inline-flex items-center rounded-full bg-fcn-accent/90 px-2.5 py-0.5 text-xs font-medium text-white backdrop-blur-sm">
-                {doctor.specialty}
-              </span>
-            </div>
+            />
+            <span>{statusLabel}</span>
           </div>
 
-          <div className="p-4 space-y-3">
-            <div>
-              <h3 className="text-lg font-bold text-fcn-text-light dark:text-fcn-text-dark">
-                Dr. {doctor.full_name}
-              </h3>
-              <div className="mt-1 flex items-center gap-2 text-xs text-fcn-text-light/60 dark:text-fcn-text-dark/60">
-                {doctor.hospital_name && (
-                  <span className="flex items-center gap-1 truncate">
-                    <Building2 className="h-3.5 w-3.5 flex-shrink-0" />
-                    <span className="truncate">{doctor.hospital_name}</span>
-                  </span>
-                )}
-                {doctor.city && (
-                  <span className="flex items-center gap-1 flex-shrink-0">
-                    <MapPin className="h-3.5 w-3.5 flex-shrink-0" />
-                    {doctor.city}
-                  </span>
-                )}
-              </div>
+          {/* Verified Badge */}
+          {doctor.verified && (
+            <div className="absolute top-3 right-3 flex items-center gap-1 px-2.5 py-1 rounded-full bg-teal-600/90 backdrop-blur-md text-[11px] font-bold text-white shadow-sm">
+              <BadgeCheck className="h-3.5 w-3.5" />
+              <span>{t("common.verified")}</span>
             </div>
+          )}
+        </div>
 
-            <div className="flex items-center gap-1 text-sm">
-              <Star className="h-4 w-4 text-fcn-warning fill-fcn-warning" />
-              <span className="font-semibold text-fcn-text-light dark:text-fcn-text-dark">
-                {doctor.rating_average.toFixed(1)}
-              </span>
-              <span className="text-fcn-text-light/50 dark:text-fcn-text-dark/50">
-                ({doctor.rating_count} {t("common.reviews")})
-              </span>
-            </div>
-
-            {doctor.next_available_slot ? (
-              <div className="flex items-center gap-1.5 text-xs text-fcn-primary">
-                <Clock className="h-3.5 w-3.5 flex-shrink-0" />
-                <span>{t("doctors.nextSlot", { slot: formatSlot(doctor.next_available_slot) })}</span>
-              </div>
-            ) : (
-              <div className="flex items-center gap-1.5 text-xs text-fcn-text-light/50 dark:text-fcn-text-dark/50">
-                <Clock className="h-3.5 w-3.5 flex-shrink-0" />
-                <span>{t("doctors.noNextSlot")}</span>
+        {/* Card Body */}
+        <div className="flex flex-1 flex-col p-4 sm:p-5">
+          <div className="flex items-start justify-between gap-2 mb-1">
+            <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white tracking-tight truncate group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
+              {doctor.full_name}
+            </h3>
+            {doctor.rating_average > 0 && (
+              <div className="flex items-center gap-1 text-amber-500 flex-shrink-0 text-xs font-bold bg-amber-500/10 px-2 py-0.5 rounded-full">
+                <Star className="h-3 w-3 fill-amber-500" />
+                <span>{doctor.rating_average.toFixed(1)}</span>
               </div>
             )}
+          </div>
 
-            <div className="flex items-center justify-between text-xs text-fcn-text-light/60 dark:text-fcn-text-dark/60 border-t border-fcn-primary/5 pt-3">
-              <div className="flex flex-col items-center">
-                <span className="font-semibold text-fcn-text-light dark:text-fcn-text-dark">
-                  {consultFee}
-                </span>
-                <span>{t("common.consult")}</span>
+          <span className="inline-block text-xs font-semibold text-teal-600 dark:text-teal-400 mb-2">
+            {doctor.specialty}
+          </span>
+
+          {/* Hospital and Location */}
+          <div className="space-y-1 text-xs text-slate-500 dark:text-slate-400 mb-4">
+            {doctor.hospital_name && (
+              <div className="flex items-center gap-1.5 truncate">
+                <Building2 className="h-3.5 w-3.5 text-slate-400 flex-shrink-0" />
+                <span className="truncate">{doctor.hospital_name}</span>
               </div>
-              <div className="flex flex-col items-center">
-                <span className="font-semibold text-fcn-text-light dark:text-fcn-text-dark">
-                  {doctor.follow_up_fee_etb ? t("filter.etb") + " " + doctor.follow_up_fee_etb : "—"}
-                </span>
-                <span>{t("common.followUp")}</span>
+            )}
+            {doctor.city && (
+              <div className="flex items-center gap-1.5 truncate">
+                <MapPin className="h-3.5 w-3.5 text-slate-400 flex-shrink-0" />
+                <span className="truncate">{doctor.city}</span>
               </div>
-              <div className="flex flex-col items-center">
-                <span className="max-w-[80px] truncate font-semibold text-fcn-text-light dark:text-fcn-text-dark">
-                  {doctor.languages_spoken.length > 0 ? doctor.languages_spoken.slice(0, 2).join(", ") + (doctor.languages_spoken.length > 2 ? "+" : "") : "—"}
-                </span>
-                <span>{t("common.language")}</span>
-              </div>
+            )}
+          </div>
+
+          {/* Stats pills */}
+          <div className="mt-auto grid grid-cols-2 gap-2 pt-3 border-t border-slate-100 dark:border-white/5 mb-4">
+            <div className="rounded-xl bg-slate-50 dark:bg-white/[0.03] p-2 text-center">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                {t("common.consult")}
+              </p>
+              <p className="text-sm font-extrabold text-teal-600 dark:text-teal-400 mt-0.5">
+                {consultFee}
+              </p>
+            </div>
+            <div className="rounded-xl bg-slate-50 dark:bg-white/[0.03] p-2 text-center">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                {t("common.language")}
+              </p>
+              <p className="text-sm font-extrabold text-slate-800 dark:text-slate-200 mt-0.5 truncate px-1">
+                {doctor.languages_spoken.length > 0 ? doctor.languages_spoken.slice(0, 2).join(", ") : "—"}
+              </p>
             </div>
           </div>
 
-          <div className="px-4 pb-4">
-            <Button
-              className="w-full group/btn"
-              size="sm"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleBook();
-              }}
-            >
-              <CalendarPlus className="h-4 w-4" />
-              {t("book.bookAppointment")}
-            </Button>
-          </div>
-        </Card>
-      </motion.div>
+          {/* Next Available Slot */}
+          {doctor.next_available_slot && (
+            <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 mb-3 bg-teal-500/5 px-2.5 py-1.5 rounded-xl border border-teal-500/10">
+              <Clock className="h-3.5 w-3.5 text-teal-600 dark:text-teal-400 flex-shrink-0" />
+              <span className="truncate">
+                {t("doctors.nextSlot", { slot: formatSlot(doctor.next_available_slot) })}
+              </span>
+            </div>
+          )}
+
+          {/* Action Button */}
+          <Button
+            type="button"
+            variant="action"
+            onClick={handleBook}
+            className="w-full min-h-[44px] text-xs font-bold"
+          >
+            <CalendarPlus className="h-4 w-4 mr-1.5" />
+            <span>{t("modal.bookNow")}</span>
+            <ArrowRight className="h-3.5 w-3.5 ml-auto opacity-70 group-hover:translate-x-0.5 transition-transform" />
+          </Button>
+        </div>
+      </div>
     </motion.div>
   );
 };

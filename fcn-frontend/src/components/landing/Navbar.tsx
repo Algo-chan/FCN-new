@@ -7,6 +7,7 @@ import { useTheme } from "@/hooks/useTheme";
 import { useSound } from "@/hooks/useSound";
 import { Button } from "@/components/ui/Button";
 import { InstallAppButton } from "@/components/pwa/InstallAppButton";
+import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
 import { MOTION } from "@/styles/motion";
 
 const navLinks = [
@@ -33,11 +34,11 @@ export const Navbar = () => {
   const scrolled = scrollY > 50;
 
   const bgClasses = scrolled
-    ? "bg-white/90 dark:bg-[#0D1117]/90 backdrop-blur-lg shadow-sm"
+    ? "bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-sm border-b border-slate-200/60 dark:border-white/10"
     : "bg-transparent";
 
   const textClasses = scrolled
-    ? "text-fcn-text-light dark:text-fcn-text-dark"
+    ? "text-slate-700 dark:text-slate-200"
     : "text-white";
 
   const closeMobile = useCallback(() => setMobileOpen(false), []);
@@ -50,7 +51,7 @@ export const Navbar = () => {
           <img
             src="/logo/fcn-logo-full.png"
             alt="Fast Care Now Logo"
-            className="h-8 w-auto sm:h-9"
+            className="h-8 w-auto sm:h-9 object-contain"
           />
         </Link>
 
@@ -61,7 +62,7 @@ export const Navbar = () => {
               key={link.href}
               href={link.href}
               onClick={(e) => handleNavClick(e, link.href)}
-              className={`text-sm font-medium transition hover:text-fcn-accent ${textClasses}`}
+              className={`text-sm font-semibold transition hover:text-teal-500 ${textClasses}`}
             >
               {link.label}
             </a>
@@ -69,10 +70,12 @@ export const Navbar = () => {
         </div>
 
         {/* Right side */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <LanguageSwitcher variant="pill" />
+
           <button
             onClick={toggleTheme}
-            className={`rounded-full p-2 transition hover:bg-white/10 ${textClasses}`}
+            className={`rounded-xl p-2 transition hover:bg-white/10 ${textClasses}`}
             aria-label="Toggle theme"
           >
             <motion.div
@@ -81,7 +84,7 @@ export const Navbar = () => {
               animate={{ rotate: 0, opacity: 1 }}
               transition={shouldReduceMotion ? { duration: 0 } : MOTION.spring}
             >
-              {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+              {isDark ? <Sun className="h-4 w-4 text-amber-400" /> : <Moon className="h-4 w-4" />}
             </motion.div>
           </button>
 
@@ -91,14 +94,14 @@ export const Navbar = () => {
               <Button variant="ghost" size="sm">Sign In</Button>
             </Link>
             <Link to="/register">
-              <Button size="sm" onClick={() => playTransition()}>Get Started</Button>
+              <Button size="sm" variant="action" onClick={() => playTransition()}>Get Started</Button>
             </Link>
           </div>
 
           {/* Mobile hamburger */}
           <button
             onClick={() => setMobileOpen(true)}
-            className={`rounded-lg p-2 md:hidden ${textClasses}`}
+            className={`rounded-xl p-2 md:hidden ${textClasses}`}
             aria-label="Open menu"
           >
             <Menu className="h-5 w-5" />
@@ -122,34 +125,48 @@ export const Navbar = () => {
               exit={!shouldReduceMotion ? { x: "100%" } : undefined}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
               onClick={(e) => e.stopPropagation()}
-              className="fixed right-0 top-0 flex h-full w-80 max-w-[85vw] flex-col bg-white px-6 py-8 dark:bg-[#0D1117]"
+              className="fixed right-0 top-0 flex h-full w-80 max-w-[85vw] flex-col bg-white px-6 py-8 dark:bg-slate-900 shadow-2xl"
             >
-              <div className="mb-8 flex justify-end">
-                <button onClick={closeMobile} className="rounded-lg p-2 text-fcn-text-light dark:text-fcn-text-dark" aria-label="Close menu">
+              <div className="mb-6 flex items-center justify-between">
+                <img
+                  src="/logo/fcn-logo-full.png"
+                  alt="Fast Care Now Logo"
+                  className="h-7 w-auto object-contain"
+                />
+                <button
+                  onClick={closeMobile}
+                  className="rounded-xl p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-white/10 dark:text-slate-300"
+                  aria-label="Close menu"
+                >
                   <X className="h-5 w-5" />
                 </button>
               </div>
 
-              <div className="flex flex-col gap-2">
+              <div className="mb-6">
+                <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Language</p>
+                <LanguageSwitcher variant="full" />
+              </div>
+
+              <div className="flex flex-col gap-1">
                 {navLinks.map((link) => (
                   <a
                     key={link.href}
                     href={link.href}
                     onClick={(e) => { handleNavClick(e, link.href); closeMobile(); }}
-                    className="rounded-lg px-4 py-4 text-base font-medium text-fcn-text-light transition hover:bg-fcn-primary/10 dark:text-fcn-text-dark"
+                    className="rounded-xl px-3 py-3 text-sm font-semibold text-slate-700 hover:bg-teal-50 hover:text-teal-700 dark:text-slate-200 dark:hover:bg-white/5 transition-colors"
                   >
                     {link.label}
                   </a>
                 ))}
               </div>
 
-              <div className="mt-auto flex flex-col gap-3">
+              <div className="mt-auto flex flex-col gap-3 pt-6 border-t border-slate-100 dark:border-white/10">
                 <InstallAppButton size="sm" fullWidth />
                 <Link to="/login" onClick={closeMobile}>
-                  <Button variant="secondary" className="w-full">Sign In</Button>
+                  <Button variant="secondary" className="w-full min-h-[48px]">Sign In</Button>
                 </Link>
                 <Link to="/register" onClick={() => { closeMobile(); playTransition(); }}>
-                  <Button className="w-full">Get Started</Button>
+                  <Button variant="action" className="w-full min-h-[48px]">Get Started</Button>
                 </Link>
               </div>
             </motion.div>

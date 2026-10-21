@@ -1,17 +1,36 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { motion, useReducedMotion } from "framer-motion";
 import gsap from "gsap";
-import { Clock, ClipboardList, Star, Wallet, LogOut, RefreshCw } from "lucide-react";
+import { Clock, ClipboardList, Star, Wallet, LogOut, RefreshCw, ShieldAlert } from "lucide-react";
 import { authService } from "@/services/auth.service";
 import { useAuthStore } from "@/store/auth.store";
 import { useSound } from "@/hooks/useSound";
 import { Button } from "@/components/ui/Button";
+import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
 
 const infoCards = [
-  { icon: Wallet, title: "Flexible Remote Income", body: "Conduct consultations from your home or clinic. Set your own availability and earn per consultation." },
-  { icon: ClipboardList, title: "Complete Patient View", body: "Access patient vitals, medical history, chronic conditions, and allergies in one place during every consultation." },
-  { icon: Star, title: "Build Your Profile", body: "Patients rate their experience. Build a verified professional profile with real consultation history." }
+  {
+    icon: Wallet,
+    title: "Flexible Remote Income",
+    body: "Conduct consultations from your home or clinic. Set your own availability and earn per consultation.",
+    color: "text-teal-600 dark:text-teal-400",
+    bg: "bg-teal-500/10 dark:bg-teal-400/20",
+  },
+  {
+    icon: ClipboardList,
+    title: "Complete Patient View",
+    body: "Access patient vitals, medical history, chronic conditions, and allergies in one place during every consultation.",
+    color: "text-sky-600 dark:text-sky-400",
+    bg: "bg-sky-500/10 dark:bg-sky-400/20",
+  },
+  {
+    icon: Star,
+    title: "Build Your Profile",
+    body: "Patients rate their experience. Build a verified professional profile with real consultation history.",
+    color: "text-amber-600 dark:text-amber-400",
+    bg: "bg-amber-500/10 dark:bg-amber-400/20",
+  },
 ];
 
 const PendingApprovalPage = () => {
@@ -27,7 +46,7 @@ const PendingApprovalPage = () => {
   useEffect(() => {
     playTransition();
     if (clockRef.current && !shouldReduceMotion) {
-      gsap.to(clockRef.current, { rotation: 360, duration: 4, ease: "none", repeat: -1 });
+      gsap.to(clockRef.current, { rotation: 360, duration: 6, ease: "none", repeat: -1 });
     }
   }, [playTransition, shouldReduceMotion]);
 
@@ -37,9 +56,9 @@ const PendingApprovalPage = () => {
     const interval = setInterval(async () => {
       try {
         const { data: response } = await authService.getMe();
-        const user = response.data;
-        if (user && user.status === "active") {
-          useAuthStore.getState().setUser(user);
+        const freshUser = response.data;
+        if (freshUser && freshUser.status === "active") {
+          useAuthStore.getState().setUser(freshUser);
           playSuccess();
           navigate("/dashboard", { replace: true });
         }
@@ -59,17 +78,17 @@ const PendingApprovalPage = () => {
     setStatusMsg(null);
     try {
       const { data: response } = await authService.getMe();
-      const user = response.data;
-      if (!user) {
+      const freshUser = response.data;
+      if (!freshUser) {
         setStatusMsg("Unable to check status. Please try again.");
         return;
       }
-      if (user.status === "active") {
-        useAuthStore.getState().setUser(user);
+      if (freshUser.status === "active") {
+        useAuthStore.getState().setUser(freshUser);
         playSuccess();
         navigate("/dashboard", { replace: true });
       } else {
-        setStatusMsg("Your application is still under review.");
+        setStatusMsg("Your application is still under review by our medical directors.");
       }
     } catch {
       setStatusMsg("Unable to check status. Please try again.");
@@ -85,69 +104,94 @@ const PendingApprovalPage = () => {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-fcn-dark to-[#0A1628] px-6 py-12">
-      {/* Logo */}
-      <div className="mb-8">
-        <img
-          src="/logo/fcn-logo-full.png"
-          alt="Fast Care Now Logo"
-          className="h-10 w-auto"
-        />
-      </div>
-
-      {/* Top Section */}
-      <div className="mb-12 text-center">
-        <div className="relative mx-auto mb-6 flex h-24 w-24 items-center justify-center">
-          <div ref={clockRef} className="absolute inset-0 rounded-full border-2 border-fcn-accent/30" />
-          <Clock className="h-10 w-10 text-fcn-accent" />
+    <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50 dark:bg-slate-950 px-4 sm:px-6 py-12 transition-colors">
+      <div className="w-full max-w-xl">
+        {/* Top bar with Logo & Language */}
+        <div className="mb-8 flex items-center justify-between">
+          <Link to="/">
+            <img
+              src="/logo/fcn-logo-full.png"
+              alt="Fast Care Now Logo"
+              className="h-8 sm:h-9 w-auto object-contain"
+            />
+          </Link>
+          <LanguageSwitcher variant="pill" />
         </div>
 
-        <h1 className="mb-2 text-3xl font-bold text-white">Your Application is Under Review</h1>
-        <p className="mb-4 text-sm text-white/50">
-          {user ? `Welcome, ${user.full_name}. ` : ""}
-          Our team will verify your credentials within 24–48 hours
-        </p>
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-fcn-warning/20 px-4 py-1.5 text-sm font-medium text-fcn-warning">
-          <RefreshCw className="h-3.5 w-3.5 animate-spin" /> Pending Review
-        </span>
-      </div>
+        {/* Card Header */}
+        <div className="rounded-3xl border border-slate-200/80 bg-white/95 dark:border-white/10 dark:bg-slate-900/90 p-6 sm:p-8 shadow-[0_12px_36px_rgba(0,0,0,0.06)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.3)] backdrop-blur-md text-center">
+          <div className="relative mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-3xl bg-amber-500/10 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 shadow-[0_0_24px_rgba(245,158,11,0.2)]">
+            <div ref={clockRef}>
+              <Clock className="h-10 w-10" />
+            </div>
+          </div>
 
-      {/* Info Cards */}
-      <div className="mb-12 grid max-w-2xl gap-4 sm:grid-cols-3">
-        {infoCards.map((card, i) => (
-          <motion.div
-            key={card.title}
-            initial={!shouldReduceMotion ? { opacity: 0, y: 30 } : undefined}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: shouldReduceMotion ? 0 : 0.3 + i * 0.15, duration: shouldReduceMotion ? 0 : 0.4 }}
-            className="rounded-lg border border-white/10 bg-white/5 p-5"
-          >
-            <card.icon className="mb-3 h-8 w-8 text-fcn-accent" />
-            <h3 className="mb-1.5 text-sm font-semibold text-white">{card.title}</h3>
-            <p className="text-xs leading-relaxed text-white/50">{card.body}</p>
-          </motion.div>
-        ))}
-      </div>
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-500/20 mb-3">
+            <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+            <span>Application Under Review</span>
+          </div>
 
-      {/* Bottom Section */}
-      <div className="text-center">
-        {statusMsg && (
-          <p className="mb-3 rounded-md bg-white/5 px-4 py-2 text-sm text-white/70">{statusMsg}</p>
-        )}
+          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight mb-2">
+            Verification in Progress
+          </h1>
 
-        <div className="flex items-center justify-center gap-4">
-          <Button onClick={handleCheckStatus} loading={checking}>
-            {checking ? "Checking..." : "Check Status"}
-          </Button>
-          <Button variant="ghost" onClick={handleLogout}>
-            <LogOut className="mr-1.5 h-4 w-4" /> Logout
-          </Button>
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium max-w-md mx-auto leading-relaxed mb-6">
+            Welcome, <strong className="text-slate-800 dark:text-slate-200">{user?.full_name ?? "Provider"}</strong>.
+            Your medical credentials and hospital license are being verified by our clinical operations team. This typically takes 24 to 48 hours.
+          </p>
+
+          {statusMsg && (
+            <div className="mb-5 rounded-2xl px-4 py-3 text-xs font-bold bg-teal-500/10 text-teal-700 dark:text-teal-300 border border-teal-500/20 max-w-md mx-auto animate-in fade-in">
+              {statusMsg}
+            </div>
+          )}
+
+          {/* Action Buttons */}
+          <div className="flex flex-col sm:flex-row gap-3 justify-center max-w-sm mx-auto mb-8">
+            <Button
+              variant="action"
+              onClick={handleCheckStatus}
+              loading={checking}
+              className="flex-1 min-h-[48px]"
+            >
+              <RefreshCw className={checking ? "w-4 h-4 animate-spin mr-1" : "w-4 h-4 mr-1"} />
+              <span>Check Status Now</span>
+            </Button>
+            <Button
+              variant="secondary"
+              onClick={handleLogout}
+              className="min-h-[48px]"
+            >
+              <LogOut className="w-4 h-4 mr-1" />
+              <span>Sign Out</span>
+            </Button>
+          </div>
+
+          {/* Value Props / What to expect */}
+          <div className="pt-6 border-t border-slate-100 dark:border-white/10 text-left">
+            <p className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-3 text-center sm:text-left">
+              What you can do once approved
+            </p>
+            <div className="grid sm:grid-cols-3 gap-3">
+              {infoCards.map((card) => (
+                <div
+                  key={card.title}
+                  className="rounded-2xl border border-slate-200/60 dark:border-white/5 bg-slate-50/60 dark:bg-white/[0.02] p-3.5"
+                >
+                  <div className={`w-8 h-8 rounded-xl ${card.bg} ${card.color} flex items-center justify-center mb-2`}>
+                    <card.icon className="h-4 w-4" />
+                  </div>
+                  <h3 className="text-xs font-bold text-slate-900 dark:text-white mb-1">
+                    {card.title}
+                  </h3>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-snug">
+                    {card.body}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
-
-        <p className="mt-6 text-sm text-white/40">
-          Have questions?{" "}
-          <a href="mailto:support@fcncare.com" className="text-fcn-accent hover:underline">support@fcncare.com</a>
-        </p>
       </div>
     </div>
   );

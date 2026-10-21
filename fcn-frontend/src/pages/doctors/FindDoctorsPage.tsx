@@ -10,32 +10,31 @@ import { DoctorFilters, EMPTY_FILTERS, type FilterState } from "@/components/doc
 import { Navbar } from "@/components/landing/Navbar";
 import { Footer } from "@/components/landing/Footer";
 import { PageTransition } from "@/components/animations/PageTransition";
-import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { useTranslation } from "@/i18n";
+import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
 import type { PublicDoctorDetail } from "@/types";
 
 const SkeletonCard = () => (
-  <Card className="animate-pulse overflow-hidden p-0">
-    <div className="h-36 md:h-44 bg-fcn-primary/10" />
-    <div className="p-4 space-y-3">
-      <div className="h-5 w-32 rounded bg-fcn-primary/10" />
-      <div className="h-3 w-24 rounded bg-fcn-primary/10" />
-      <div className="h-4 w-20 rounded bg-fcn-primary/10" />
-      <div className="flex justify-between pt-3 border-t border-fcn-primary/5">
-        <div className="h-8 w-16 rounded bg-fcn-primary/10" />
-        <div className="h-8 w-16 rounded bg-fcn-primary/10" />
-        <div className="h-8 w-16 rounded bg-fcn-primary/10" />
+  <div className="rounded-[22px] border border-slate-200/80 bg-white dark:border-white/10 dark:bg-slate-900/90 overflow-hidden animate-pulse">
+    <div className="h-44 bg-slate-200 dark:bg-slate-800" />
+    <div className="p-4 sm:p-5 space-y-3">
+      <div className="h-5 w-40 rounded-xl bg-slate-200 dark:bg-slate-800" />
+      <div className="h-3 w-28 rounded-lg bg-slate-200 dark:bg-slate-800" />
+      <div className="h-4 w-32 rounded-lg bg-slate-200 dark:bg-slate-800" />
+      <div className="grid grid-cols-2 gap-2 pt-3 border-t border-slate-100 dark:border-white/5">
+        <div className="h-10 rounded-xl bg-slate-200 dark:bg-slate-800" />
+        <div className="h-10 rounded-xl bg-slate-200 dark:bg-slate-800" />
       </div>
-      <div className="h-9 w-full rounded bg-fcn-primary/10" />
+      <div className="h-11 w-full rounded-2xl bg-slate-200 dark:bg-slate-800" />
     </div>
-  </Card>
+  </div>
 );
 
 const FindDoctorsPage = () => {
   const shouldReduceMotion = useReducedMotion();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { t, locale, setLocale } = useTranslation();
+  const { t } = useTranslation();
 
   const [filters, setFilters] = useState<FilterState>(() => ({
     search: searchParams.get("search") ?? "",
@@ -46,7 +45,7 @@ const FindDoctorsPage = () => {
     min_fee: searchParams.get("min_fee") ?? "",
     max_fee: searchParams.get("max_fee") ?? "",
     available_today: searchParams.get("available_today") === "true",
-    verified_only: searchParams.get("verified_only") === "true"
+    verified_only: searchParams.get("verified_only") === "true",
   }));
 
   const [page, setPage] = useState(() => {
@@ -56,45 +55,51 @@ const FindDoctorsPage = () => {
 
   const [selectedDoctorId, setSelectedDoctorId] = useState<string | null>(null);
 
-  const updateFilters = useCallback((newFilters: FilterState) => {
-    setFilters(newFilters);
-    setPage(1);
-    const params = new URLSearchParams();
-    if (newFilters.search) params.set("search", newFilters.search);
-    if (newFilters.specialty) params.set("specialty", newFilters.specialty);
-    if (newFilters.hospital_id) params.set("hospital_id", newFilters.hospital_id);
-    if (newFilters.city) params.set("city", newFilters.city);
-    if (newFilters.language) params.set("language", newFilters.language);
-    if (newFilters.min_fee) params.set("min_fee", newFilters.min_fee);
-    if (newFilters.max_fee) params.set("max_fee", newFilters.max_fee);
-    if (newFilters.available_today) params.set("available_today", "true");
-    if (newFilters.verified_only) params.set("verified_only", "true");
-    setSearchParams(params, { replace: true });
-  }, [setSearchParams]);
+  const updateFilters = useCallback(
+    (newFilters: FilterState) => {
+      setFilters(newFilters);
+      setPage(1);
+      const params = new URLSearchParams();
+      if (newFilters.search) params.set("search", newFilters.search);
+      if (newFilters.specialty) params.set("specialty", newFilters.specialty);
+      if (newFilters.hospital_id) params.set("hospital_id", newFilters.hospital_id);
+      if (newFilters.city) params.set("city", newFilters.city);
+      if (newFilters.language) params.set("language", newFilters.language);
+      if (newFilters.min_fee) params.set("min_fee", newFilters.min_fee);
+      if (newFilters.max_fee) params.set("max_fee", newFilters.max_fee);
+      if (newFilters.available_today) params.set("available_today", "true");
+      if (newFilters.verified_only) params.set("verified_only", "true");
+      setSearchParams(params, { replace: true });
+    },
+    [setSearchParams]
+  );
 
-  const queryParams = useMemo(() => ({
-    search: filters.search || undefined,
-    specialty: filters.specialty || undefined,
-    hospital_id: filters.hospital_id || undefined,
-    city: filters.city || undefined,
-    language: filters.language || undefined,
-    min_fee: filters.min_fee ? Number(filters.min_fee) : undefined,
-    max_fee: filters.max_fee ? Number(filters.max_fee) : undefined,
-    available_today: filters.available_today || undefined,
-    verified_only: filters.verified_only || undefined,
-    page,
-    limit: 12
-  }), [filters, page]);
+  const queryParams = useMemo(
+    () => ({
+      search: filters.search || undefined,
+      specialty: filters.specialty || undefined,
+      hospital_id: filters.hospital_id || undefined,
+      city: filters.city || undefined,
+      language: filters.language || undefined,
+      min_fee: filters.min_fee ? Number(filters.min_fee) : undefined,
+      max_fee: filters.max_fee ? Number(filters.max_fee) : undefined,
+      available_today: filters.available_today || undefined,
+      verified_only: filters.verified_only || undefined,
+      page,
+      limit: 12,
+    }),
+    [filters, page]
+  );
 
   const { data: doctorsResponse, isLoading } = useQuery({
     queryKey: ["doctors", queryParams],
-    queryFn: () => doctorsService.getAllDoctors(queryParams)
+    queryFn: () => doctorsService.getAllDoctors(queryParams),
   });
 
   const { data: doctorDetailData } = useQuery({
     queryKey: ["doctor", selectedDoctorId],
     queryFn: () => doctorsService.getDoctorById(selectedDoctorId!),
-    enabled: !!selectedDoctorId
+    enabled: !!selectedDoctorId,
   });
 
   const doctors = useMemo(() => doctorsResponse?.data ?? [], [doctorsResponse]);
@@ -111,43 +116,43 @@ const FindDoctorsPage = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-fcn-light text-fcn-text-light dark:bg-fcn-dark dark:text-fcn-text-dark">
+    <div className="min-h-screen bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 flex flex-col transition-colors">
       <Navbar />
-      <div className="mx-auto w-full max-w-7xl px-4 pt-20 sm:px-6 lg:px-8">
+
+      <main className="flex-1 mx-auto w-full max-w-7xl px-4 pt-20 sm:pt-24 pb-16 sm:px-6 lg:px-8">
         <PageTransition>
-          <div className="space-y-4 md:space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-              <div className="flex items-center gap-3">
-                <h1 className="text-xl md:text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
+          <div className="space-y-5">
+            {/* Page Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <div>
+                <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
                   {t("doctors.pageTitle")}
                 </h1>
-                <select
-                  value={locale}
-                  onChange={(e) => setLocale(e.target.value as "en" | "am")}
-                  className="h-8 rounded-lg border border-fcn-primary/15 bg-white px-2 text-xs font-medium text-fcn-text-light outline-none dark:bg-fcn-dark dark:text-fcn-text-dark"
-                  aria-label="Language"
-                >
-                  <option value="en">English</option>
-                  <option value="am">አማርኛ</option>
-                </select>
+                <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium mt-1">
+                  {t("doctors.pageSubtitle")}
+                </p>
+              </div>
+
+              <div className="self-start sm:self-auto">
+                <LanguageSwitcher variant="pill" />
               </div>
             </div>
-            <p className="text-xs md:text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">
-              {t("doctors.pageSubtitle")}
-            </p>
 
-            <div className="sticky top-16 z-30 -mx-3 px-3 py-3 bg-white/80 dark:bg-fcn-dark/80 backdrop-blur-md border-b border-fcn-primary/5 sm:-mx-4 sm:px-4">
+            {/* Filter Section Sticky on scroll */}
+            <div className="sticky top-16 z-20 -mx-4 px-4 py-3 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-y border-slate-200/80 dark:border-white/10 sm:rounded-2xl sm:border sm:mx-0 sm:shadow-sm">
               <DoctorFilters filters={filters} onChange={updateFilters} />
             </div>
 
+            {/* Results count indicator */}
             {meta && (
-              <p className="text-xs md:text-sm text-fcn-text-light/50 dark:text-fcn-text-dark/50">
+              <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-semibold">
                 {doctors.length === 1
                   ? t("doctors.showingOne")
                   : t("doctors.showingMany", { count: doctors.length, total: meta.total })}
               </p>
             )}
 
+            {/* Doctor Cards Grid */}
             <AnimatePresence mode="wait">
               {isLoading ? (
                 <motion.div
@@ -155,7 +160,7 @@ const FindDoctorsPage = () => {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5"
+                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5"
                 >
                   {Array.from({ length: 6 }).map((_, i) => (
                     <SkeletonCard key={i} />
@@ -167,20 +172,20 @@ const FindDoctorsPage = () => {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
-                  className="flex flex-col items-center justify-center py-16 md:py-20"
+                  className="flex flex-col items-center justify-center py-16 sm:py-24 text-center rounded-3xl border border-slate-200/60 dark:border-white/5 bg-white/50 dark:bg-white/[0.02]"
                 >
-                  <div className="mb-4 flex h-16 w-16 md:h-20 md:w-20 items-center justify-center rounded-full bg-fcn-primary/5">
-                    <Frown className="h-8 w-8 md:h-10 md:w-10 text-fcn-primary/30" />
+                  <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-teal-500/10 text-teal-600 dark:text-teal-400">
+                    <Frown className="h-8 w-8" />
                   </div>
-                  <h3 className="text-base md:text-lg font-semibold text-fcn-text-light dark:text-fcn-text-dark">
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-white">
                     {t("doctors.noResultsTitle")}
                   </h3>
-                  <p className="mt-1 text-xs md:text-sm text-fcn-text-light/50 dark:text-fcn-text-dark/50 text-center max-w-sm px-4">
+                  <p className="mt-1 text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-sm px-4">
                     {t("doctors.noResultsHint")}
                   </p>
                   <Button
-                    variant="secondary"
-                    className="mt-4"
+                    variant="action"
+                    className="mt-5 min-h-[44px]"
                     onClick={() => {
                       setFilters(EMPTY_FILTERS);
                       setSearchParams({}, { replace: true });
@@ -196,24 +201,23 @@ const FindDoctorsPage = () => {
                   animate={{ opacity: 1 }}
                   exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -10 }}
                   transition={{ duration: shouldReduceMotion ? 0 : 0.25 }}
-                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5"
+                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5"
                 >
-                  <AnimatePresence>
-                    {doctors.map((doc, i) => (
-                      <DoctorCard
-                        key={doc.id}
-                        doctor={doc}
-                        index={i}
-                        onClick={() => setSelectedDoctorId(doc.id)}
-                      />
-                    ))}
-                  </AnimatePresence>
+                  {doctors.map((doc, i) => (
+                    <DoctorCard
+                      key={doc.id}
+                      doctor={doc}
+                      index={i}
+                      onClick={() => setSelectedDoctorId(doc.id)}
+                    />
+                  ))}
                 </motion.div>
               )}
             </AnimatePresence>
 
+            {/* Pagination */}
             {totalPages > 1 && (
-              <div className="flex items-center justify-center gap-1 md:gap-2 pt-4">
+              <div className="flex items-center justify-center gap-1.5 sm:gap-2 pt-6">
                 <Button
                   variant="secondary"
                   size="sm"
@@ -230,10 +234,10 @@ const FindDoctorsPage = () => {
                       key={pageNum}
                       type="button"
                       onClick={() => setPage(pageNum)}
-                      className={`flex h-8 w-8 items-center justify-center rounded-md text-sm font-medium transition ${
+                      className={`flex h-9 w-9 items-center justify-center rounded-xl text-xs font-bold transition-all ${
                         page === pageNum
-                          ? "bg-fcn-accent text-white"
-                          : "text-fcn-text-light/60 hover:bg-fcn-primary/5 dark:text-fcn-text-dark/60"
+                          ? "bg-teal-500 text-white shadow-sm"
+                          : "text-slate-600 hover:bg-slate-200 dark:text-slate-300 dark:hover:bg-white/10"
                       }`}
                     >
                       {pageNum}
@@ -253,7 +257,7 @@ const FindDoctorsPage = () => {
             )}
           </div>
         </PageTransition>
-      </div>
+      </main>
 
       <DoctorDetailModal
         doctor={selectedDoctor}
