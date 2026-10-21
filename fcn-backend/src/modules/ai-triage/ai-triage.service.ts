@@ -361,14 +361,12 @@ class AITriageService {
     const systemPrompt = buildSystemPrompt(assessment.language, patientContext);
     const roundPrompt = buildRoundPrompt(newRound, assessment.language);
 
-    const history = conversation.map((msg): DeepSeekMessage => ({
+    const history: AIMessage[] = conversation.map((msg) => ({
       role: msg.role === "assistant" ? "assistant" : "user",
       content: msg.content
     }));
 
-    const model = await getDeepSeekModel();
-    const aiResponse = await callDeepSeek(
-      model,
+    const aiResponse = await callAI(
       systemPrompt + "\n\n" + roundPrompt,
       [...history, { role: "user", content: sanitizedMessage }]
     );
@@ -458,16 +456,13 @@ class AITriageService {
     const systemPrompt = buildSystemPrompt(assessment.language, patientContext);
     const roundPrompt = buildRoundPrompt(3, assessment.language);
 
-    const history = conversation.slice(0, -1).map((msg): DeepSeekMessage => ({
+    const history: AIMessage[] = conversation.slice(0, -1).map((msg) => ({
       role: msg.role === "assistant" ? "assistant" : "user",
       content: msg.content
     }));
 
-    const model = await getDeepSeekModel();
-
     const lastUserMsg = [...conversation].reverse().find((m) => m.role === "user");
-    const aiResponse = await callDeepSeek(
-      model,
+    const aiResponse = await callAI(
       systemPrompt + "\n\n" + roundPrompt,
       [...history, { role: "user", content: lastUserMsg?.content || "Please provide your final assessment now." }]
     );
