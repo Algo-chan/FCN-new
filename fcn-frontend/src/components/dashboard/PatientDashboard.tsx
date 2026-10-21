@@ -255,13 +255,13 @@ export const PatientDashboard = () => {
           </Link>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-2.5 sm:gap-3 lg:grid-cols-4">
           <HealthMetricCard
-            label="Systolic Pressure"
+            label="Systolic BP"
             value={vitals?.bp_systolic ?? 0}
             unit="mmHg"
             status={getVitalStatus(vitals?.bp_systolic, "bp_systolic")}
-            icon={<Heart className="h-5 w-5" />}
+            icon={<Heart className="h-4 w-4 sm:h-5 sm:w-5" />}
             trend={vitals?.bp_systolic ? (vitals.bp_systolic > 120 ? "up" : "down") : "stable"}
           />
           <HealthMetricCard
@@ -269,7 +269,7 @@ export const PatientDashboard = () => {
             value={vitals?.heart_rate_bpm ?? 0}
             unit="bpm"
             status={getVitalStatus(vitals?.heart_rate_bpm, "heart_rate")}
-            icon={<Activity className="h-5 w-5" />}
+            icon={<Activity className="h-4 w-4 sm:h-5 sm:w-5" />}
             trend={vitals?.heart_rate_bpm ? (vitals.heart_rate_bpm > 80 ? "up" : "down") : "stable"}
           />
           <HealthMetricCard
@@ -280,7 +280,7 @@ export const PatientDashboard = () => {
               vitals?.blood_glucose_mg_dl ? Number(vitals.blood_glucose_mg_dl) : null,
               "glucose"
             )}
-            icon={<TrendingUp className="h-5 w-5" />}
+            icon={<TrendingUp className="h-4 w-4 sm:h-5 sm:w-5" />}
             trend={
               vitals?.blood_glucose_mg_dl
                 ? Number(vitals.blood_glucose_mg_dl) > 100
@@ -290,14 +290,14 @@ export const PatientDashboard = () => {
             }
           />
           <HealthMetricCard
-            label="Blood Oxygen (SpO2)"
+            label="Blood Oxygen"
             value={vitals?.spo2_percent ? Number(vitals.spo2_percent) : 0}
             unit="%"
             status={getVitalStatus(
               vitals?.spo2_percent ? Number(vitals.spo2_percent) : null,
               "spo2"
             )}
-            icon={<Activity className="h-5 w-5" />}
+            icon={<Activity className="h-4 w-4 sm:h-5 sm:w-5" />}
             trend={
               vitals?.spo2_percent
                 ? Number(vitals.spo2_percent) < 98
