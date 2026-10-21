@@ -8,6 +8,7 @@ import { useSound } from "@/hooks/useSound";
 import { Button } from "@/components/ui/Button";
 import { InstallAppButton } from "@/components/pwa/InstallAppButton";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
+import { clsx } from "clsx";
 import { MOTION } from "@/styles/motion";
 
 const navLinks = [
@@ -78,7 +79,15 @@ export const Navbar = () => {
 
         {/* Right side */}
         <div className="flex items-center gap-2 sm:gap-3">
-          <LanguageSwitcher variant="pill" />
+          <LanguageSwitcher
+            variant="compact"
+            btnClassName={clsx(
+              "border transition-colors duration-200",
+              scrolled
+                ? "bg-slate-100 hover:bg-slate-200/80 text-slate-700 dark:bg-white/10 dark:hover:bg-white/15 dark:text-slate-200 border-slate-200/80 dark:border-white/10"
+                : "bg-white/10 hover:bg-white/20 text-white border-white/20 backdrop-blur-md"
+            )}
+          />
 
           <button
             onClick={toggleTheme}

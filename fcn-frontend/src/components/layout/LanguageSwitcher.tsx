@@ -12,10 +12,17 @@ const LANGUAGES: { code: Locale; name: string; nativeName: string; flag: string 
 
 interface LanguageSwitcherProps {
   className?: string;
-  variant?: "pill" | "icon" | "full";
+  btnClassName?: string;
+  variant?: "pill" | "icon" | "full" | "compact";
+  short?: boolean;
 }
 
-export const LanguageSwitcher = ({ className, variant = "pill" }: LanguageSwitcherProps) => {
+export const LanguageSwitcher = ({
+  className,
+  btnClassName,
+  variant = "pill",
+  short = false,
+}: LanguageSwitcherProps) => {
   const { locale, setLocale } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -24,6 +31,7 @@ export const LanguageSwitcher = ({ className, variant = "pill" }: LanguageSwitch
   });
 
   const current = LANGUAGES.find((l) => l.code === locale) || LANGUAGES[0];
+  const isCompact = variant === "compact" || short;
 
   return (
     <div ref={containerRef} className={clsx("relative inline-block text-left", className)}>
@@ -34,21 +42,29 @@ export const LanguageSwitcher = ({ className, variant = "pill" }: LanguageSwitch
         aria-haspopup="listbox"
         aria-label={`Select language. Current language: ${current.name}`}
         className={clsx(
-          "inline-flex items-center gap-1.5 rounded-xl text-xs font-semibold transition-all duration-150 select-none",
+          "inline-flex items-center gap-1.5 rounded-xl font-semibold transition-all duration-150 select-none",
           "focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-500",
-          variant === "pill" &&
-            "px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200/80 text-slate-700 dark:bg-white/10 dark:hover:bg-white/15 dark:text-slate-200 border border-slate-200/60 dark:border-white/10",
+          isCompact && "px-2 py-1 text-xs border",
+          !isCompact && variant === "pill" && "px-2.5 py-1.5 text-xs border",
           variant === "icon" &&
             "p-2 rounded-xl text-slate-500 hover:text-teal-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-teal-400 dark:hover:bg-white/10",
           variant === "full" &&
-            "w-full justify-between px-3 py-2 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-white/10 rounded-xl text-slate-800 dark:text-slate-200"
+            "w-full justify-between px-3 py-2 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-white/10 rounded-xl text-slate-800 dark:text-slate-200 text-xs",
+          btnClassName
+            ? btnClassName
+            : (variant === "pill" || isCompact) &&
+                "bg-slate-100 hover:bg-slate-200/80 text-slate-700 dark:bg-white/10 dark:hover:bg-white/15 dark:text-slate-200 border-slate-200/60 dark:border-white/10"
         )}
       >
-        <span className="text-sm leading-none">{current.flag}</span>
-        <span className="truncate">{current.nativeName}</span>
+        <span className="text-xs leading-none">{current.flag}</span>
+        {isCompact ? (
+          <span className="text-[11px] font-bold uppercase tracking-wider">{current.code}</span>
+        ) : (
+          <span className="truncate">{current.nativeName}</span>
+        )}
         <ChevronDown
           className={clsx(
-            "w-3.5 h-3.5 text-slate-400 transition-transform duration-200",
+            "w-3 h-3 opacity-70 transition-transform duration-200",
             isOpen && "rotate-180"
           )}
         />
