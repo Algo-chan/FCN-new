@@ -69,7 +69,7 @@ export default defineConfig({
             if (id.includes("recharts") || id.includes("d3-")) return "vendor-charts";
             if (id.includes("react-hook-form") || id.includes("@hookform") || id.includes("zod")) return "vendor-forms";
             if (id.includes("@tanstack")) return "vendor-query";
-            if (id.includes("socket.io")) return "vendor-socket";
+            if (id.includes("socket.io") || id.includes("engine.io")) return "vendor-socket";
             if (id.includes("gsap")) return "vendor-gsap";
             if (id.includes("firebase")) return "vendor-firebase";
             if (id.includes("leaflet") || id.includes("react-leaflet")) return "vendor-maps";

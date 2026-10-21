@@ -116,17 +116,18 @@ export const AppRouter = () => (
       <Route path="/hospitals" element={<HospitalCheckerPage />} />
       <Route path="/notifications" element={<NotificationsPage />} />
       <Route path="/profile" element={<ProfilePage />} />
+      <Route path="/appointments" element={<MyAppointmentsPage />} />
+      <Route path="/consultation" element={<ConsultationPage />} />
+      <Route path="/consultation/:appointmentId" element={<ConsultationPage />} />
+      <Route path="/health-records" element={<HealthRecordsPage />} />
+      <Route path="/health-records/patient/:patientId" element={<HealthRecordsPage />} />
+      <Route path="/health-records/patient/:patientId/view" element={<PatientRecordsViewPage />} />
     </Route>
 
     {/* ── Patient-only routes ─────────────────────────────────── */}
     <Route element={<PatientRoute />}>
       <Route path="/doctors/:id/details" element={<PageScaffold title="Doctor Details" section="Doctor" />} />
       <Route path="/appointments/book" element={<BookAppointmentPage />} />
-      <Route path="/appointments" element={<MyAppointmentsPage />} />
-      <Route path="/consultation/:appointmentId" element={<ConsultationPage />} />
-      <Route path="/health-records" element={<HealthRecordsPage />} />
-      <Route path="/health-records/patient/:patientId" element={<HealthRecordsPage />} />
-      <Route path="/health-records/patient/:patientId/view" element={<PatientRecordsViewPage />} />
       <Route path="/ai-check" element={<AISymptomCheckPage />} />
       <Route path="/pharmacy" element={<PharmacyPage />} />
     </Route>
@@ -134,8 +135,6 @@ export const AppRouter = () => (
     {/* ── Doctor-only routes ──────────────────────────────────── */}
     <Route element={<DoctorRoute />}>
       <Route path="/doctor/schedule" element={<DoctorSchedulePage />} />
-      <Route path="/appointments" element={<MyAppointmentsPage />} />
-      <Route path="/consultation" element={<ConsultationPage />} />
       <Route path="/doctor/patients" element={<DoctorPatientsPage />} />
       <Route path="/doctor/patients/:patientId" element={<PatientRecordsViewPage />} />
       <Route path="/doctor/prescriptions" element={<DoctorPrescriptionsListPage />} />
@@ -147,9 +146,7 @@ export const AppRouter = () => (
       <Route path="/nurse/patients" element={<NursePatientsPage />} />
       <Route path="/nurse/history" element={<NurseHistoryPage />} />
       <Route path="/nurse/escalation" element={<NurseEscalationPage />} />
-      <Route path="/health-records" element={<HealthRecordsPage />} />
       <Route path="/health-records/nurse" element={<NurseHealthRecordsPage />} />
-      <Route path="/health-records/patient/:patientId/view" element={<PatientRecordsViewPage />} />
     </Route>
 
     {/* ── Hospital Admin routes ───────────────────────────────── */}

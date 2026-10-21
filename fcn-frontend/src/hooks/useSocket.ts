@@ -24,7 +24,8 @@ export const useSocket = (): UseSocketReturn => {
   useEffect(() => {
     if (!accessToken) return;
 
-    const socketUrl = import.meta.env.VITE_SOCKET_URL ?? import.meta.env.VITE_API_URL ?? "http://localhost:5000";
+    const rawSocketUrl = import.meta.env.VITE_SOCKET_URL ?? import.meta.env.VITE_API_URL ?? "http://localhost:5000";
+    const socketUrl = rawSocketUrl.replace(/\/api\/v1\/?$/, "");
 
     const socket = io(socketUrl, {
       auth: { token: accessToken },

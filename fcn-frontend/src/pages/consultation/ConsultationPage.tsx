@@ -1,5 +1,5 @@
 import { useEffect, useCallback, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { MessageCircle, User, Pill, FileText, LogOut, CheckCircle } from "lucide-react";
@@ -268,6 +268,32 @@ export default function ConsultationPage() {
     ? contextData?.appointment?.patient?.full_name
     : contextData?.appointment?.doctor?.full_name;
   const otherPartySpecialty = contextData?.appointment?.doctor?.specialty;
+
+  if (!appointmentId) {
+    return (
+      <div className="flex h-[calc(100vh-4rem)] items-center justify-center bg-gray-950 p-6 text-center">
+        <div className="max-w-md rounded-2xl border border-gray-800 bg-gray-900/60 p-8 shadow-xl">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-teal-500/10 text-teal-400">
+            <MessageCircle className="h-8 w-8" />
+          </div>
+          <h2 className="text-xl font-bold text-gray-100">
+            No Active Consultation Selected
+          </h2>
+          <p className="mt-2 text-sm text-gray-400">
+            Consultation sessions are tied to confirmed appointments. Select an appointment from your schedule to enter the consultation room.
+          </p>
+          <div className="mt-6">
+            <Link
+              to={user?.role === "doctor" ? "/doctor/schedule" : "/appointments"}
+              className="inline-flex items-center gap-2 rounded-xl bg-teal-500 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-teal-400 transition-colors"
+            >
+              {user?.role === "doctor" ? "View My Schedule" : "View My Appointments"}
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-[calc(100vh-4rem)] overflow-hidden bg-gray-950">

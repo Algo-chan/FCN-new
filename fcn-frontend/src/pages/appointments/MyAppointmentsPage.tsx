@@ -69,9 +69,11 @@ const MyAppointmentsPage = () => {
   const userRole = useAuthStore((s) => s.user?.role);
 
   const { data: appointmentsData, isLoading, error } = useQuery({
-    queryKey: ["my-appointments"],
+    queryKey: ["my-appointments", userRole],
     queryFn: async () => {
-      const res = await appointmentsService.getMyAppointments({ limit: 50 });
+      const res = userRole === "doctor"
+        ? await appointmentsService.getDoctorAppointments({ limit: 50 })
+        : await appointmentsService.getMyAppointments({ limit: 50 });
       return res.data ?? [];
     },
     staleTime: 15_000
