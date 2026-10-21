@@ -5,6 +5,7 @@ import { BrowserRouter, useNavigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { AppRouter } from "@/router";
 import { I18nProvider } from "@/i18n";
+import { SmoothScroll } from "@/components/layout/SmoothScroll";
 import { ScrollToTop } from "@/components/layout/ScrollToTop";
 import { OfflineDetector } from "@/components/layout/OfflineDetector";
 import { useAuthStore } from "@/store/auth.store";
@@ -91,6 +92,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <I18nProvider>
+          <SmoothScroll />
           <ScrollToTop />
           <SessionRestorer />
           <AppRouter />

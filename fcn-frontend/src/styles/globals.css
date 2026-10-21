@@ -3,32 +3,43 @@
 @tailwind utilities;
 
 :root {
-  --color-primary: #0A7EA4;
-  --color-secondary: #FFFFFF;
+  --color-primary: #0D9488;
+  --color-primary-hover: #0F766E;
+  --color-secondary: #0284C7;
   --color-accent: #2DD4BF;
-  --color-background: #F8FFFE;
+  --color-background: #F8FAF9;
   --color-surface: #FFFFFF;
-  --color-danger: #F87171;
-  --color-warning: #FBBF24;
-  --color-success: #10B981;
-  --color-text: #1E293B;
+  --color-surface-subtle: #F1F5F4;
+  --color-surface-border: rgba(15, 23, 42, 0.08);
+  --color-danger: #E11D48;
+  --color-warning: #D97706;
+  --color-success: #059669;
+  --color-info: #6366F1;
+  --color-text: #0F172A;
+  --color-text-muted: #64748B;
+  --color-card-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.06);
 }
 
 .dark {
-  --color-primary: #0A7EA4;
-  --color-secondary: #FFFFFF;
+  --color-primary: #14B8A6;
+  --color-primary-hover: #2DD4BF;
+  --color-secondary: #38BDF8;
   --color-accent: #2DD4BF;
-  --color-background: #0D1117;
-  --color-surface: #111827;
-  --color-danger: #F87171;
+  --color-background: #0B0F15;
+  --color-surface: #131B24;
+  --color-surface-subtle: #1A2430;
+  --color-surface-border: rgba(255, 255, 255, 0.08);
+  --color-danger: #FB7185;
   --color-warning: #FBBF24;
   --color-success: #10B981;
-  --color-text: #E2E8F0;
+  --color-info: #818CF8;
+  --color-text: #F8FAFC;
+  --color-text-muted: #94A3B8;
+  --color-card-shadow: 0 4px 24px -2px rgba(0, 0, 0, 0.45);
 }
 
 @layer base {
   html {
-    scroll-behavior: smooth;
     overflow-x: hidden;
     max-width: 100vw;
   }
@@ -39,33 +50,41 @@
     overflow-x: hidden;
     background: var(--color-background);
     color: var(--color-text);
-    font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+    font-family: "Plus Jakarta Sans", "Noto Sans Ethiopic", "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     -webkit-tap-highlight-color: transparent;
   }
 
+  /* Support Ge'ez/Ethiopic script with proper height & spacing */
+  :lang(am), [lang="am"], [lang="ti"] {
+    font-family: "Noto Sans Ethiopic", "Plus Jakarta Sans", system-ui, sans-serif;
+    line-height: 1.7;
+  }
+
   ::selection {
-    background: #2DD4BF;
-    color: #0D1117;
+    background: #14B8A6;
+    color: #0B0F15;
   }
 
   * {
     scrollbar-width: thin;
-    scrollbar-color: #0A7EA4 transparent;
+    scrollbar-color: #0D9488 transparent;
     box-sizing: border-box;
   }
 
-  @media (max-width: 640px) {
-    a, button, [role="button"] {
-      min-height: 44px;
+  /* Touch accessibility on mobile */
+  @media (max-width: 768px) {
+    a, button, [role="button"], input[type="button"], input[type="submit"] {
+      min-height: 48px;
     }
   }
 
   *::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
   }
 
   *::-webkit-scrollbar-track {
@@ -73,7 +92,7 @@
   }
 
   *::-webkit-scrollbar-thumb {
-    background: #0A7EA4;
+    background: #0D9488;
     border-radius: 999px;
   }
 
@@ -82,6 +101,77 @@
   }
 }
 
+/* ── Mobile Fitness-Inspired Healthcare Utilities ─────────────────── */
+@layer components {
+  /* Sticky action bar container on mobile */
+  .sticky-bottom-action-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 40;
+    padding: 12px 16px;
+    padding-bottom: max(16px, env(safe-area-inset-bottom, 16px));
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-top: 1px solid var(--color-surface-border);
+  }
+
+  .dark .sticky-bottom-action-bar {
+    background: rgba(19, 27, 36, 0.9);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  /* Fitness-inspired energetic action button */
+  .btn-fitness-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    min-height: 52px;
+    padding: 0 24px;
+    border-radius: 16px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #FFFFFF;
+    background: linear-gradient(135deg, #0D9488 0%, #0284C7 100%);
+    box-shadow: 0 8px 24px -4px rgba(13, 148, 136, 0.35);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    user-select: none;
+  }
+
+  .btn-fitness-action:active {
+    transform: scale(0.98);
+    box-shadow: 0 4px 12px -2px rgba(13, 148, 136, 0.25);
+  }
+
+  /* Large energetic card with rounded 24px corners */
+  .card-fitness {
+    border-radius: 24px;
+    padding: 20px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-surface-border);
+    box-shadow: var(--color-card-shadow);
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+  }
+
+  .card-fitness:active {
+    transform: scale(0.99);
+  }
+
+  /* Bottom sheet drag handle */
+  .bottom-sheet-handle {
+    width: 40px;
+    height: 5px;
+    border-radius: 9999px;
+    background: rgba(148, 163, 184, 0.4);
+    margin: 8px auto 16px;
+  }
+}
+
+/* Horizontal scroll category chip styling */
 .hide-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -90,12 +180,11 @@
   display: none;
 }
 
-@media (max-width: 1024px) {
-  .hide-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-  .hide-scrollbar::-webkit-scrollbar {
-    display: none;
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
