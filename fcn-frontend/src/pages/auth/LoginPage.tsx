@@ -22,6 +22,15 @@ const featurePills = [
 
 const avatarColors = ["#0D9488", "#0284C7", "#059669"];
 
+const DEMO_ACCOUNTS = [
+  { label: "Patient", email: "demo.patient@fcncare.com", pass: "Patient@123", icon: "🩺", desc: "Dagem Tesfaye (Patient)" },
+  { label: "Doctor", email: "demo.doctor1@fcncare.com", pass: "Doctor@123", icon: "👨‍⚕️", desc: "Dr. Abebe Bekele (General Medicine)" },
+  { label: "Super Admin", email: "admin@fcncare.com", pass: "Admin@123", icon: "🛡️", desc: "Full System Administrator" },
+  { label: "Nurse", email: "demo.nurse@fcncare.com", pass: "Nurse@123", icon: "💉", desc: "Bethel Mekonnen (Nurse)" },
+  { label: "Hospital", email: "demo.hospitaladmin@fcncare.com", pass: "Hospital@123", icon: "🏥", desc: "Dil Chora Hospital Admin" },
+  { label: "Pharmacy", email: "demo.pharmacy@fcncare.com", pass: "Pharmacy@123", icon: "💊", desc: "Central Pharmacy Admin" }
+];
+
 const LoginPage = () => {
   usePageMeta({
     title: "Login | Fast Care Now",
@@ -88,8 +97,14 @@ const LoginPage = () => {
   const redirectUser = (user: { role: string; status: string }) => {
     if (user.role === "admin" || user.role === "super_admin") {
       navigate("/admin", { replace: true });
+    } else if (user.role === "hospital_admin") {
+      navigate("/hospital-admin", { replace: true });
+    } else if (user.role === "pharmacy_admin") {
+      navigate("/pharmacy-admin", { replace: true });
     } else if ((user.role === "doctor" || user.role === "nurse" || user.role === "rural_health_officer") && user.status === "pending") {
       navigate("/pending", { replace: true });
+    } else if (user.role === "doctor" || user.role === "nurse" || user.role === "rural_health_officer") {
+      navigate(from ?? "/dashboard", { replace: true });
     } else {
       authService.getOnboardingStatus().then(({ data }) => {
         if (data.data?.completed) {
@@ -378,7 +393,41 @@ const LoginPage = () => {
                     </Button>
                   </form>
 
-                  <p className="mt-6 text-center text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium">
+                  {/* Instant Demo Accounts Selector */}
+                  <div className="mt-6 border-t border-slate-200/80 dark:border-white/10 pt-4">
+                    <div className="flex items-center justify-between mb-2.5">
+                      <span className="text-[11px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                        Instant Demo Login
+                      </span>
+                      <span className="text-[10px] font-bold text-teal-600 dark:text-teal-400 bg-teal-500/10 px-2 py-0.5 rounded-full">
+                        Tap role to fill
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-3 gap-1.5">
+                      {DEMO_ACCOUNTS.map((acc) => (
+                        <button
+                          key={acc.label}
+                          type="button"
+                          onClick={() => {
+                            setEmail(acc.email);
+                            setPassword(acc.pass);
+                            setError(null);
+                          }}
+                          className={`flex flex-col items-center justify-center p-2 rounded-xl text-center border transition-all text-xs font-semibold ${
+                            email === acc.email
+                              ? "border-teal-500 bg-teal-500/15 text-teal-700 dark:text-teal-300 ring-2 ring-teal-500/30 shadow-sm"
+                              : "border-slate-200/80 bg-slate-50/70 hover:bg-slate-100 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300"
+                          }`}
+                          title={`${acc.desc} (${acc.email})`}
+                        >
+                          <span className="text-base leading-none mb-1">{acc.icon}</span>
+                          <span className="leading-tight text-[11px] font-bold truncate max-w-full">{acc.label}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <p className="mt-5 text-center text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium">
                     Don't have an account?{" "}
                     <Link
                       to="/register"
@@ -389,18 +438,23 @@ const LoginPage = () => {
                   </p>
                 </motion.div>
               ) : (
-                <OTPVerification
-                  key="login-otp"
-                  email={otpEmail}
-                  onVerify={handleVerifyOTP}
-                  onResend={handleResendOTP}
-                  onBack={otpLocked ? undefined : handleBackToLogin}
-                  isLoading={isOTPLoading}
-                  error={otpError}
-                  locked={otpLocked}
-                  title="Two-factor authentication"
-                  subtitle="Enter the 6-digit code sent to"
-                />
+                <div>
+                  <OTPVerification
+                    key="login-otp"
+                    email={otpEmail}
+                    onVerify={handleVerifyOTP}
+                    onResend={handleResendOTP}
+                    onBack={otpLocked ? undefined : handleBackToLogin}
+                    isLoading={isOTPLoading}
+                    error={otpError}
+                    locked={otpLocked}
+                    title="Two-factor authentication"
+                    subtitle="Enter the 6-digit code sent to"
+                  />
+                  <div className="mt-4 p-2.5 rounded-xl bg-teal-500/10 border border-teal-500/20 text-center text-xs text-teal-700 dark:text-teal-300 font-medium">
+                    Testing? Enter universal master code: <strong className="font-mono font-bold tracking-widest text-teal-600 dark:text-teal-400">123456</strong>
+                  </div>
+                </div>
               )}
             </AnimatePresence>
           </motion.div>

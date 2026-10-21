@@ -29,10 +29,18 @@ export const redisRateLimit = (options: RateLimitOptions = {}) => {
       const result = await redis.eval(INCR_EXPIRE_SCRIPT, 1, key, windowSeconds.toString());
       const count = Number(result);
 
-      res.setHeader("X-RateLimit-Limit", maxRequests);
-      res.setHeader("X-RateLimit-Remaining", Math.max(maxRequests - count, 0));
+      const isLocalhost =
+        identifier === "::1" ||
+        identifier === "127.0.0.1" ||
+        identifier === "localhost" ||
+        identifier.startsWith("127.") ||
+        identifier === "::ffff:127.0.0.1";
+      const effectiveMax = isLocalhost ? Math.max(maxRequests, 2000) : maxRequests;
 
-      if (count > maxRequests) {
+      res.setHeader("X-RateLimit-Limit", effectiveMax);
+      res.setHeader("X-RateLimit-Remaining", Math.max(effectiveMax - count, 0));
+
+      if (count > effectiveMax) {
         errorResponse(res, "Too many requests. Please try again later.", 429, "RATE_LIMITED");
         return;
       }
