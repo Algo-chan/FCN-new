@@ -1,8 +1,20 @@
 import { useEffect, useCallback, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { motion } from "framer-motion";
-import { MessageCircle, User, Pill, FileText, LogOut, CheckCircle } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  MessageCircle,
+  User,
+  Pill,
+  FileText,
+  LogOut,
+  CheckCircle,
+  ShieldAlert,
+  ArrowLeft,
+  Sparkles,
+  PhoneCall,
+  Lock
+} from "lucide-react";
 import { format } from "date-fns";
 import toast from "react-hot-toast";
 import { useAuthStore } from "@/store/auth.store";
@@ -14,6 +26,8 @@ import { MessagesList } from "@/components/consultation/MessagesList";
 import { ChatInput } from "@/components/consultation/ChatInput";
 import { PatientHealthPassport } from "@/components/consultation/PatientHealthPassport";
 import { PrescribePanel } from "@/components/consultation/PrescribePanel";
+import { Badge } from "@/components/ui/Badge";
+import { Button } from "@/components/ui/Button";
 import type { ConsultationContext, Message } from "@/types";
 import { clsx } from "clsx";
 
@@ -234,7 +248,7 @@ export default function ConsultationPage() {
 
   const handleEndConsultation = useCallback(() => {
     if (!appointmentId) return;
-    if (window.confirm("Are you sure you want to end this consultation?")) {
+    if (window.confirm("Are you sure you want to conclude and lock this consultation session?")) {
       endConsultation(appointmentId);
     }
   }, [appointmentId, endConsultation]);
@@ -271,21 +285,21 @@ export default function ConsultationPage() {
 
   if (!appointmentId) {
     return (
-      <div className="flex h-[calc(100vh-4rem)] items-center justify-center bg-gray-950 p-6 text-center">
-        <div className="max-w-md rounded-2xl border border-gray-800 bg-gray-900/60 p-8 shadow-xl">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-teal-500/10 text-teal-400">
+      <div className="flex h-[calc(100vh-4rem)] items-center justify-center bg-fcn-surface-light dark:bg-fcn-dark p-6 text-center">
+        <div className="max-w-md rounded-2xl border border-fcn-primary/15 bg-white dark:bg-fcn-surface-dark p-8 shadow-xl">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-fcn-primary/10 text-fcn-primary">
             <MessageCircle className="h-8 w-8" />
           </div>
-          <h2 className="text-xl font-bold text-gray-100">
+          <h2 className="text-xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
             No Active Consultation Selected
           </h2>
-          <p className="mt-2 text-sm text-gray-400">
-            Consultation sessions are tied to confirmed appointments. Select an appointment from your schedule to enter the consultation room.
+          <p className="mt-2 text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">
+            Consultation sessions are tied to confirmed appointments. Select an appointment from your schedule to enter the secure room.
           </p>
           <div className="mt-6">
             <Link
               to={user?.role === "doctor" ? "/doctor/schedule" : "/appointments"}
-              className="inline-flex items-center gap-2 rounded-xl bg-teal-500 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-teal-400 transition-colors"
+              className="inline-flex items-center gap-2 rounded-xl bg-fcn-primary px-5 py-2.5 text-sm font-semibold text-white shadow-md hover:bg-fcn-primary/90 transition-all"
             >
               {user?.role === "doctor" ? "View My Schedule" : "View My Appointments"}
             </Link>
@@ -296,11 +310,12 @@ export default function ConsultationPage() {
   }
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] overflow-hidden bg-gray-950">
+    <div className="flex h-[calc(100vh-4rem)] overflow-hidden bg-fcn-surface-light dark:bg-fcn-dark">
+      {/* Desktop Split View: 65% Chat Stream, 35% Health Passport */}
       <div className="hidden flex-1 lg:flex">
-        <div className="flex w-[65%] flex-col border-r border-gray-800">
+        <div className="flex w-[65%] flex-col border-r border-fcn-primary/10 bg-white dark:bg-fcn-surface-dark">
           <TopBar
-            otherPartyName={otherPartyName ?? "Loading..."}
+            otherPartyName={otherPartyName ?? "Connecting..."}
             otherPartySpecialty={isDoctor ? undefined : otherPartySpecialty ?? undefined}
             isDoctor={isDoctor}
             isReadOnly={isReadOnly}
@@ -310,27 +325,38 @@ export default function ConsultationPage() {
             showNoteInput={showNoteInput}
           />
 
+          {isReadOnly && (
+            <div className="flex items-center justify-center gap-2 bg-amber-500/10 border-b border-amber-500/20 px-4 py-2 text-xs font-semibold text-amber-700 dark:text-amber-300">
+              <Lock className="h-3.5 w-3.5" />
+              <span>Consultation session completed and locked. Conversation is archived for clinical reference.</span>
+            </div>
+          )}
+
           {showNoteInput && isDoctor && (
-            <div className="border-b border-gray-800 bg-gray-900/80 px-4 py-2">
+            <div className="border-b border-fcn-primary/10 bg-fcn-surface-light dark:bg-fcn-dark px-4 py-3">
               <div className="flex items-end gap-2">
                 <textarea
                   value={summaryNote}
                   onChange={(e) => setSummaryNote(e.target.value)}
-                  placeholder="Write a summary note for this consultation..."
+                  placeholder="Write a clinical summary note for this patient's medical record..."
                   rows={2}
                   maxLength={2000}
-                  className="flex-1 resize-none rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-sm text-gray-100 placeholder-gray-600 outline-none focus:border-teal-500/50"
+                  className="flex-1 resize-none rounded-xl border border-fcn-primary/20 bg-white dark:bg-fcn-surface-dark px-3 py-2 text-sm text-fcn-text-light placeholder:text-fcn-text-light/40 outline-none focus:border-fcn-primary dark:text-fcn-text-dark"
                 />
-                <button
+                <Button
+                  size="sm"
+                  variant="primary"
                   onClick={handleSaveNote}
                   disabled={!summaryNote.trim()}
-                  className="flex h-9 items-center gap-1 rounded-lg bg-teal-500 px-3 text-xs font-medium text-white hover:bg-teal-400 disabled:opacity-50"
+                  className="h-10 shrink-0"
                 >
-                  <CheckCircle className="h-4 w-4" />
-                  Save
-                </button>
+                  <CheckCircle className="h-4 w-4 mr-1" />
+                  Save Note
+                </Button>
               </div>
-              <p className="mt-1 text-right text-[10px] text-gray-600">{summaryNote.length}/2000</p>
+              <p className="mt-1 text-right text-[10px] text-fcn-text-light/40 dark:text-fcn-text-dark/40">
+                {summaryNote.length}/2000
+              </p>
             </div>
           )}
 
@@ -343,7 +369,7 @@ export default function ConsultationPage() {
           />
 
           {isTyping && (
-            <div className="border-t border-gray-800 px-4 py-1.5">
+            <div className="border-t border-fcn-primary/5 px-4 py-2 bg-white/50 dark:bg-fcn-dark/50">
               <TypingIndicator userName={isTyping.userName} />
             </div>
           )}
@@ -358,7 +384,8 @@ export default function ConsultationPage() {
           />
         </div>
 
-        <div className="relative w-[35%] overflow-y-auto">
+        {/* Right side: Patient Passport / Clinical Info */}
+        <div className="relative w-[35%] overflow-y-auto bg-fcn-surface-light/50 dark:bg-fcn-dark/50">
           <PatientHealthPassport
             context={contextData ?? null}
             isLoading={contextLoading}
@@ -374,51 +401,53 @@ export default function ConsultationPage() {
         </div>
       </div>
 
+      {/* Mobile Experience: Tabbed Switcher (Chat vs Info) */}
       <div className="flex flex-1 flex-col lg:hidden">
-        <div className="flex border-b border-gray-800">
+        {/* Mobile Tab Header */}
+        <div className="flex border-b border-fcn-primary/10 bg-white dark:bg-fcn-surface-dark">
           <button
             onClick={() => { setMobileTab("chat"); resetUnread(); }}
             className={clsx(
-              "relative flex flex-1 items-center justify-center gap-2 px-4 py-3 text-sm font-medium transition-colors",
-              mobileTab === "chat" ? "text-teal-400" : "text-gray-500"
+              "relative flex flex-1 items-center justify-center gap-2 py-3 text-xs sm:text-sm font-semibold transition-colors",
+              mobileTab === "chat" ? "text-fcn-primary dark:text-fcn-accent" : "text-fcn-text-light/50 dark:text-fcn-text-dark/50"
             )}
           >
             <MessageCircle className="h-4 w-4" />
-            Chat
+            Consultation Chat
             {unreadCount > 0 && (
-              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-teal-500 text-[10px] font-bold text-white">
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">
                 {unreadCount}
               </span>
             )}
             {mobileTab === "chat" && (
               <motion.div
-                layoutId="mobileTab"
-                className="absolute bottom-0 left-0 right-0 h-0.5 bg-teal-500"
+                layoutId="mobileConsultTab"
+                className="absolute bottom-0 left-0 right-0 h-0.5 bg-fcn-primary"
               />
             )}
           </button>
           <button
             onClick={() => setMobileTab("info")}
             className={clsx(
-              "relative flex flex-1 items-center justify-center gap-2 px-4 py-3 text-sm font-medium transition-colors",
-              mobileTab === "info" ? "text-teal-400" : "text-gray-500"
+              "relative flex flex-1 items-center justify-center gap-2 py-3 text-xs sm:text-sm font-semibold transition-colors",
+              mobileTab === "info" ? "text-fcn-primary dark:text-fcn-accent" : "text-fcn-text-light/50 dark:text-fcn-text-dark/50"
             )}
           >
             <User className="h-4 w-4" />
-            Patient Info
+            {isDoctor ? "Patient Passport" : "Doctor Profile"}
             {mobileTab === "info" && (
               <motion.div
-                layoutId="mobileTab"
-                className="absolute bottom-0 left-0 right-0 h-0.5 bg-teal-500"
+                layoutId="mobileConsultTab"
+                className="absolute bottom-0 left-0 right-0 h-0.5 bg-fcn-primary"
               />
             )}
           </button>
         </div>
 
         {mobileTab === "chat" ? (
-          <div className="flex flex-1 flex-col">
+          <div className="flex flex-1 flex-col overflow-hidden bg-white dark:bg-fcn-surface-dark">
             <TopBar
-              otherPartyName={otherPartyName ?? "Loading..."}
+              otherPartyName={otherPartyName ?? "Connecting..."}
               otherPartySpecialty={isDoctor ? undefined : otherPartySpecialty ?? undefined}
               isDoctor={isDoctor}
               isReadOnly={isReadOnly}
@@ -428,8 +457,15 @@ export default function ConsultationPage() {
               showNoteInput={showNoteInput}
             />
 
+            {isReadOnly && (
+              <div className="flex items-center justify-center gap-1.5 bg-amber-500/10 border-b border-amber-500/20 px-3 py-1.5 text-[11px] font-semibold text-amber-700 dark:text-amber-300">
+                <Lock className="h-3 w-3" />
+                <span>Session completed & locked</span>
+              </div>
+            )}
+
             {showNoteInput && isDoctor && (
-              <div className="border-b border-gray-800 bg-gray-900/80 px-4 py-2">
+              <div className="border-b border-fcn-primary/10 bg-fcn-surface-light dark:bg-fcn-dark px-3 py-2">
                 <div className="flex items-end gap-2">
                   <textarea
                     value={summaryNote}
@@ -437,15 +473,17 @@ export default function ConsultationPage() {
                     placeholder="Write a summary note..."
                     rows={2}
                     maxLength={2000}
-                    className="flex-1 resize-none rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-sm text-gray-100 placeholder-gray-600 outline-none focus:border-teal-500/50"
+                    className="flex-1 resize-none rounded-lg border border-fcn-primary/20 bg-white dark:bg-fcn-surface-dark px-3 py-1.5 text-xs text-fcn-text-light placeholder:text-fcn-text-light/40 outline-none focus:border-fcn-primary dark:text-fcn-text-dark"
                   />
-                  <button
+                  <Button
+                    size="sm"
+                    variant="primary"
                     onClick={handleSaveNote}
                     disabled={!summaryNote.trim()}
-                    className="flex h-9 items-center gap-1 rounded-lg bg-teal-500 px-3 text-xs font-medium text-white hover:bg-teal-400 disabled:opacity-50"
+                    className="h-8 text-xs shrink-0"
                   >
                     Save
-                  </button>
+                  </Button>
                 </div>
               </div>
             )}
@@ -459,7 +497,7 @@ export default function ConsultationPage() {
             />
 
             {isTyping && (
-              <div className="border-t border-gray-800 px-4 py-1.5">
+              <div className="border-t border-fcn-primary/5 px-4 py-1.5 bg-white/50 dark:bg-fcn-dark/50">
                 <TypingIndicator userName={isTyping.userName} />
               </div>
             )}
@@ -474,7 +512,7 @@ export default function ConsultationPage() {
             />
           </div>
         ) : (
-          <div className="flex-1 overflow-y-auto">
+          <div className="flex-1 overflow-y-auto bg-fcn-surface-light/50 dark:bg-fcn-dark/50 pb-20">
             <PatientHealthPassport
               context={contextData ?? null}
               isLoading={contextLoading}
@@ -484,7 +522,7 @@ export default function ConsultationPage() {
 
         <PrescribePanel
           appointmentId={appointmentId ?? ""}
-          patientName={contextData?.appointment.patient.full_name ?? "Patient"}
+          patientName={contextData?.appointment?.patient?.full_name ?? "Patient"}
           isOpen={isDoctor && prescribeOpen}
           onClose={() => setPrescribeOpen(false)}
           onPrescriptionIssued={handlePrescriptionIssued}
@@ -514,17 +552,21 @@ function TopBar({
   showNoteInput: boolean;
 }) {
   return (
-    <div className="flex items-center justify-between border-b border-gray-800 bg-gray-900/80 px-4 py-3">
+    <div className="flex items-center justify-between border-b border-fcn-primary/10 bg-white/80 dark:bg-fcn-surface-dark/80 backdrop-blur-sm px-4 py-3">
       <div className="flex items-center gap-3">
-        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-teal-500/20 text-sm font-bold text-teal-400">
-          {otherPartyName?.charAt(0) ?? "?"}
+        <div className="relative">
+          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-fcn-primary to-fcn-accent text-sm font-bold text-white shadow-sm">
+            {otherPartyName?.charAt(0) ?? "?"}
+          </div>
+          <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-white dark:border-fcn-surface-dark bg-emerald-500" />
         </div>
         <div>
-          <h2 className="text-sm font-semibold text-gray-100">{otherPartyName}</h2>
-          <div className="flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-green-500" />
-            <span className="text-[10px] text-gray-500">
-              {otherPartySpecialty ? `${otherPartySpecialty}` : isDoctor ? "Patient" : "Doctor"}
+          <h2 className="text-sm font-bold text-fcn-text-light dark:text-fcn-text-dark">
+            {otherPartyName}
+          </h2>
+          <div className="flex items-center gap-1.5">
+            <span className="text-[11px] font-medium text-fcn-text-light/60 dark:text-fcn-text-dark/60">
+              {otherPartySpecialty ? otherPartySpecialty : isDoctor ? "Verified Patient" : "Consulting Physician"}
             </span>
           </div>
         </div>
@@ -533,32 +575,33 @@ function TopBar({
       <div className="flex items-center gap-2">
         {isDoctor && !isReadOnly && (
           <>
-            <button
+            <Button
+              variant={showNoteInput ? "primary" : "secondary"}
+              size="sm"
               onClick={onAddNote}
-              className={clsx(
-                "flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors",
-                showNoteInput
-                  ? "bg-teal-500/20 text-teal-400"
-                  : "text-gray-400 hover:bg-gray-800 hover:text-gray-200"
-              )}
+              className="h-8 text-xs"
             >
-              <FileText className="h-3.5 w-3.5" />
+              <FileText className="h-3.5 w-3.5 mr-1" />
               Note
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="action"
+              size="sm"
               onClick={onPrescribe}
-              className="flex items-center gap-1 rounded-lg bg-teal-500 px-2.5 py-1.5 text-xs font-medium text-white transition-colors hover:bg-teal-400"
+              className="h-8 text-xs"
             >
-              <Pill className="h-3.5 w-3.5" />
+              <Pill className="h-3.5 w-3.5 mr-1" />
               Prescribe
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="danger"
+              size="sm"
               onClick={onEndConsultation}
-              className="flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-medium text-gray-400 transition-colors hover:bg-red-500/20 hover:text-red-400"
+              className="h-8 text-xs"
             >
-              <LogOut className="h-3.5 w-3.5" />
+              <LogOut className="h-3.5 w-3.5 mr-1" />
               End
-            </button>
+            </Button>
           </>
         )}
       </div>
@@ -569,17 +612,19 @@ function TopBar({
 function TypingIndicator({ userName }: { userName: string }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 5 }}
+      initial={{ opacity: 0, y: 3 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 5 }}
-      className="flex items-center gap-1.5"
+      exit={{ opacity: 0, y: 3 }}
+      className="flex items-center gap-2"
     >
-      <span className="text-xs text-gray-500">{userName} is typing</span>
+      <span className="text-xs font-medium text-fcn-text-light/60 dark:text-fcn-text-dark/60">
+        {userName} is typing
+      </span>
       <span className="flex items-center gap-0.5">
         {[0, 1, 2].map((i) => (
           <span
             key={i}
-            className="h-1.5 w-1.5 animate-bounce rounded-full bg-gray-500"
+            className="h-1.5 w-1.5 animate-bounce rounded-full bg-fcn-primary"
             style={{ animationDelay: `${i * 150}ms` }}
           />
         ))}
