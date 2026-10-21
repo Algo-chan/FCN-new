@@ -136,19 +136,6 @@ export const TopBar = () => {
             </span>
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse ml-0.5" />
           </Link>
-
-          {user && (
-            <span
-              className={clsx(
-                "hidden md:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold capitalize tracking-tight",
-                roleStyle.bg,
-                roleStyle.text
-              )}
-            >
-              <span className={clsx("w-1.5 h-1.5 rounded-full", roleStyle.dot)} />
-              {formatRole(user.role)}
-            </span>
-          )}
         </div>
       </div>
 
