@@ -1,6 +1,20 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
-import { Sparkles, Loader2, Info, ChevronLeft, RefreshCw, Share2, Printer } from "lucide-react";
+import {
+  Sparkles,
+  Loader2,
+  Info,
+  ChevronLeft,
+  RefreshCw,
+  Share2,
+  Printer,
+  ShieldCheck,
+  Clock,
+  Activity,
+  History,
+  MessageSquareHeart,
+  Plus
+} from "lucide-react";
 import gsap from "gsap";
 import { useNavigate } from "react-router-dom";
 import { clsx } from "clsx";
@@ -20,6 +34,10 @@ import { ConversationChat } from "@/components/ai-triage/ConversationChat";
 import { FinalAssessmentCard } from "@/components/ai-triage/FinalAssessmentCard";
 import { AssessmentHistoryCard } from "@/components/ai-triage/AssessmentHistoryCard";
 import { AssessmentDetailModal } from "@/components/ai-triage/AssessmentDetailModal";
+import { Button } from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
+import { Card } from "@/components/ui/Card";
+import { StickyActionButton } from "@/components/ui/StickyActionButton";
 import { useSound } from "@/hooks/useSound";
 import type { SupportedLanguage } from "@/types";
 
@@ -41,12 +59,19 @@ const LANGUAGE_PLACEHOLDERS: Record<string, string> = {
 
 const DURATION_OPTIONS = ["< 24 hours", "1-3 days", "3-7 days", "Over a week"];
 
+const COMMON_SYMPTOM_TAGS: Record<string, string[]> = {
+  en: ["Headache", "Fever", "Cough", "Sore throat", "Fatigue", "Chest tightness", "Stomach ache", "Nausea"],
+  am: ["ራስ ምታት", "ትኩሳት", "ሳል", "የጉሮሮ ህመም", "የድካም ስሜት", "የደረት ህመም", "የሆድ ህመም", "ማቅለሽለሽ"],
+  so: ["Madax xanuun", "Qandho", "Qufac", "Cune xanuun", "Daal", "Xabad xanuun", "Calool xanuun", "Lallabbo"],
+  om: ["Mataa dhukkubbi", "Ho'a qaamaa", "Qufaa", "Qoonqo dhukkubbi", "Bututaa", "Laphee dhukkubbi", "Garaa kaasa", "Baqee"]
+};
+
 const LOADING_MESSAGES: Record<string, string[]> = {
   en: [
     "Analyzing your symptoms...",
     "Reviewing your medical history...",
-    "Consulting medical knowledge...",
-    "Preparing your assessment..."
+    "Consulting clinical guidelines...",
+    "Preparing your personalized assessment..."
   ],
   am: [
     "ምልክቶችዎን በመተንተን ላይ...",
@@ -109,7 +134,7 @@ const AISymptomCheckPage = () => {
     if (sparkleRef.current && !shouldReduceMotion) {
       gsap.to(sparkleRef.current, {
         rotation: 360,
-        duration: 4,
+        duration: 8,
         repeat: -1,
         ease: "none"
       });
@@ -219,8 +244,17 @@ const AISymptomCheckPage = () => {
     setPageState("language_select");
   };
 
+  const handleAddSymptomTag = (tag: string) => {
+    if (symptoms.includes(tag)) return;
+    setSymptoms((prev) => {
+      const trimmed = prev.trim();
+      if (!trimmed) return tag;
+      return `${trimmed}, ${tag}`;
+    });
+  };
+
   const handleStartAssessment = async () => {
-    if (!store.language || symptoms.length < 10) return;
+    if (!store.language || symptoms.length < 5) return;
 
     setStarting(true);
     setLoadingProgress(0);
@@ -373,114 +407,142 @@ Recommended: See ${store.finalAssessment.recommended_specialty || "a doctor"}`;
   };
 
   const severityColor = (() => {
-    if (severity <= 3) return "text-fcn-success";
-    if (severity <= 6) return "text-fcn-warning";
-    return "text-fcn-danger";
+    if (severity <= 3) return "text-emerald-500 dark:text-emerald-400";
+    if (severity <= 6) return "text-amber-500 dark:text-amber-400";
+    return "text-rose-500 dark:text-rose-400";
   })();
 
   const loadingTexts = LOADING_MESSAGES[langCode] || LOADING_MESSAGES.en;
-
   const isWaitingForApi = starting || store.isLoading;
+  const commonTags = COMMON_SYMPTOM_TAGS[langCode] || COMMON_SYMPTOM_TAGS.en;
 
   return (
-    <div className="mx-auto max-w-5xl">
-      <div className="mb-6 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span ref={sparkleRef} className="inline-flex">
-            <Sparkles className="h-5 w-5 text-fcn-accent" />
-          </span>
-          <h1 className="text-xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
-            AI Health Check
-          </h1>
+    <div className="mx-auto max-w-5xl space-y-6 pb-20 md:pb-8">
+      {/* Page Header */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-3">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500 to-indigo-600 text-white shadow-md shadow-violet-500/20">
+            <span ref={sparkleRef} className="inline-flex">
+              <Sparkles className="h-6 w-6" />
+            </span>
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h1 className="text-xl sm:text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
+                AI Health Triage
+              </h1>
+              <Badge variant="info" size="sm">Smart Check</Badge>
+            </div>
+            <p className="text-xs sm:text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">
+              Instant clinical assessment and doctor recommendations
+            </p>
+          </div>
         </div>
-        <span className="rounded-full bg-fcn-warning/10 px-3 py-1 text-xs font-medium text-fcn-warning">
-          AI Guidance Only — Not a Diagnosis
-        </span>
+
+        <div className="flex items-center gap-2">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/10 px-3 py-1 text-xs font-semibold text-amber-700 dark:text-amber-300 border border-amber-500/20">
+            <ShieldCheck className="h-3.5 w-3.5" />
+            AI Guidance Only — Not a Diagnosis
+          </span>
+        </div>
       </div>
 
+      {/* Incomplete assessment resume banner */}
       {incompleteBanner && (
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-4 rounded-lg border border-fcn-accent/20 bg-fcn-accent/5 p-4"
+          className="rounded-2xl border border-violet-500/20 bg-gradient-to-r from-violet-500/10 via-fcn-primary/5 to-transparent p-4 shadow-sm"
         >
-          <p className="mb-2 text-sm text-fcn-text-light dark:text-fcn-text-dark">
-            You have an incomplete assessment from {incompleteBanner.timeAgo}. Continue where you left off?
-          </p>
-          <div className="flex gap-2">
-            <button
-              onClick={() => handleResumeIncomplete(incompleteBanner.id)}
-              className="rounded-lg bg-fcn-primary px-4 py-1.5 text-xs font-medium text-white hover:bg-fcn-accent transition-colors"
-            >
-              Continue
-            </button>
-            <button
-              onClick={handleStartFresh}
-              className="rounded-lg border border-fcn-primary/30 px-4 py-1.5 text-xs font-medium text-fcn-text-light dark:text-fcn-text-dark hover:bg-white/5 transition-colors"
-            >
-              Start Fresh
-            </button>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-violet-500/15 text-violet-600 dark:text-violet-400">
+                <Clock className="h-5 w-5" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-fcn-text-light dark:text-fcn-text-dark">
+                  Resume previous check?
+                </p>
+                <p className="text-xs text-fcn-text-light/60 dark:text-fcn-text-dark/60">
+                  You have an incomplete assessment from {incompleteBanner.timeAgo}.
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button
+                size="sm"
+                variant="primary"
+                onClick={() => handleResumeIncomplete(incompleteBanner.id)}
+              >
+                Continue Assessment
+              </Button>
+              <Button
+                size="sm"
+                variant="secondary"
+                onClick={handleStartFresh}
+              >
+                Start Fresh
+              </Button>
+            </div>
           </div>
         </motion.div>
       )}
 
+      {/* Tabs: New vs History (if past language selection) */}
       {pageState !== "language_select" && (
-        <div className="mb-6 flex gap-4 border-b border-fcn-primary/10">
+        <div className="flex border-b border-fcn-primary/10 gap-6">
           <button
             onClick={() => { setActiveTab("new"); setDirection(1); }}
             className={clsx(
-              "relative pb-2 text-sm font-medium transition-colors",
+              "relative pb-3 text-sm font-semibold transition-colors flex items-center gap-2",
               activeTab === "new"
-                ? "text-fcn-primary"
+                ? "text-fcn-primary dark:text-fcn-accent"
                 : "text-fcn-text-light/50 hover:text-fcn-text-light dark:text-fcn-text-dark/50"
             )}
           >
+            <MessageSquareHeart className="h-4 w-4" />
             New Assessment
             {activeTab === "new" && (
               <motion.div
-                layoutId="tab-underline"
-                className="absolute bottom-0 left-0 h-0.5 w-full bg-fcn-accent"
+                layoutId="ai-tab-underline"
+                className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-fcn-primary to-fcn-accent"
               />
             )}
           </button>
           <button
             onClick={() => { setActiveTab("history"); }}
             className={clsx(
-              "relative pb-2 text-sm font-medium transition-colors",
+              "relative pb-3 text-sm font-semibold transition-colors flex items-center gap-2",
               activeTab === "history"
-                ? "text-fcn-primary"
+                ? "text-fcn-primary dark:text-fcn-accent"
                 : "text-fcn-text-light/50 hover:text-fcn-text-light dark:text-fcn-text-dark/50"
             )}
           >
+            <History className="h-4 w-4" />
             Past Assessments
             {activeTab === "history" && (
               <motion.div
-                layoutId="tab-underline"
-                className="absolute bottom-0 left-0 h-0.5 w-full bg-fcn-accent"
+                layoutId="ai-tab-underline"
+                className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-fcn-primary to-fcn-accent"
               />
             )}
           </button>
         </div>
       )}
 
+      {/* Loading Bar when calling AI */}
       {isWaitingForApi && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="mb-6 rounded-lg border border-fcn-accent/20 bg-fcn-accent/5 p-6"
+          className="rounded-2xl border border-violet-500/20 bg-gradient-to-br from-violet-500/5 via-fcn-primary/5 to-transparent p-6 shadow-sm"
         >
           <div className="mb-4 flex items-center justify-center gap-3">
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-              className="text-2xl"
-            >
-              +
-            </motion.div>
+            <Sparkles className="h-5 w-5 animate-spin text-violet-500" />
             <div className="h-2 flex-1 max-w-md rounded-full bg-fcn-primary/10 overflow-hidden">
               <motion.div
                 ref={progressRef}
-                className="h-full rounded-full bg-gradient-to-r from-fcn-primary to-fcn-accent"
+                className="h-full rounded-full bg-gradient-to-r from-violet-500 via-fcn-primary to-fcn-accent"
                 initial={{ width: "0%" }}
                 animate={{ width: `${loadingProgress}%` }}
                 transition={{ duration: 0.3 }}
@@ -493,7 +555,7 @@ Recommended: See ${store.finalAssessment.recommended_specialty || "a doctor"}`;
               initial={{ opacity: 0, y: 5 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -5 }}
-              className="text-center text-sm text-fcn-text-light/70 dark:text-fcn-text-dark/70"
+              className="text-center text-sm font-medium text-fcn-text-light/80 dark:text-fcn-text-dark/80"
             >
               {loadingTexts[loadingMessageIndex]}
             </motion.p>
@@ -511,11 +573,11 @@ Recommended: See ${store.finalAssessment.recommended_specialty || "a doctor"}`;
             transition={{ duration: 0.25 }}
           >
             {historyLoading ? (
-              <div className="flex items-center justify-center py-12">
-                <Loader2 className="h-6 w-6 animate-spin text-fcn-primary" />
+              <div className="flex items-center justify-center py-16">
+                <Loader2 className="h-8 w-8 animate-spin text-fcn-primary" />
               </div>
             ) : historyData && historyData.data.length > 0 ? (
-              <div className="grid gap-3 sm:grid-cols-2">
+              <div className="grid gap-4 sm:grid-cols-2">
                 {historyData.data.map((item) => (
                   <AssessmentHistoryCard
                     key={item.id}
@@ -526,11 +588,21 @@ Recommended: See ${store.finalAssessment.recommended_specialty || "a doctor"}`;
                 ))}
               </div>
             ) : (
-              <div className="rounded-lg border border-fcn-primary/10 p-8 text-center">
-                <p className="text-sm text-fcn-text-light/50 dark:text-fcn-text-dark/50">
-                  No assessments yet. Start your first AI health check above.
+              <Card className="p-12 text-center">
+                <History className="mx-auto mb-3 h-12 w-12 text-fcn-text-light/20" />
+                <h3 className="text-base font-semibold text-fcn-text-light dark:text-fcn-text-dark">
+                  No assessments yet
+                </h3>
+                <p className="mt-1 text-sm text-fcn-text-light/50 dark:text-fcn-text-dark/50">
+                  Start your first AI health check to record and track triage history.
                 </p>
-              </div>
+                <Button
+                  className="mt-4"
+                  onClick={() => { setActiveTab("new"); setPageState("symptoms_input"); }}
+                >
+                  Start New Check
+                </Button>
+              </Card>
             )}
           </motion.div>
         ) : pageState === "language_select" ? (
@@ -542,7 +614,7 @@ Recommended: See ${store.finalAssessment.recommended_specialty || "a doctor"}`;
             animate="center"
             exit="exit"
             transition={{ duration: 0.25 }}
-            className="flex justify-center py-8"
+            className="flex justify-center py-4"
           >
             <LanguageSelector onSelect={handleLanguageSelect} />
           </motion.div>
@@ -556,155 +628,219 @@ Recommended: See ${store.finalAssessment.recommended_specialty || "a doctor"}`;
             exit="exit"
             transition={{ duration: 0.25 }}
           >
-            <div className="flex gap-6">
-              <div className="flex-1 space-y-5">
-                <button
-                  onClick={handleBackToLanguage}
-                  className="flex items-center gap-1 text-sm text-fcn-primary hover:text-fcn-accent"
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                  Change Language
-                </button>
-
-                <div className="flex items-center gap-2">
-                  <span className="text-lg">{LANGUAGE_CONFIGS[langCode]?.flag || "🇬🇧"}</span>
-                  <span className="text-sm font-medium text-fcn-text-light dark:text-fcn-text-dark">
-                    {LANGUAGE_CONFIGS[langCode]?.name || "English"}
-                  </span>
-                </div>
-
-                <h2 className="text-lg font-semibold text-fcn-text-light dark:text-fcn-text-dark">
-                  {LANGUAGE_HEADINGS[langCode] || LANGUAGE_HEADINGS.en}
-                </h2>
-
-                <textarea
-                  value={symptoms}
-                  onChange={(e) => setSymptoms(e.target.value)}
-                  placeholder={LANGUAGE_PLACEHOLDERS[langCode] || LANGUAGE_PLACEHOLDERS.en}
-                  rows={5}
-                  maxLength={1000}
-                  className="w-full resize-none rounded-lg border border-fcn-primary/10 bg-white/50 px-4 py-3 text-sm text-fcn-text-light placeholder-gray-400 outline-none transition-colors focus:border-fcn-accent dark:bg-fcn-dark/50 dark:text-fcn-text-dark"
-                />
-
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-fcn-text-light dark:text-fcn-text-dark">
-                    Symptom Duration
-                  </label>
-                  <div className="flex flex-wrap gap-2">
-                    {DURATION_OPTIONS.map((opt) => (
-                      <button
-                        key={opt}
-                        onClick={() => setDuration(opt === duration ? "" : opt)}
-                        className={clsx(
-                          "rounded-full px-3 py-1.5 text-xs font-medium transition-all",
-                          opt === duration
-                            ? "bg-fcn-accent text-white"
-                            : "bg-fcn-primary/10 text-fcn-primary hover:bg-fcn-primary/20"
-                        )}
-                      >
-                        {opt}
-                      </button>
-                    ))}
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+              {/* Main Symptoms Input Form */}
+              <div className="lg:col-span-2 space-y-6">
+                <div className="flex items-center justify-between">
+                  <button
+                    onClick={handleBackToLanguage}
+                    className="inline-flex items-center gap-1.5 text-sm font-medium text-fcn-primary hover:text-fcn-accent transition-colors"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                    Back to Language Selection
+                  </button>
+                  <div className="flex items-center gap-2 rounded-full border border-fcn-primary/10 bg-white/60 dark:bg-fcn-dark/60 px-3 py-1 shadow-sm">
+                    <span className="text-base">{LANGUAGE_CONFIGS[langCode]?.flag || "🇬🇧"}</span>
+                    <span className="text-xs font-semibold text-fcn-text-light dark:text-fcn-text-dark">
+                      {LANGUAGE_CONFIGS[langCode]?.name || "English"}
+                    </span>
                   </div>
                 </div>
 
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-fcn-text-light dark:text-fcn-text-dark">
-                    How severe are your symptoms?{" "}
-                    <span ref={severityNumRef} className={clsx("inline-block text-2xl font-bold", severityColor)}>
-                      {severity}
-                    </span>
-                    <span className="text-xs text-fcn-text-light/50 dark:text-fcn-text-dark/50">
-                      {severity <= 3 ? " (Mild)" : severity <= 6 ? " (Moderate)" : " (Severe)"}
-                    </span>
-                  </label>
-                  <input
-                    type="range"
-                    min={1}
-                    max={10}
-                    value={severity}
-                    onChange={(e) => setSeverity(parseInt(e.target.value))}
-                    className="w-full"
-                    style={{
-                      accentColor: severity <= 3 ? "#10B981" : severity <= 6 ? "#FBBF24" : "#F87171"
-                    }}
-                  />
-                  <div className="mt-1 flex justify-between text-[10px] text-fcn-text-light/40 dark:text-fcn-text-dark/40">
-                    <span>1 - Barely noticeable</span>
-                    <span>10 - Extremely severe</span>
+                <div className="rounded-2xl border border-fcn-primary/15 bg-white dark:bg-fcn-dark p-5 sm:p-6 shadow-sm space-y-5">
+                  <div>
+                    <h2 className="text-lg sm:text-xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
+                      {LANGUAGE_HEADINGS[langCode] || LANGUAGE_HEADINGS.en}
+                    </h2>
+                    <p className="mt-1 text-xs sm:text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">
+                      Tap common symptoms below or describe in your own words.
+                    </p>
                   </div>
-                </div>
 
-                <button
-                  onClick={handleStartAssessment}
-                  disabled={symptoms.length < 10 || starting}
-                  className="flex w-full items-center justify-center gap-2 rounded-lg bg-fcn-primary px-5 py-3 font-medium text-white transition-all hover:shadow-[0_0_24px_rgba(10,126,164,0.35)] disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  {starting ? (
-                    <>
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                      {LANGUAGE_CONFIGS[langCode]?.thinkingText || "Analyzing..."}
-                    </>
-                  ) : (
-                    "Start AI Assessment"
-                  )}
-                </button>
+                  {/* Quick Symptom Chips */}
+                  <div>
+                    <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-fcn-text-light/50 dark:text-fcn-text-dark/50">
+                      Common Symptoms (Tap to Add)
+                    </label>
+                    <div className="flex flex-wrap gap-2">
+                      {commonTags.map((tag) => {
+                        const isSelected = symptoms.toLowerCase().includes(tag.toLowerCase());
+                        return (
+                          <button
+                            key={tag}
+                            type="button"
+                            onClick={() => handleAddSymptomTag(tag)}
+                            className={clsx(
+                              "inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium transition-all active:scale-95",
+                              isSelected
+                                ? "bg-fcn-primary text-white shadow-sm"
+                                : "bg-fcn-primary/5 text-fcn-text-light/80 dark:text-fcn-text-dark/80 hover:bg-fcn-primary/15 border border-fcn-primary/10"
+                            )}
+                          >
+                            <Plus className={clsx("h-3 w-3", isSelected && "rotate-45")} />
+                            {tag}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
 
-                {store.error && (
-                  <div className="rounded-lg border border-fcn-danger/20 bg-fcn-danger/10 p-3">
-                    <p className="text-sm text-fcn-danger">{store.error}</p>
-                    <button
-                      onClick={() => store.setError(null)}
-                      className="mt-2 text-xs text-fcn-danger/70 hover:text-fcn-danger transition-colors"
+                  {/* Textarea */}
+                  <div>
+                    <textarea
+                      value={symptoms}
+                      onChange={(e) => setSymptoms(e.target.value)}
+                      placeholder={LANGUAGE_PLACEHOLDERS[langCode] || LANGUAGE_PLACEHOLDERS.en}
+                      rows={5}
+                      maxLength={1000}
+                      className="w-full resize-none rounded-xl border border-fcn-primary/20 bg-fcn-surface-light dark:bg-fcn-surface-dark px-4 py-3 text-sm text-fcn-text-light placeholder:text-fcn-text-light/40 outline-none transition-all focus:border-fcn-primary focus:ring-2 focus:ring-fcn-primary/20 dark:text-fcn-text-dark"
+                    />
+                    <div className="mt-1.5 flex justify-between text-xs text-fcn-text-light/40 dark:text-fcn-text-dark/40">
+                      <span>Minimum 5 characters</span>
+                      <span>{symptoms.length}/1000</span>
+                    </div>
+                  </div>
+
+                  {/* Duration Chips */}
+                  <div>
+                    <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-fcn-text-light/50 dark:text-fcn-text-dark/50">
+                      How long have you had these symptoms?
+                    </label>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                      {DURATION_OPTIONS.map((opt) => (
+                        <button
+                          key={opt}
+                          type="button"
+                          onClick={() => setDuration(opt === duration ? "" : opt)}
+                          className={clsx(
+                            "rounded-xl py-2.5 px-3 text-xs font-semibold transition-all border text-center active:scale-95",
+                            opt === duration
+                              ? "bg-fcn-primary text-white border-fcn-primary shadow-sm"
+                              : "bg-fcn-surface-light dark:bg-fcn-surface-dark border-fcn-primary/10 text-fcn-text-light dark:text-fcn-text-dark hover:border-fcn-primary/30"
+                          )}
+                        >
+                          {opt}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Severity Slider */}
+                  <div className="rounded-xl border border-fcn-primary/10 bg-fcn-surface-light/50 dark:bg-fcn-surface-dark/50 p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="text-xs font-semibold uppercase tracking-wider text-fcn-text-light/60 dark:text-fcn-text-dark/60">
+                        Symptom Severity
+                      </label>
+                      <div className="flex items-baseline gap-1.5">
+                        <span ref={severityNumRef} className={clsx("text-2xl font-black", severityColor)}>
+                          {severity}
+                        </span>
+                        <span className="text-xs font-semibold text-fcn-text-light/50 dark:text-fcn-text-dark/50">
+                          / 10
+                        </span>
+                        <span className={clsx("ml-1 text-xs font-bold", severityColor)}>
+                          {severity <= 3 ? "• Mild" : severity <= 6 ? "• Moderate" : "• Severe"}
+                        </span>
+                      </div>
+                    </div>
+                    <input
+                      type="range"
+                      min={1}
+                      max={10}
+                      value={severity}
+                      onChange={(e) => setSeverity(parseInt(e.target.value))}
+                      className="w-full h-2 bg-fcn-primary/10 rounded-lg appearance-none cursor-pointer accent-fcn-primary"
+                    />
+                    <div className="mt-1 flex justify-between text-[11px] text-fcn-text-light/40 dark:text-fcn-text-dark/40 font-medium">
+                      <span>1 - Barely noticeable</span>
+                      <span>5 - Uncomfortable</span>
+                      <span>10 - Unbearable</span>
+                    </div>
+                  </div>
+
+                  {/* Start Button Desktop */}
+                  <div className="hidden md:block pt-2">
+                    <Button
+                      size="lg"
+                      onClick={handleStartAssessment}
+                      disabled={symptoms.length < 5 || starting}
+                      loading={starting}
+                      variant="primary"
+                      className="w-full h-13 text-base shadow-lg shadow-fcn-primary/25"
                     >
-                      Dismiss
-                    </button>
+                      <Sparkles className="h-5 w-5 mr-1" />
+                      {starting
+                        ? (LANGUAGE_CONFIGS[langCode]?.thinkingText || "Analyzing...")
+                        : "Start AI Assessment"}
+                    </Button>
                   </div>
-                )}
+
+                  {store.error && (
+                    <div className="rounded-xl border border-rose-500/20 bg-rose-500/10 p-4">
+                      <p className="text-sm font-medium text-rose-600 dark:text-rose-400">{store.error}</p>
+                      <button
+                        onClick={() => store.setError(null)}
+                        className="mt-2 text-xs font-semibold text-rose-600/80 hover:text-rose-600 underline"
+                      >
+                        Dismiss
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
 
-              <div className="hidden w-72 shrink-0 space-y-4 lg:block">
-                <div className="rounded-lg border border-fcn-primary/10 bg-white/50 p-4 dark:bg-fcn-dark/50">
-                  <h3 className="mb-3 text-sm font-semibold text-fcn-text-light dark:text-fcn-text-dark">
-                    Tips for a better assessment
+              {/* Sidebar with Tips & Health Profile */}
+              <div className="space-y-4">
+                <Card className="p-5 space-y-4">
+                  <h3 className="text-sm font-bold text-fcn-text-light dark:text-fcn-text-dark flex items-center gap-2">
+                    <Info className="h-4 w-4 text-fcn-primary" />
+                    Tips for Accurate Triage
                   </h3>
-                  <ul className="space-y-2">
-                    <li className="flex items-start gap-2 text-xs text-fcn-text-light/60 dark:text-fcn-text-dark/60">
-                      <span>💡</span>
-                      Be as specific as possible
+                  <ul className="space-y-2.5 text-xs text-fcn-text-light/70 dark:text-fcn-text-dark/70">
+                    <li className="flex items-start gap-2">
+                      <span className="text-fcn-primary font-bold">1.</span>
+                      <span>Be specific about body location and when the symptoms began.</span>
                     </li>
-                    <li className="flex items-start gap-2 text-xs text-fcn-text-light/60 dark:text-fcn-text-dark/60">
-                      <span>💡</span>
-                      Mention when symptoms started
+                    <li className="flex items-start gap-2">
+                      <span className="text-fcn-primary font-bold">2.</span>
+                      <span>Note any triggers (eating, exertion, lying down).</span>
                     </li>
-                    <li className="flex items-start gap-2 text-xs text-fcn-text-light/60 dark:text-fcn-text-dark/60">
-                      <span>💡</span>
-                      Include any recent travel
-                    </li>
-                    <li className="flex items-start gap-2 text-xs text-fcn-text-light/60 dark:text-fcn-text-dark/60">
-                      <span>💡</span>
-                      List all current medications
+                    <li className="flex items-start gap-2">
+                      <span className="text-fcn-primary font-bold">3.</span>
+                      <span>Mention any fever readings or medications already taken.</span>
                     </li>
                   </ul>
-                </div>
+                </Card>
 
-                <div className="rounded-lg border border-fcn-accent/20 bg-fcn-accent/5 p-4">
+                {/* Patient Profile Context Card */}
+                <div className="rounded-2xl border border-fcn-accent/20 bg-gradient-to-br from-fcn-accent/10 to-transparent p-5">
                   <div className="mb-2 flex items-center gap-2">
-                    <Info className="h-4 w-4 text-fcn-accent" />
-                    <span className="text-xs font-medium text-fcn-accent">
-                      Your health profile is included
+                    <Activity className="h-4 w-4 text-fcn-accent" />
+                    <span className="text-xs font-bold text-fcn-accent uppercase tracking-wider">
+                      Health Profile Included
                     </span>
                   </div>
-                  <p className="text-xs text-fcn-text-light/60 dark:text-fcn-text-dark/60">
-                    The AI assistant will consider your{" "}
-                    {patientProfile?.chronic_conditions?.length > 0
-                      ? patientProfile.chronic_conditions.join(", ")
-                      : "health profile"}{" "}
-                    when analyzing your symptoms.
+                  <p className="text-xs text-fcn-text-light/70 dark:text-fcn-text-dark/70 leading-relaxed">
+                    The AI considers your recorded{" "}
+                    <strong>
+                      {patientProfile?.chronic_conditions?.length > 0
+                        ? patientProfile.chronic_conditions.join(", ")
+                        : "health profile & vitals"}
+                    </strong>{" "}
+                    during clinical risk calculation.
                   </p>
                 </div>
               </div>
             </div>
+
+            {/* Mobile Sticky Action Button */}
+            <StickyActionButton
+              label={starting ? "Analyzing..." : "Start AI Assessment"}
+              icon={<Sparkles className="h-5 w-5" />}
+              loading={starting}
+              disabled={symptoms.length < 5 || starting}
+              onClick={handleStartAssessment}
+            />
           </motion.div>
         ) : (
           <motion.div
@@ -733,46 +869,48 @@ Recommended: See ${store.finalAssessment.recommended_specialty || "a doctor"}`;
             )}
 
             {store.error && (
-              <div className="rounded-lg border border-fcn-danger/20 bg-fcn-danger/10 p-4">
-                <p className="text-sm text-fcn-danger">{store.error}</p>
+              <div className="rounded-2xl border border-rose-500/20 bg-rose-500/10 p-4">
+                <p className="text-sm font-medium text-rose-600 dark:text-rose-400">{store.error}</p>
                 {store.conversation.length > 0 && (
                   <button
                     onClick={handleRetry}
                     disabled={retrying}
-                    className="mt-2 flex items-center gap-1.5 rounded-lg bg-fcn-danger/20 px-3 py-1.5 text-xs font-medium text-fcn-danger hover:bg-fcn-danger/30 transition-colors disabled:opacity-50"
+                    className="mt-3 flex items-center gap-1.5 rounded-lg bg-rose-600/10 px-3 py-1.5 text-xs font-semibold text-rose-600 hover:bg-rose-600/20 transition-colors disabled:opacity-50"
                   >
                     <RefreshCw className={clsx("h-3.5 w-3.5", retrying && "animate-spin")} />
-                    Retry
+                    Retry Message
                   </button>
                 )}
               </div>
             )}
 
             {showFinalCard && store.finalAssessment && (
-              <>
+              <div className="space-y-4">
                 <FinalAssessmentCard
                   assessment={store.finalAssessment}
                   onBookConsultation={handleBookConsultation}
                   onSaveAndReturn={handleSaveAndReturn}
                   onStartNew={handleStartOver}
                 />
-                <div className="flex items-center justify-center gap-3">
-                  <button
+                <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+                  <Button
+                    variant="secondary"
+                    size="sm"
                     onClick={handleShareAssessment}
-                    className="flex items-center gap-1.5 rounded-lg border border-fcn-primary/20 px-4 py-2 text-xs font-medium text-fcn-primary hover:bg-fcn-primary/5 transition-colors"
                   >
-                    <Share2 className="h-3.5 w-3.5" />
+                    <Share2 className="h-4 w-4 mr-1.5" />
                     Share with Doctor
-                  </button>
-                  <button
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    size="sm"
                     onClick={handlePrintAssessment}
-                    className="flex items-center gap-1.5 rounded-lg border border-fcn-primary/20 px-4 py-2 text-xs font-medium text-fcn-primary hover:bg-fcn-primary/5 transition-colors"
                   >
-                    <Printer className="h-3.5 w-3.5" />
+                    <Printer className="h-4 w-4 mr-1.5" />
                     Print Assessment
-                  </button>
+                  </Button>
                 </div>
-              </>
+              </div>
             )}
           </motion.div>
         )}

@@ -1,7 +1,17 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
-import { Building2, LayoutGrid, MapIcon, SlidersHorizontal } from "lucide-react";
+import {
+  Building2,
+  LayoutGrid,
+  MapIcon,
+  SlidersHorizontal,
+  Activity,
+  Bed,
+  Clock,
+  Sparkles,
+  ArrowUpDown
+} from "lucide-react";
 import { clsx } from "clsx";
 import { hospitalsService } from "@/services/hospitals.service";
 import { useAuthStore } from "@/store/auth.store";
@@ -11,6 +21,7 @@ import { HospitalDetailModal } from "@/components/hospitals/HospitalDetailModal"
 import { OccupancyUpdateForm } from "@/components/hospitals/OccupancyUpdateForm";
 import { SkeletonCard } from "@/components/dashboard/SkeletonCard";
 import { Card } from "@/components/ui/Card";
+import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { ImagePlaceholder } from "@/components/landing/ImagePlaceholder";
 import type { Hospital, HospitalDetail } from "@/types";
@@ -75,37 +86,77 @@ const HospitalCheckerPage = () => {
     setShowAdminForm(false);
   }, []);
 
+  // Compute live overview stats
+  const totalHospitals = hospitals.length;
+  const avgOccupancy = totalHospitals > 0
+    ? Math.round(hospitals.reduce((acc, h) => acc + h.occupancy_percent, 0) / totalHospitals)
+    : 0;
+  const activeDoctors = hospitals.reduce((acc, h) => acc + (h.active_doctors_count || 0), 0);
+
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
-          Hospital Checker
-        </h1>
-        <p className="mt-1 text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">
-          Check real-time capacity before you visit
-        </p>
+    <div className="mx-auto max-w-6xl space-y-6 pb-20 md:pb-8">
+      {/* Header */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-3">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-rose-500 to-red-600 text-white shadow-md shadow-rose-500/20">
+            <Building2 className="h-6 w-6" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h1 className="text-xl sm:text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
+                Live Hospital Capacity
+              </h1>
+              <Badge variant="danger" size="sm">Emergency Status</Badge>
+            </div>
+            <p className="text-xs sm:text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">
+              Check real-time ICU beds, occupancy rates, and doctors on duty
+            </p>
+          </div>
+        </div>
+
+        {/* Live Summary Chips */}
+        {totalHospitals > 0 && (
+          <div className="flex items-center gap-2 text-xs font-semibold">
+            <div className="rounded-xl border border-fcn-primary/10 bg-white dark:bg-fcn-dark px-3 py-1.5 shadow-sm">
+              <span className="text-fcn-text-light/50 dark:text-fcn-text-dark/50">Avg Occupancy: </span>
+              <span className={clsx("font-bold", avgOccupancy > 80 ? "text-rose-500" : "text-emerald-500")}>
+                {avgOccupancy}%
+              </span>
+            </div>
+            <div className="rounded-xl border border-fcn-primary/10 bg-white dark:bg-fcn-dark px-3 py-1.5 shadow-sm">
+              <span className="text-fcn-text-light/50 dark:text-fcn-text-dark/50">On Duty: </span>
+              <span className="font-bold text-fcn-primary">{activeDoctors} Doctors</span>
+            </div>
+          </div>
+        )}
       </div>
 
       {isHospitalAdmin && userHospital && (
-        <Card className="border-fcn-accent/30 bg-fcn-accent/5">
-          <div className="flex items-center justify-between">
+        <Card className="border-fcn-accent/30 bg-fcn-accent/5 p-4 sm:p-5 rounded-2xl">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-center gap-3">
-              <Building2 className="h-5 w-5 text-fcn-accent" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-fcn-accent/15 text-fcn-accent">
+                <Building2 className="h-5 w-5" />
+              </div>
               <div>
-                <p className="text-sm font-medium text-fcn-text-light dark:text-fcn-text-dark">
-                  You manage <strong>{userHospital.name}</strong>'s data
+                <p className="text-sm font-semibold text-fcn-text-light dark:text-fcn-text-dark">
+                  Managing: <strong>{userHospital.name}</strong>
+                </p>
+                <p className="text-xs text-fcn-text-light/60 dark:text-fcn-text-dark/60">
+                  Keep hospital occupancy and active doctor counts accurate for emergency ambulances.
                 </p>
               </div>
             </div>
             <Button
               size="sm"
+              variant="primary"
               onClick={() => setShowAdminForm((p) => !p)}
             >
-              {showAdminForm ? "Hide Form" : "Update My Hospital"}
+              {showAdminForm ? "Hide Form" : "Update Occupancy"}
             </Button>
           </div>
           {showAdminForm && (
-            <div className="mt-4">
+            <div className="mt-4 pt-4 border-t border-fcn-accent/20">
               <OccupancyUpdateForm
                 hospitalId={userHospital.id}
                 currentData={userHospital}
@@ -116,14 +167,15 @@ const HospitalCheckerPage = () => {
         </Card>
       )}
 
-      <div className="flex items-center gap-4">
-        <div className="flex rounded-lg border border-fcn-primary/20 bg-white p-0.5 dark:bg-fcn-dark">
+      {/* View Mode & Sort Controls */}
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex rounded-xl border border-fcn-primary/15 bg-white p-1 dark:bg-fcn-dark shadow-sm">
           <button
             onClick={() => setViewMode("list")}
             className={clsx(
-              "flex items-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
+              "flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs sm:text-sm font-semibold transition-all",
               viewMode === "list"
-                ? "bg-fcn-primary text-white"
+                ? "bg-fcn-primary text-white shadow-sm"
                 : "text-fcn-text-light/60 hover:text-fcn-text-light dark:text-fcn-text-dark/60"
             )}
           >
@@ -133,29 +185,34 @@ const HospitalCheckerPage = () => {
           <button
             onClick={() => setViewMode("map")}
             className={clsx(
-              "flex items-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
+              "flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs sm:text-sm font-semibold transition-all",
               viewMode === "map"
-                ? "bg-fcn-primary text-white"
+                ? "bg-fcn-primary text-white shadow-sm"
                 : "text-fcn-text-light/60 hover:text-fcn-text-light dark:text-fcn-text-dark/60"
             )}
           >
             <MapIcon className="h-4 w-4" />
-            Map View
+            Interactive Map
           </button>
         </div>
 
         {viewMode === "list" && (
           <div className="flex items-center gap-2">
-            <SlidersHorizontal className="h-4 w-4 text-fcn-text-light/40" />
-            <select
-              value={sortMode}
-              onChange={(e) => setSortMode(e.target.value as SortMode)}
-              className="rounded-md border border-fcn-primary/20 bg-white px-2 py-1.5 text-sm text-fcn-text-light outline-none dark:bg-fcn-dark dark:text-fcn-text-dark"
-            >
-              <option value="least_busy">Least Busy</option>
-              <option value="most_doctors">Most Doctors</option>
-              <option value="closest" disabled>Closest — Coming soon</option>
-            </select>
+            <span className="text-xs font-semibold text-fcn-text-light/50 dark:text-fcn-text-dark/50 hidden sm:inline">
+              Sort by:
+            </span>
+            <div className="relative">
+              <select
+                value={sortMode}
+                onChange={(e) => setSortMode(e.target.value as SortMode)}
+                className="appearance-none rounded-xl border border-fcn-primary/20 bg-white py-2 pl-3 pr-8 text-xs sm:text-sm font-semibold text-fcn-text-light outline-none transition-all focus:border-fcn-primary dark:bg-fcn-dark dark:text-fcn-text-dark cursor-pointer shadow-sm"
+              >
+                <option value="least_busy">🟢 Least Busy First</option>
+                <option value="most_doctors">🩺 Most Doctors On Duty</option>
+                <option value="closest" disabled>📍 Closest (GPS)</option>
+              </select>
+              <ArrowUpDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 pointer-events-none text-fcn-text-light/40" />
+            </div>
           </div>
         )}
       </div>
@@ -167,30 +224,44 @@ const HospitalCheckerPage = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            className="space-y-4"
           >
-            <HospitalMap
-              hospitals={sortedHospitals}
-              onSelect={handleMapSelect}
-              height={400}
-            />
+            <div className="overflow-hidden rounded-2xl border border-fcn-primary/15 shadow-sm">
+              <HospitalMap
+                hospitals={sortedHospitals}
+                onSelect={handleMapSelect}
+                height={460}
+              />
+            </div>
             {sortedHospitals.length > 0 && (
-              <div className="mt-4 flex gap-3 overflow-x-auto pb-2">
-                {sortedHospitals.map((h) => (
-                  <button
-                    key={h.id}
-                    onClick={() => handleCardClick(h)}
-                    className="shrink-0"
-                  >
-                    <Card className="w-48 p-3 text-left" hoverable>
-                      <p className="truncate text-sm font-medium text-fcn-text-light dark:text-fcn-text-dark">
-                        {h.name}
-                      </p>
-                      <p className="text-xs text-fcn-text-light/50">
-                        {h.occupancy_percent}% occupied
-                      </p>
-                    </Card>
-                  </button>
-                ))}
+              <div>
+                <p className="mb-2 text-xs font-bold uppercase tracking-wider text-fcn-text-light/50 dark:text-fcn-text-dark/50">
+                  Tap hospital card to inspect details
+                </p>
+                <div className="flex gap-3 overflow-x-auto hide-scrollbar pb-2">
+                  {sortedHospitals.map((h) => (
+                    <button
+                      key={h.id}
+                      onClick={() => handleCardClick(h)}
+                      className="shrink-0 text-left active:scale-95 transition-transform"
+                    >
+                      <Card className="w-52 p-3.5 rounded-2xl" hoverable>
+                        <p className="truncate text-sm font-bold text-fcn-text-light dark:text-fcn-text-dark">
+                          {h.name}
+                        </p>
+                        <div className="mt-1 flex items-center justify-between">
+                          <span className="text-xs text-fcn-text-light/50">
+                            {h.occupancy_percent}% occupied
+                          </span>
+                          <span className={clsx(
+                            "h-2 w-2 rounded-full",
+                            h.occupancy_percent > 80 ? "bg-rose-500" : h.occupancy_percent > 50 ? "bg-amber-500" : "bg-emerald-500"
+                          )} />
+                        </div>
+                      </Card>
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
           </motion.div>
@@ -203,25 +274,27 @@ const HospitalCheckerPage = () => {
           >
             {isLoading ? (
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {Array.from({ length: 3 }).map((_, i) => (
-                  <SkeletonCard key={i} lines={6} />
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <SkeletonCard key={i} lines={5} />
                 ))}
               </div>
             ) : error ? (
-              <div className="flex flex-col items-center py-20">
-                <p className="text-fcn-danger">Failed to load hospitals</p>
-              </div>
+              <Card className="p-12 text-center max-w-md mx-auto space-y-3 rounded-2xl">
+                <p className="text-sm font-semibold text-rose-500">Failed to load hospitals capacity data</p>
+                <Button size="sm" variant="secondary" onClick={() => window.location.reload()}>
+                  Retry Connection
+                </Button>
+              </Card>
             ) : sortedHospitals.length === 0 ? (
-              <div className="flex flex-col items-center py-16">
-                <ImagePlaceholder
-                  query="No active hospitals in your area"
-                  alt="No hospitals"
-                  className="mb-4 max-w-xs"
-                />
-                <p className="text-fcn-text-light/50 dark:text-fcn-text-dark/50">
-                  No active hospitals found in your area
+              <Card className="p-12 text-center max-w-md mx-auto space-y-3 rounded-2xl">
+                <Building2 className="mx-auto h-12 w-12 text-fcn-primary/30" />
+                <h3 className="text-base font-bold text-fcn-text-light dark:text-fcn-text-dark">
+                  No active hospitals found
+                </h3>
+                <p className="text-xs text-fcn-text-light/50 dark:text-fcn-text-dark/50">
+                  There are currently no hospitals reporting live bed status.
                 </p>
-              </div>
+              </Card>
             ) : (
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {sortedHospitals.map((h, i) => (

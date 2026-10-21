@@ -47,7 +47,7 @@ export const VitalSummaryCard = ({
 
   if (isLoading) {
     return (
-      <div className="animate-pulse rounded-xl border border-fcn-primary/10 bg-white p-4 dark:bg-fcn-dark">
+      <div className="animate-pulse rounded-2xl border border-fcn-primary/10 bg-white p-5 dark:bg-fcn-dark shadow-sm">
         <div className="mb-3 h-4 w-20 rounded bg-fcn-primary/10" />
         <div className="mb-2 h-8 w-24 rounded bg-fcn-primary/10" />
         <div className="h-4 w-16 rounded bg-fcn-primary/10" />
@@ -72,66 +72,61 @@ Recorded ${shareData.timeAgo} on Fast Care Now`;
 
   return (
     <motion.div
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
       className={clsx(
-        "relative overflow-hidden rounded-xl border-l-[3px] bg-white p-4 shadow-sm transition-shadow hover:shadow-md dark:bg-fcn-dark",
+        "group relative overflow-hidden rounded-2xl border border-fcn-primary/10 bg-white p-4 sm:p-5 shadow-sm transition-all hover:shadow-md hover:border-fcn-primary/25 dark:bg-fcn-dark",
         borderColor
       )}
     >
-      <motion.div
-        className="absolute bottom-0 left-0 w-[3px] bg-fcn-accent/30"
-        initial={{ height: "0%" }}
-        animate={{ height: "100%" }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-      />
-
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span className="text-fcn-accent">{icon}</span>
-          <span className="text-xs font-medium text-fcn-text-light/60 dark:text-fcn-text-dark/60">
+        <div className="flex items-center gap-2.5">
+          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-fcn-primary/10 text-fcn-primary dark:text-fcn-accent">
+            {icon}
+          </div>
+          <span className="text-xs sm:text-sm font-semibold text-fcn-text-light/70 dark:text-fcn-text-dark/70">
             {label}
           </span>
         </div>
         {shareData && value && value !== "—" && (
           <button
             onClick={handleShare}
-            className="flex h-6 w-6 items-center justify-center rounded-md text-fcn-text-light/30 hover:bg-fcn-primary/10 hover:text-fcn-primary transition-colors"
+            className="flex h-7 w-7 items-center justify-center rounded-lg text-fcn-text-light/40 hover:bg-fcn-primary/10 hover:text-fcn-primary transition-colors"
             title="Share with doctor"
           >
-            <Share2 className="h-3 w-3" />
+            <Share2 className="h-3.5 w-3.5" />
           </button>
         )}
       </div>
 
-      <div ref={valueRef} className="mt-2 flex items-baseline gap-1.5 transition-colors duration-300">
-        <span className="font-mono text-3xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
+      <div ref={valueRef} className="mt-3 flex items-baseline gap-1.5 transition-colors duration-300">
+        <span className="font-mono text-2xl sm:text-3xl font-bold tracking-tight text-fcn-text-light dark:text-fcn-text-dark">
           {value || "—"}
         </span>
         {value && value !== "—" && (
-          <span className="text-xs text-fcn-text-light/50 dark:text-fcn-text-dark/50">{unit}</span>
+          <span className="text-xs font-medium text-fcn-text-light/50 dark:text-fcn-text-dark/50">{unit}</span>
         )}
       </div>
 
-      <div className="mt-3 flex items-center justify-between">
+      <div className="mt-3 flex items-center justify-between pt-2 border-t border-fcn-primary/5">
         {value && value !== "—" ? (
           <span
-            className="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium"
+            className="inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold"
             style={{
-              backgroundColor: `${statusColor}20`,
+              backgroundColor: `${statusColor}18`,
               color: statusColor
             }}
           >
             {statusLabel}
           </span>
         ) : (
-          <span className="text-[10px] text-fcn-text-light/40 dark:text-fcn-text-dark/40">
+          <span className="text-[11px] text-fcn-text-light/40 dark:text-fcn-text-dark/40 font-medium">
             Not recorded
           </span>
         )}
         {recordedAt && (
-          <span className="text-[10px] text-fcn-text-light/40 dark:text-fcn-text-dark/40">
+          <span className="text-[11px] text-fcn-text-light/40 dark:text-fcn-text-dark/40 font-medium">
             {recordedAt}
           </span>
         )}

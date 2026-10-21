@@ -4,8 +4,17 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useReducedMotion } from "framer-motion";
 import { clsx } from "clsx";
 import {
-  Search, Stethoscope, MapPin, Clock, ChevronRight,
-  ChevronLeft, Check, Video, User, FileText, AlertCircle
+  Search,
+  Stethoscope,
+  MapPin,
+  Clock,
+  ChevronRight,
+  ChevronLeft,
+  Check,
+  Video,
+  User,
+  AlertCircle,
+  Calendar,
 } from "lucide-react";
 import { format, addDays, parseISO } from "date-fns";
 
@@ -13,6 +22,8 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Spinner } from "@/components/ui/Spinner";
+import { StepIndicator } from "@/components/ui/StepIndicator";
+import { StickyActionButton } from "@/components/ui/StickyActionButton";
 import { BookingSummaryCard } from "@/components/appointments/BookingSummaryCard";
 import { ConfirmationModal } from "@/components/appointments/ConfirmationModal";
 import { PageTransition } from "@/components/animations/PageTransition";
@@ -21,14 +32,14 @@ import { useNotifications } from "@/hooks/useNotifications";
 import { useSystemSettings } from "@/hooks/useSystemSettings";
 import { doctorsService } from "@/services/doctors.service";
 import { appointmentsService } from "@/services/appointments.service";
-import type { PublicDoctorCard, TimeSlot } from "@/types";
+import type { PublicDoctorCard } from "@/types";
 
 type Step = "doctor" | "datetime" | "confirm";
 
 const typeOptions = [
   { value: "remote", label: "Video Call", icon: Video, desc: "Consult from home" },
   { value: "in_person", label: "In Person", icon: MapPin, desc: "Visit the hospital" },
-  { value: "nurse_visit", label: "Nurse Visit", icon: User, desc: "Nurse comes to you" }
+  { value: "nurse_visit", label: "Nurse Visit", icon: User, desc: "Nurse comes to you" },
 ] as const;
 
 const BookAppointmentPage = () => {
@@ -59,11 +70,11 @@ const BookAppointmentPage = () => {
       const res = await doctorsService.getAllDoctors({
         search: debouncedSearch || undefined,
         available_now: true,
-        limit: 50
+        limit: 50,
       });
       return res.data ?? [];
     },
-    staleTime: 30_000
+    staleTime: 30_000,
   });
 
   const { data: timeSlots, isLoading: slotsLoading } = useQuery({
@@ -74,7 +85,7 @@ const BookAppointmentPage = () => {
       return res.data ?? [];
     },
     enabled: !!selectedDoctor && !!selectedDate,
-    staleTime: 15_000
+    staleTime: 15_000,
   });
 
   const createMutation = useMutation({
@@ -90,7 +101,7 @@ const BookAppointmentPage = () => {
         doctor_id: selectedDoctor.id,
         appointment_type: selectedType as "remote" | "in_person" | "nurse_visit",
         scheduled_at: scheduledAt,
-        chief_complaint: chiefComplaint || undefined
+        chief_complaint: chiefComplaint || undefined,
       });
       return res.data;
     },
@@ -101,7 +112,7 @@ const BookAppointmentPage = () => {
     onError: (error: any) => {
       const msg = error?.response?.data?.error?.message || error?.message || "Failed to create appointment";
       addToast({ type: "danger", title: msg });
-    }
+    },
   });
 
   const doctors = useMemo(() => {
@@ -142,76 +153,55 @@ const BookAppointmentPage = () => {
   }, [preselectedDoctorId, doctors, selectedDoctor, handleDoctorSelect]);
 
   const handleBack = useCallback(() => {
-    if (step === "datetime") { setStep("doctor"); return; }
-    if (step === "confirm") { setStep("datetime"); return; }
+    if (step === "datetime") {
+      setStep("doctor");
+      return;
+    }
+    if (step === "confirm") {
+      setStep("datetime");
+      return;
+    }
   }, [step]);
 
   const handleConfirmBooking = useCallback(() => {
     createMutation.mutate();
   }, [createMutation]);
 
-  const renderStepIndicator = () => (
-    <div className="mb-6 md:mb-8 flex items-center justify-center gap-1 md:gap-2">
-      {(["doctor", "datetime", "confirm"] as Step[]).map((s, i) => (
-        <div key={s} className="flex items-center gap-1 md:gap-2">
-          <div className={clsx(
-            "flex h-7 w-7 md:h-8 md:w-8 items-center justify-center rounded-full text-xs font-bold transition-colors",
-            step === s
-              ? "bg-fcn-primary text-white"
-              : ["doctor", "datetime"].includes(step) && ["doctor", "datetime"].includes(s)
-                ? "bg-fcn-primary/20 text-fcn-primary"
-                : "bg-fcn-primary/10 text-fcn-primary/40"
-          )}>
-            {["doctor", "datetime"].includes(step) && s !== step && s !== "confirm" ? <Check className="h-4 w-4" /> : i + 1}
-          </div>
-          <span className={clsx(
-            "hidden text-xs font-medium sm:inline",
-            step === s ? "text-fcn-primary" : "text-fcn-text-light/40 dark:text-fcn-text-dark/40"
-          )}>
-            {s === "doctor" ? "Doctor" : s === "datetime" ? "Date & Time" : "Confirm"}
-          </span>
-          {i < 2 && <div className="h-px w-6 md:w-8 bg-fcn-primary/20" />}
-        </div>
-      ))}
-    </div>
-  );
-
-  const renderSpecialtyIcon = (specialty: string) => {
-    const icons: Record<string, string> = {
-      "General Medicine": "🩺",
-      "Surgery": "🔪",
-      "Pediatrics": "👶",
-      "Obstetrics": "🤰",
-      "Emergency": "🚑"
-    };
-    return icons[specialty] ?? "🩺";
-  };
+  const stepIndex = step === "doctor" ? 1 : step === "datetime" ? 2 : 3;
 
   return (
     <PageTransition>
-      <div className="mx-auto max-w-4xl pb-24 md:pb-0">
-        <div className="mb-4 md:mb-6">
-          <h1 className="text-xl md:text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
+      <div className="mx-auto max-w-4xl pb-24 md:pb-6">
+        {/* Header */}
+        <div className="mb-6">
+          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
             Book an Appointment
           </h1>
-          <p className="mt-1 text-xs md:text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">
-            Find and book a consultation with a healthcare provider.
+          <p className="mt-1 text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium">
+            Find and book a consultation with a verified healthcare specialist
           </p>
         </div>
 
-        {renderStepIndicator()}
+        {/* Multi-step progress bar (Pattern #4) */}
+        <div className="mb-6 rounded-2xl border border-slate-200/80 bg-white dark:border-white/10 dark:bg-slate-900/90 p-4 shadow-sm">
+          <StepIndicator
+            currentStep={stepIndex}
+            totalSteps={3}
+            stepTitles={["Select Doctor", "Date & Consultation", "Confirm & Book"]}
+          />
+        </div>
 
         {/* Step 1: Select Doctor */}
         {step === "doctor" && (
           <div className="space-y-4">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-fcn-text-light/40 dark:text-fcn-text-dark/40" />
+              <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
               <input
                 type="text"
-                placeholder="Search doctors by name..."
+                placeholder="Search doctors by name or specialty..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full rounded-lg border border-fcn-primary/20 bg-white py-2.5 pl-10 pr-4 text-sm text-fcn-text-light outline-none focus:border-fcn-primary focus:ring-1 focus:ring-fcn-primary dark:bg-fcn-dark dark:text-fcn-text-dark"
+                className="h-12 w-full rounded-2xl border border-slate-200/80 bg-white pl-11 pr-4 text-sm text-slate-900 outline-none transition focus:border-teal-500 focus:bg-white focus:ring-4 focus:ring-teal-500/15 dark:border-white/10 dark:bg-slate-900 dark:text-white"
               />
             </div>
 
@@ -220,81 +210,89 @@ const BookAppointmentPage = () => {
                 <Spinner size="lg" />
               </div>
             ) : doctors.length === 0 ? (
-              <div className="flex flex-col items-center gap-2 py-12 text-center">
-                <AlertCircle className="h-8 w-8 text-fcn-text-light/40 dark:text-fcn-text-dark/40" />
-                <p className="text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">
+              <div className="flex flex-col items-center gap-2 py-12 text-center rounded-2xl border border-dashed border-slate-200 dark:border-white/10 p-6">
+                <AlertCircle className="h-8 w-8 text-slate-400" />
+                <p className="text-sm font-semibold text-slate-600 dark:text-slate-300">
                   No available doctors found. Try adjusting your search.
                 </p>
               </div>
             ) : (
               <div className="grid gap-3 grid-cols-1 sm:grid-cols-2">
-                {doctors.map((doctor) => (
-                  <Card
-                    key={doctor.id}
-                    hoverable
-                    glow={selectedDoctor?.id === doctor.id}
-                    onClick={() => handleDoctorSelect(doctor)}
-                    className={clsx(
-                      "cursor-pointer transition-all",
-                      selectedDoctor?.id === doctor.id && "ring-2 ring-fcn-primary"
-                    )}
-                  >
-                    <div className="flex items-start gap-3">
-                      <div className="flex h-10 w-10 md:h-12 md:w-12 shrink-0 items-center justify-center rounded-full bg-fcn-primary/10 text-lg">
-                        {renderSpecialtyIcon(doctor.specialty ?? "")}
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-semibold text-fcn-text-light dark:text-fcn-text-dark">
-                          Dr. {doctor.full_name}
-                        </p>
-                        <div className="mt-0.5 flex items-center gap-1 text-xs text-fcn-text-light/60 dark:text-fcn-text-dark/60">
-                          <Stethoscope className="h-3 w-3" />
-                          {doctor.specialty}
+                {doctors.map((doctor) => {
+                  const isSelected = selectedDoctor?.id === doctor.id;
+                  return (
+                    <div
+                      key={doctor.id}
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => handleDoctorSelect(doctor)}
+                      className={clsx(
+                        "group p-4 rounded-2xl border-2 transition-all duration-150 cursor-pointer select-none text-left",
+                        "hover:scale-[1.01] active:scale-[0.99]",
+                        isSelected
+                          ? "border-teal-500 bg-teal-500/10 dark:bg-teal-400/20 shadow-[0_4px_16px_rgba(20,184,166,0.25)]"
+                          : "border-slate-200/80 bg-white dark:border-white/10 dark:bg-slate-900 hover:border-teal-500/40"
+                      )}
+                    >
+                      <div className="flex items-start gap-3.5">
+                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-teal-500/10 text-teal-600 dark:text-teal-400 text-xl font-bold">
+                          🩺
                         </div>
-                        <div className="mt-1 flex items-center gap-2">
-                          <Badge variant={
-                            doctor.availability_status === "available" ? "success" : "warning"
-                          } size="sm">
-                            {doctor.availability_status === "available" ? "Available" : "Busy"}
-                          </Badge>
-                          <span className="text-xs text-fcn-text-light/40 dark:text-fcn-text-dark/40">
-                            ETB {doctor.consultation_fee_etb?.toFixed(0) ?? "—"}
-                          </span>
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate text-base font-bold text-slate-900 dark:text-white group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
+                            Dr. {doctor.full_name}
+                          </p>
+                          <div className="mt-0.5 flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400">
+                            <Stethoscope className="h-3.5 w-3.5 text-teal-500 flex-shrink-0" />
+                            <span className="truncate">{doctor.specialty}</span>
+                          </div>
+                          <div className="mt-2 flex items-center justify-between">
+                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/10 text-emerald-700 dark:text-emerald-300">
+                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                              Available
+                            </span>
+                            <span className="text-xs font-black text-teal-600 dark:text-teal-400">
+                              ETB {doctor.consultation_fee_etb?.toFixed(0) ?? "—"}
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </Card>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>
         )}
 
-        {/* Step 2: Select Date, Time & Type */}
+        {/* Step 2: Select Date, Time & Consultation Type */}
         {step === "datetime" && (
-          <div className="space-y-4 md:space-y-6">
+          <div className="space-y-5 rounded-3xl border border-slate-200/80 bg-white dark:border-white/10 dark:bg-slate-900/90 p-5 sm:p-7 shadow-sm">
+            {/* Consultation Type Selector */}
             <div>
-              <h3 className="mb-3 text-sm font-semibold text-fcn-text-light dark:text-fcn-text-dark">
-                Consultation Type
+              <h3 className="mb-2.5 text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                Select Consultation Type
               </h3>
-              <div className="grid grid-cols-3 gap-2 md:gap-3">
+              <div className="grid grid-cols-3 gap-2.5">
                 {typeOptions.map((option) => {
                   const Icon = option.icon;
                   const isSelected = selectedType === option.value;
                   return (
                     <button
                       key={option.value}
+                      type="button"
                       onClick={() => setSelectedType(option.value)}
                       className={clsx(
-                        "flex flex-col items-center gap-1 md:gap-1.5 rounded-lg border p-2 md:p-3 text-center text-[10px] md:text-xs transition-all",
+                        "flex flex-col items-center gap-1.5 rounded-2xl border-2 p-3 text-center transition-all duration-150 select-none",
+                        "hover:scale-[1.02] active:scale-[0.98]",
                         isSelected
-                          ? "border-fcn-primary bg-fcn-primary/10 text-fcn-primary"
-                          : "border-fcn-primary/10 text-fcn-text-light/60 hover:border-fcn-primary/30 dark:text-fcn-text-dark/60"
+                          ? "border-teal-500 bg-teal-500/10 text-teal-700 dark:text-teal-300 shadow-[0_4px_16px_rgba(20,184,166,0.25)]"
+                          : "border-slate-200/80 bg-slate-50/50 text-slate-600 dark:border-white/10 dark:bg-white/[0.02] dark:text-slate-400"
                       )}
                     >
-                      <Icon className="h-4 w-4 md:h-5 md:w-5" />
-                      <span className="font-medium">{option.label}</span>
-                      <span className="text-[9px] md:text-[10px] text-fcn-text-light/40 dark:text-fcn-text-dark/40">
+                      <Icon className="h-5 w-5" />
+                      <span className="text-xs font-bold">{option.label}</span>
+                      <span className="text-[10px] text-slate-400 hidden sm:inline">
                         {option.desc}
                       </span>
                     </button>
@@ -303,9 +301,10 @@ const BookAppointmentPage = () => {
               </div>
             </div>
 
+            {/* Select Date */}
             <div>
-              <h3 className="mb-3 text-sm font-semibold text-fcn-text-light dark:text-fcn-text-dark">
-                Select Date
+              <h3 className="mb-2.5 text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                Select Appointment Date
               </h3>
               <input
                 type="date"
@@ -317,13 +316,14 @@ const BookAppointmentPage = () => {
                   setSelectedTime("");
                   setSelectedTimeLabel("");
                 }}
-                className="w-full rounded-lg border border-fcn-primary/20 bg-white px-4 py-2.5 text-sm text-fcn-text-light outline-none focus:border-fcn-primary focus:ring-1 focus:ring-fcn-primary dark:bg-fcn-dark dark:text-fcn-text-dark"
+                className="h-12 w-full rounded-2xl border border-slate-200/80 bg-slate-50/50 px-4 text-sm text-slate-900 outline-none focus:border-teal-500 dark:border-white/10 dark:bg-white/5 dark:text-white"
               />
             </div>
 
+            {/* Available Time Slots */}
             {selectedDate && (
               <div>
-                <h3 className="mb-3 text-sm font-semibold text-fcn-text-light dark:text-fcn-text-dark">
+                <h3 className="mb-2.5 text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
                   Available Time Slots
                 </h3>
                 {slotsLoading ? (
@@ -331,31 +331,36 @@ const BookAppointmentPage = () => {
                     <Spinner />
                   </div>
                 ) : availableSlots.length === 0 ? (
-                  <div className="flex flex-col items-center gap-2 py-6 text-center">
-                    <Clock className="h-6 w-6 text-fcn-text-light/40 dark:text-fcn-text-dark/40" />
-                    <p className="text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">
+                  <div className="flex flex-col items-center gap-2 py-6 text-center rounded-2xl bg-slate-50 dark:bg-white/[0.02] border border-slate-200 dark:border-white/10 p-4">
+                    <Clock className="h-6 w-6 text-slate-400" />
+                    <p className="text-xs font-semibold text-slate-500">
                       No available slots for this date. Please select another date.
                     </p>
                   </div>
                 ) : (
                   <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-6">
-                    {availableSlots.map((slot) => (
-                      <button
-                        key={slot.time}
-                        onClick={() => {
-                          setSelectedTime(slot.time);
-                          setSelectedTimeLabel(slot.label);
-                        }}
-                        className={clsx(
-                          "rounded-lg border px-2 md:px-3 py-2 text-xs font-medium transition-all",
-                          selectedTime === slot.time
-                            ? "border-fcn-primary bg-fcn-primary text-white"
-                            : "border-fcn-primary/20 text-fcn-text-light hover:border-fcn-primary/40 dark:text-fcn-text-dark"
-                        )}
-                      >
-                        {slot.label}
-                      </button>
-                    ))}
+                    {availableSlots.map((slot) => {
+                      const isSelected = selectedTime === slot.time;
+                      return (
+                        <button
+                          key={slot.time}
+                          type="button"
+                          onClick={() => {
+                            setSelectedTime(slot.time);
+                            setSelectedTimeLabel(slot.label);
+                          }}
+                          className={clsx(
+                            "h-11 rounded-xl text-xs font-bold transition-all duration-150 select-none",
+                            "hover:scale-[1.02] active:scale-[0.98]",
+                            isSelected
+                              ? "bg-teal-500 text-white shadow-[0_4px_12px_rgba(20,184,166,0.35)]"
+                              : "border border-slate-200/80 bg-slate-50/50 text-slate-700 dark:border-white/10 dark:bg-white/5 dark:text-slate-300 hover:border-slate-300"
+                          )}
+                        >
+                          {slot.label}
+                        </button>
+                      );
+                    })}
                   </div>
                 )}
               </div>
@@ -363,25 +368,25 @@ const BookAppointmentPage = () => {
           </div>
         )}
 
-        {/* Step 3: Confirm */}
+        {/* Step 3: Confirm Details & Reason */}
         {step === "confirm" && selectedDoctor && (
           <div className="grid gap-4 md:gap-6 md:grid-cols-5">
             <div className="space-y-4 md:col-span-3">
-              <div>
-                <h3 className="mb-2 text-sm font-semibold text-fcn-text-light dark:text-fcn-text-dark">
+              <div className="rounded-3xl border border-slate-200/80 bg-white dark:border-white/10 dark:bg-slate-900/90 p-5 sm:p-6 shadow-sm">
+                <h3 className="mb-2 text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
                   Reason for Visit (Optional)
                 </h3>
                 <textarea
                   value={chiefComplaint}
                   onChange={(e) => setChiefComplaint(e.target.value)}
-                  placeholder="Briefly describe your symptoms or reason for the appointment..."
+                  placeholder="Briefly describe your symptoms or what you'd like to consult the doctor about..."
                   rows={4}
-                  className="w-full resize-none rounded-lg border border-fcn-primary/20 bg-white p-3 text-sm text-fcn-text-light outline-none focus:border-fcn-primary focus:ring-1 focus:ring-fcn-primary dark:bg-fcn-dark dark:text-fcn-text-dark"
+                  className="w-full resize-none rounded-2xl border border-slate-200/80 bg-slate-50/50 p-3.5 text-sm text-slate-900 outline-none focus:border-teal-500 dark:border-white/10 dark:bg-white/5 dark:text-white"
                 />
               </div>
             </div>
 
-            <div className="hidden md:block md:col-span-2">
+            <div className="md:col-span-2">
               <BookingSummaryCard
                 doctorName={selectedDoctor.full_name}
                 specialty={selectedDoctor.specialty ?? ""}
@@ -397,66 +402,84 @@ const BookAppointmentPage = () => {
           </div>
         )}
 
-        {/* Navigation Buttons */}
-        <div className="mt-6 md:mt-8 flex items-center justify-between">
+        {/* Bottom Navigation Buttons (Desktop & Tablet) */}
+        <div className="mt-6 flex items-center justify-between">
           <div>
             {step !== "doctor" && (
-              <Button variant="ghost" onClick={handleBack} icon={<ChevronLeft className="h-4 w-4" />}>
-                <span className="hidden sm:inline">Back</span>
+              <Button
+                variant="secondary"
+                onClick={handleBack}
+                icon={<ChevronLeft className="h-4 w-4" />}
+                className="min-h-[48px]"
+              >
+                <span>Back</span>
               </Button>
             )}
           </div>
-          <div>
+          <div className="hidden sm:block">
             {step === "doctor" && (
               <Button
+                variant="action"
                 disabled={!canProceedToDateTime}
                 onClick={() => setStep("datetime")}
                 icon={<ChevronRight className="h-4 w-4" />}
+                className="min-h-[48px]"
               >
-                Next
+                Continue to Date & Time
               </Button>
             )}
             {step === "datetime" && (
               <Button
+                variant="action"
                 disabled={!canProceedToConfirm}
                 onClick={() => setStep("confirm")}
                 icon={<ChevronRight className="h-4 w-4" />}
+                className="min-h-[48px]"
               >
-                Review Booking
+                Review Booking Details
               </Button>
             )}
             {step === "confirm" && (
               <Button
+                variant="action"
                 onClick={handleConfirmBooking}
                 loading={createMutation.isPending}
                 disabled={createMutation.isPending}
-                className="hidden md:flex"
+                className="min-h-[48px]"
               >
-                {createMutation.isPending ? "Booking..." : "Confirm Booking"}
+                {createMutation.isPending ? "Confirming..." : "Confirm & Book Appointment"}
               </Button>
             )}
           </div>
         </div>
 
-        {/* Mobile sticky bottom bar for confirm step */}
-        {step === "confirm" && (
-          <div className="fixed bottom-0 left-0 right-0 z-30 border-t border-fcn-primary/10 bg-white px-4 py-3 dark:bg-fcn-dark md:hidden">
-            <div className="flex items-center justify-between">
-              <div className="text-sm">
-                <span className="text-fcn-text-light/60 dark:text-fcn-text-dark/60">Total: </span>
-                <span className="font-bold text-fcn-primary">ETB {grandTotal.toFixed(0)}</span>
-              </div>
-              <Button
-                onClick={handleConfirmBooking}
-                loading={createMutation.isPending}
-                disabled={createMutation.isPending}
-              >
-                {createMutation.isPending ? "Booking..." : "Confirm Booking"}
-              </Button>
-            </div>
-          </div>
-        )}
+        {/* Mobile Sticky Action Button (Pattern #3: 52px tall, gradient fill, press animation) */}
+        <div className="sm:hidden">
+          {step === "doctor" && (
+            <StickyActionButton
+              label="Continue to Date & Time"
+              onClick={() => setStep("datetime")}
+              disabled={!canProceedToDateTime}
+            />
+          )}
+          {step === "datetime" && (
+            <StickyActionButton
+              label="Review Booking Details"
+              onClick={() => setStep("confirm")}
+              disabled={!canProceedToConfirm}
+            />
+          )}
+          {step === "confirm" && (
+            <StickyActionButton
+              label={`Confirm & Book (ETB ${grandTotal.toFixed(0)})`}
+              onClick={handleConfirmBooking}
+              loading={createMutation.isPending}
+              disabled={createMutation.isPending}
+            />
+          )}
+        </div>
 
+        {/* Confirmation Modal */}
         <ConfirmationModal
           isOpen={showConfirmation}
           onClose={() => {
