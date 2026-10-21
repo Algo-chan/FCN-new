@@ -81,6 +81,105 @@ async function callDeepSeek(
   return aiResponse;
 }
 
+interface AIMessage {
+  role: "user" | "assistant";
+  content: string;
+}
+
+async function callGemini(
+  systemPrompt: string,
+  messages: AIMessage[]
+): Promise<string> {
+  const apiKey = env.GEMINI_API_KEY || process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    throw new AppError("AI triage is not configured (missing GEMINI_API_KEY).", 503, "AI_NOT_CONFIGURED");
+  }
+
+  // Model hierarchy: user requested gemini-3.8-flash first, fallback to gemini-3.5-flash on high demand
+  const modelsToTry = ["gemini-3.8-flash", "gemini-3.5-flash", "gemini-flash-latest"];
+
+  const contents = messages.map((m) => ({
+    role: m.role === "assistant" ? "model" : "user",
+    parts: [{ text: m.content }]
+  }));
+
+  const body = {
+    system_instruction: {
+      parts: [{ text: systemPrompt }]
+    },
+    contents,
+    generationConfig: {
+      temperature: 0.4,
+      maxOutputTokens: 2048,
+      topP: 0.9
+    }
+  };
+
+  let lastError = "";
+
+  for (const model of modelsToTry) {
+    try {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+      });
+
+      if (!response.ok) {
+        let detail = "";
+        try {
+          const errData = (await response.json()) as any;
+          detail = errData?.error?.message || response.statusText;
+        } catch {
+          detail = response.statusText;
+        }
+        logger.warn(`Gemini model ${model} request returned ${response.status}`, { detail });
+        lastError = detail;
+        continue;
+      }
+
+      const result = (await response.json()) as any;
+      const text = result?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+      if (text) {
+        logger.info("Gemini AI triage response generated successfully", { model });
+        return text;
+      }
+    } catch (err: any) {
+      logger.warn(`Gemini model ${model} exception`, { error: err.message });
+      lastError = err.message;
+    }
+  }
+
+  logger.error("Gemini AI requests exhausted", { lastError });
+  throw new AppError("AI triage is temporarily busy. Please try again in a few moments.", 502, "AI_REQUEST_FAILED");
+}
+
+async function callAI(
+  systemPrompt: string,
+  messages: AIMessage[]
+): Promise<string> {
+  const geminiKey = env.GEMINI_API_KEY || process.env.GEMINI_API_KEY;
+  if (geminiKey) {
+    return callGemini(systemPrompt, messages);
+  }
+
+  if (env.DEEPSEEK_API_KEY) {
+    const model = await getDeepSeekModel();
+    return callDeepSeek(
+      model,
+      systemPrompt,
+      messages.map((m) => ({
+        role: m.role,
+        content: m.content
+      }))
+    );
+  }
+
+  throw new AppError("AI triage is not configured (missing GEMINI_API_KEY).", 503, "AI_NOT_CONFIGURED");
+}
+
+
 export interface PatientContext {
   full_name: string;
   age: number;
@@ -198,9 +297,7 @@ class AITriageService {
     const systemPrompt = buildSystemPrompt(language, patientContext);
     const roundPrompt = buildRoundPrompt(1, language);
 
-    const model = await getDeepSeekModel();
-    const aiResponse = await callDeepSeek(
-      model,
+    const aiResponse = await callAI(
       systemPrompt + "\n\n" + roundPrompt,
       [{ role: "user", content: `Patient's initial symptoms: ${sanitizedSymptoms}` }]
     );
