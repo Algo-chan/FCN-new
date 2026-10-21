@@ -32,7 +32,7 @@ export const StickyActionButton = ({
   variant = "primary",
 }: StickyActionButtonProps) => {
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-40 p-4 pb-[max(16px,env(safe-area-inset-bottom))] bg-white/90 dark:bg-fcn-dark/90 backdrop-blur-md border-t border-slate-200/80 dark:border-white/10 sm:static sm:p-0 sm:bg-transparent sm:border-0 sm:backdrop-blur-none">
+    <div className="fixed bottom-[calc(64px+env(safe-area-inset-bottom,0px))] left-0 right-0 z-40 p-3 sm:p-4 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200/80 dark:border-white/10 shadow-[0_-4px_20px_rgba(0,0,0,0.12)] lg:static lg:p-0 lg:bg-transparent lg:border-0 lg:shadow-none lg:backdrop-blur-none">
       <button
         type="button"
         onClick={onClick}

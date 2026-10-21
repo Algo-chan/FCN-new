@@ -417,7 +417,7 @@ Recommended: See ${store.finalAssessment.recommended_specialty || "a doctor"}`;
   const commonTags = COMMON_SYMPTOM_TAGS[langCode] || COMMON_SYMPTOM_TAGS.en;
 
   return (
-    <div className="mx-auto max-w-5xl space-y-6 pb-20 md:pb-8">
+    <div className="mx-auto max-w-5xl space-y-6 pb-36 md:pb-8">
       {/* Page Header */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
@@ -758,21 +758,26 @@ Recommended: See ${store.finalAssessment.recommended_specialty || "a doctor"}`;
                     </div>
                   </div>
 
-                  {/* Start Button Desktop */}
-                  <div className="hidden md:block pt-2">
+                  {/* Start AI Assessment Button (Always accessible directly below the form) */}
+                  <div className="pt-3">
                     <Button
                       size="lg"
                       onClick={handleStartAssessment}
-                      disabled={symptoms.length < 5 || starting}
+                      disabled={symptoms.trim().length < 5 || starting}
                       loading={starting}
                       variant="primary"
-                      className="w-full h-13 text-base shadow-lg shadow-fcn-primary/25"
+                      className="w-full min-h-[52px] text-base font-bold shadow-lg shadow-fcn-primary/25 hover:shadow-fcn-primary/40 active:scale-[0.98] transition-all"
                     >
-                      <Sparkles className="h-5 w-5 mr-1" />
+                      <Sparkles className="h-5 w-5 mr-1.5" />
                       {starting
                         ? (LANGUAGE_CONFIGS[langCode]?.thinkingText || "Analyzing...")
                         : "Start AI Assessment"}
                     </Button>
+                    {symptoms.trim().length > 0 && symptoms.trim().length < 5 && (
+                      <p className="mt-2 text-center text-xs font-semibold text-amber-600 dark:text-amber-400">
+                        Please enter at least 5 characters to start ({symptoms.trim().length}/5).
+                      </p>
+                    )}
                   </div>
 
                   {store.error && (
@@ -833,14 +838,17 @@ Recommended: See ${store.finalAssessment.recommended_specialty || "a doctor"}`;
               </div>
             </div>
 
-            {/* Mobile Sticky Action Button */}
-            <StickyActionButton
-              label={starting ? "Analyzing..." : "Start AI Assessment"}
-              icon={<Sparkles className="h-5 w-5" />}
-              loading={starting}
-              disabled={symptoms.length < 5 || starting}
-              onClick={handleStartAssessment}
-            />
+            {/* Mobile Sticky Action Button (Docked right above bottom navigation bar) */}
+            <div className="lg:hidden">
+              <StickyActionButton
+                label={starting ? "Analyzing..." : "Start AI Assessment"}
+                icon={<Sparkles className="h-5 w-5" />}
+                loading={starting}
+                disabled={symptoms.trim().length < 5 || starting}
+                onClick={handleStartAssessment}
+                subtitle={symptoms.trim().length < 5 ? "Enter at least 5 characters" : undefined}
+              />
+            </div>
           </motion.div>
         ) : (
           <motion.div

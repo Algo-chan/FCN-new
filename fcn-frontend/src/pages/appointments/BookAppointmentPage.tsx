@@ -171,7 +171,7 @@ const BookAppointmentPage = () => {
 
   return (
     <PageTransition>
-      <div className="mx-auto max-w-4xl pb-24 md:pb-6">
+      <div className="mx-auto max-w-4xl pb-36 sm:pb-28 md:pb-6">
         {/* Header */}
         <div className="mb-6">
           <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
