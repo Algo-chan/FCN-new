@@ -4,7 +4,6 @@ import {
   CalendarCheck,
   Sparkles,
   Stethoscope,
-  User,
   Calendar,
   MapPin,
   Users,
@@ -32,39 +31,39 @@ const PATIENT_TABS: BottomNavItem[] = [
   { label: "Doctors", path: "/doctors", icon: <Stethoscope className="h-5 w-5" /> },
   { label: "Appts", path: "/appointments", icon: <CalendarCheck className="h-5 w-5" /> },
   { label: "AI Check", path: "/ai-check", icon: <Sparkles className="h-5 w-5" /> },
-  { label: "Profile", path: "/profile", icon: <User className="h-5 w-5" /> },
+  { label: "Notifs", path: "/notifications", icon: <Bell className="h-5 w-5" />, badge: true },
 ];
 
 const DOCTOR_TABS: BottomNavItem[] = [
   { label: "Home", path: "/dashboard", icon: <Home className="h-5 w-5" /> },
   { label: "Schedule", path: "/doctor/schedule", icon: <Calendar className="h-5 w-5" /> },
   { label: "Patients", path: "/doctor/patients", icon: <Users className="h-5 w-5" /> },
+  { label: "Rx", path: "/doctor/prescriptions", icon: <ClipboardList className="h-5 w-5" /> },
   { label: "Notifs", path: "/notifications", icon: <Bell className="h-5 w-5" />, badge: true },
-  { label: "Profile", path: "/profile", icon: <User className="h-5 w-5" /> },
 ];
 
 const NURSE_TABS: BottomNavItem[] = [
   { label: "Home", path: "/dashboard", icon: <Home className="h-5 w-5" /> },
   { label: "Visits", path: "/nurse/today", icon: <MapPin className="h-5 w-5" /> },
   { label: "Patients", path: "/nurse/patients", icon: <Users className="h-5 w-5" /> },
+  { label: "History", path: "/nurse/history", icon: <ClipboardList className="h-5 w-5" /> },
   { label: "Notifs", path: "/notifications", icon: <Bell className="h-5 w-5" />, badge: true },
-  { label: "Profile", path: "/profile", icon: <User className="h-5 w-5" /> },
 ];
 
 const HOSPITAL_ADMIN_TABS: BottomNavItem[] = [
   { label: "Home", path: "/hospital-admin", icon: <Home className="h-5 w-5" /> },
   { label: "Beds", path: "/hospital-admin/occupancy", icon: <Activity className="h-5 w-5" /> },
   { label: "Doctors", path: "/hospital-admin/doctors", icon: <Stethoscope className="h-5 w-5" /> },
+  { label: "Hospitals", path: "/hospitals", icon: <Building2 className="h-5 w-5" /> },
   { label: "Notifs", path: "/notifications", icon: <Bell className="h-5 w-5" />, badge: true },
-  { label: "Profile", path: "/profile", icon: <User className="h-5 w-5" /> },
 ];
 
 const PHARMACY_ADMIN_TABS: BottomNavItem[] = [
   { label: "Home", path: "/pharmacy-admin", icon: <Home className="h-5 w-5" /> },
   { label: "Verify", path: "/pharmacy-admin/verify", icon: <QrCode className="h-5 w-5" /> },
   { label: "History", path: "/pharmacy-admin/history", icon: <ClipboardList className="h-5 w-5" /> },
+  { label: "Catalog", path: "/pharmacy", icon: <Pill className="h-5 w-5" /> },
   { label: "Notifs", path: "/notifications", icon: <Bell className="h-5 w-5" />, badge: true },
-  { label: "Profile", path: "/profile", icon: <User className="h-5 w-5" /> },
 ];
 
 const SUPER_ADMIN_TABS: BottomNavItem[] = [
@@ -72,7 +71,7 @@ const SUPER_ADMIN_TABS: BottomNavItem[] = [
   { label: "Users", path: "/admin/users", icon: <Users className="h-5 w-5" /> },
   { label: "Hospitals", path: "/admin/hospitals", icon: <Building2 className="h-5 w-5" /> },
   { label: "Pharmacy", path: "/admin/pharmacies", icon: <Pill className="h-5 w-5" /> },
-  { label: "Profile", path: "/profile", icon: <User className="h-5 w-5" /> },
+  { label: "Notifs", path: "/notifications", icon: <Bell className="h-5 w-5" />, badge: true },
 ];
 
 const ROLE_TABS: Record<Role, BottomNavItem[]> = {
@@ -90,6 +89,8 @@ const ROLE_TABS: Record<Role, BottomNavItem[]> = {
  * Implements Mobile Style Reference Pattern #1:
  * Bottom tab bar (4-5 items, active tab filled and colored with a small label),
  * respecting safe-area insets, with 48px+ touch targets and active scale feedback.
+ * Profile has been placed in TopBar account dropdown, and Notifications is now
+ * prominently available in the bottom tab bar with live unread badge counters.
  */
 export const BottomNavBar = () => {
   const user = useAuthStore((state) => state.user);

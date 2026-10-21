@@ -163,8 +163,10 @@ export const TopBar = () => {
           {isDark ? <Sun className="h-5 w-5 text-amber-400" /> : <Moon className="h-5 w-5 text-slate-600" />}
         </button>
 
-        {/* Notification Bell */}
-        <NotificationBell />
+        {/* Notification Bell (Desktop only - mobile uses BottomNavBar Notifications tab) */}
+        <div className="hidden lg:block">
+          <NotificationBell />
+        </div>
 
         {/* User Dropdown */}
         <div ref={dropdownRef} className="relative">
