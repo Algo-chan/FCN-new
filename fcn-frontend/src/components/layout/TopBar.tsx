@@ -1,6 +1,7 @@
 import { useCallback, useState } from "react";
 import { Link } from "react-router-dom";
 import {
+  Globe,
   LogOut,
   Menu,
   Moon,
@@ -17,10 +18,18 @@ import { useWindowSize } from "@/hooks/useWindowSize";
 import { NotificationBell } from "@/components/notifications/NotificationBell";
 import { useNotifications } from "@/hooks/useNotifications";
 import { useAuth } from "@/hooks/useAuth";
+import { useTranslation, type Locale } from "@/i18n";
 import { getInitials, formatRole } from "@/utils/formatters";
 import { InstallAppButton } from "@/components/pwa/InstallAppButton";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
 import type { Role } from "@/types";
+
+const LANGUAGES: { code: Locale; name: string; nativeName: string; flag: string }[] = [
+  { code: "en", name: "English", nativeName: "English", flag: "🇬🇧" },
+  { code: "am", name: "Amharic", nativeName: "አማርኛ", flag: "🇪🇹" },
+  { code: "om", name: "Oromo", nativeName: "Afaan Oromoo", flag: "🇪🇹" },
+  { code: "so", name: "Somali", nativeName: "Soomaali", flag: "🇸🇴" },
+];
 
 const roleColors: Record<Role, { bg: string; text: string; dot: string }> = {
   patient: {
@@ -66,6 +75,7 @@ export const TopBar = () => {
   const toggleSidebar = useUiStore((state) => state.toggleSidebar);
   const setSidebar = useUiStore((state) => state.setSidebar);
   const { isDark, toggleTheme } = useThemeMode();
+  const { locale, setLocale } = useTranslation();
   const { user, logout } = useAuth();
   const { addToast } = useNotifications();
   const { width } = useWindowSize();
@@ -136,16 +146,18 @@ export const TopBar = () => {
 
       {/* Right: Actions (Language, Theme, Install, Notifs, Profile) */}
       <div className="flex items-center gap-1.5 sm:gap-2">
-        {/* Language Switcher */}
-        <LanguageSwitcher variant="pill" />
+        {/* Language Switcher (Desktop only - moved to Account Menu on mobile) */}
+        <div className="hidden md:block">
+          <LanguageSwitcher variant="pill" />
+        </div>
 
         {/* PWA Install */}
         <InstallAppButton variant="ghost" size="sm" className="hidden md:inline-flex" />
 
-        {/* Theme Toggle */}
+        {/* Theme Toggle (Desktop only - moved to Account Menu on mobile) */}
         <button
           onClick={toggleTheme}
-          className="rounded-xl p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-800 dark:text-slate-400 dark:hover:bg-white/10 dark:hover:text-slate-200 transition-colors"
+          className="hidden md:flex rounded-xl p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-800 dark:text-slate-400 dark:hover:bg-white/10 dark:hover:text-slate-200 transition-colors"
           aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
         >
           {isDark ? <Sun className="h-5 w-5 text-amber-400" /> : <Moon className="h-5 w-5 text-slate-600" />}
@@ -168,7 +180,7 @@ export const TopBar = () => {
           </button>
 
           {dropdownOpen && (
-            <div className="absolute right-0 top-full mt-2 w-64 overflow-hidden rounded-2xl border border-slate-200/80 bg-white/95 p-1.5 shadow-[0_16px_36px_rgba(0,0,0,0.12)] backdrop-blur-md dark:border-white/10 dark:bg-slate-900/95 animate-in fade-in slide-in-from-top-2 duration-150">
+            <div className="absolute right-0 top-full mt-2 w-72 overflow-hidden rounded-2xl border border-slate-200/80 bg-white/95 p-1.5 shadow-[0_16px_36px_rgba(0,0,0,0.14)] backdrop-blur-md dark:border-white/10 dark:bg-slate-900/95 animate-in fade-in slide-in-from-top-2 duration-150">
               <div className="border-b border-slate-100 dark:border-white/10 px-3 py-2.5 mb-1">
                 <p className="text-sm font-bold text-slate-900 dark:text-white truncate">
                   {user?.full_name ?? "User"}
@@ -210,6 +222,59 @@ export const TopBar = () => {
                     <span>Admin Panel</span>
                   </Link>
                 )}
+
+                {/* Appearance / Mode Toggle */}
+                <button
+                  type="button"
+                  onClick={toggleTheme}
+                  className="w-full flex items-center justify-between rounded-xl px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-white/10 transition-colors"
+                >
+                  <div className="flex items-center gap-2.5">
+                    {isDark ? (
+                      <Sun className="h-4 w-4 text-amber-400" />
+                    ) : (
+                      <Moon className="h-4 w-4 text-sky-600 dark:text-sky-400" />
+                    )}
+                    <span>Appearance</span>
+                  </div>
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-300">
+                    {isDark ? "Dark" : "Light"}
+                  </span>
+                </button>
+
+                {/* Language Switcher Section */}
+                <div className="border-t border-slate-100 dark:border-white/10 my-1 pt-1.5 px-1">
+                  <div className="flex items-center justify-between mb-1.5 px-2 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+                    <span className="flex items-center gap-1.5">
+                      <Globe className="h-3 w-3" />
+                      Language
+                    </span>
+                    <span className="text-teal-600 dark:text-teal-400 font-bold">
+                      {LANGUAGES.find((l) => l.code === locale)?.nativeName ?? "English"}
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-1">
+                    {LANGUAGES.map((lang) => {
+                      const isSelected = locale === lang.code;
+                      return (
+                        <button
+                          key={lang.code}
+                          type="button"
+                          onClick={() => setLocale(lang.code)}
+                          className={clsx(
+                            "flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-[11px] font-semibold transition-all text-left",
+                            isSelected
+                              ? "bg-teal-500/15 text-teal-700 dark:text-teal-300 font-bold border border-teal-500/30 shadow-xs"
+                              : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 border border-transparent"
+                          )}
+                        >
+                          <span className="text-xs">{lang.flag}</span>
+                          <span className="truncate">{lang.nativeName}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
 
                 <div className="border-t border-slate-100 dark:border-white/10 my-1 pt-1">
                   <button
