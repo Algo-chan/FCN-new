@@ -35,7 +35,6 @@ import { FinalAssessmentCard } from "@/components/ai-triage/FinalAssessmentCard"
 import { AssessmentHistoryCard } from "@/components/ai-triage/AssessmentHistoryCard";
 import { AssessmentDetailModal } from "@/components/ai-triage/AssessmentDetailModal";
 import { Button } from "@/components/ui/Button";
-import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { useSound } from "@/hooks/useSound";
 import type { SupportedLanguage } from "@/types";
@@ -426,13 +425,10 @@ Recommended: See ${store.finalAssessment.recommended_specialty || "a doctor"}`;
             </span>
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-xl sm:text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
-                AI Health Triage
-              </h1>
-              <Badge variant="info" size="sm">Smart Check</Badge>
-            </div>
-            <p className="text-xs sm:text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">
+            <h1 className="text-xl sm:text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
+              AI Health Triage
+            </h1>
+            <p className="text-xs sm:text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60 mt-0.5">
               Instant clinical assessment and doctor recommendations
             </p>
           </div>

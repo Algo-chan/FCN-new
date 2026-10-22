@@ -18,7 +18,6 @@ import {
 import { clsx } from "clsx";
 import { dashboardService, type AdminDashboardData } from "@/services/dashboard.service";
 import { Card } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { SkeletonCard } from "@/components/dashboard/SkeletonCard";
 import { useNotifications } from "@/hooks/useNotifications";
@@ -135,13 +134,10 @@ export const AdminDashboard = () => {
             <Shield className="h-6 w-6" />
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-xl sm:text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
-                Executive Control Tower
-              </h1>
-              <Badge variant="primary" size="sm">System Live</Badge>
-            </div>
-            <p className="text-xs sm:text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">
+            <h1 className="text-xl sm:text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
+              Executive Control Tower
+            </h1>
+            <p className="text-xs sm:text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60 mt-0.5">
               National Fast Care Now user base, capacity, and active services
             </p>
           </div>
@@ -177,7 +173,7 @@ export const AdminDashboard = () => {
           value={data.activeHospitals}
           icon={<Building2 className="h-6 w-6" />}
           gradient="bg-gradient-to-br from-rose-500 to-red-600"
-          subtext="Reporting live beds"
+          subtext="Connected healthcare facilities"
         />
         <StatCard
           label="Today's Consultations"

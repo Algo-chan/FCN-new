@@ -10,7 +10,6 @@ import { AnalyticsOverviewCards } from "@/components/admin/AnalyticsOverviewCard
 import { ConsultationsTrendChart } from "@/components/admin/ConsultationsTrendChart";
 import { RegistrationsTrendChart } from "@/components/admin/RegistrationsTrendChart";
 import { TopDoctorsTable } from "@/components/admin/TopDoctorsTable";
-import { Badge } from "@/components/ui/Badge";
 
 const AdminPanelPage = () => {
   const user = useAuthStore((s) => s.user);
@@ -54,13 +53,10 @@ const AdminPanelPage = () => {
             <Shield className="h-6 w-6" />
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-xl sm:text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
-                Operations & Analytics Center
-              </h1>
-              <Badge variant="primary" size="sm">Super Admin</Badge>
-            </div>
-            <p className="text-xs sm:text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">
+            <h1 className="text-xl sm:text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
+              Operations & Analytics Center
+            </h1>
+            <p className="text-xs sm:text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60 mt-0.5">
               National healthcare metrics, telemedicine throughput, and provider performance
             </p>
           </div>

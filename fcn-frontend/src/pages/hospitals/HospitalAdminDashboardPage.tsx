@@ -4,7 +4,6 @@ import { useAuthStore } from "@/store/auth.store";
 import { profileService } from "@/services/profile.service";
 import { OccupancyUpdateForm } from "@/components/hospitals/OccupancyUpdateForm";
 import { Card } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
 import { SkeletonCard } from "@/components/dashboard/SkeletonCard";
 import { Building2, Clock, Stethoscope, Users, Bed, Activity, AlertCircle } from "lucide-react";
 
@@ -76,13 +75,10 @@ const HospitalAdminDashboardPage = () => {
             <Building2 className="h-6 w-6" />
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-xl sm:text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
-                Welcome, {user?.full_name?.split(" ")[0] ?? "Admin"}
-              </h1>
-              <Badge variant="danger" size="sm">Hospital Admin</Badge>
-            </div>
-            <p className="text-xs sm:text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">
+            <h1 className="text-xl sm:text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
+              Welcome, {user?.full_name?.split(" ")[0] ?? "Admin"}
+            </h1>
+            <p className="text-xs sm:text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60 mt-0.5">
               Facility Management: <strong>{hospital.name}</strong>
             </p>
           </div>

@@ -105,12 +105,9 @@ export const DoctorDashboard = () => {
             <Stethoscope className="h-6 w-6" />
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-xl sm:text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
-                {greeting}, Dr. {lastName}
-              </h1>
-              <Badge variant="primary" size="sm">Provider</Badge>
-            </div>
+            <h1 className="text-xl sm:text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
+              {greeting}, Dr. {lastName}
+            </h1>
             {subtitle && (
               <p className={clsx("text-xs sm:text-sm font-medium mt-0.5", stats?.pending_requests ? "text-amber-600 dark:text-amber-400" : "text-fcn-text-light/60 dark:text-fcn-text-dark/60")}>
                 {subtitle}

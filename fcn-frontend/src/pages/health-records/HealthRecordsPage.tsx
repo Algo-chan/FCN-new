@@ -24,7 +24,6 @@ import { VitalsHistoryTable } from "@/components/health-records/VitalsHistoryTab
 import { SpO2Alert } from "@/components/health-records/SpO2Alert";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
 import { healthRecordsService } from "@/services/health-records.service";
 import { useAuthStore } from "@/store/auth.store";
 import { classifyVital, classifySpo2 } from "@/utils/vitals-classifier";
@@ -136,13 +135,10 @@ const HealthRecordsPage = () => {
               <Activity className="h-6 w-6" />
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-xl sm:text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
-                  {routePatientId ? "Patient Vitals" : "Health Records & Vitals"}
-                </h1>
-                <Badge variant="success" size="sm">Live Trends</Badge>
-              </div>
-              <p className="text-xs sm:text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">
+              <h1 className="text-xl sm:text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
+                {routePatientId ? "Patient Vitals" : "Health Records & Vitals"}
+              </h1>
+              <p className="text-xs sm:text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60 mt-0.5">
                 {routePatientId ? "Clinical monitoring and historical charts" : "Track blood pressure, glucose, SpO2, and vital signs"}
               </p>
             </div>

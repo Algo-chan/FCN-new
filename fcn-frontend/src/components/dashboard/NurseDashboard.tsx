@@ -101,12 +101,9 @@ export const NurseDashboard = () => {
             <HeartHandshake className="h-6 w-6" />
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-xl sm:text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
-                {greeting}, {firstName}
-              </h1>
-              <Badge variant="info" size="sm">{isRural ? "Field Officer" : "Community Nurse"}</Badge>
-            </div>
+            <h1 className="text-xl sm:text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
+              {greeting}, {firstName}
+            </h1>
             <p className="text-xs sm:text-sm font-medium text-fcn-text-light/60 dark:text-fcn-text-dark/60 mt-0.5">
               {stats?.today_visits ?? 0} {visitLabelPlural} scheduled for patient care today
             </p>

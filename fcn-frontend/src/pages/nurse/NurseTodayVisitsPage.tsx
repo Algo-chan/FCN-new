@@ -61,13 +61,10 @@ const NurseTodayVisitsPage = () => {
             <Calendar className="h-6 w-6" />
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-xl sm:text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
-                Today's Care Schedule
-              </h1>
-              <Badge variant="primary" size="sm">Field Active</Badge>
-            </div>
-            <p className="text-xs sm:text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">
+            <h1 className="text-xl sm:text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
+              Today's Care Schedule
+            </h1>
+            <p className="text-xs sm:text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60 mt-0.5">
               {format(new Date(), "EEEE, MMMM d, yyyy")} • Community health visits
             </p>
           </div>

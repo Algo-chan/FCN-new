@@ -265,7 +265,7 @@ const ProfilePage = () => {
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-base md:text-lg font-bold text-fcn-text-light dark:text-fcn-text-dark">Your Public Profile</h3>
                 <Button variant="ghost" size="sm" onClick={() => window.open(`/doctors/${user.id}`, "_blank")}>
-                  View live →
+                  View Public Profile →
                 </Button>
               </div>
               <div className="rounded-lg border border-fcn-primary/10 overflow-hidden max-w-md mx-auto">

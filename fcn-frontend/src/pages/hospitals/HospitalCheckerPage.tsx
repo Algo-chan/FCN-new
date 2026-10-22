@@ -21,7 +21,6 @@ import { HospitalDetailModal } from "@/components/hospitals/HospitalDetailModal"
 import { OccupancyUpdateForm } from "@/components/hospitals/OccupancyUpdateForm";
 import { SkeletonCard } from "@/components/dashboard/SkeletonCard";
 import { Card } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { ImagePlaceholder } from "@/components/landing/ImagePlaceholder";
 import type { Hospital, HospitalDetail } from "@/types";
@@ -102,13 +101,10 @@ const HospitalCheckerPage = () => {
             <Building2 className="h-6 w-6" />
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-xl sm:text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
-                Live Hospital Capacity
-              </h1>
-              <Badge variant="danger" size="sm">Emergency Status</Badge>
-            </div>
-            <p className="text-xs sm:text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">
+            <h1 className="text-xl sm:text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
+              Hospital Capacity
+            </h1>
+            <p className="text-xs sm:text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60 mt-0.5">
               Check real-time ICU beds, occupancy rates, and doctors on duty
             </p>
           </div>

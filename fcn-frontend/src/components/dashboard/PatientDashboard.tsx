@@ -217,16 +217,14 @@ export const PatientDashboard = () => {
             subtitle="Book phone or video appointment today"
             icon={<Stethoscope className="w-6 h-6 text-white" />}
             gradient="clinical"
-            badge="50+ Verified"
             onClick={() => navigate("/appointments/book")}
           />
 
           <FitnessCard
-            title="Hospital Emergency"
+            title="Hospital Capacity"
             subtitle="Check real-time occupancy and ICU beds"
             icon={<Building2 className="w-6 h-6 text-white" />}
             gradient="coral"
-            badge="Live Beds"
             onClick={() => navigate("/hospitals")}
           />
 
@@ -235,7 +233,6 @@ export const PatientDashboard = () => {
             subtitle="Order refills and view prescriptions"
             icon={<Pill className="w-6 h-6 text-white" />}
             gradient="amber"
-            badge="E-Prescriptions"
             onClick={() => navigate("/pharmacy")}
           />
         </div>
@@ -251,7 +248,7 @@ export const PatientDashboard = () => {
             to="/health-records"
             className="text-xs font-bold text-teal-600 dark:text-teal-400 hover:underline"
           >
-            Track Trends →
+            View Health Records →
           </Link>
         </div>
 

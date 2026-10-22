@@ -255,7 +255,7 @@ export function PatientHealthPassport({ context, isLoading }: HealthPassportProp
 
       {/* Latest Vitals */}
       <CollapsibleSection
-        title="Live Vital Signs"
+        title="Vital Signs"
         icon={<Activity className="h-4 w-4" />}
         defaultOpen={true}
       >

@@ -128,20 +128,6 @@ export const HeroSection = () => {
       <div className="relative z-10 mx-auto flex min-h-screen max-w-7xl flex-col items-center gap-8 px-4 pt-20 pb-10 sm:px-6 lg:flex-row lg:px-8 lg:pt-28 lg:pb-12">
         {/* Left column */}
         <div className="flex-1 text-center lg:text-left">
-          <motion.div
-            initial={shouldReduceMotion ? false : { opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-4 inline-flex items-center gap-2 rounded-full bg-fcn-accent/20 px-4 py-1.5 text-xs font-medium text-fcn-accent"
-          >
-            <motion.span
-              animate={shouldReduceMotion ? {} : { scale: [1, 1.03, 1] }}
-              transition={{ repeat: Infinity, duration: 2 }}
-            >
-              🇪🇹
-            </motion.span>
-            Now Live in Dire Dawa, Ethiopia
-          </motion.div>
-
           <h1 className="mb-4 text-[2.6rem] font-extrabold leading-[1.05] tracking-tight text-white sm:text-5xl lg:text-6xl">
             {words.map((word, i) => (
               <motion.span

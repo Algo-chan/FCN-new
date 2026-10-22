@@ -5,7 +5,7 @@ import { CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 
 const bullets = [
-  "Live occupancy dashboard for your front desk team",
+  "Occupancy management dashboard for your front desk team",
   "Reduced non-urgent walk-in volume",
   "Seamless integration with your existing systems"
 ];
