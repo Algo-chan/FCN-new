@@ -109,6 +109,7 @@ export const AppRouter = () => (
     <Route path="/onboarding" element={<OnboardingPage />} />
     <Route path="/pending" element={<PendingApprovalPage />} />
     <Route path="/doctors/:doctorId" element={<DoctorPublicProfilePage />} />
+    <Route path="/doctors/:doctorId/details" element={<Navigate to="/doctors" replace />} />
 
     {/* ── Shared authenticated routes ─────────────────────────── */}
     <Route element={<ProtectedRoute />}>
@@ -126,7 +127,6 @@ export const AppRouter = () => (
 
     {/* ── Patient-only routes ─────────────────────────────────── */}
     <Route element={<PatientRoute />}>
-      <Route path="/doctors/:id/details" element={<PageScaffold title="Doctor Details" section="Doctor" />} />
       <Route path="/appointments/book" element={<BookAppointmentPage />} />
       <Route path="/ai-check" element={<AISymptomCheckPage />} />
       <Route path="/pharmacy" element={<PharmacyPage />} />

@@ -12,6 +12,7 @@ import { clsx } from "clsx";
 import { MOTION } from "@/styles/motion";
 
 const navLinks = [
+  { label: "Find Doctors", href: "/doctors", isRoute: true },
   { label: "Features", href: "#features" },
   { label: "How it Works", href: "#how-it-works" },
   { label: "For Hospitals", href: "#for-hospitals" },
@@ -65,16 +66,32 @@ export const Navbar = () => {
 
         {/* Desktop nav */}
         <div className="hidden items-center gap-6 md:flex">
-          {navLinks.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              onClick={(e) => handleNavClick(e, link.href)}
-              className={`text-sm font-semibold transition hover:text-teal-500 ${textClasses}`}
-            >
-              {link.label}
-            </a>
-          ))}
+          {navLinks.map((link) => {
+            if ("isRoute" in link && link.isRoute) {
+              return (
+                <Link
+                  key={link.href}
+                  to={link.href}
+                  className={`inline-flex items-center gap-1.5 text-sm font-semibold transition hover:text-teal-500 ${textClasses}`}
+                >
+                  <span>{link.label}</span>
+                  <span className="rounded-full bg-emerald-500/20 px-1.5 py-0.2 text-[10px] font-extrabold text-emerald-400 border border-emerald-400/30">
+                    Free 🎉
+                  </span>
+                </Link>
+              );
+            }
+            return (
+              <a
+                key={link.href}
+                href={link.href}
+                onClick={(e) => handleNavClick(e, link.href)}
+                className={`text-sm font-semibold transition hover:text-teal-500 ${textClasses}`}
+              >
+                {link.label}
+              </a>
+            );
+          })}
         </div>
 
         {/* Right side */}
@@ -164,16 +181,33 @@ export const Navbar = () => {
               </div>
 
               <div className="flex flex-col gap-1">
-                {navLinks.map((link) => (
-                  <a
-                    key={link.href}
-                    href={link.href}
-                    onClick={(e) => { handleNavClick(e, link.href); closeMobile(); }}
-                    className="rounded-xl px-3 py-3 text-sm font-semibold text-slate-700 hover:bg-teal-50 hover:text-teal-700 dark:text-slate-200 dark:hover:bg-white/5 transition-colors"
-                  >
-                    {link.label}
-                  </a>
-                ))}
+                {navLinks.map((link) => {
+                  if ("isRoute" in link && link.isRoute) {
+                    return (
+                      <Link
+                        key={link.href}
+                        to={link.href}
+                        onClick={closeMobile}
+                        className="flex items-center justify-between rounded-xl px-3 py-3 text-sm font-semibold text-slate-700 hover:bg-teal-50 hover:text-teal-700 dark:text-slate-200 dark:hover:bg-white/5 transition-colors"
+                      >
+                        <span>{link.label}</span>
+                        <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
+                          Free during pilot 🎉
+                        </span>
+                      </Link>
+                    );
+                  }
+                  return (
+                    <a
+                      key={link.href}
+                      href={link.href}
+                      onClick={(e) => { handleNavClick(e, link.href); closeMobile(); }}
+                      className="rounded-xl px-3 py-3 text-sm font-semibold text-slate-700 hover:bg-teal-50 hover:text-teal-700 dark:text-slate-200 dark:hover:bg-white/5 transition-colors"
+                    >
+                      {link.label}
+                    </a>
+                  );
+                })}
               </div>
 
               <div className="mt-auto flex flex-col gap-3 pt-6 border-t border-slate-100 dark:border-white/10">

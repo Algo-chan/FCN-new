@@ -1,5 +1,5 @@
 import { motion, useReducedMotion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Building2, CalendarPlus, MapPin, Star, BadgeCheck, Clock, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { ImagePlaceholder } from "@/components/ui/ImagePlaceholder";
@@ -132,9 +132,13 @@ export const DoctorCard = ({ doctor, index, onClick }: DoctorCardProps) => {
         {/* Card Body */}
         <div className="flex flex-1 flex-col p-4 sm:p-5">
           <div className="flex items-start justify-between gap-2 mb-1">
-            <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white tracking-tight truncate group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
+            <Link
+              to={`/doctors/${doctor.id}`}
+              onClick={(e) => e.stopPropagation()}
+              className="text-base sm:text-lg font-bold text-slate-900 dark:text-white tracking-tight truncate group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors hover:underline"
+            >
               {doctor.full_name}
-            </h3>
+            </Link>
             {doctor.rating_average > 0 && (
               <div className="flex items-center gap-1 text-amber-500 flex-shrink-0 text-xs font-bold bg-amber-500/10 px-2 py-0.5 rounded-full">
                 <Star className="h-3 w-3 fill-amber-500" />
