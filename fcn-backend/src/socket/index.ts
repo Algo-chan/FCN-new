@@ -7,6 +7,7 @@ import { verifyAccessToken } from "../utils/jwt";
 import { encrypt, decrypt } from "../utils/encryption";
 import { cloudinary } from "../config/cloudinary";
 import { notificationService } from "../modules/notifications/notification.service";
+import { instantConsultService } from "../modules/instant-consult/instant-consult.service";
 import { logger } from "../utils/logger";
 import type { JwtAccessPayload } from "../types";
 import type { MessageType } from "@prisma/client";
@@ -52,6 +53,39 @@ export const initSocket = (server: HttpServer): Server => {
   io.on("connection", (socket) => {
     const user = socket.data.user;
     logger.info(`Socket connected: ${user.full_name} (${user.role}) [${socket.id}]`);
+
+    // Auto-join personal user room for direct user-targeted socket notifications
+    socket.join(`user:${user.id}`);
+    if (user.role === "doctor") {
+      socket.join("role:doctor");
+    }
+
+    // Instant Consult event listeners
+    socket.on("doctor_accept_instant", async ({ appointmentId }) => {
+      try {
+        if (user.role !== "doctor") return;
+        await instantConsultService.acceptInstantConsult(user.id, appointmentId);
+      } catch (err) {
+        logger.error("doctor_accept_instant error", { error: err });
+      }
+    });
+
+    socket.on("doctor_decline_instant", async ({ appointmentId }) => {
+      try {
+        if (user.role !== "doctor") return;
+        await instantConsultService.declineInstantConsult(user.id, appointmentId);
+      } catch (err) {
+        logger.error("doctor_decline_instant error", { error: err });
+      }
+    });
+
+    socket.on("cancel_instant_request", async ({ appointmentId }) => {
+      try {
+        await instantConsultService.cancelInstantConsult(user.id, appointmentId);
+      } catch (err) {
+        logger.error("cancel_instant_request error", { error: err });
+      }
+    });
 
     socket.on("join_consultation", async ({ appointmentId }) => {
       try {

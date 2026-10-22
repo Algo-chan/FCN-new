@@ -25,6 +25,7 @@ import { adminRoutes } from "./modules/admin/admin.routes";
 import { doctorDashboardRoutes } from "./modules/doctor-dashboard/doctor-dashboard.routes";
 import { nurseDashboardRoutes } from "./modules/nurse-dashboard/nurse-dashboard.routes";
 import { profileRoutes } from "./modules/profile/profile.routes";
+import { instantConsultRoutes } from "./modules/instant-consult/instant-consult.routes";
 import { waitlistRoutes } from "./modules/waitlist/waitlist.routes";
 import { searchRoutes } from "./modules/search/search.routes";
 import { successResponse } from "./utils/response";
@@ -91,6 +92,7 @@ app.use("/api/v1/admin", adminRoutes);
 app.use("/api/v1/doctor-dashboard", doctorDashboardRoutes);
 app.use("/api/v1/nurse-dashboard", nurseDashboardRoutes);
 app.use("/api/v1/profile", profileRoutes);
+app.use("/api/v1/instant-consult", instantConsultRoutes);
 
 app.use("/api/v1/waitlist", waitlistRoutes);
 app.use("/search", searchRoutes);
