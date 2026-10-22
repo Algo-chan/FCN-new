@@ -15,6 +15,7 @@ import {
   User,
   AlertCircle,
   Calendar,
+  Sparkles,
 } from "lucide-react";
 import { format, addDays, parseISO } from "date-fns";
 
@@ -32,6 +33,7 @@ import { useNotifications } from "@/hooks/useNotifications";
 import { useSystemSettings } from "@/hooks/useSystemSettings";
 import { doctorsService } from "@/services/doctors.service";
 import { appointmentsService } from "@/services/appointments.service";
+import { useInstantConsultStore } from "@/store/instant-consult.store";
 import type { PublicDoctorCard } from "@/types";
 
 type Step = "doctor" | "datetime" | "confirm";
@@ -48,6 +50,7 @@ const BookAppointmentPage = () => {
   const shouldReduceMotion = useReducedMotion();
   const { addToast } = useNotifications();
   const { isPaymentEnabled, isFreePeriod, isLoading: settingsLoading } = useSystemSettings();
+  const openInstantConsult = useInstantConsultStore((state) => state.openInstantConsult);
 
   const preselectedDoctorId = searchParams.get("doctor_id");
 
@@ -180,6 +183,36 @@ const BookAppointmentPage = () => {
           <p className="mt-1 text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium">
             Find and book a consultation with a verified healthcare specialist
           </p>
+        </div>
+
+        {/* KILLER FEATURE: Instant Consult Hero Banner */}
+        <div className="mb-6 relative overflow-hidden rounded-2xl sm:rounded-3xl border border-teal-500/35 bg-gradient-to-r from-teal-950 via-slate-900 to-sky-950 p-4 sm:p-5 text-white shadow-lg">
+          <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-[radial-gradient(#2dd4bf_1px,transparent_1px)] [background-size:16px_16px] opacity-20 pointer-events-none" />
+
+          <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="space-y-1 max-w-xl">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-black border border-emerald-500/30">
+                <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span>On-Duty Doctors Ready • ~5 Min Wait</span>
+              </div>
+              <h2 className="text-lg sm:text-xl font-black tracking-tight text-white">
+                Need to see a doctor immediately?
+              </h2>
+              <p className="text-xs sm:text-sm text-slate-300 font-medium">
+                Skip scheduling future slots. Connect directly with the first available verified doctor right now.
+              </p>
+            </div>
+
+            <Button
+              variant="action"
+              size="md"
+              onClick={() => openInstantConsult()}
+              className="shrink-0 font-black shadow-[0_6px_20px_rgba(13,148,136,0.35)] active:scale-95 text-xs sm:text-sm min-h-[44px] px-5"
+            >
+              <Sparkles className="w-4 h-4 mr-2 text-teal-200 animate-pulse" />
+              <span>See a Doctor Now</span>
+            </Button>
+          </div>
         </div>
 
         {/* Multi-step progress bar (Pattern #4) */}
