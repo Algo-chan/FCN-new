@@ -13,7 +13,6 @@ import {
   Sparkles
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import { PilotBadge } from "@/components/ui/PilotBadge";
 import { doctorsService } from "@/services/doctors.service";
 import { useAuthStore } from "@/store/auth.store";
 import { clsx } from "clsx";
@@ -108,9 +107,9 @@ export const FeaturedDoctorsSection = () => {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="mx-auto max-w-3xl text-center mb-12 sm:mb-16">
-          <div className="inline-flex items-center gap-2 rounded-full bg-emerald-500/10 px-3.5 py-1 text-xs font-bold text-emerald-700 dark:text-emerald-300 border border-emerald-500/25 mb-4 shadow-xs">
-            <Sparkles className="h-3.5 w-3.5 text-emerald-600" />
-            <span>TRANSPARENT PRICING · PILOT LAUNCH</span>
+          <div className="inline-flex items-center gap-2 rounded-full bg-teal-500/10 px-3.5 py-1 text-xs font-bold text-teal-700 dark:text-teal-300 border border-teal-500/25 mb-4 shadow-xs">
+            <Sparkles className="h-3.5 w-3.5 text-teal-600" />
+            <span>TRANSPARENT PRICING</span>
           </div>
 
           <h2 className="text-2xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
@@ -121,20 +120,8 @@ export const FeaturedDoctorsSection = () => {
           </h2>
 
           <p className="mt-3 text-sm sm:text-base text-slate-600 dark:text-slate-300 max-w-2xl mx-auto font-medium">
-            Know what you pay before you book. Every specialist displays upfront fees — and during our pilot launch,{" "}
-            <span className="font-extrabold text-emerald-600 dark:text-emerald-400">
-              all consultations are 100% FREE 🎉
-            </span>
+            Know what you pay before you book. Every specialist displays upfront, transparent fees without hidden charges.
           </p>
-
-          {/* Pilot announcement pill */}
-          <div className="mt-5 inline-flex flex-wrap items-center justify-center gap-2 rounded-2xl bg-white dark:bg-slate-900/80 px-4 py-2 border border-slate-200/80 dark:border-white/10 shadow-xs text-xs font-medium text-slate-700 dark:text-slate-300">
-            <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span>Pilot Offer Active:</span>
-            <span className="font-bold text-slate-400 line-through">from 350 Br</span>
-            <span className="font-extrabold text-emerald-600 dark:text-emerald-400 text-sm">0 Br</span>
-            <PilotBadge size="xs" variant="solid" />
-          </div>
         </div>
 
         {/* Doctor Cards Grid */}
@@ -158,11 +145,6 @@ export const FeaturedDoctorsSection = () => {
                     className="h-full w-full object-cover object-top transition duration-500 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent pointer-events-none" />
-
-                  {/* Top Left Pilot Badge */}
-                  <div className="absolute top-3 left-3">
-                    <PilotBadge size="xs" variant="solid" />
-                  </div>
 
                   {/* Top Right Verified by FCN */}
                   {doctor.verified && (
@@ -222,26 +204,25 @@ export const FeaturedDoctorsSection = () => {
                     </div>
                   </div>
 
-                  {/* Prominent Pricing Block */}
-                  <div className="mt-auto rounded-2xl border border-emerald-500/30 bg-gradient-to-r from-emerald-500/10 via-teal-500/5 to-transparent dark:from-emerald-950/40 dark:via-teal-950/20 p-3.5 mb-4">
+                  {/* Transparent Pricing Block */}
+                  <div className="mt-auto rounded-2xl border border-teal-500/20 bg-gradient-to-r from-teal-500/10 via-emerald-500/5 to-transparent dark:from-teal-950/40 dark:via-emerald-950/20 p-3.5 mb-4">
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                           Consultation Fee
                         </p>
-                        <div className="flex items-baseline gap-2 mt-0.5">
-                          <span className="text-xs text-slate-400 line-through font-semibold">
+                        <div className="flex items-baseline gap-1 mt-0.5">
+                          <span className="text-xl font-black text-slate-900 dark:text-white">
                             {fee} Br
-                          </span>
-                          <span className="text-xl font-black text-emerald-600 dark:text-emerald-400">
-                            0 Br
                           </span>
                         </div>
                       </div>
                       <div className="text-right">
-                        <PilotBadge size="xs" variant="glow" />
-                        <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold mt-1">
-                          No credit card needed
+                        <span className="inline-block px-2 py-0.5 rounded-md bg-teal-50 dark:bg-teal-950/50 text-[10px] text-teal-700 dark:text-teal-300 font-bold border border-teal-500/20">
+                          Upfront Fee
+                        </span>
+                        <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium mt-1">
+                          Follow-up: {doctor.follow_up_fee_etb || 150} Br
                         </p>
                       </div>
                     </div>
@@ -267,7 +248,7 @@ export const FeaturedDoctorsSection = () => {
                     className="w-full min-h-[44px] text-xs font-extrabold bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white shadow-sm"
                   >
                     <CalendarPlus className="h-4 w-4 mr-2" />
-                    <span>Book Free Consultation</span>
+                    <span>Book Consultation</span>
                     <ArrowRight className="h-3.5 w-3.5 ml-auto opacity-80 group-hover:translate-x-1 transition-transform" />
                   </Button>
                 </div>

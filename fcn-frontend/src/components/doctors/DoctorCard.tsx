@@ -3,7 +3,6 @@ import { useNavigate, Link } from "react-router-dom";
 import { Building2, CalendarPlus, MapPin, Star, BadgeCheck, Clock, ArrowRight, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { ImagePlaceholder } from "@/components/ui/ImagePlaceholder";
-import { PilotBadge } from "@/components/ui/PilotBadge";
 import { useTranslation } from "@/i18n";
 import { useAuthStore } from "@/store/auth.store";
 import type { PublicDoctorCard } from "@/types";
@@ -102,11 +101,6 @@ export const DoctorCard = ({ doctor, index, onClick }: DoctorCardProps) => {
           {/* Dark gradient overlay for readability of bottom chips */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
 
-          {/* FREE during pilot Badge on Photo */}
-          <div className="absolute top-3 left-3">
-            <PilotBadge size="xs" variant="solid" />
-          </div>
-
           {/* Availability Status Chip */}
           <div className="absolute bottom-3 left-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-950/70 backdrop-blur-md text-[11px] font-bold text-white shadow-sm">
             <span
@@ -184,26 +178,27 @@ export const DoctorCard = ({ doctor, index, onClick }: DoctorCardProps) => {
           </div>
 
           {/* Prominent Pricing Block */}
-          <div className="mt-auto rounded-xl border border-emerald-500/25 bg-emerald-500/5 dark:bg-emerald-500/10 p-2.5 mb-3">
+          <div className="mt-auto rounded-xl border border-teal-500/20 bg-teal-500/5 dark:bg-teal-500/10 p-2.5 mb-3">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                   Consultation Fee
                 </p>
-                <div className="flex items-baseline gap-1.5 mt-0.5">
-                  <span className="text-xs text-slate-400 line-through font-semibold">
+                <div className="flex items-baseline gap-1 mt-0.5">
+                  <span className="text-base font-black text-slate-900 dark:text-white">
                     {doctor.consultation_fee_etb ? `${doctor.consultation_fee_etb} Br` : "350 Br"}
-                  </span>
-                  <span className="text-base font-black text-emerald-600 dark:text-emerald-400">
-                    0 Br
                   </span>
                 </div>
               </div>
               <div className="text-right">
-                <PilotBadge size="xs" variant="glow" />
-                <p className="text-[9px] text-emerald-600/80 dark:text-emerald-400/80 font-medium mt-0.5">
-                  100% Free Consultation
-                </p>
+                <span className="inline-block px-2 py-0.5 rounded-md bg-teal-50 dark:bg-teal-950/50 text-[10px] text-teal-700 dark:text-teal-300 font-bold border border-teal-500/20">
+                  Upfront Fee
+                </span>
+                {doctor.follow_up_fee_etb && (
+                  <p className="text-[9px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">
+                    Follow-up: {doctor.follow_up_fee_etb} Br
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -246,7 +241,7 @@ export const DoctorCard = ({ doctor, index, onClick }: DoctorCardProps) => {
             className="w-full min-h-[44px] text-xs font-extrabold bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white shadow-xs"
           >
             <CalendarPlus className="h-4 w-4 mr-1.5" />
-            <span>Book Free Consultation</span>
+            <span>Book Consultation</span>
             <ArrowRight className="h-3.5 w-3.5 ml-auto opacity-70 group-hover:translate-x-0.5 transition-transform" />
           </Button>
         </div>

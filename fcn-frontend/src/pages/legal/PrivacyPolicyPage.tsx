@@ -63,7 +63,7 @@ export const PrivacyPolicyPage = () => {
             </span>
             <span>•</span>
             <span className="text-emerald-600 dark:text-emerald-400">
-              Applies to Dire Dawa Pilot & Nationwide Services
+              Applies to Dire Dawa & Nationwide Services
             </span>
           </div>
         </header>

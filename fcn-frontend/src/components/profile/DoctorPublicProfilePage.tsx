@@ -21,7 +21,6 @@ import { doctorsService } from "@/services/doctors.service";
 import { InitialsAvatar } from "@/components/profile/InitialsAvatar";
 import { Button } from "@/components/ui/Button";
 import { Spinner } from "@/components/ui/Spinner";
-import { PilotBadge } from "@/components/ui/PilotBadge";
 import { Navbar } from "@/components/landing/Navbar";
 import { Footer } from "@/components/landing/Footer";
 import { useNotifications } from "@/hooks/useNotifications";
@@ -263,40 +262,30 @@ export const DoctorPublicProfilePage = () => {
           </div>
         </div>
 
-        {/* Pricing & Free Pilot Banner Card */}
+        {/* Transparent Pricing Card */}
         <div className="rounded-3xl border border-teal-500/20 bg-gradient-to-br from-teal-500/10 via-emerald-500/5 to-white dark:to-slate-900 p-5 sm:p-6 dark:border-teal-500/20 shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="space-y-1.5">
-            <div className="flex items-center gap-2">
-              <span className="text-[11px] font-extrabold uppercase tracking-wider text-teal-700 dark:text-teal-300">
-                Transparent Pricing
-              </span>
-              <PilotBadge size="sm" variant="solid" />
-            </div>
+            <span className="text-[11px] font-extrabold uppercase tracking-wider text-teal-700 dark:text-teal-300">
+              Transparent Upfront Pricing
+            </span>
 
             <div className="flex flex-wrap items-baseline gap-2.5">
               <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
                 Consultation Fee:
               </span>
-              {profile.consultation_fee_etb ? (
-                <span className="text-sm font-semibold text-slate-400 line-through">
-                  {profile.consultation_fee_etb} Br
-                </span>
-              ) : (
-                <span className="text-sm font-semibold text-slate-400 line-through">
-                  350 Br
+              <span className="text-2xl font-black text-slate-900 dark:text-white">
+                {profile.consultation_fee_etb ? `${profile.consultation_fee_etb} Br` : "350 Br"}
+              </span>
+              {profile.follow_up_fee_etb && (
+                <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+                  (Follow-up: {profile.follow_up_fee_etb} Br)
                 </span>
               )}
-              <span className="text-2xl font-black text-emerald-600 dark:text-emerald-400">
-                0 Br
-              </span>
-              <span className="text-[11px] font-extrabold text-emerald-700 dark:text-emerald-400 bg-emerald-500/15 px-2 py-0.5 rounded-full border border-emerald-500/20">
-                100% Free During Pilot 🎉
-              </span>
             </div>
 
             <p className="text-xs text-slate-600 dark:text-slate-400 flex items-center gap-1.5">
               <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 flex-shrink-0" />
-              <span>Zero booking fees. Browse freely without login; sign in only when you confirm.</span>
+              <span>Upfront rate. Browse freely without login; sign in only when you confirm your booking.</span>
             </p>
           </div>
 
@@ -306,7 +295,7 @@ export const DoctorPublicProfilePage = () => {
             className="min-h-[48px] px-6 text-sm font-bold shadow-[0_8px_20px_rgba(13,148,136,0.3)] flex-shrink-0"
           >
             <CalendarPlus className="h-4 w-4 mr-2" />
-            <span>Book Free Consultation</span>
+            <span>Book Consultation</span>
           </Button>
         </div>
 
@@ -436,7 +425,7 @@ export const DoctorPublicProfilePage = () => {
             className="flex-1 min-h-[50px] text-sm font-bold shadow-[0_8px_24px_rgba(13,148,136,0.35)]"
           >
             <CalendarPlus className="h-5 w-5 mr-2" />
-            <span>Book Free Consultation</span>
+            <span>Book Consultation</span>
           </Button>
 
           <Button

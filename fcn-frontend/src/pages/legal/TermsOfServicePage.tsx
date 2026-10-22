@@ -17,7 +17,6 @@ import {
 import { Navbar } from "@/components/landing/Navbar";
 import { Footer } from "@/components/landing/Footer";
 import { Button } from "@/components/ui/Button";
-import { PilotBadge } from "@/components/ui/PilotBadge";
 
 export const TermsOfServicePage = () => {
   useEffect(() => {
@@ -99,7 +98,7 @@ export const TermsOfServicePage = () => {
             </div>
             <h2 className="font-bold text-sm text-slate-900 dark:text-white">Transparent Pricing</h2>
             <p className="mt-1 text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-              100% Free during our Dire Dawa pilot phase. Clear consultation rates with zero surprise charges.
+              Upfront consultation fees displayed on every doctor card with zero surprise charges.
             </p>
           </div>
 
@@ -190,20 +189,15 @@ export const TermsOfServicePage = () => {
               <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-teal-500/15 text-teal-700 dark:text-teal-300 text-xs font-black">
                 4
               </span>
-              <span>Free Pilot Phase & Transparent Fees</span>
+              <span>Transparent Pricing & Fee Structure</span>
             </h2>
-            <div className="flex items-center gap-2">
-              <PilotBadge size="md" variant="solid" />
-              <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wide">
-                Dire Dawa Community Pilot
-              </span>
-            </div>
             <p>
-              During the pilot phase in Dire Dawa, all doctor consultations, AI triage sessions, and digital prescription issuance
-              are provided <strong>free of charge (0 ETB)</strong> to patients.
+              Fast Care Now displays transparent consultation rates upfront on doctor cards and profile pages.
+              Patients can review fees before confirming an appointment. All rates are shown in Ethiopian Birr (ETB)
+              with zero hidden platform markups.
             </p>
             <p className="text-xs text-slate-500 dark:text-slate-400">
-              Any post-pilot pricing or fee schedules will be communicated transparently on doctor cards and profiles in advance. No patient will ever be charged without prior explicit authorization.
+              Any future adjustments to fee schedules will be communicated transparently on doctor cards and profiles in advance. No patient will ever be charged without prior explicit authorization.
             </p>
           </div>
 

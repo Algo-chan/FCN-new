@@ -72,12 +72,9 @@ export const Navbar = () => {
                 <Link
                   key={link.href}
                   to={link.href}
-                  className={`inline-flex items-center gap-1.5 text-sm font-semibold transition hover:text-teal-500 ${textClasses}`}
+                  className={`text-sm font-semibold transition hover:text-teal-500 ${textClasses}`}
                 >
-                  <span>{link.label}</span>
-                  <span className="rounded-full bg-emerald-500/20 px-1.5 py-0.2 text-[10px] font-extrabold text-emerald-400 border border-emerald-400/30">
-                    Free 🎉
-                  </span>
+                  {link.label}
                 </Link>
               );
             }
@@ -188,12 +185,9 @@ export const Navbar = () => {
                         key={link.href}
                         to={link.href}
                         onClick={closeMobile}
-                        className="flex items-center justify-between rounded-xl px-3 py-3 text-sm font-semibold text-slate-700 hover:bg-teal-50 hover:text-teal-700 dark:text-slate-200 dark:hover:bg-white/5 transition-colors"
+                        className="rounded-xl px-3 py-3 text-sm font-semibold text-slate-700 hover:bg-teal-50 hover:text-teal-700 dark:text-slate-200 dark:hover:bg-white/5 transition-colors"
                       >
-                        <span>{link.label}</span>
-                        <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
-                          Free during pilot 🎉
-                        </span>
+                        {link.label}
                       </Link>
                     );
                   }

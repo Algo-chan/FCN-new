@@ -11,7 +11,6 @@ import { Navbar } from "@/components/landing/Navbar";
 import { Footer } from "@/components/landing/Footer";
 import { PageTransition } from "@/components/animations/PageTransition";
 import { Button } from "@/components/ui/Button";
-import { PilotBadge } from "@/components/ui/PilotBadge";
 import { useTranslation } from "@/i18n";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
 import type { PublicDoctorDetail } from "@/types";
@@ -139,28 +138,24 @@ const FindDoctorsPage = () => {
               </div>
             </div>
 
-            {/* Pilot Launch Pricing Announcement Banner */}
-            <div className="rounded-2xl border border-emerald-500/30 bg-gradient-to-r from-emerald-500/15 via-teal-500/10 to-transparent dark:from-emerald-950/50 dark:via-teal-950/30 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
+            {/* Upfront Transparent Pricing Banner */}
+            <div className="rounded-2xl border border-teal-500/25 bg-gradient-to-r from-teal-500/10 via-emerald-500/5 to-transparent dark:from-teal-950/40 dark:via-emerald-950/20 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
               <div className="flex items-start sm:items-center gap-3.5">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-emerald-500 text-white shadow-md text-xl">
-                  🎉
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-teal-500/15 text-teal-600 dark:text-teal-400 font-black text-xl">
+                  💳
                 </div>
                 <div>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <h2 className="text-sm sm:text-base font-extrabold text-slate-900 dark:text-white">
-                      100% Free Remote Consultations During Pilot
-                    </h2>
-                    <PilotBadge size="xs" variant="solid" />
-                  </div>
+                  <h2 className="text-sm sm:text-base font-extrabold text-slate-900 dark:text-white">
+                    Transparent Upfront Specialist Rates
+                  </h2>
                   <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-medium mt-0.5">
-                    Standard specialist rates start from <strong>350 Br</strong>. During our launch pilot, all appointments with licensed specialists are completely free with zero prepayment.
+                    Browse all verified Ethiopian doctors and view fees upfront. Consultations start from <strong>350 Br</strong> with zero hidden platform charges.
                   </p>
                 </div>
               </div>
               <div className="flex items-center gap-2 shrink-0">
-                <div className="rounded-xl bg-white/90 dark:bg-slate-900/90 px-3.5 py-2 border border-emerald-500/25 text-xs font-bold text-emerald-700 dark:text-emerald-300 shadow-xs">
-                  Fee: <span className="line-through text-slate-400 font-normal mr-1.5">from 350 Br</span>
-                  <span className="text-sm font-black text-emerald-600 dark:text-emerald-400">0 Br</span>
+                <div className="rounded-xl bg-white/90 dark:bg-slate-900/90 px-3.5 py-2 border border-teal-500/25 text-xs font-bold text-teal-700 dark:text-teal-300 shadow-xs">
+                  Rates: <span className="text-sm font-black text-slate-900 dark:text-white ml-1">from 350 Br</span>
                 </div>
               </div>
             </div>
