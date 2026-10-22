@@ -8,6 +8,8 @@ import { useSound } from "@/hooks/useSound";
 import { Button } from "@/components/ui/Button";
 import { InstallAppButton } from "@/components/pwa/InstallAppButton";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
+import { useAuthStore } from "@/store/auth.store";
+import { getRoleDashboard } from "@/constants/roles";
 import { clsx } from "clsx";
 import { MOTION } from "@/styles/motion";
 
@@ -32,6 +34,9 @@ export const Navbar = () => {
   const { playTransition } = useSound();
   const shouldReduceMotion = useReducedMotion();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const user = useAuthStore((state) => state.user);
+  const dashboardPath = user ? getRoleDashboard(user.role) : "/dashboard";
 
   const scrolled = scrollY > 50;
 
@@ -120,12 +125,22 @@ export const Navbar = () => {
 
           <div className="hidden items-center gap-2 md:flex">
             <InstallAppButton size="sm" />
-            <Link to="/login">
-              <Button variant="ghost" size="sm">Sign In</Button>
-            </Link>
-            <Link to="/register">
-              <Button size="sm" variant="action" onClick={() => playTransition()}>Get Started</Button>
-            </Link>
+            {isAuthenticated ? (
+              <Link to={dashboardPath}>
+                <Button size="sm" variant="action" className="font-bold">
+                  Dashboard →
+                </Button>
+              </Link>
+            ) : (
+              <>
+                <Link to="/login">
+                  <Button variant="ghost" size="sm">Sign In</Button>
+                </Link>
+                <Link to="/register">
+                  <Button size="sm" variant="action" onClick={() => playTransition()}>Get Started</Button>
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile hamburger */}
@@ -206,12 +221,22 @@ export const Navbar = () => {
 
               <div className="mt-auto flex flex-col gap-3 pt-6 border-t border-slate-100 dark:border-white/10">
                 <InstallAppButton size="sm" fullWidth />
-                <Link to="/login" onClick={closeMobile}>
-                  <Button variant="secondary" className="w-full min-h-[48px]">Sign In</Button>
-                </Link>
-                <Link to="/register" onClick={() => { closeMobile(); playTransition(); }}>
-                  <Button variant="action" className="w-full min-h-[48px]">Get Started</Button>
-                </Link>
+                {isAuthenticated ? (
+                  <Link to={dashboardPath} onClick={closeMobile}>
+                    <Button variant="action" className="w-full min-h-[48px] font-bold">
+                      Go to Dashboard →
+                    </Button>
+                  </Link>
+                ) : (
+                  <>
+                    <Link to="/login" onClick={closeMobile}>
+                      <Button variant="secondary" className="w-full min-h-[48px]">Sign In</Button>
+                    </Link>
+                    <Link to="/register" onClick={() => { closeMobile(); playTransition(); }}>
+                      <Button variant="action" className="w-full min-h-[48px]">Get Started</Button>
+                    </Link>
+                  </>
+                )}
               </div>
             </motion.div>
           </motion.div>

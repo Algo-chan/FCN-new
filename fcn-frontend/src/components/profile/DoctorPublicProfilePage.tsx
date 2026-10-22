@@ -23,6 +23,7 @@ import { Button } from "@/components/ui/Button";
 import { Spinner } from "@/components/ui/Spinner";
 import { Navbar } from "@/components/landing/Navbar";
 import { Footer } from "@/components/landing/Footer";
+import { PageLayout } from "@/components/layout/PageLayout";
 import { useNotifications } from "@/hooks/useNotifications";
 import { useAuthStore } from "@/store/auth.store";
 import { clsx } from "clsx";
@@ -77,6 +78,15 @@ export const DoctorPublicProfilePage = () => {
   };
 
   if (isLoading) {
+    if (isAuthenticated) {
+      return (
+        <PageLayout>
+          <div className="flex items-center justify-center min-h-[400px]">
+            <Spinner size="lg" />
+          </div>
+        </PageLayout>
+      );
+    }
     return (
       <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950">
         <Navbar />
@@ -89,18 +99,24 @@ export const DoctorPublicProfilePage = () => {
   }
 
   if (error || !profile) {
+    const errorBody = (
+      <div className="flex flex-col items-center justify-center min-h-[400px] gap-4 text-center p-6">
+        <p className="text-rose-500 font-bold text-lg">Doctor profile not found</p>
+        <p className="text-slate-500 text-sm max-w-md">
+          The doctor you are looking for may have moved or is not publicly available.
+        </p>
+        <Button variant="secondary" onClick={() => navigate("/doctors")}>
+          Browse All Available Doctors
+        </Button>
+      </div>
+    );
+    if (isAuthenticated) {
+      return <PageLayout>{errorBody}</PageLayout>;
+    }
     return (
       <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950">
         <Navbar />
-        <div className="flex-1 flex flex-col items-center justify-center min-h-[400px] gap-4 text-center p-6">
-          <p className="text-rose-500 font-bold text-lg">Doctor profile not found</p>
-          <p className="text-slate-500 text-sm max-w-md">
-            The doctor you are looking for may have moved or is not publicly available.
-          </p>
-          <Button variant="secondary" onClick={() => navigate("/doctors")}>
-            Browse All Available Doctors
-          </Button>
-        </div>
+        <div className="flex-1 flex items-center justify-center">{errorBody}</div>
         <Footer />
       </div>
     );
@@ -110,42 +126,40 @@ export const DoctorPublicProfilePage = () => {
   const isAvailable = profile.availability_status === "available";
   const isInSession = profile.availability_status === "in_session";
 
-  return (
-    <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950">
-      <Navbar />
+  const jsonLdScript = (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{
+        __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Physician",
+          name: `Dr. ${profile.full_name}`,
+          medicalSpecialty: profile.specialty,
+          description:
+            profile.bio ||
+            `Dr. ${profile.full_name} is a ${profile.specialty} specialist serving patients in ${profile.city || "Dire Dawa"}, Ethiopia.`,
+          address: {
+            "@type": "PostalAddress",
+            addressLocality: profile.city || "Dire Dawa",
+            addressCountry: "ET",
+          },
+          ...(profile.hospital_name ? { hospitalAffiliation: profile.hospital_name } : {}),
+          ...(profile.rating_average && profile.rating_count
+            ? {
+                aggregateRating: {
+                  "@type": "AggregateRating",
+                  ratingValue: profile.rating_average,
+                  reviewCount: profile.rating_count,
+                },
+              }
+            : {}),
+        }),
+      }}
+    />
+  );
 
-      {/* Structured JSON-LD schema for Google SEO indexing */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Physician",
-            name: `Dr. ${profile.full_name}`,
-            medicalSpecialty: profile.specialty,
-            description:
-              profile.bio ||
-              `Dr. ${profile.full_name} is a ${profile.specialty} specialist serving patients in ${profile.city || "Dire Dawa"}, Ethiopia.`,
-            address: {
-              "@type": "PostalAddress",
-              addressLocality: profile.city || "Dire Dawa",
-              addressCountry: "ET",
-            },
-            ...(profile.hospital_name ? { hospitalAffiliation: profile.hospital_name } : {}),
-            ...(profile.rating_average && profile.rating_count
-              ? {
-                  aggregateRating: {
-                    "@type": "AggregateRating",
-                    ratingValue: profile.rating_average,
-                    reviewCount: profile.rating_count,
-                  },
-                }
-              : {}),
-          }),
-        }}
-      />
-
-      <main className="flex-1 max-w-4xl w-full mx-auto px-4 py-6 sm:py-10 pb-28 sm:pb-12 space-y-6">
+  const profileContent = (
+    <div className="max-w-4xl w-full mx-auto space-y-6">
         {/* Navigation Breadcrumb */}
         <div className="flex items-center justify-between">
           <Link
@@ -414,31 +428,58 @@ export const DoctorPublicProfilePage = () => {
             </div>
           </div>
         )}
-      </main>
+    </div>
+  );
 
-      {/* Floating Sticky Bottom Action CTA on Mobile */}
-      <div className="fixed bottom-0 left-0 right-0 z-30 p-4 pb-[max(16px,env(safe-area-inset-bottom))] bg-white/95 backdrop-blur-md border-t border-slate-200/80 dark:border-white/10 dark:bg-slate-900/95 sm:hidden">
-        <div className="flex items-center gap-3 max-w-4xl mx-auto">
-          <Button
-            variant="action"
-            onClick={handleBook}
-            className="flex-1 min-h-[50px] text-sm font-bold shadow-[0_8px_24px_rgba(13,148,136,0.35)]"
-          >
-            <CalendarPlus className="h-5 w-5 mr-2" />
-            <span>Book Consultation</span>
-          </Button>
+  const floatingMobileCta = (
+    <div
+      className={clsx(
+        "fixed left-0 right-0 z-30 p-4 bg-white/95 backdrop-blur-md border-t border-slate-200/80 dark:border-white/10 dark:bg-slate-900/95 sm:hidden",
+        isAuthenticated
+          ? "bottom-16 shadow-[0_-4px_20px_rgba(0,0,0,0.08)]"
+          : "bottom-0 pb-[max(16px,env(safe-area-inset-bottom))]"
+      )}
+    >
+      <div className="flex items-center gap-3 max-w-4xl mx-auto">
+        <Button
+          variant="action"
+          onClick={handleBook}
+          className="flex-1 min-h-[50px] text-sm font-bold shadow-[0_8px_24px_rgba(13,148,136,0.35)]"
+        >
+          <CalendarPlus className="h-5 w-5 mr-2" />
+          <span>Book Consultation</span>
+        </Button>
 
-          <Button
-            variant="secondary"
-            onClick={handleShare}
-            className="h-[50px] w-[50px] p-0 flex items-center justify-center rounded-2xl flex-shrink-0"
-            aria-label="Share doctor profile"
-          >
-            <Share2 className="h-5 w-5" />
-          </Button>
-        </div>
+        <Button
+          variant="secondary"
+          onClick={handleShare}
+          className="h-[50px] w-[50px] p-0 flex items-center justify-center rounded-2xl flex-shrink-0"
+          aria-label="Share doctor profile"
+        >
+          <Share2 className="h-5 w-5" />
+        </Button>
       </div>
+    </div>
+  );
 
+  if (isAuthenticated) {
+    return (
+      <PageLayout>
+        {jsonLdScript}
+        {profileContent}
+        {floatingMobileCta}
+      </PageLayout>
+    );
+  }
+
+  return (
+    <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950">
+      <Navbar />
+      {jsonLdScript}
+      <main className="flex-1 max-w-4xl w-full mx-auto px-4 pt-20 sm:pt-24 pb-28 sm:pb-12 space-y-6">
+        {profileContent}
+      </main>
+      {floatingMobileCta}
       <Footer />
     </div>
   );
