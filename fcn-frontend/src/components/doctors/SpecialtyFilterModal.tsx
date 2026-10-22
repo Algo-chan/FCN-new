@@ -104,6 +104,7 @@ export const SpecialtyFilterModal = ({
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 50, scale: 0.96 }}
           transition={{ duration: 0.25, ease: "easeOut" }}
+          data-lenis-prevent
           className="relative z-10 w-full max-w-2xl max-h-[85vh] sm:max-h-[80vh] flex flex-col rounded-t-[28px] sm:rounded-3xl border border-slate-200/80 dark:border-white/10 bg-white dark:bg-slate-900 shadow-2xl overflow-hidden"
         >
           {/* Header */}
@@ -181,8 +182,11 @@ export const SpecialtyFilterModal = ({
             </div>
           </div>
 
-          {/* Grouped Categories Body (Scrollable) */}
-          <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
+          {/* Grouped Categories Body (Scrollable with Lenis prevention & touch pan) */}
+          <div
+            data-lenis-prevent
+            className="flex-1 overflow-y-auto overscroll-contain p-4 sm:p-6 space-y-6 touch-pan-y"
+          >
             {filteredCategories.map(({ category, items }) => {
               const icon = CATEGORY_ICONS[category.iconName] || <Stethoscope className="h-5 w-5" />;
               const hasSelected = items.includes(selectedSpecialty);
