@@ -113,6 +113,7 @@ export interface PublicDoctorCard {
   next_available_slot: string | null;
   hospital_name: string | null;
   hospital_location: string | null;
+  years_experience?: number;
 }
 
 export interface PublicDoctorReview {

@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { ChevronLeft, ChevronRight, Frown } from "lucide-react";
+import { ChevronLeft, ChevronRight, Frown, Sparkles } from "lucide-react";
 import { doctorsService } from "@/services/doctors.service";
 import { DoctorCard } from "@/components/doctors/DoctorCard";
 import { DoctorDetailModal } from "@/components/doctors/DoctorDetailModal";
@@ -11,6 +11,7 @@ import { Navbar } from "@/components/landing/Navbar";
 import { Footer } from "@/components/landing/Footer";
 import { PageTransition } from "@/components/animations/PageTransition";
 import { Button } from "@/components/ui/Button";
+import { PilotBadge } from "@/components/ui/PilotBadge";
 import { useTranslation } from "@/i18n";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
 import type { PublicDoctorDetail } from "@/types";
@@ -135,6 +136,32 @@ const FindDoctorsPage = () => {
 
               <div className="self-start sm:self-auto">
                 <LanguageSwitcher variant="pill" />
+              </div>
+            </div>
+
+            {/* Pilot Launch Pricing Announcement Banner */}
+            <div className="rounded-2xl border border-emerald-500/30 bg-gradient-to-r from-emerald-500/15 via-teal-500/10 to-transparent dark:from-emerald-950/50 dark:via-teal-950/30 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
+              <div className="flex items-start sm:items-center gap-3.5">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-emerald-500 text-white shadow-md text-xl">
+                  🎉
+                </div>
+                <div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h2 className="text-sm sm:text-base font-extrabold text-slate-900 dark:text-white">
+                      100% Free Remote Consultations During Pilot
+                    </h2>
+                    <PilotBadge size="xs" variant="solid" />
+                  </div>
+                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-medium mt-0.5">
+                    Standard specialist rates start from <strong>350 Br</strong>. During our launch pilot, all appointments with licensed specialists are completely free with zero prepayment.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                <div className="rounded-xl bg-white/90 dark:bg-slate-900/90 px-3.5 py-2 border border-emerald-500/25 text-xs font-bold text-emerald-700 dark:text-emerald-300 shadow-xs">
+                  Fee: <span className="line-through text-slate-400 font-normal mr-1.5">from 350 Br</span>
+                  <span className="text-sm font-black text-emerald-600 dark:text-emerald-400">0 Br</span>
+                </div>
               </div>
             </div>
 

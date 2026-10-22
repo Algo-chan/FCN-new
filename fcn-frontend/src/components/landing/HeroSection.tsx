@@ -213,6 +213,26 @@ export const HeroSection = () => {
             </Link>
           </motion.div>
 
+          {/* Pricing hook & Pilot badge */}
+          <motion.div
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: shouldReduceMotion ? 0 : 1.05 }}
+            className="mt-5 flex flex-wrap items-center justify-center lg:justify-start gap-2.5 text-xs font-semibold"
+          >
+            <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3.5 py-1.5 backdrop-blur-md border border-white/20 text-white shadow-xs">
+              <span>🩺 Consultations from <strong>350 Br</strong></span>
+              <span className="text-white/40">•</span>
+              <span className="rounded-full bg-emerald-500/25 px-2 py-0.5 text-[11px] font-black text-emerald-300 border border-emerald-400/30">
+                FREE during pilot 🎉
+              </span>
+            </div>
+            <Link to="/doctors" className="inline-flex items-center gap-1 text-xs font-bold text-fcn-accent hover:underline px-2 py-1">
+              <span>View all doctors</span>
+              <ArrowRight className="h-3 w-3" />
+            </Link>
+          </motion.div>
+
           {/* Trust indicators — desktop only (unchanged) */}
           <motion.div
             initial={shouldReduceMotion ? false : { opacity: 0 }}
@@ -262,13 +282,17 @@ export const HeroSection = () => {
                   </div>
 
                   {/* Doctor preview */}
-                  <div className="flex items-center gap-2 rounded-lg border border-fcn-primary/10 p-2">
+                  <div className="flex items-center gap-2 rounded-lg border border-fcn-primary/10 p-2 bg-white/50 dark:bg-white/[0.02]">
                     <div className="flex h-8 w-8 items-center justify-center rounded-full bg-fcn-accent text-[10px] font-bold text-white">ST</div>
-                    <div>
-                      <p className="text-[11px] font-medium text-fcn-text-light dark:text-fcn-text-dark">Dr. Sara T.</p>
-                      <p className="text-[9px] text-fcn-text-light/50 dark:text-fcn-text-dark/50">General Physician</p>
+                    <div className="min-w-0">
+                      <p className="text-[11px] font-bold text-fcn-text-light dark:text-fcn-text-dark truncate">Dr. Sara T.</p>
+                      <p className="text-[9px] text-fcn-text-light/50 dark:text-fcn-text-dark/50">Pediatrics · <span className="line-through">400 Br</span></p>
                     </div>
-                    <span className="ml-auto text-[10px] font-medium text-fcn-accent">Online</span>
+                    <div className="ml-auto text-right">
+                      <span className="inline-block rounded-full bg-emerald-500/20 px-1.5 py-0.5 text-[9px] font-extrabold text-emerald-600 dark:text-emerald-400">
+                        0 Br FREE 🎉
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>

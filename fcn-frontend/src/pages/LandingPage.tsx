@@ -6,6 +6,7 @@ import { PageTransition } from "@/components/animations/PageTransition";
 import { Navbar } from "@/components/landing/Navbar";
 import { HeroSection } from "@/components/landing/HeroSection";
 import { TrustBar } from "@/components/landing/TrustBar";
+import { FeaturedDoctorsSection } from "@/components/landing/FeaturedDoctorsSection";
 import { FeaturesSection } from "@/components/landing/FeaturesSection";
 import { HowItWorksSection } from "@/components/landing/HowItWorksSection";
 import { ForHospitalsSection } from "@/components/landing/ForHospitalsSection";
@@ -41,6 +42,7 @@ const LandingPage = () => {
         <Navbar />
         <HeroSection />
         <TrustBar />
+        <FeaturedDoctorsSection />
         <FeaturesSection />
         <HowItWorksSection />
         <ForHospitalsSection />

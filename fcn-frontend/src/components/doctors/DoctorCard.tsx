@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Building2, CalendarPlus, MapPin, Star, BadgeCheck, Clock, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { ImagePlaceholder } from "@/components/ui/ImagePlaceholder";
+import { PilotBadge } from "@/components/ui/PilotBadge";
 import { useTranslation } from "@/i18n";
 import { useAuthStore } from "@/store/auth.store";
 import type { PublicDoctorCard } from "@/types";
@@ -101,6 +102,11 @@ export const DoctorCard = ({ doctor, index, onClick }: DoctorCardProps) => {
           {/* Dark gradient overlay for readability of bottom chips */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
 
+          {/* FREE during pilot Badge on Photo */}
+          <div className="absolute top-3 left-3">
+            <PilotBadge size="xs" variant="solid" />
+          </div>
+
           {/* Availability Status Chip */}
           <div className="absolute bottom-3 left-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-950/70 backdrop-blur-md text-[11px] font-bold text-white shadow-sm">
             <span
@@ -142,7 +148,7 @@ export const DoctorCard = ({ doctor, index, onClick }: DoctorCardProps) => {
           </span>
 
           {/* Hospital and Location */}
-          <div className="space-y-1 text-xs text-slate-500 dark:text-slate-400 mb-4">
+          <div className="space-y-1 text-xs text-slate-500 dark:text-slate-400 mb-3">
             {doctor.hospital_name && (
               <div className="flex items-center gap-1.5 truncate">
                 <Building2 className="h-3.5 w-3.5 text-slate-400 flex-shrink-0" />
@@ -157,21 +163,46 @@ export const DoctorCard = ({ doctor, index, onClick }: DoctorCardProps) => {
             )}
           </div>
 
+          {/* Prominent Pricing Block */}
+          <div className="mt-auto rounded-xl border border-emerald-500/25 bg-emerald-500/5 dark:bg-emerald-500/10 p-2.5 mb-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                  Consultation Fee
+                </p>
+                <div className="flex items-baseline gap-1.5 mt-0.5">
+                  <span className="text-xs text-slate-400 line-through font-semibold">
+                    {doctor.consultation_fee_etb ? `${doctor.consultation_fee_etb} Br` : "350 Br"}
+                  </span>
+                  <span className="text-base font-black text-emerald-600 dark:text-emerald-400">
+                    0 Br
+                  </span>
+                </div>
+              </div>
+              <div className="text-right">
+                <PilotBadge size="xs" variant="glow" />
+                <p className="text-[9px] text-emerald-600/80 dark:text-emerald-400/80 font-medium mt-0.5">
+                  100% Free Consultation
+                </p>
+              </div>
+            </div>
+          </div>
+
           {/* Stats pills */}
-          <div className="mt-auto grid grid-cols-2 gap-2 pt-3 border-t border-slate-100 dark:border-white/5 mb-4">
+          <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100 dark:border-white/5 mb-3">
             <div className="rounded-xl bg-slate-50 dark:bg-white/[0.03] p-2 text-center">
               <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                {t("common.consult")}
+                {t("modal.experience")}
               </p>
-              <p className="text-sm font-extrabold text-teal-600 dark:text-teal-400 mt-0.5">
-                {consultFee}
+              <p className="text-xs font-extrabold text-slate-800 dark:text-slate-200 mt-0.5">
+                {doctor.years_experience || 10}+ Years
               </p>
             </div>
             <div className="rounded-xl bg-slate-50 dark:bg-white/[0.03] p-2 text-center">
               <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
                 {t("common.language")}
               </p>
-              <p className="text-sm font-extrabold text-slate-800 dark:text-slate-200 mt-0.5 truncate px-1">
+              <p className="text-xs font-extrabold text-slate-800 dark:text-slate-200 mt-0.5 truncate px-1">
                 {doctor.languages_spoken.length > 0 ? doctor.languages_spoken.slice(0, 2).join(", ") : "—"}
               </p>
             </div>
@@ -192,10 +223,10 @@ export const DoctorCard = ({ doctor, index, onClick }: DoctorCardProps) => {
             type="button"
             variant="action"
             onClick={handleBook}
-            className="w-full min-h-[44px] text-xs font-bold"
+            className="w-full min-h-[44px] text-xs font-extrabold bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white shadow-xs"
           >
             <CalendarPlus className="h-4 w-4 mr-1.5" />
-            <span>{t("modal.bookNow")}</span>
+            <span>Book Free Consultation</span>
             <ArrowRight className="h-3.5 w-3.5 ml-auto opacity-70 group-hover:translate-x-0.5 transition-transform" />
           </Button>
         </div>

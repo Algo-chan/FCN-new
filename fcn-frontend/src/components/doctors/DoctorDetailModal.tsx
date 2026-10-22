@@ -8,6 +8,7 @@ import {
 import { Modal } from "@/components/ui/Modal";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
+import { PilotBadge } from "@/components/ui/PilotBadge";
 import { ImagePlaceholder } from "@/components/ui/ImagePlaceholder";
 import { useTranslation } from "@/i18n";
 import { useAuthStore } from "@/store/auth.store";
@@ -184,6 +185,7 @@ export const DoctorDetailModal = ({ doctor, isOpen, onClose }: DoctorDetailModal
               <Badge variant={statusBadgeVariant(doctor.availability_status)} size="sm">
                 {statusLabel}
               </Badge>
+              <PilotBadge size="xs" variant="glow" />
             </div>
             {(doctor.hospital_name || doctor.city) && (
               <div className="mt-2 flex flex-wrap items-center gap-2 text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">
@@ -226,12 +228,16 @@ export const DoctorDetailModal = ({ doctor, isOpen, onClose }: DoctorDetailModal
             </div>
             <div className="text-xs text-fcn-text-light/60 dark:text-fcn-text-dark/60">{t("modal.consultations")}</div>
           </div>
-          <div className="rounded-lg border border-fcn-primary/10 bg-fcn-primary/5 p-3 text-center">
-            <DollarSign className="mx-auto h-5 w-5 text-fcn-primary mb-1" />
-            <div className="text-lg font-bold text-fcn-text-light dark:text-fcn-text-dark">
-              {consultFee}
+          <div className="rounded-lg border border-emerald-500/25 bg-emerald-500/5 dark:bg-emerald-500/10 p-3 text-center">
+            <DollarSign className="mx-auto h-5 w-5 text-emerald-600 dark:text-emerald-400 mb-1" />
+            <div className="flex items-baseline justify-center gap-1.5">
+              <span className="text-xs text-slate-400 line-through font-semibold">{consultFee}</span>
+              <span className="text-lg font-black text-emerald-600 dark:text-emerald-400">0 Br</span>
             </div>
-            <div className="text-xs text-fcn-text-light/60 dark:text-fcn-text-dark/60">{t("common.consult")}</div>
+            <div className="mt-1">
+              <PilotBadge size="xs" variant="solid" />
+            </div>
+            <div className="text-[10px] text-fcn-text-light/60 dark:text-fcn-text-dark/60 mt-0.5">{t("common.consult")}</div>
           </div>
           <div className="rounded-lg border border-fcn-primary/10 bg-fcn-primary/5 p-3 text-center">
             <Repeat className="mx-auto h-5 w-5 text-fcn-primary mb-1" />
@@ -304,10 +310,10 @@ export const DoctorDetailModal = ({ doctor, isOpen, onClose }: DoctorDetailModal
             onClose();
             handleBook();
           }}
-          className="order-4 sm:order-3"
+          className="order-4 sm:order-3 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white font-extrabold shadow-sm"
           icon={<CalendarPlus className="h-4 w-4" />}
         >
-          {t("modal.bookNow")}
+          Book Free Consultation
         </Button>
       </div>
     </Modal>
