@@ -1,6 +1,6 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { useNavigate, Link } from "react-router-dom";
-import { Building2, CalendarPlus, MapPin, Star, BadgeCheck, Clock, ArrowRight } from "lucide-react";
+import { Building2, CalendarPlus, MapPin, Star, BadgeCheck, Clock, ArrowRight, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { ImagePlaceholder } from "@/components/ui/ImagePlaceholder";
 import { PilotBadge } from "@/components/ui/PilotBadge";
@@ -120,11 +120,14 @@ export const DoctorCard = ({ doctor, index, onClick }: DoctorCardProps) => {
             <span>{statusLabel}</span>
           </div>
 
-          {/* Verified Badge */}
+          {/* Verified by FCN Badge */}
           {doctor.verified && (
-            <div className="absolute top-3 right-3 flex items-center gap-1 px-2.5 py-1 rounded-full bg-teal-600/90 backdrop-blur-md text-[11px] font-bold text-white shadow-sm">
-              <BadgeCheck className="h-3.5 w-3.5" />
-              <span>{t("common.verified")}</span>
+            <div
+              className="absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-teal-600/95 backdrop-blur-md text-[11px] font-extrabold text-white shadow-md border border-white/20"
+              title="Verified by FCN • Medical license checked by admin"
+            >
+              <BadgeCheck className="h-3.5 w-3.5 text-teal-200 fill-teal-200/20" />
+              <span>Verified by FCN</span>
             </div>
           )}
         </div>
@@ -147,9 +150,22 @@ export const DoctorCard = ({ doctor, index, onClick }: DoctorCardProps) => {
             )}
           </div>
 
-          <span className="inline-block text-xs font-semibold text-teal-600 dark:text-teal-400 mb-2">
-            {doctor.specialty}
-          </span>
+          {/* Specialty & License Verified Trust Badge */}
+          <div className="flex flex-wrap items-center justify-between gap-1.5 mb-2.5">
+            <span className="text-xs sm:text-sm font-semibold text-teal-600 dark:text-teal-400">
+              {doctor.specialty}
+            </span>
+
+            {doctor.verified && (
+              <div
+                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-500/20 text-[10px] sm:text-[11px] font-bold text-emerald-700 dark:text-emerald-300"
+                title="Medical license checked and verified by FCN admin"
+              >
+                <ShieldCheck className="h-3 w-3 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                <span>License checked by admin</span>
+              </div>
+            )}
+          </div>
 
           {/* Hospital and Location */}
           <div className="space-y-1 text-xs text-slate-500 dark:text-slate-400 mb-3">

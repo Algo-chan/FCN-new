@@ -164,11 +164,14 @@ export const FeaturedDoctorsSection = () => {
                     <PilotBadge size="xs" variant="solid" />
                   </div>
 
-                  {/* Top Right Verified */}
+                  {/* Top Right Verified by FCN */}
                   {doctor.verified && (
-                    <div className="absolute top-3 right-3 flex items-center gap-1 px-2.5 py-1 rounded-full bg-teal-600/90 backdrop-blur-md text-[11px] font-bold text-white shadow-sm">
-                      <BadgeCheck className="h-3.5 w-3.5" />
-                      <span>Verified Doctor</span>
+                    <div
+                      className="absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-teal-600/95 backdrop-blur-md text-[11px] font-extrabold text-white shadow-md border border-white/20"
+                      title="Verified by FCN • Medical license checked by admin"
+                    >
+                      <BadgeCheck className="h-3.5 w-3.5 text-teal-200 fill-teal-200/20" />
+                      <span>Verified by FCN</span>
                     </div>
                   )}
 
@@ -191,9 +194,20 @@ export const FeaturedDoctorsSection = () => {
                     <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
                       {doctor.full_name}
                     </h3>
-                    <p className="text-xs font-bold text-teal-600 dark:text-teal-400 uppercase tracking-wide">
-                      {doctor.specialty}
-                    </p>
+                    <div className="flex flex-wrap items-center justify-between gap-1.5 mt-0.5">
+                      <p className="text-xs font-bold text-teal-600 dark:text-teal-400 uppercase tracking-wide">
+                        {doctor.specialty}
+                      </p>
+                      {doctor.verified && (
+                        <div
+                          className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-500/20 text-[10px] font-bold text-emerald-700 dark:text-emerald-300"
+                          title="Medical license checked and verified by FCN admin"
+                        >
+                          <ShieldCheck className="h-3 w-3 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                          <span>License checked by admin</span>
+                        </div>
+                      )}
+                    </div>
                   </div>
 
                   {/* Hospital & Location */}

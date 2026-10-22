@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import gsap from "gsap";
 import {
   Building2, CalendarPlus, Clock, Languages, MessageCircle, Star, Users,
-  Award, DollarSign, BadgeCheck, MapPin, Repeat
+  Award, DollarSign, BadgeCheck, MapPin, Repeat, ShieldCheck
 } from "lucide-react";
 import { Modal } from "@/components/ui/Modal";
 import { Button } from "@/components/ui/Button";
@@ -172,11 +172,11 @@ export const DoctorDetailModal = ({ doctor, isOpen, onClose }: DoctorDetailModal
               </h2>
               {doctor.verified && (
                 <span
-                  className="inline-flex items-center gap-1 rounded-full bg-fcn-success/10 px-2.5 py-0.5 text-xs font-medium text-fcn-success"
-                  title={t("common.verified")}
+                  className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 px-3 py-1 text-xs font-bold text-emerald-700 dark:text-emerald-300 shadow-sm"
+                  title="Medical license checked and verified by FCN clinical admin"
                 >
-                  <BadgeCheck className="h-3.5 w-3.5" />
-                  {t("common.verified").replace("✓ ", "")}
+                  <ShieldCheck className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                  <span>Verified by FCN • License Checked</span>
                 </span>
               )}
             </div>

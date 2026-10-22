@@ -33,6 +33,8 @@ import PharmacyVerifyPage from "@/pages/pharmacy-admin/PharmacyVerifyPage";
 import PharmacyDispenseHistoryPage from "@/pages/pharmacy-admin/PharmacyDispenseHistoryPage";
 import ProfilePage from "@/pages/profile/ProfilePage";
 import { DoctorPublicProfilePage } from "@/components/profile/DoctorPublicProfilePage";
+import PrivacyPolicyPage from "@/pages/legal/PrivacyPolicyPage";
+import TermsOfServicePage from "@/pages/legal/TermsOfServicePage";
 import { PageScaffold } from "@/pages/PageScaffold";
 import OnboardingPage from "@/pages/auth/OnboardingPage";
 import PendingApprovalPage from "@/pages/auth/PendingApprovalPage";
@@ -110,6 +112,10 @@ export const AppRouter = () => (
     <Route path="/pending" element={<PendingApprovalPage />} />
     <Route path="/doctors/:doctorId" element={<DoctorPublicProfilePage />} />
     <Route path="/doctors/:doctorId/details" element={<Navigate to="/doctors" replace />} />
+    <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+    <Route path="/privacy" element={<Navigate to="/privacy-policy" replace />} />
+    <Route path="/terms-of-service" element={<TermsOfServicePage />} />
+    <Route path="/terms" element={<Navigate to="/terms-of-service" replace />} />
 
     {/* ── Shared authenticated routes ─────────────────────────── */}
     <Route element={<ProtectedRoute />}>

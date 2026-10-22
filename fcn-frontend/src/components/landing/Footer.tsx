@@ -1,18 +1,45 @@
+import { Link } from "react-router-dom";
 import { Facebook, Heart, Instagram, Linkedin, Mail, MapPin, Send, Twitter } from "lucide-react";
 
-const NAV_SECTIONS = [
+interface NavLink {
+  label: string;
+  href: string;
+  isRoute?: boolean;
+}
+
+interface NavSection {
+  title: string;
+  links: NavLink[];
+}
+
+const NAV_SECTIONS: NavSection[] = [
   {
     title: "Platform",
-    links: [{ label: "Features", href: "#features" }, { label: "How It Works", href: "#how-it-works" }, { label: "For Hospitals", href: "#for-hospitals" }, { label: "For Doctors", href: "#for-doctors" }, { label: "FAQ", href: "#faq" }]
+    links: [
+      { label: "Find Doctors", href: "/doctors", isRoute: true },
+      { label: "Features", href: "/#features" },
+      { label: "How It Works", href: "/#how-it-works" },
+      { label: "For Hospitals", href: "/#for-hospitals" },
+      { label: "For Doctors", href: "/#for-doctors" },
+      { label: "FAQ", href: "/#faq" },
+    ],
   },
   {
     title: "Company",
-    links: [{ label: "About Us", href: "#" }, { label: "Careers", href: "#" }, { label: "Contact", href: "mailto:hello@fcncare.com" }, { label: "Blog", href: "#" }]
+    links: [
+      { label: "About Us", href: "/#features" },
+      { label: "Careers", href: "mailto:careers@fastcarenow.et" },
+      { label: "Contact", href: "mailto:hello@fcncare.com" },
+    ],
   },
   {
     title: "Legal",
-    links: [{ label: "Privacy Policy", href: "#" }, { label: "Terms of Service", href: "#" }, { label: "Cookie Policy", href: "#" }]
-  }
+    links: [
+      { label: "Privacy Policy", href: "/privacy-policy", isRoute: true },
+      { label: "Terms of Service", href: "/terms-of-service", isRoute: true },
+      { label: "Cookie Policy", href: "/privacy-policy#cookies", isRoute: true },
+    ],
+  },
 ];
 
 const SOCIALS = [
@@ -106,12 +133,21 @@ export const Footer = () => {
               <ul className="space-y-2.5">
                 {section.links.map((link) => (
                   <li key={link.label}>
-                    <a
-                      href={link.href}
-                      className="inline-block text-sm text-fcn-text-light/55 transition hover:text-fcn-primary dark:text-fcn-text-dark/55 dark:hover:text-fcn-accent"
-                    >
-                      {link.label}
-                    </a>
+                    {link.isRoute ? (
+                      <Link
+                        to={link.href}
+                        className="inline-block text-sm text-fcn-text-light/55 transition hover:text-fcn-primary dark:text-fcn-text-dark/55 dark:hover:text-fcn-accent"
+                      >
+                        {link.label}
+                      </Link>
+                    ) : (
+                      <a
+                        href={link.href}
+                        className="inline-block text-sm text-fcn-text-light/55 transition hover:text-fcn-primary dark:text-fcn-text-dark/55 dark:hover:text-fcn-accent"
+                      >
+                        {link.label}
+                      </a>
+                    )}
                   </li>
                 ))}
               </ul>
@@ -123,9 +159,15 @@ export const Footer = () => {
         <div className="mt-14 flex flex-col items-center justify-between gap-3 border-t border-fcn-primary/10 pt-7 text-xs text-fcn-text-light/45 dark:border-white/10 dark:text-fcn-text-dark/45 sm:flex-row">
           <p>&copy; {year} Fast Care Now. All rights reserved.</p>
           <div className="flex items-center gap-5">
-            <a href="#" className="transition hover:text-fcn-primary dark:hover:text-fcn-accent">Privacy</a>
-            <a href="#" className="transition hover:text-fcn-primary dark:hover:text-fcn-accent">Terms</a>
-            <a href="#" className="transition hover:text-fcn-primary dark:hover:text-fcn-accent">Cookies</a>
+            <Link to="/privacy-policy" className="transition hover:text-fcn-primary dark:hover:text-fcn-accent">
+              Privacy
+            </Link>
+            <Link to="/terms-of-service" className="transition hover:text-fcn-primary dark:hover:text-fcn-accent">
+              Terms
+            </Link>
+            <Link to="/privacy-policy#cookies" className="transition hover:text-fcn-primary dark:hover:text-fcn-accent">
+              Cookies
+            </Link>
           </div>
           <p className="flex items-center gap-1">
             Made with <Heart className="h-3.5 w-3.5 fill-fcn-danger text-fcn-danger" /> in Dire Dawa, Ethiopia

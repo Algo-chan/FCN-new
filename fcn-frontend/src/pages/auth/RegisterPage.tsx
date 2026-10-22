@@ -821,7 +821,28 @@ const RegisterPage = () => {
                       onChange={(e) => setAgreeTerms(e.target.checked)}
                       className="mt-0.5 h-4 w-4 rounded-md border-slate-300 text-teal-600 focus:ring-teal-500"
                     />
-                    <span>I agree to Fast Care Now's Terms of Service and Privacy Policy</span>
+                    <span>
+                      I agree to Fast Care Now's{" "}
+                      <Link
+                        to="/terms-of-service"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-teal-600 dark:text-teal-400 font-semibold underline hover:text-teal-700"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        Terms of Service
+                      </Link>{" "}
+                      and{" "}
+                      <Link
+                        to="/privacy-policy"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-teal-600 dark:text-teal-400 font-semibold underline hover:text-teal-700"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        Privacy Policy
+                      </Link>
+                    </span>
                   </label>
 
                   <div className="flex gap-2.5 pt-2">

@@ -185,7 +185,7 @@ export const DoctorPublicProfilePage = () => {
               {profile.verified && (
                 <div
                   className="absolute bottom-1 right-1 flex items-center justify-center w-7 h-7 rounded-full bg-teal-500 text-white shadow-sm ring-2 ring-slate-900"
-                  title="Verified Doctor"
+                  title="Verified by FCN - Medical license checked by admin"
                 >
                   <BadgeCheck className="w-4 h-4" />
                 </div>
@@ -203,6 +203,16 @@ export const DoctorPublicProfilePage = () => {
                 <span className="px-3 py-1 rounded-full text-xs font-bold bg-teal-500/20 text-teal-300 border border-teal-500/30 backdrop-blur-sm">
                   {profile.specialty}
                 </span>
+
+                {profile.verified && (
+                  <span
+                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 backdrop-blur-sm text-xs font-bold"
+                    title="Medical license checked and verified by FCN admin"
+                  >
+                    <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
+                    <span>Verified by FCN • License Checked</span>
+                  </span>
+                )}
 
                 {profile.city && (
                   <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white/10 backdrop-blur-sm text-xs font-medium text-white/90">
