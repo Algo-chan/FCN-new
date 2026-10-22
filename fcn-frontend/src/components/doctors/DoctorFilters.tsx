@@ -195,10 +195,7 @@ export const DoctorFilters = ({ filters, onChange }: DoctorFiltersProps) => {
           <BadgeCheck className="h-3.5 w-3.5" />
           <span>{t("filter.verifiedOnly")}</span>
         </button>
-      </div>
 
-      {/* Specialty Filter: Grouped Modal Trigger & Popular Quick Chips */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
         {/* Visual Categorized Modal Trigger */}
         <button
           type="button"
@@ -215,35 +212,6 @@ export const DoctorFilters = ({ filters, onChange }: DoctorFiltersProps) => {
           <span>{filters.specialty ? filters.specialty : "All Specialties (Grouped)"}</span>
           <ChevronDown className="h-3.5 w-3.5 opacity-60" />
         </button>
-
-        {specialtiesLoading ? (
-          Array.from({ length: 4 }).map((_, i) => <SkeletonPill key={i} />)
-        ) : (
-          <>
-            <SpecialtyPill
-              label={t("filter.allSpecialties")}
-              selected={!filters.specialty}
-              onClick={() => update({ specialty: "" })}
-            />
-            {specialties.slice(0, 5).map((spec) => (
-              <SpecialtyPill
-                key={spec}
-                label={spec}
-                selected={filters.specialty === spec}
-                onClick={() => update({ specialty: filters.specialty === spec ? "" : spec })}
-              />
-            ))}
-            {specialties.length > 5 && (
-              <button
-                type="button"
-                onClick={() => setSpecialtyModalOpen(true)}
-                className="whitespace-nowrap rounded-full px-3 py-2 text-xs font-bold text-teal-600 dark:text-teal-400 hover:underline select-none"
-              >
-                + More Categories...
-              </button>
-            )}
-          </>
-        )}
       </div>
 
       {/* Visual Specialty Categories Modal */}
