@@ -4,6 +4,7 @@ import { decryptMessage, computeAge } from "./consultation.helpers";
 import { AppError } from "../../utils/app-error";
 import { systemSettings } from "../../utils/system-settings";
 import { notificationService } from "../notifications/notification.service";
+import { getIO, consultationRoom } from "../../socket";
 import { logger } from "../../utils/logger";
 import type { IssuePrescriptionDto } from "./consultation.validators";
 import crypto from "crypto";
@@ -196,6 +197,8 @@ export class ConsultationService {
         appointment_type: appointment.appointment_type,
         status: appointment.status,
         scheduled_at: appointment.scheduled_at.toISOString(),
+        duration_minutes: appointment.duration_minutes ?? 15,
+        actual_start_time: appointment.actual_start_time?.toISOString() ?? null,
         chief_complaint: appointment.chief_complaint,
         consultation_started_at: appointment.consultation_started_at?.toISOString() ?? null,
         consultation_ended_at: appointment.consultation_ended_at?.toISOString() ?? null,
@@ -447,6 +450,147 @@ export class ConsultationService {
 
     logger.info(`Soft-deleted ${ids.length} messages older than ${retentionDays} days`);
     return { deleted: ids.length };
+  }
+
+  async requestExtension(appointmentId: string, doctorId: string, minutes: number = 10) {
+    const appointment = await prisma.appointment.findUnique({
+      where: { id: appointmentId },
+      include: {
+        doctor: { select: { id: true, full_name: true } },
+        patient: { select: { id: true, full_name: true } }
+      }
+    });
+
+    if (!appointment) {
+      throw new AppError("Appointment not found", 404, "NOT_FOUND");
+    }
+
+    if (appointment.doctor_id !== doctorId) {
+      throw new AppError("Only the assigned doctor can request an extension", 403, "FORBIDDEN");
+    }
+
+    if (appointment.status !== "in_session" && appointment.status !== "confirmed") {
+      throw new AppError("Can only extend active sessions", 400, "SESSION_NOT_ACTIVE");
+    }
+
+    try {
+      const io = getIO();
+      if (io) {
+        io.to(`user:${appointment.patient_id}`).emit("extension_requested", {
+          appointmentId,
+          minutes,
+          doctorName: appointment.doctor.full_name
+        });
+        io.to(consultationRoom(appointmentId)).emit("extension_requested", {
+          appointmentId,
+          minutes,
+          doctorName: appointment.doctor.full_name
+        });
+      }
+    } catch (err) {
+      logger.warn("Socket extension_requested emit error", { error: err });
+    }
+
+    return { success: true, requestedMinutes: minutes };
+  }
+
+  async respondExtension(
+    appointmentId: string,
+    patientId: string,
+    approved: boolean,
+    minutes: number = 10
+  ) {
+    const appointment = await prisma.appointment.findUnique({
+      where: { id: appointmentId },
+      include: {
+        doctor: { select: { id: true, full_name: true } },
+        patient: { select: { id: true, full_name: true } }
+      }
+    });
+
+    if (!appointment) {
+      throw new AppError("Appointment not found", 404, "NOT_FOUND");
+    }
+
+    if (appointment.patient_id !== patientId) {
+      throw new AppError("Only the patient can approve or decline an extension", 403, "FORBIDDEN");
+    }
+
+    const io = getIO();
+
+    if (!approved) {
+      const declineMsg = "Session extension declined. Wrapping up consultation.";
+      const { encrypted, iv } = encrypt(declineMsg);
+      await prisma.message.create({
+        data: {
+          conversation_id: appointmentId,
+          appointment_id: appointmentId,
+          sender_user_id: patientId,
+          recipient_user_id: appointment.doctor_id,
+          message_text: encrypted,
+          message_iv: iv,
+          message_type: "system",
+          is_system_message: true
+        }
+      });
+
+      if (io) {
+        io.to(`user:${appointment.doctor_id}`).emit("extension_declined", { appointmentId });
+        io.to(consultationRoom(appointmentId)).emit("extension_declined", { appointmentId });
+      }
+
+      return { approved: false };
+    }
+
+    // Approved: update appointment duration
+    const currentDuration = appointment.duration_minutes ?? 15;
+    const newDuration = currentDuration + minutes;
+
+    await prisma.appointment.update({
+      where: { id: appointmentId },
+      data: { duration_minutes: newDuration }
+    });
+
+    const grantMsg = `Session extended by ${minutes} minutes (approved by patient)`;
+    const { encrypted, iv } = encrypt(grantMsg);
+    const createdMsg = await prisma.message.create({
+      data: {
+        conversation_id: appointmentId,
+        appointment_id: appointmentId,
+        sender_user_id: patientId,
+        recipient_user_id: appointment.doctor_id,
+        message_text: encrypted,
+        message_iv: iv,
+        message_type: "system",
+        is_system_message: true
+      },
+      include: {
+        sender: { select: { id: true, full_name: true } }
+      }
+    });
+
+    if (io) {
+      io.to(consultationRoom(appointmentId)).emit("extension_granted", {
+        appointmentId,
+        duration_minutes: newDuration,
+        durationMinutes: newDuration,
+        addedMinutes: minutes
+      });
+      io.to(consultationRoom(appointmentId)).emit("new_message", {
+        id: createdMsg.id,
+        conversation_id: createdMsg.conversation_id,
+        appointment_id: createdMsg.appointment_id,
+        sender_user_id: createdMsg.sender_user_id,
+        recipient_user_id: createdMsg.recipient_user_id,
+        sender_name: "System",
+        message_text: grantMsg,
+        message_type: "system",
+        is_system_message: true,
+        sent_at: createdMsg.sent_at.toISOString()
+      });
+    }
+
+    return { approved: true, duration_minutes: newDuration, addedMinutes: minutes };
   }
 }
 

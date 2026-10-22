@@ -53,5 +53,21 @@ export const consultationService = {
       `/consultations/${appointmentId}/summary`
     );
     return response.data;
+  },
+
+  requestExtension: async (appointmentId: string, minutes: number = 10) => {
+    const response = await api.post<ApiResponse<{ success: boolean; requestedMinutes: number }>>(
+      `/consultations/${appointmentId}/extension/request`,
+      { minutes }
+    );
+    return response.data;
+  },
+
+  respondExtension: async (appointmentId: string, approved: boolean, minutes: number = 10) => {
+    const response = await api.post<ApiResponse<{ approved: boolean; duration_minutes?: number; addedMinutes?: number }>>(
+      `/consultations/${appointmentId}/extension/respond`,
+      { approved, minutes }
+    );
+    return response.data;
   }
 };

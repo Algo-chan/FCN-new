@@ -106,3 +106,39 @@ export const getConsultationSummaryController = async (
     next(error);
   }
 };
+
+export const requestExtensionController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { appointmentId } = req.params;
+    const minutes = Number(req.body.minutes ?? 10);
+    const result = await consultationService.requestExtension(appointmentId, req.user!.id, minutes);
+    successResponse(res, result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const respondExtensionController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { appointmentId } = req.params;
+    const approved = Boolean(req.body.approved);
+    const minutes = Number(req.body.minutes ?? 10);
+    const result = await consultationService.respondExtension(
+      appointmentId,
+      req.user!.id,
+      approved,
+      minutes
+    );
+    successResponse(res, result);
+  } catch (error) {
+    next(error);
+  }
+};

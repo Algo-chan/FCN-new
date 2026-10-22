@@ -370,6 +370,14 @@ export interface Message {
   error?: boolean;
 }
 
+export type DurationTier = "general" | "specialist" | "complex";
+
+export const DURATION_TIERS: Record<DurationTier, { label: string; minutes: number; description: string }> = {
+  general: { label: "General", minutes: 15, description: "15 min standard clinical consultation" },
+  specialist: { label: "Specialist", minutes: 30, description: "30 min comprehensive specialist consultation" },
+  complex: { label: "Complex Case", minutes: 45, description: "45 min multi-system or complex case review" }
+};
+
 export interface ConsultationContext {
   appointment: {
     id: string;
@@ -378,6 +386,8 @@ export interface ConsultationContext {
     appointment_type: AppointmentType;
     status: AppointmentStatus;
     scheduled_at: string;
+    duration_minutes?: number;
+    actual_start_time?: string | null;
     chief_complaint?: string | null;
     consultation_started_at?: string | null;
     consultation_ended_at?: string | null;

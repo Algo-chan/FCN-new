@@ -8,6 +8,7 @@ import { encrypt, decrypt } from "../utils/encryption";
 import { cloudinary } from "../config/cloudinary";
 import { notificationService } from "../modules/notifications/notification.service";
 import { instantConsultService } from "../modules/instant-consult/instant-consult.service";
+import { consultationService } from "../modules/consultation/consultation.service";
 import { logger } from "../utils/logger";
 import type { JwtAccessPayload } from "../types";
 import type { MessageType } from "@prisma/client";
@@ -84,6 +85,24 @@ export const initSocket = (server: HttpServer): Server => {
         await instantConsultService.cancelInstantConsult(user.id, appointmentId);
       } catch (err) {
         logger.error("cancel_instant_request error", { error: err });
+      }
+    });
+
+    socket.on("request_consultation_extension", async ({ appointmentId, minutes = 10 }) => {
+      try {
+        if (user.role !== "doctor") return;
+        await consultationService.requestExtension(appointmentId, user.id, minutes);
+      } catch (err) {
+        logger.error("request_consultation_extension error", { error: err });
+      }
+    });
+
+    socket.on("respond_consultation_extension", async ({ appointmentId, approved, minutes = 10 }) => {
+      try {
+        if (user.role !== "patient") return;
+        await consultationService.respondExtension(appointmentId, user.id, approved, minutes);
+      } catch (err) {
+        logger.error("respond_consultation_extension error", { error: err });
       }
     });
 

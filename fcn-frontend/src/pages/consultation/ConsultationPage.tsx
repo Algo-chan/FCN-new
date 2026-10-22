@@ -14,7 +14,8 @@ import {
   Sparkles,
   PhoneCall,
   Lock,
-  Clock
+  Clock,
+  AlertTriangle
 } from "lucide-react";
 import { format } from "date-fns";
 import toast from "react-hot-toast";
@@ -27,6 +28,8 @@ import { MessagesList } from "@/components/consultation/MessagesList";
 import { ChatInput } from "@/components/consultation/ChatInput";
 import { PatientHealthPassport } from "@/components/consultation/PatientHealthPassport";
 import { PrescribePanel } from "@/components/consultation/PrescribePanel";
+import { ConsultationTimer } from "@/components/consultation/ConsultationTimer";
+import { ExtensionApprovalModal } from "@/components/consultation/ExtensionApprovalModal";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import type { ConsultationContext, Message } from "@/types";
@@ -61,6 +64,9 @@ export default function ConsultationPage() {
   const [page, setPage] = useState(1);
   const [hasMoreMessages, setHasMoreMessages] = useState(true);
   const [initialLoad, setInitialLoad] = useState(true);
+  const [durationMinutes, setDurationMinutes] = useState(15);
+  const [extensionRequest, setExtensionRequest] = useState<{ doctorName: string; minutes: number } | null>(null);
+  const [isExtending, setIsExtending] = useState(false);
   const queryClient = useQueryClient();
   const pageFocusedRef = useRef(true);
 
@@ -115,6 +121,41 @@ export default function ConsultationPage() {
       setReadOnly(true, contextData.appointment.consultation_ended_at ?? undefined);
     }
   }, [contextData, setReadOnly]);
+
+  useEffect(() => {
+    if (contextData?.appointment?.duration_minutes) {
+      setDurationMinutes(contextData.appointment.duration_minutes);
+    }
+  }, [contextData?.appointment?.duration_minutes]);
+
+  const startedAt =
+    contextData?.appointment?.consultation_started_at ||
+    (contextData?.appointment as any)?.actual_start_time;
+
+  const [remainingSecs, setRemainingSecs] = useState<number>(() => {
+    if (!startedAt) return durationMinutes * 60;
+    const elapsed = Math.max(0, Math.floor((Date.now() - new Date(startedAt).getTime()) / 1000));
+    return Math.max(0, durationMinutes * 60 - elapsed);
+  });
+
+  useEffect(() => {
+    if (!startedAt) {
+      setRemainingSecs(durationMinutes * 60);
+      return;
+    }
+    const elapsed = Math.max(0, Math.floor((Date.now() - new Date(startedAt).getTime()) / 1000));
+    setRemainingSecs(Math.max(0, durationMinutes * 60 - elapsed));
+  }, [startedAt, durationMinutes]);
+
+  useEffect(() => {
+    if (isReadOnly) return;
+    const interval = setInterval(() => {
+      setRemainingSecs((prev) => (prev > 0 ? prev - 1 : 0));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [isReadOnly]);
+
+  const showFiveMinWarning = !isReadOnly && remainingSecs <= 300 && remainingSecs > 0;
 
   // Initial doctor auto-greeting simulation with typing indicator on mount for instant consultations
   useEffect(() => {
@@ -197,6 +238,29 @@ export default function ConsultationPage() {
       }
     };
 
+    const handleExtensionRequested = (data: { doctorName: string; minutes: number }) => {
+      if (!isDoctor) {
+        setExtensionRequest({ doctorName: data.doctorName, minutes: data.minutes });
+        playNotification();
+      }
+    };
+
+    const handleExtensionGranted = (data: { durationMinutes?: number; duration_minutes?: number; addedMinutes: number; approvedBy?: string }) => {
+      const dur = data.durationMinutes ?? data.duration_minutes ?? (durationMinutes + (data.addedMinutes || 10));
+      setDurationMinutes(dur);
+      setExtensionRequest(null);
+      playSuccess();
+      toast.success(`Session extended by +${data.addedMinutes} min (${dur}m total)`);
+      refetchContext();
+    };
+
+    const handleExtensionDeclined = () => {
+      setExtensionRequest(null);
+      if (isDoctor) {
+        toast("Patient preferred not to extend session. Concluding at regular limit.");
+      }
+    };
+
     socket.on("new_message", handleNewMessage);
     socket.on("user_typing", handleUserTyping);
     socket.on("user_stopped_typing", handleUserStoppedTyping);
@@ -205,6 +269,9 @@ export default function ConsultationPage() {
     socket.on("prescription_issued", handlePrescriptionIssued);
     socket.on("error", handleError);
     socket.on("consultation_joined", handleConsultationJoined);
+    socket.on("extension_requested", handleExtensionRequested);
+    socket.on("extension_granted", handleExtensionGranted);
+    socket.on("extension_declined", handleExtensionDeclined);
 
     return () => {
       socket.off("new_message", handleNewMessage);
@@ -215,17 +282,22 @@ export default function ConsultationPage() {
       socket.off("prescription_issued", handlePrescriptionIssued);
       socket.off("error", handleError);
       socket.off("consultation_joined", handleConsultationJoined);
+      socket.off("extension_requested", handleExtensionRequested);
+      socket.off("extension_granted", handleExtensionGranted);
+      socket.off("extension_declined", handleExtensionDeclined);
     };
   }, [
     socket,
     appointmentId,
     user?.id,
+    isDoctor,
     addMessage,
     incrementUnread,
     setTyping,
     markMessagesRead,
     setReadOnly,
     playNotification,
+    playSuccess,
     refetchContext
   ]);
 
@@ -312,6 +384,40 @@ export default function ConsultationPage() {
     refetchContext();
   }, [playSuccess, refetchContext]);
 
+  const handleRequestExtension = useCallback(
+    async (minutes = 10) => {
+      if (!appointmentId || isExtending) return;
+      setIsExtending(true);
+      try {
+        await consultationService.requestExtension(appointmentId, minutes);
+        toast.success(`Extension request for +${minutes}m sent to patient`);
+      } catch (err: any) {
+        toast.error(err.response?.data?.message || "Failed to request session extension");
+      } finally {
+        setIsExtending(false);
+      }
+    },
+    [appointmentId, isExtending]
+  );
+
+  const handleRespondExtension = useCallback(
+    async (approved: boolean, minutes = 10) => {
+      if (!appointmentId) return;
+      try {
+        await consultationService.respondExtension(appointmentId, approved, minutes);
+        setExtensionRequest(null);
+        if (approved) {
+          toast.success(`Session extended by +${minutes} minutes`);
+        } else {
+          toast("Extension declined. Session will conclude at current time limit.");
+        }
+      } catch (err: any) {
+        toast.error(err.response?.data?.message || "Failed to respond to extension");
+      }
+    },
+    [appointmentId]
+  );
+
   const otherPartyName = isDoctor
     ? contextData?.appointment?.patient?.full_name
     : contextData?.appointment?.doctor?.full_name;
@@ -358,17 +464,45 @@ export default function ConsultationPage() {
             otherPartySpecialty={isDoctor ? undefined : otherPartySpecialty ?? undefined}
             isDoctor={isDoctor}
             isReadOnly={isReadOnly}
-            durationMinutes={(contextData?.appointment as any)?.duration_minutes ?? 15}
+            startedAt={startedAt}
+            durationMinutes={durationMinutes}
             onPrescribe={() => setPrescribeOpen(true)}
             onEndConsultation={handleEndConsultation}
             onAddNote={() => setShowNoteInput(!showNoteInput)}
             showNoteInput={showNoteInput}
+            onRequestExtension={handleRequestExtension}
+            isExtending={isExtending}
           />
 
           {isReadOnly && (
             <div className="flex items-center justify-center gap-2 bg-amber-500/10 border-b border-amber-500/20 px-4 py-2 text-xs font-semibold text-amber-700 dark:text-amber-300">
               <Lock className="h-3.5 w-3.5" />
               <span>Consultation session completed and locked. Conversation is archived for clinical reference.</span>
+            </div>
+          )}
+
+          {/* 5-Minute Warning Banner */}
+          {showFiveMinWarning && (
+            <div className="flex items-center justify-between gap-3 bg-amber-500/10 border-b border-amber-500/20 px-4 py-2.5 text-xs text-amber-800 dark:text-amber-200 font-semibold animate-pulse">
+              <div className="flex items-center gap-2">
+                <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-400 shrink-0" />
+                <span>
+                  <strong>Session ending in {Math.ceil(remainingSecs / 60)} min.</strong>{" "}
+                  {isDoctor
+                    ? "Please finalize clinical advice or request an extension if required."
+                    : "Doctor may request an extension if additional clinical review is needed."}
+                </span>
+              </div>
+              {isDoctor && (
+                <button
+                  type="button"
+                  onClick={() => handleRequestExtension(10)}
+                  disabled={isExtending}
+                  className="px-2.5 py-1 text-[11px] font-bold rounded-lg bg-amber-500 hover:bg-amber-600 text-white shrink-0 shadow-sm transition-all disabled:opacity-50"
+                >
+                  {isExtending ? "Requesting..." : "+10m Extension"}
+                </button>
+              )}
             </div>
           )}
 
@@ -491,17 +625,43 @@ export default function ConsultationPage() {
               otherPartySpecialty={isDoctor ? undefined : otherPartySpecialty ?? undefined}
               isDoctor={isDoctor}
               isReadOnly={isReadOnly}
-              durationMinutes={(contextData?.appointment as any)?.duration_minutes ?? 15}
+              startedAt={startedAt}
+              durationMinutes={durationMinutes}
               onPrescribe={() => setPrescribeOpen(true)}
               onEndConsultation={handleEndConsultation}
               onAddNote={() => setShowNoteInput(!showNoteInput)}
               showNoteInput={showNoteInput}
+              onRequestExtension={handleRequestExtension}
+              isExtending={isExtending}
             />
 
             {isReadOnly && (
               <div className="flex items-center justify-center gap-1.5 bg-amber-500/10 border-b border-amber-500/20 px-3 py-1.5 text-[11px] font-semibold text-amber-700 dark:text-amber-300">
                 <Lock className="h-3 w-3" />
                 <span>Session completed & locked</span>
+              </div>
+            )}
+
+            {/* Mobile 5-Minute Warning Banner */}
+            {showFiveMinWarning && (
+              <div className="flex items-center justify-between gap-2 bg-amber-500/10 border-b border-amber-500/20 px-3 py-2 text-[11px] text-amber-800 dark:text-amber-200 font-semibold animate-pulse">
+                <div className="flex items-center gap-1.5">
+                  <AlertTriangle className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400 shrink-0" />
+                  <span>
+                    <strong>Ending in {Math.ceil(remainingSecs / 60)}m.</strong>{" "}
+                    {isDoctor ? "Wrap up or extend." : "Doctor may extend."}
+                  </span>
+                </div>
+                {isDoctor && (
+                  <button
+                    type="button"
+                    onClick={() => handleRequestExtension(10)}
+                    disabled={isExtending}
+                    className="px-2 py-0.5 text-[10px] font-bold rounded bg-amber-500 text-white shrink-0"
+                  >
+                    +10m
+                  </button>
+                )}
               </div>
             )}
 
@@ -569,49 +729,16 @@ export default function ConsultationPage() {
           onPrescriptionIssued={handlePrescriptionIssued}
         />
       </div>
+
+      {/* Patient Extension Approval Modal */}
+      <ExtensionApprovalModal
+        isOpen={!!extensionRequest && !isDoctor}
+        doctorName={extensionRequest?.doctorName ?? "Doctor"}
+        requestedMinutes={extensionRequest?.minutes ?? 10}
+        onApprove={(mins) => handleRespondExtension(true, mins)}
+        onDecline={() => handleRespondExtension(false, extensionRequest?.minutes ?? 10)}
+      />
     </motion.div>
-  );
-}
-
-function ConsultationTimer({
-  durationMinutes = 15,
-  isReadOnly
-}: {
-  durationMinutes?: number;
-  isReadOnly: boolean;
-}) {
-  const [secondsLeft, setSecondsLeft] = useState(durationMinutes * 60);
-
-  useEffect(() => {
-    if (isReadOnly) return;
-    const interval = setInterval(() => {
-      setSecondsLeft((prev) => (prev > 0 ? prev - 1 : 0));
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [isReadOnly]);
-
-  const mins = Math.floor(secondsLeft / 60);
-  const secs = secondsLeft % 60;
-  const timeFormatted = `${mins}:${secs < 10 ? "0" : ""}${secs}`;
-
-  const isLowTime = secondsLeft < 120;
-  const isMedTime = secondsLeft < 300 && !isLowTime;
-
-  return (
-    <div
-      className={clsx(
-        "flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold transition-all tabular-nums",
-        isLowTime
-          ? "bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/30 animate-pulse"
-          : isMedTime
-            ? "bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30"
-            : "bg-teal-500/15 text-teal-700 dark:text-teal-300 border border-teal-500/20"
-      )}
-      title="Remaining consultation session duration"
-    >
-      <Clock className="h-3.5 w-3.5" />
-      <span>{timeFormatted}</span>
-    </div>
   );
 }
 
@@ -620,21 +747,27 @@ function TopBar({
   otherPartySpecialty,
   isDoctor,
   isReadOnly,
+  startedAt,
   durationMinutes = 15,
   onPrescribe,
   onEndConsultation,
   onAddNote,
-  showNoteInput
+  showNoteInput,
+  onRequestExtension,
+  isExtending
 }: {
   otherPartyName: string;
   otherPartySpecialty?: string;
   isDoctor: boolean;
   isReadOnly: boolean;
+  startedAt?: string | null;
   durationMinutes?: number;
   onPrescribe: () => void;
   onEndConsultation: () => void;
   onAddNote: () => void;
   showNoteInput: boolean;
+  onRequestExtension?: (minutes: number) => void;
+  isExtending?: boolean;
 }) {
   return (
     <div className="flex items-center justify-between border-b border-fcn-primary/10 bg-white/80 dark:bg-fcn-surface-dark/80 backdrop-blur-sm px-4 py-3">
@@ -658,7 +791,14 @@ function TopBar({
       </div>
 
       <div className="flex items-center gap-2">
-        <ConsultationTimer durationMinutes={durationMinutes} isReadOnly={isReadOnly} />
+        <ConsultationTimer
+          startedAt={startedAt}
+          durationMinutes={durationMinutes}
+          isReadOnly={isReadOnly}
+          isDoctor={isDoctor}
+          onRequestExtension={onRequestExtension}
+          isExtending={isExtending}
+        />
 
         {isDoctor && !isReadOnly && (
           <>
