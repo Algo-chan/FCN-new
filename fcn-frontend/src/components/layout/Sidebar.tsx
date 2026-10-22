@@ -300,6 +300,7 @@ export const Sidebar = () => {
 
   const sidebarContent = (
     <aside
+      data-lenis-prevent
       className={clsx(
         "flex h-full flex-col border-r border-slate-200/80 bg-white/95 dark:border-white/10 dark:bg-slate-900/95 backdrop-blur-md",
         isMobile
@@ -350,7 +351,10 @@ export const Sidebar = () => {
       </div>
 
       {/* Navigation Groups */}
-      <nav className="flex-1 overflow-y-auto px-2.5 py-4 space-y-5">
+      <nav
+        data-lenis-prevent
+        className="flex-1 overflow-y-auto overscroll-contain px-2.5 py-4 space-y-5 touch-pan-y"
+      >
         {navGroups.map((group) => (
           <div key={group.group}>
             {(!sidebarCollapsed || isMobile) && (
