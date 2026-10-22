@@ -148,10 +148,6 @@ export const PatientDashboard = () => {
       <div className="relative overflow-hidden rounded-[24px] sm:rounded-3xl border border-teal-500/25 bg-gradient-to-br from-teal-600 via-teal-700 to-sky-800 p-5 sm:p-7 text-white shadow-[0_16px_40px_rgba(13,148,136,0.25)]">
         <div className="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
           <div>
-            <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-white/15 backdrop-blur-md text-[11px] font-bold text-teal-100 mb-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-300 animate-pulse" />
-              <span>Patient Health Portal</span>
-            </div>
             <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
               {greeting}, {firstName}! 👋
             </h1>
@@ -208,7 +204,6 @@ export const PatientDashboard = () => {
             subtitle="Describe symptoms for instant clinical triage"
             icon={<Sparkles className="w-6 h-6 text-white" />}
             gradient="violet"
-            badge="Instant • Free"
             onClick={() => navigate("/ai-check")}
           />
 

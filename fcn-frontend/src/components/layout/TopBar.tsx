@@ -134,7 +134,6 @@ export const TopBar = () => {
                 Care
               </span>
             </span>
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse ml-0.5" />
           </Link>
         </div>
       </div>

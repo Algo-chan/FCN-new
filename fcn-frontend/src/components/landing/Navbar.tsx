@@ -65,7 +65,6 @@ export const Navbar = () => {
             <span className="bg-gradient-to-r from-teal-500 via-teal-400 to-sky-500 bg-clip-text text-transparent">
               Care
             </span>
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse ml-0.5" />
           </span>
         </Link>
 

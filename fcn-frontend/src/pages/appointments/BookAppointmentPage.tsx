@@ -191,10 +191,6 @@ const BookAppointmentPage = () => {
 
           <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="space-y-1 max-w-xl">
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-black border border-emerald-500/30">
-                <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-                <span>On-Duty Doctors Ready • ~5 Min Wait</span>
-              </div>
               <h2 className="text-lg sm:text-xl font-black tracking-tight text-white">
                 Need to see a doctor immediately?
               </h2>
@@ -209,7 +205,7 @@ const BookAppointmentPage = () => {
               onClick={() => openInstantConsult()}
               className="shrink-0 font-black shadow-[0_6px_20px_rgba(13,148,136,0.35)] active:scale-95 text-xs sm:text-sm min-h-[44px] px-5"
             >
-              <Sparkles className="w-4 h-4 mr-2 text-teal-200 animate-pulse" />
+              <Sparkles className="w-4 h-4 mr-2 text-teal-200" />
               <span>See a Doctor Now</span>
             </Button>
           </div>
