@@ -23,6 +23,7 @@ import { CircularProgress } from "@/components/ui/CircularProgress";
 import { FitnessCard } from "@/components/ui/FitnessCard";
 import { SkeletonCard } from "@/components/dashboard/SkeletonCard";
 import { HealthScoreModal } from "@/components/dashboard/HealthScoreModal";
+import { useInstantConsultStore } from "@/store/instant-consult.store";
 import type { VitalStatus } from "@/types";
 import { clsx } from "clsx";
 
@@ -80,6 +81,7 @@ export const PatientDashboard = () => {
   const [showHealthScore, setShowHealthScore] = useState(false);
   const { addToast } = useNotifications();
   const user = useAuthStore((state) => state.user);
+  const openInstantConsult = useInstantConsultStore((state) => state.openInstantConsult);
   const navigate = useNavigate();
 
   const fetchDashboard = useCallback(async () => {
@@ -190,6 +192,36 @@ export const PatientDashboard = () => {
               </span>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* KILLER FEATURE: Instant Consult Hero Banner */}
+      <div className="relative overflow-hidden rounded-[24px] sm:rounded-3xl border border-teal-500/35 bg-gradient-to-r from-teal-950 via-slate-900 to-sky-950 p-5 sm:p-6 text-white shadow-xl">
+        <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-[radial-gradient(#2dd4bf_1px,transparent_1px)] [background-size:16px_16px] opacity-20 pointer-events-none" />
+
+        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="space-y-1.5 max-w-xl">
+            <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-black border border-emerald-500/30">
+              <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span>Doctors Ready Right Now • ~5 Min Wait</span>
+            </div>
+            <h2 className="text-xl sm:text-2xl font-black tracking-tight text-white">
+              Need to see a doctor immediately?
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-300 font-medium">
+              Skip browsing. Connect directly with the first available Ethiopian doctor on active duty.
+            </p>
+          </div>
+
+          <Button
+            variant="action"
+            size="lg"
+            onClick={() => openInstantConsult()}
+            className="shrink-0 min-h-[50px] px-6 text-sm sm:text-base font-black shadow-[0_8px_24px_rgba(13,148,136,0.4)] active:scale-95"
+          >
+            <Sparkles className="w-5 h-5 mr-2 text-teal-200 animate-pulse" />
+            <span>See a Doctor Now</span>
+          </Button>
         </div>
       </div>
 

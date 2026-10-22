@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Frown, Sparkles } from "lucide-react";
@@ -15,6 +15,8 @@ import { Button } from "@/components/ui/Button";
 import { useTranslation } from "@/i18n";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
 import { useAuthStore } from "@/store/auth.store";
+import { useInstantConsultStore } from "@/store/instant-consult.store";
+import { InstantConsultOverlay } from "@/components/instant-consult/InstantConsultOverlay";
 import type { PublicDoctorDetail } from "@/types";
 
 const SkeletonCard = () => (
@@ -34,10 +36,12 @@ const SkeletonCard = () => (
 );
 
 const FindDoctorsPage = () => {
+  const navigate = useNavigate();
   const shouldReduceMotion = useReducedMotion();
   const [searchParams, setSearchParams] = useSearchParams();
   const { t } = useTranslation();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const openInstantConsult = useInstantConsultStore((state) => state.openInstantConsult);
 
   const [filters, setFilters] = useState<FilterState>(() => ({
     search: searchParams.get("search") ?? "",
@@ -151,8 +155,24 @@ const FindDoctorsPage = () => {
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-2 shrink-0">
-          <div className="rounded-xl bg-white/90 dark:bg-slate-900/90 px-3.5 py-2 border border-teal-500/25 text-xs font-bold text-teal-700 dark:text-teal-300 shadow-xs">
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
+          <Button
+            variant="action"
+            size="sm"
+            onClick={() => {
+              if (!isAuthenticated) {
+                navigate("/login", { state: { instant_consult: true } });
+                return;
+              }
+              openInstantConsult();
+            }}
+            className="font-black shadow-md text-xs sm:text-sm min-h-[38px]"
+          >
+            <Sparkles className="h-3.5 w-3.5 mr-1.5 text-teal-200" />
+            <span>See a Doctor Now</span>
+          </Button>
+
+          <div className="rounded-xl bg-white/90 dark:bg-slate-900/90 px-3 py-2 border border-teal-500/25 text-xs font-bold text-teal-700 dark:text-teal-300 shadow-xs">
             Rates: <span className="text-sm font-black text-slate-900 dark:text-white ml-1">from 350 Br</span>
           </div>
         </div>
@@ -306,6 +326,8 @@ const FindDoctorsPage = () => {
         isOpen={!!selectedDoctorId}
         onClose={handleCloseDetail}
       />
+
+      <InstantConsultOverlay />
 
       <Footer />
     </div>

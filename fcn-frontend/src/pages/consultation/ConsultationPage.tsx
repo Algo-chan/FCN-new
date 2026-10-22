@@ -13,7 +13,8 @@ import {
   ArrowLeft,
   Sparkles,
   PhoneCall,
-  Lock
+  Lock,
+  Clock
 } from "lucide-react";
 import { format } from "date-fns";
 import toast from "react-hot-toast";
@@ -36,6 +37,7 @@ type MobileTab = "chat" | "info";
 export default function ConsultationPage() {
   const { appointmentId } = useParams<{ appointmentId: string }>();
   const user = useAuthStore((state) => state.user);
+  const isDoctor = user?.role === "doctor";
   const {
     messages,
     setMessages,
@@ -113,6 +115,39 @@ export default function ConsultationPage() {
       setReadOnly(true, contextData.appointment.consultation_ended_at ?? undefined);
     }
   }, [contextData, setReadOnly]);
+
+  // Initial doctor auto-greeting simulation with typing indicator on mount for instant consultations
+  useEffect(() => {
+    if (!contextData?.appointment || messages.length > 0 || isDoctor || isReadOnly) return;
+
+    const doctorName = contextData.appointment.doctor?.full_name ?? "Doctor";
+    const timer1 = setTimeout(() => {
+      setTyping({ userId: contextData.appointment.doctor_id, userName: `Dr. ${doctorName}` });
+    }, 1200);
+
+    const timer2 = setTimeout(() => {
+      setTyping(null);
+      const greetingMessage: Message = {
+        id: `greeting-${Date.now()}`,
+        conversation_id: appointmentId!,
+        appointment_id: appointmentId!,
+        sender_user_id: contextData.appointment.doctor_id,
+        recipient_user_id: user?.id ?? "",
+        sender_name: `Dr. ${doctorName}`,
+        message_text: `Hello! I'm Dr. ${doctorName}. I have reviewed your file and chief complaint. How are you feeling right now?`,
+        message_type: "text",
+        is_system_message: false,
+        sent_at: new Date().toISOString()
+      };
+      addMessage(greetingMessage);
+      playNotification();
+    }, 3200);
+
+    return () => {
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+    };
+  }, [contextData, messages.length, isDoctor, isReadOnly, appointmentId, user?.id, setTyping, addMessage, playNotification]);
 
   useEffect(() => {
     if (!socket || !appointmentId) return;
@@ -277,7 +312,6 @@ export default function ConsultationPage() {
     refetchContext();
   }, [playSuccess, refetchContext]);
 
-  const isDoctor = user?.role === "doctor";
   const otherPartyName = isDoctor
     ? contextData?.appointment?.patient?.full_name
     : contextData?.appointment?.doctor?.full_name;
@@ -310,7 +344,12 @@ export default function ConsultationPage() {
   }
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] overflow-hidden bg-fcn-surface-light dark:bg-fcn-dark">
+    <motion.div
+      initial={{ opacity: 0, scale: 0.98 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
+      className="flex h-[calc(100vh-4rem)] overflow-hidden bg-fcn-surface-light dark:bg-fcn-dark"
+    >
       {/* Desktop Split View: 65% Chat Stream, 35% Health Passport */}
       <div className="hidden flex-1 lg:flex">
         <div className="flex w-[65%] flex-col border-r border-fcn-primary/10 bg-white dark:bg-fcn-surface-dark">
@@ -319,6 +358,7 @@ export default function ConsultationPage() {
             otherPartySpecialty={isDoctor ? undefined : otherPartySpecialty ?? undefined}
             isDoctor={isDoctor}
             isReadOnly={isReadOnly}
+            durationMinutes={(contextData?.appointment as any)?.duration_minutes ?? 15}
             onPrescribe={() => setPrescribeOpen(true)}
             onEndConsultation={handleEndConsultation}
             onAddNote={() => setShowNoteInput(!showNoteInput)}
@@ -451,6 +491,7 @@ export default function ConsultationPage() {
               otherPartySpecialty={isDoctor ? undefined : otherPartySpecialty ?? undefined}
               isDoctor={isDoctor}
               isReadOnly={isReadOnly}
+              durationMinutes={(contextData?.appointment as any)?.duration_minutes ?? 15}
               onPrescribe={() => setPrescribeOpen(true)}
               onEndConsultation={handleEndConsultation}
               onAddNote={() => setShowNoteInput(!showNoteInput)}
@@ -528,6 +569,48 @@ export default function ConsultationPage() {
           onPrescriptionIssued={handlePrescriptionIssued}
         />
       </div>
+    </motion.div>
+  );
+}
+
+function ConsultationTimer({
+  durationMinutes = 15,
+  isReadOnly
+}: {
+  durationMinutes?: number;
+  isReadOnly: boolean;
+}) {
+  const [secondsLeft, setSecondsLeft] = useState(durationMinutes * 60);
+
+  useEffect(() => {
+    if (isReadOnly) return;
+    const interval = setInterval(() => {
+      setSecondsLeft((prev) => (prev > 0 ? prev - 1 : 0));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [isReadOnly]);
+
+  const mins = Math.floor(secondsLeft / 60);
+  const secs = secondsLeft % 60;
+  const timeFormatted = `${mins}:${secs < 10 ? "0" : ""}${secs}`;
+
+  const isLowTime = secondsLeft < 120;
+  const isMedTime = secondsLeft < 300 && !isLowTime;
+
+  return (
+    <div
+      className={clsx(
+        "flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold transition-all tabular-nums",
+        isLowTime
+          ? "bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/30 animate-pulse"
+          : isMedTime
+            ? "bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30"
+            : "bg-teal-500/15 text-teal-700 dark:text-teal-300 border border-teal-500/20"
+      )}
+      title="Remaining consultation session duration"
+    >
+      <Clock className="h-3.5 w-3.5" />
+      <span>{timeFormatted}</span>
     </div>
   );
 }
@@ -537,6 +620,7 @@ function TopBar({
   otherPartySpecialty,
   isDoctor,
   isReadOnly,
+  durationMinutes = 15,
   onPrescribe,
   onEndConsultation,
   onAddNote,
@@ -546,6 +630,7 @@ function TopBar({
   otherPartySpecialty?: string;
   isDoctor: boolean;
   isReadOnly: boolean;
+  durationMinutes?: number;
   onPrescribe: () => void;
   onEndConsultation: () => void;
   onAddNote: () => void;
@@ -573,6 +658,8 @@ function TopBar({
       </div>
 
       <div className="flex items-center gap-2">
+        <ConsultationTimer durationMinutes={durationMinutes} isReadOnly={isReadOnly} />
+
         {isDoctor && !isReadOnly && (
           <>
             <Button

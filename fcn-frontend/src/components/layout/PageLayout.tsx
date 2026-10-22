@@ -10,11 +10,14 @@ import { useNotifications } from "@/hooks/useNotifications";
 import { useAuthStore } from "@/store/auth.store";
 import { useWindowSize } from "@/hooks/useWindowSize";
 import { Toast } from "@/components/ui/Toast";
+import { InstantConsultOverlay } from "@/components/instant-consult/InstantConsultOverlay";
+import { DoctorIncomingInstantModal } from "@/components/instant-consult/DoctorIncomingInstantModal";
 
 export const PageLayout = ({ children }: PropsWithChildren) => {
   const sidebarOpen = useUiStore((state) => state.sidebarOpen);
   const sidebarCollapsed = useUiStore((state) => state.sidebarCollapsed);
   const { toasts, removeToast } = useNotifications();
+  const user = useAuthStore((state) => state.user);
   const { width } = useWindowSize();
   const isMobile = width < 1024;
   const updateActivity = useCallback(() => {
@@ -61,6 +64,12 @@ export const PageLayout = ({ children }: PropsWithChildren) => {
       <div className="lg:hidden">
         <BottomNavBar />
       </div>
+
+      {/* Instant Consultation Overlay for Patients */}
+      <InstantConsultOverlay />
+
+      {/* Incoming Call Notification for Doctors */}
+      {user?.role === "doctor" && <DoctorIncomingInstantModal />}
     </div>
   );
 };
