@@ -1,13 +1,14 @@
 import { useMemo, useState, useEffect } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
-import { Search, X, Building2, MapPin, Languages as LanguagesIcon, BadgeCheck, Filter } from "lucide-react";
+import { Search, X, Building2, MapPin, Languages as LanguagesIcon, BadgeCheck, Filter, Layers, ChevronDown } from "lucide-react";
 import { clsx } from "clsx";
 import { doctorsService } from "@/services/doctors.service";
 import { hospitalsService } from "@/services/hospitals.service";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useTranslation } from "@/i18n";
 import { languageLabels } from "@/constants/languages";
+import { SpecialtyFilterModal } from "./SpecialtyFilterModal";
 import type { SupportedLanguage } from "@/types";
 
 export interface FilterState {
@@ -83,6 +84,7 @@ export const DoctorFilters = ({ filters, onChange }: DoctorFiltersProps) => {
   const shouldReduceMotion = useReducedMotion();
   const { t } = useTranslation();
   const [searchInput, setSearchInput] = useState(filters.search);
+  const [specialtyModalOpen, setSpecialtyModalOpen] = useState(false);
   const debouncedSearch = useDebounce(searchInput, 400);
 
   useEffect(() => {
@@ -195,10 +197,27 @@ export const DoctorFilters = ({ filters, onChange }: DoctorFiltersProps) => {
         </button>
       </div>
 
-      {/* Specialty Scrolling Carousel */}
+      {/* Specialty Filter: Grouped Modal Trigger & Popular Quick Chips */}
       <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+        {/* Visual Categorized Modal Trigger */}
+        <button
+          type="button"
+          onClick={() => setSpecialtyModalOpen(true)}
+          className={clsx(
+            "flex items-center gap-2 shrink-0 rounded-full px-4 py-2 text-xs font-black transition-all select-none border",
+            filters.specialty
+              ? "bg-teal-500 text-white border-teal-500 shadow-[0_4px_12px_rgba(20,184,166,0.35)]"
+              : "bg-white dark:bg-slate-900 border-slate-200 dark:border-white/10 text-slate-800 dark:text-slate-100 hover:border-teal-500/50 shadow-xs"
+          )}
+          title="Browse grouped specialties with category icons"
+        >
+          <Layers className="h-3.5 w-3.5 text-teal-500" />
+          <span>{filters.specialty ? filters.specialty : "All Specialties (Grouped)"}</span>
+          <ChevronDown className="h-3.5 w-3.5 opacity-60" />
+        </button>
+
         {specialtiesLoading ? (
-          Array.from({ length: 5 }).map((_, i) => <SkeletonPill key={i} />)
+          Array.from({ length: 4 }).map((_, i) => <SkeletonPill key={i} />)
         ) : (
           <>
             <SpecialtyPill
@@ -206,7 +225,7 @@ export const DoctorFilters = ({ filters, onChange }: DoctorFiltersProps) => {
               selected={!filters.specialty}
               onClick={() => update({ specialty: "" })}
             />
-            {specialties.map((spec) => (
+            {specialties.slice(0, 5).map((spec) => (
               <SpecialtyPill
                 key={spec}
                 label={spec}
@@ -214,9 +233,27 @@ export const DoctorFilters = ({ filters, onChange }: DoctorFiltersProps) => {
                 onClick={() => update({ specialty: filters.specialty === spec ? "" : spec })}
               />
             ))}
+            {specialties.length > 5 && (
+              <button
+                type="button"
+                onClick={() => setSpecialtyModalOpen(true)}
+                className="whitespace-nowrap rounded-full px-3 py-2 text-xs font-bold text-teal-600 dark:text-teal-400 hover:underline select-none"
+              >
+                + More Categories...
+              </button>
+            )}
           </>
         )}
       </div>
+
+      {/* Visual Specialty Categories Modal */}
+      <SpecialtyFilterModal
+        isOpen={specialtyModalOpen}
+        onClose={() => setSpecialtyModalOpen(false)}
+        selectedSpecialty={filters.specialty}
+        onSelectSpecialty={(spec) => update({ specialty: spec })}
+        availableSpecialties={specialties}
+      />
 
       {/* Dropdown Filters row */}
       <div className="flex flex-wrap items-center gap-2 pt-1">
