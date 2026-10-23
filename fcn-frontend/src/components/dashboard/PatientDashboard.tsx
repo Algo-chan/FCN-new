@@ -150,7 +150,7 @@ export const PatientDashboard = () => {
         <div className="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
           <div>
             <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
-              {greeting}, {firstName}! 👋
+              {greeting}, {firstName}!
             </h1>
             <p className="mt-1 text-xs sm:text-sm text-teal-100/80 font-medium max-w-md">
               {nextAppointment
