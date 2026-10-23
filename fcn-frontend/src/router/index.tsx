@@ -35,6 +35,8 @@ import ProfilePage from "@/pages/profile/ProfilePage";
 import { DoctorPublicProfilePage } from "@/components/profile/DoctorPublicProfilePage";
 import PrivacyPolicyPage from "@/pages/legal/PrivacyPolicyPage";
 import TermsOfServicePage from "@/pages/legal/TermsOfServicePage";
+import { ArticlesDirectoryPage } from "@/pages/articles/ArticlesDirectoryPage";
+import { ArticleDetailPage } from "@/pages/articles/ArticleDetailPage";
 import { PageScaffold } from "@/pages/PageScaffold";
 import OnboardingPage from "@/pages/auth/OnboardingPage";
 import PendingApprovalPage from "@/pages/auth/PendingApprovalPage";
@@ -104,6 +106,8 @@ export const AppRouter = () => (
     <Route path="/app" element={<LaunchPage />} />
     <Route path="/search" element={<SearchPage />} />
     <Route path="/doctors" element={<FindDoctorsPage />} />
+    <Route path="/articles" element={<ArticlesDirectoryPage />} />
+    <Route path="/articles/:slug" element={<ArticleDetailPage />} />
     <Route path="/login" element={<LoginPage />} />
     <Route path="/register" element={<RegisterPage />} />
     <Route path="/auth/callback" element={<AuthCallbackPage />} />
