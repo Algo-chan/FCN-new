@@ -105,11 +105,11 @@ export const LifelinePulse: React.FC<LifelinePulseProps> = ({ className }) => {
       <style>{`
         @keyframes lifelineSweep {
           0% {
-            stroke-dasharray: 120 500;
-            stroke-dashoffset: 620;
+            stroke-dasharray: 130 500;
+            stroke-dashoffset: 630;
             opacity: 0;
           }
-          8% {
+          10% {
             opacity: 1;
           }
           75% {
@@ -119,14 +119,14 @@ export const LifelinePulse: React.FC<LifelinePulseProps> = ({ className }) => {
             opacity: 0;
           }
           100% {
-            stroke-dasharray: 120 500;
+            stroke-dasharray: 130 500;
             stroke-dashoffset: -520;
             opacity: 0;
           }
         }
 
         .animate-lifeline-pulse {
-          animation: lifelineSweep 2.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+          animation: lifelineSweep 4.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
         }
       `}</style>
     </div>
