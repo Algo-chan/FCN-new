@@ -69,7 +69,6 @@ const PharmacyPage = () => {
           description="Manage medications, track active refills, and locate partner pharmacies across Ethiopia"
           icon={Pill}
           iconVariant="sky"
-          eyebrow="E-Pharmacy Network"
           actions={
             <Button
               size="sm"

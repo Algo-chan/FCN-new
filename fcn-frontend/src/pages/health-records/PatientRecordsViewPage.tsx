@@ -85,7 +85,6 @@ const PatientRecordsViewPage = () => {
           iconVariant="emerald"
           title={patientName || "Patient Vitals"}
           description="Detailed clinical vitals telemetry, biometric trends, and longitudinal health metrics"
-          eyebrow="Clinical Telemetry"
           actions={
             <Button
               variant="secondary"

@@ -40,7 +40,6 @@ const NurseHistoryPage = () => {
         description="Comprehensive log of completed community home visits, clinical check-ups, and recorded observations"
         icon={Clock}
         iconVariant="emerald"
-        eyebrow="Community Nursing"
         badge={
           <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-500/20">
             {visits.length} {visits.length === 1 ? "Completed Visit" : "Completed Visits"}

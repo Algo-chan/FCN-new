@@ -131,7 +131,6 @@ const FindDoctorsPage = () => {
         description={t("doctors.pageSubtitle")}
         icon={Stethoscope}
         iconVariant="teal"
-        eyebrow="Verified Telehealth Network"
         actions={<LanguageSwitcher variant="pill" />}
       />
 

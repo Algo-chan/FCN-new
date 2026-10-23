@@ -9,7 +9,6 @@ const AdminSettingsPage = () => (
       description="Configure nationwide telemedicine parameters, notification gateways, and system flags"
       icon={Settings}
       iconVariant="indigo"
-      eyebrow="System Configuration"
     />
     <SystemSettingsPanel />
   </div>

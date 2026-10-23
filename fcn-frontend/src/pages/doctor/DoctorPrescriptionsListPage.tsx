@@ -182,7 +182,6 @@ const DoctorPrescriptionsListPage = () => {
         description={`${prescriptions.length} prescriptions issued • ${pendingCount} pending refill${pendingCount !== 1 ? "s" : ""}`}
         icon={FileText}
         iconVariant="sky"
-        eyebrow="E-Prescription Records"
       />
 
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">

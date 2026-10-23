@@ -18,7 +18,6 @@ const AdminUsersPage = () => {
         description="Oversee and manage patient, doctor, nurse, and admin accounts across Fast Care Now"
         icon={Users}
         iconVariant="indigo"
-        eyebrow="Platform Governance"
       />
       <UserManagementTable
         filters={userFilters}

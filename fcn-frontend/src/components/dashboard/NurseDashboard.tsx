@@ -100,7 +100,6 @@ export const NurseDashboard = () => {
         description={`${stats?.today_visits ?? 0} ${visitLabelPlural} scheduled for patient care today`}
         icon={HeartHandshake}
         iconVariant="emerald"
-        eyebrow={isRural ? "Rural Health Officer" : "Community Nursing"}
         actions={
           <a
             href="/health-records/nurse"

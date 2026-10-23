@@ -9,7 +9,6 @@ const AdminHospitalsPage = () => (
       description="Register, verify, and monitor Ethiopian hospitals and facility administrators"
       icon={Building2}
       iconVariant="indigo"
-      eyebrow="Healthcare Infrastructure"
     />
     <HospitalManagementPanel />
   </div>

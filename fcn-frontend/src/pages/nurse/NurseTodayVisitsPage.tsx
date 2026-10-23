@@ -60,7 +60,6 @@ const NurseTodayVisitsPage = () => {
         description={`${format(new Date(), "EEEE, MMMM d, yyyy")} • Community health visits & patient check-ins`}
         icon={Calendar}
         iconVariant="emerald"
-        eyebrow="Community Nursing"
         actions={
           <a
             href="/health-records/nurse"

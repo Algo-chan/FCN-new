@@ -66,7 +66,6 @@ const PharmacyAdminPortalPage = () => {
           description={`${user?.full_name ?? "Licensed Pharmacist"} • Verify electronic prescriptions, check authenticity QR codes, and log dispensing`}
           icon={Pill}
           iconVariant="emerald"
-          eyebrow="Pharmacy Partner"
           badge={
             <Badge variant="success" size="sm">
               <ShieldCheck className="mr-1 h-3.5 w-3.5" />

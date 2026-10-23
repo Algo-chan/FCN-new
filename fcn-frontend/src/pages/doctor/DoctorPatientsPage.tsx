@@ -138,7 +138,6 @@ const DoctorPatientsPage = () => {
         description={`${activePatients.length} active patients under care • ${previousPatients.length} completed consultations`}
         icon={Users}
         iconVariant="teal"
-        eyebrow="Clinical Patient Roster"
       />
 
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">

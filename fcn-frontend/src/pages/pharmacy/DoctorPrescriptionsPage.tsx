@@ -44,7 +44,6 @@ const DoctorPrescriptionsPage = () => {
           description="Manage digital prescriptions, track dispensing status, and process patient refill authorizations"
           icon={FileText}
           iconVariant="sky"
-          eyebrow="Clinical Pharmacy"
           badge={
             pendingCount > 0 ? (
               <Badge variant="warning" size="md">

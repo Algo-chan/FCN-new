@@ -16,7 +16,6 @@ export const PageScaffold = ({ title, section = "Module" }: PageScaffoldProps) =
         description={`The ${section} workspace is actively undergoing clinical integration and test verification.`}
         icon={Construction}
         iconVariant="indigo"
-        eyebrow="Workspace Preview"
       />
       <Card className="flex flex-col items-center justify-center p-12 text-center border-dashed border-2">
         <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 mb-4">

@@ -213,7 +213,6 @@ const MyAppointmentsPage = () => {
           description="Manage your upcoming consultations, review session notes, and medical records"
           icon={Calendar}
           iconVariant="teal"
-          eyebrow={userRole === "doctor" ? "Physician Schedule" : "Patient Consultations"}
           actions={
             <Button
               variant="action"

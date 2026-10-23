@@ -18,7 +18,6 @@ const AdminLogsPage = () => {
         description="Monitor system events, clinical actions, authentication records, and administrative modifications in real-time"
         icon={ClipboardList}
         iconVariant="indigo"
-        eyebrow="Audit & Security"
       />
       <ActivityLogsTable
         filters={logFilters}

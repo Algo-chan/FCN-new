@@ -125,7 +125,6 @@ const NotificationsPage = () => {
           description="Stay updated with consultations, prescriptions, clinical alerts, and account activity"
           icon={Bell}
           iconVariant="amber"
-          eyebrow="Activity Center"
           badge={
             totalUnread > 0 ? (
               <Badge variant="warning" className="animate-pulse">

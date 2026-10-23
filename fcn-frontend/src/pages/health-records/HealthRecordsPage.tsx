@@ -130,7 +130,6 @@ const HealthRecordsPage = () => {
           }
           icon={Activity}
           iconVariant="emerald"
-          eyebrow="Clinical Telemetry"
           backButton={
             routePatientId
               ? { to: "/health-records/nurse", label: "Back to nurse records" }

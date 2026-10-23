@@ -61,7 +61,6 @@ const NurseHealthRecordsPage = () => {
           description="View, record, and track bedside vitals for assigned community care patients"
           icon={Activity}
           iconVariant="emerald"
-          eyebrow="Clinical Observations"
           badge={
             criticalCount > 0 ? (
               <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-50 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300 border border-rose-500/20">

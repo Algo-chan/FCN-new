@@ -79,7 +79,6 @@ export const DoctorArticleEditorPage = () => {
         }}
         icon={BookOpen}
         iconVariant="teal"
-        eyebrow={isEditing ? "Article Revision" : "Clinical Publishing"}
         title={isEditing ? "Edit Clinical Article" : "Write Clinical Article"}
         description="Craft evidence-based health articles for Ethiopian patients. Provide structured headings, dietary advice, and key medical warnings."
         badge={

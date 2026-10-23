@@ -133,7 +133,6 @@ export const AdminDashboard = () => {
         description="National Fast Care Now healthcare network, clinical capacity, and live telemetry"
         icon={Shield}
         iconVariant="indigo"
-        eyebrow="Platform Operations"
         actions={
           <Link
             to="/admin"

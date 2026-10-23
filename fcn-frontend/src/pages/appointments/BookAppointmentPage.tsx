@@ -183,7 +183,6 @@ const BookAppointmentPage = () => {
           description="Schedule a remote or in-person consultation with a verified Ethiopian physician"
           icon={CalendarPlus}
           iconVariant="teal"
-          eyebrow="Specialist Booking"
           backButton={{ to: "/doctors", label: "Back to doctors" }}
           className="mb-6"
         />

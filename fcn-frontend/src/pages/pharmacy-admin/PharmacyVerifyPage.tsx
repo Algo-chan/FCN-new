@@ -9,7 +9,6 @@ const PharmacyVerifyPage = () => (
       description="Scan patient digital RX QR codes or input reference IDs to instantly verify authenticity and dispense medications"
       icon={QrCode}
       iconVariant="emerald"
-      eyebrow="Pharmacy Dispensing"
     />
     <QRScannerPortal />
   </div>

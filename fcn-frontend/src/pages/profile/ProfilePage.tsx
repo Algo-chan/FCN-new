@@ -148,7 +148,6 @@ const ProfilePage = () => {
         description="Manage your clinical profile, credentials, security configurations, and personal preferences"
         icon={User}
         iconVariant="teal"
-        eyebrow="My Account"
         badge={
           <Badge variant={roleBadgeVariant[user.role] ?? "neutral"}>
             {roleLabels[user.role] ?? user.role}

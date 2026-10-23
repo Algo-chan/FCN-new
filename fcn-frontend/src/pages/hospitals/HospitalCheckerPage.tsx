@@ -101,7 +101,6 @@ const HospitalCheckerPage = () => {
         description="Check real-time ICU beds, occupancy rates, and doctors on duty"
         icon={Building2}
         iconVariant="rose"
-        eyebrow="Emergency & Bed Tracker"
         actions={
           totalHospitals > 0 ? (
             <div className="flex flex-wrap items-center gap-2 text-xs font-semibold">

@@ -423,7 +423,6 @@ Recommended: See ${store.finalAssessment.recommended_specialty || "a doctor"}`;
         description="Instant clinical symptom assessment and doctor recommendations powered by Fast Care AI"
         icon={Sparkles}
         iconVariant="violet"
-        eyebrow="Clinical Triage Intelligence"
         badge={
           <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/10 px-3 py-1 text-xs font-semibold text-amber-700 dark:text-amber-300 border border-amber-500/20">
             <ShieldCheck className="h-3.5 w-3.5" />

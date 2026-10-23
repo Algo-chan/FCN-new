@@ -14,7 +14,6 @@ const DoctorSchedulePage = () => {
         description="View, filter, and manage your weekly telehealth and in-person patient slots"
         icon={Calendar}
         iconVariant="teal"
-        eyebrow="Physician Practice Management"
       />
 
       <DoctorScheduleView doctorId={user.id} />

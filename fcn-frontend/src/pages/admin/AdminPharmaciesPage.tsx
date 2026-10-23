@@ -9,7 +9,6 @@ const AdminPharmaciesPage = () => (
       description="Manage licensed pharmacies, track medication dispensing, and review pharmacy administrators"
       icon={Pill}
       iconVariant="indigo"
-      eyebrow="Pharmacy Network"
     />
     <PharmacyManagementTable />
   </div>

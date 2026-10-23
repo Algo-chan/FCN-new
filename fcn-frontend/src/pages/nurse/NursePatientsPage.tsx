@@ -32,7 +32,6 @@ const NursePatientsPage = () => {
         description="Community patients under your primary nursing observation, vital monitoring, and routine home care"
         icon={Users}
         iconVariant="emerald"
-        eyebrow="Community Nursing"
         badge={
           <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-500/20">
             {patients.length} {patients.length === 1 ? "Patient" : "Patients"}

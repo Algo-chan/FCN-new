@@ -66,7 +66,6 @@ const SearchPage = () => {
             description="Find licensed doctors, hospital facilities, and clinical specialties across Ethiopia"
             icon={Search}
             iconVariant="teal"
-            eyebrow="Healthcare Directory"
           />
 
       <div className="relative">

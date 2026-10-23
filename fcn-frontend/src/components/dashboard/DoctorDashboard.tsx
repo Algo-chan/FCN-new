@@ -104,7 +104,6 @@ export const DoctorDashboard = () => {
         description={subtitle || "Physician Clinical Practice & Telehealth Operations"}
         icon={Stethoscope}
         iconVariant="teal"
-        eyebrow="Physician Practice"
         actions={
           stats && (
             <div className="self-start sm:self-auto">

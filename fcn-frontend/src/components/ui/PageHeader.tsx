@@ -21,7 +21,6 @@ interface PageHeaderProps {
   icon?: React.ComponentType<{ className?: string }>;
   iconVariant?: PageHeaderVariant;
   layout?: PageHeaderLayout;
-  eyebrow?: string;
   badge?: React.ReactNode;
   actions?: React.ReactNode;
   backButton?: {
@@ -40,8 +39,6 @@ const VARIANT_MAP: Record<
     glow: string;
     glowBg: string;
     ring: string;
-    eyebrow: string;
-    dot: string;
   }
 > = {
   teal: {
@@ -49,70 +46,49 @@ const VARIANT_MAP: Record<
     shadow: "shadow-teal-500/30",
     glow: "bg-teal-500/30",
     glowBg: "bg-teal-500/15 dark:bg-teal-400/10",
-    ring: "ring-teal-500/20",
-    eyebrow:
-      "text-teal-700 dark:text-teal-300 bg-teal-50/90 dark:bg-teal-950/70 border-teal-500/30",
-    dot: "bg-teal-500 dark:bg-teal-400"
+    ring: "ring-teal-500/20"
   },
   sky: {
     gradient: "from-sky-500 via-blue-600 to-indigo-600",
     shadow: "shadow-sky-500/30",
     glow: "bg-sky-500/30",
     glowBg: "bg-sky-500/15 dark:bg-sky-400/10",
-    ring: "ring-sky-500/20",
-    eyebrow:
-      "text-sky-700 dark:text-sky-300 bg-sky-50/90 dark:bg-sky-950/70 border-sky-500/30",
-    dot: "bg-sky-500 dark:bg-sky-400"
+    ring: "ring-sky-500/20"
   },
   emerald: {
     gradient: "from-emerald-500 via-teal-600 to-green-600",
     shadow: "shadow-emerald-500/30",
     glow: "bg-emerald-500/30",
     glowBg: "bg-emerald-500/15 dark:bg-emerald-400/10",
-    ring: "ring-emerald-500/20",
-    eyebrow:
-      "text-emerald-700 dark:text-emerald-300 bg-emerald-50/90 dark:bg-emerald-950/70 border-emerald-500/30",
-    dot: "bg-emerald-500 dark:bg-emerald-400"
+    ring: "ring-emerald-500/20"
   },
   violet: {
     gradient: "from-violet-500 via-purple-600 to-indigo-600",
     shadow: "shadow-violet-500/30",
     glow: "bg-violet-500/30",
     glowBg: "bg-violet-500/15 dark:bg-violet-400/10",
-    ring: "ring-violet-500/20",
-    eyebrow:
-      "text-violet-700 dark:text-violet-300 bg-violet-50/90 dark:bg-violet-950/70 border-violet-500/30",
-    dot: "bg-violet-500 dark:bg-violet-400"
+    ring: "ring-violet-500/20"
   },
   rose: {
     gradient: "from-rose-500 via-pink-600 to-red-600",
     shadow: "shadow-rose-500/30",
     glow: "bg-rose-500/30",
     glowBg: "bg-rose-500/15 dark:bg-rose-400/10",
-    ring: "ring-rose-500/20",
-    eyebrow:
-      "text-rose-700 dark:text-rose-300 bg-rose-50/90 dark:bg-rose-950/70 border-rose-500/30",
-    dot: "bg-rose-500 dark:bg-rose-400"
+    ring: "ring-rose-500/20"
   },
   amber: {
     gradient: "from-amber-500 via-amber-600 to-orange-600",
     shadow: "shadow-amber-500/30",
     glow: "bg-amber-500/30",
     glowBg: "bg-amber-500/15 dark:bg-amber-400/10",
-    ring: "ring-amber-500/20",
-    eyebrow:
-      "text-amber-700 dark:text-amber-300 bg-amber-50/90 dark:bg-amber-950/70 border-amber-500/30",
-    dot: "bg-amber-500 dark:bg-amber-400"
+    ring: "ring-amber-500/20"
   },
   indigo: {
     gradient: "from-indigo-600 via-violet-600 to-purple-700",
     shadow: "shadow-indigo-600/30",
     glow: "bg-indigo-600/30",
     glowBg: "bg-indigo-600/15 dark:bg-indigo-400/10",
-    ring: "ring-indigo-500/20",
-    eyebrow:
-      "text-indigo-700 dark:text-indigo-300 bg-indigo-50/90 dark:bg-indigo-950/70 border-indigo-500/30",
-    dot: "bg-indigo-500 dark:bg-indigo-400"
+    ring: "ring-indigo-500/20"
   },
   slate: {
     gradient:
@@ -120,10 +96,7 @@ const VARIANT_MAP: Record<
     shadow: "shadow-slate-500/20",
     glow: "bg-slate-500/20",
     glowBg: "bg-slate-500/10 dark:bg-slate-400/10",
-    ring: "ring-slate-500/20",
-    eyebrow:
-      "text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 border-slate-300 dark:border-white/10",
-    dot: "bg-slate-500 dark:bg-slate-400"
+    ring: "ring-slate-500/20"
   }
 };
 
@@ -133,7 +106,6 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
   icon: Icon,
   iconVariant = "teal",
   layout = "card",
-  eyebrow,
   badge,
   actions,
   backButton,
@@ -199,33 +171,6 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
           )}
 
           <div className="min-w-0 flex-1">
-            {eyebrow && (
-              <div className="mb-1.5 flex items-center">
-                <span
-                  className={clsx(
-                    "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold uppercase tracking-wider border shadow-2xs",
-                    style.eyebrow
-                  )}
-                >
-                  <span className="relative flex h-1.5 w-1.5 shrink-0">
-                    <span
-                      className={clsx(
-                        "animate-ping absolute inline-flex h-full w-full rounded-full opacity-75",
-                        style.dot
-                      )}
-                    />
-                    <span
-                      className={clsx(
-                        "relative inline-flex rounded-full h-1.5 w-1.5",
-                        style.dot
-                      )}
-                    />
-                  </span>
-                  <span>{eyebrow}</span>
-                </span>
-              </div>
-            )}
-
             <div className="flex items-center gap-2.5 flex-wrap">
               <h1 className="text-lg sm:text-2xl md:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight">
                 {title}
