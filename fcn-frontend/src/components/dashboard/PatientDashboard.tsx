@@ -154,8 +154,8 @@ export const PatientDashboard = () => {
               {greeting}, {firstName}!
             </h1>
 
-            {/* Medical Lifeline EKG pulse with left-to-right diminishing animation */}
-            <LifelinePulse className="my-1.5 sm:my-2 max-w-xs sm:max-w-md" />
+            {/* Medical Lifeline EKG pulse - active only on mobile screens */}
+            <LifelinePulse className="my-1.5 max-w-xs sm:hidden" />
 
             <p className="mt-1 text-xs sm:text-sm text-teal-100/80 font-medium max-w-md">
               {nextAppointment
