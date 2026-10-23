@@ -373,6 +373,7 @@ export const Sidebar = () => {
                     to={item.path}
                     end={
                       item.path === "/dashboard" ||
+                      item.path === "/appointments" ||
                       item.path === "/hospital-admin" ||
                       item.path === "/pharmacy-admin" ||
                       item.path === "/admin"

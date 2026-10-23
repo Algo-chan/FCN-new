@@ -111,6 +111,7 @@ export const BottomNavBar = () => {
             to={tab.path}
             end={
               tab.path === "/dashboard" ||
+              tab.path === "/appointments" ||
               tab.path === "/hospital-admin" ||
               tab.path === "/pharmacy-admin" ||
               tab.path === "/admin"
