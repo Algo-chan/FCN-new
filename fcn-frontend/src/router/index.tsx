@@ -43,6 +43,8 @@ import PendingApprovalPage from "@/pages/auth/PendingApprovalPage";
 import DoctorSchedulePage from "@/pages/doctor/DoctorSchedulePage";
 import DoctorPatientsPage from "@/pages/doctor/DoctorPatientsPage";
 import DoctorPrescriptionsListPage from "@/pages/doctor/DoctorPrescriptionsListPage";
+import { DoctorArticlesListPage } from "@/pages/doctor/DoctorArticlesListPage";
+import { DoctorArticleEditorPage } from "@/pages/doctor/DoctorArticleEditorPage";
 import NurseTodayVisitsPage from "@/pages/nurse/NurseTodayVisitsPage";
 import NursePatientsPage from "@/pages/nurse/NursePatientsPage";
 import NurseHistoryPage from "@/pages/nurse/NurseHistoryPage";
@@ -148,6 +150,9 @@ export const AppRouter = () => (
       <Route path="/doctor/patients" element={<DoctorPatientsPage />} />
       <Route path="/doctor/patients/:patientId" element={<PatientRecordsViewPage />} />
       <Route path="/doctor/prescriptions" element={<DoctorPrescriptionsListPage />} />
+      <Route path="/doctor/articles" element={<DoctorArticlesListPage />} />
+      <Route path="/doctor/articles/new" element={<DoctorArticleEditorPage />} />
+      <Route path="/doctor/articles/:id/edit" element={<DoctorArticleEditorPage />} />
     </Route>
 
     {/* ── Nurse / Rural Health Officer routes ─────────────────── */}
