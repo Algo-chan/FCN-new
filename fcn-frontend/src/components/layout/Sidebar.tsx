@@ -3,6 +3,7 @@ import { NavLink } from "react-router-dom";
 import {
   Activity,
   ArrowUpCircle,
+  BookOpen,
   Building2,
   Calendar,
   CalendarCheck,
@@ -61,6 +62,7 @@ const ICON_MAP: Record<string, React.ReactNode> = {
   Inbox: <Inbox className="h-5 w-5" />,
   Users: <Users className="h-5 w-5" />,
   FileText: <FileText className="h-5 w-5" />,
+  BookOpen: <BookOpen className="h-5 w-5" />,
   MapPin: <MapPin className="h-5 w-5" />,
   Clock: <Clock className="h-5 w-5" />,
   ArrowUpCircle: <ArrowUpCircle className="h-5 w-5" />,
@@ -122,6 +124,7 @@ const NAV_CONFIG: Record<Role, NavGroup[]> = {
       items: [
         { label: "My Patients", icon: "Users", path: "/doctor/patients" },
         { label: "Prescriptions Issued", icon: "FileText", path: "/doctor/prescriptions" },
+        { label: "Medical Articles", icon: "BookOpen", path: "/doctor/articles" },
       ],
     },
     {
@@ -216,6 +219,7 @@ const NAV_CONFIG: Record<Role, NavGroup[]> = {
         { label: "Users", icon: "Users", path: "/admin/users" },
         { label: "Hospitals", icon: "Building2", path: "/admin/hospitals" },
         { label: "Pharmacies", icon: "Pill", path: "/admin/pharmacies" },
+        { label: "Article Moderation", icon: "BookOpen", path: "/admin/articles" },
         { label: "Settings", icon: "Settings", path: "/admin/settings" },
         { label: "Activity Logs", icon: "ClipboardList", path: "/admin/logs" },
       ],
