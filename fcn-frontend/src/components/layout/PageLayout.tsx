@@ -40,7 +40,7 @@ export const PageLayout = ({ children }: PropsWithChildren) => {
       role="none"
     >
       <Sidebar />
-      <div className={clsx("min-h-screen transition-all duration-300", sidebarWidth)}>
+      <div className={clsx("min-h-screen transition-[margin] duration-300", sidebarWidth)}>
         <TopBar />
         <main className="mx-auto w-full max-w-7xl px-3 py-4 sm:px-4 sm:py-6 md:px-6 lg:px-8 lg:py-8 pb-28 lg:pb-8">
           <Breadcrumbs />

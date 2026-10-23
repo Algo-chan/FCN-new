@@ -17,6 +17,8 @@ import { articleService } from "@/services/article.service";
 import { ArticleCard } from "@/components/articles/ArticleCard";
 import { MASTER_SPECIALTIES } from "@/constants/specialties";
 import { Spinner } from "@/components/ui/Spinner";
+import { Navbar } from "@/components/landing/Navbar";
+import { Footer } from "@/components/landing/Footer";
 
 export const ArticlesDirectoryPage = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
@@ -62,8 +64,10 @@ export const ArticlesDirectoryPage = () => {
   const standardArticles = showFeatured ? articles.slice(1) : articles;
 
   return (
-    <div className="min-h-screen bg-slate-50/50 pb-24 dark:bg-slate-950">
-      {/* Hero Header */}
+    <div className="min-h-screen bg-slate-50/50 flex flex-col dark:bg-slate-950">
+      <Navbar />
+      <div className="flex-1 pt-16">
+        {/* Hero Header */}
       <section className="relative overflow-hidden border-b border-slate-200/80 bg-gradient-to-b from-teal-500/10 via-white to-transparent py-12 md:py-16 dark:border-white/10 dark:from-teal-950/20 dark:via-slate-900 dark:to-transparent">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <div className="max-w-3xl">
@@ -258,6 +262,8 @@ export const ArticlesDirectoryPage = () => {
           </div>
         </section>
       </main>
+      </div>
+      <Footer />
     </div>
   );
 };

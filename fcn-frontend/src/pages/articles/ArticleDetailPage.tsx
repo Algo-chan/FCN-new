@@ -20,6 +20,8 @@ import { articleService } from "@/services/article.service";
 import { FloatingDoctorDock } from "@/components/articles/FloatingDoctorDock";
 import { ArticleJsonLd } from "@/components/articles/ArticleJsonLd";
 import { Spinner } from "@/components/ui/Spinner";
+import { Navbar } from "@/components/landing/Navbar";
+import { Footer } from "@/components/landing/Footer";
 import { getInitials } from "@/utils/formatters";
 import toast from "react-hot-toast";
 
@@ -229,18 +231,20 @@ export const ArticleDetailPage = () => {
     "https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=1400&q=80";
 
   return (
-    <div className="min-h-screen bg-slate-50/40 pb-36 dark:bg-slate-950">
+    <div className="min-h-screen bg-slate-50/40 pb-36 dark:bg-slate-950 flex flex-col">
+      <Navbar />
+
       {/* Schema.org MedicalWebPage JSON-LD for Google SEO */}
       <ArticleJsonLd article={article} />
 
-      {/* Reading Progress Bar pinned at top */}
+      {/* Reading Progress Bar pinned directly below the fixed navbar */}
       <div
-        className="fixed top-0 left-0 h-1 bg-gradient-to-r from-teal-500 via-teal-400 to-emerald-500 z-50 transition-all duration-150"
+        className="fixed top-16 left-0 h-1 bg-gradient-to-r from-teal-500 via-teal-400 to-emerald-500 z-50 transition-all duration-150"
         style={{ width: `${scrollProgress}%` }}
       />
 
       {/* Top Header & Breadcrumb */}
-      <div className="mx-auto max-w-4xl px-4 sm:px-6 pt-8 pb-4">
+      <div className="mx-auto max-w-4xl w-full px-4 sm:px-6 pt-20 sm:pt-24 pb-4">
         <div className="flex items-center justify-between text-xs">
           <Link
             to="/articles"
@@ -452,6 +456,8 @@ export const ArticleDetailPage = () => {
 
       {/* Option A Sticky Floating Doctor Dock */}
       {author && <FloatingDoctorDock author={author} />}
+
+      <Footer />
     </div>
   );
 };

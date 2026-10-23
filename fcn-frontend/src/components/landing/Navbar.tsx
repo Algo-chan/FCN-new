@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Menu, Moon, Sun, X } from "lucide-react";
 import { useScrollPosition } from "@/hooks/useScrollPosition";
@@ -29,6 +29,7 @@ const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) =>
 };
 
 export const Navbar = () => {
+  const location = useLocation();
   const scrollY = useScrollPosition();
   const { isDark, toggleTheme } = useTheme();
   const { playTransition } = useSound();
@@ -38,7 +39,8 @@ export const Navbar = () => {
   const user = useAuthStore((state) => state.user);
   const dashboardPath = user ? getRoleDashboard(user.role) : "/dashboard";
 
-  const scrolled = scrollY > 50;
+  const isHome = location.pathname === "/";
+  const scrolled = !isHome || scrollY > 50;
 
   const bgClasses = scrolled
     ? "bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-sm border-b border-slate-200/60 dark:border-white/10"

@@ -110,7 +110,7 @@ export const TopBar = () => {
   const roleStyle = user?.role ? roleColors[user.role] : roleColors.patient;
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-slate-200/80 bg-white/85 backdrop-blur-md px-3 sm:px-4 md:px-6 dark:border-white/10 dark:bg-slate-900/85">
+    <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-slate-200/80 bg-white/95 backdrop-blur-md px-3 sm:px-4 md:px-6 dark:border-white/10 dark:bg-slate-900/95 shadow-sm transition-all duration-200">
       {/* Left: Sidebar toggle + Welcome message */}
       <div className="flex items-center gap-3">
         <button
