@@ -14,9 +14,20 @@ if (env.NODE_ENV !== "production") {
   globalForPrisma.prisma = prisma;
 }
 
-export const connectDatabase = async (): Promise<void> => {
-  await prisma.$connect();
-  logger.info("Database connection established");
+export const connectDatabase = async (retries = 5, delay = 2000): Promise<void> => {
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      await prisma.$connect();
+      logger.info("Database connection established");
+      return;
+    } catch (error) {
+      logger.warn(`Database connection attempt ${attempt}/${retries} failed: ${error instanceof Error ? error.message : String(error)}`);
+      if (attempt === retries) {
+        throw error;
+      }
+      await new Promise((res) => setTimeout(res, delay));
+    }
+  }
 };
 
 export const disconnectDatabase = async (): Promise<void> => {

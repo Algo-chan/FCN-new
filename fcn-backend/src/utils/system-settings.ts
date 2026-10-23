@@ -1,20 +1,7 @@
-import Redis from "ioredis";
-import { env } from "../config/env";
+import { redis } from "../config/redis";
 import { prisma } from "../config/database";
-import { logger } from "./logger";
 
 const CACHE_TTL = 300;
-
-let redis: Redis | null = null;
-try {
-  redis = new Redis(env.REDIS_URL, {
-    maxRetriesPerRequest: 3,
-    retryStrategy: (times) => (times > 3 ? null : Math.min(times * 200, 2000))
-  });
-  redis.on("error", (err) => logger.warn("Redis connection error (system-settings):", err));
-} catch {
-  logger.warn("Redis not available for system-settings, using DB fallback");
-}
 
 class SystemSettingsService {
   private cache = new Map<string, { value: string; expiry: number }>();
@@ -25,16 +12,14 @@ class SystemSettingsService {
       return cached.value;
     }
 
-    if (redis?.status === "ready") {
-      try {
-        const cachedVal = await redis.get(`settings:${key}`);
-        if (cachedVal !== null) {
-          this.cache.set(key, { value: cachedVal, expiry: Date.now() + CACHE_TTL * 1000 });
-          return cachedVal;
-        }
-      } catch {
-        /* fall through */
+    try {
+      const cachedVal = await (redis as any).get(`settings:${key}`);
+      if (cachedVal !== null && cachedVal !== undefined) {
+        this.cache.set(key, { value: cachedVal, expiry: Date.now() + CACHE_TTL * 1000 });
+        return cachedVal;
       }
+    } catch {
+      /* fall through to DB */
     }
 
     const setting = await prisma.systemSettings.findUnique({ where: { key } });
@@ -43,8 +28,10 @@ class SystemSettingsService {
     const value = setting.value;
     this.cache.set(key, { value, expiry: Date.now() + CACHE_TTL * 1000 });
 
-    if (redis?.status === "ready") {
-      redis.set(`settings:${key}`, value, "EX", CACHE_TTL).catch(() => {});
+    try {
+      await (redis as any).set(`settings:${key}`, value, "EX", CACHE_TTL);
+    } catch {
+      /* ignore cache write error */
     }
 
     return value;
@@ -58,8 +45,10 @@ class SystemSettingsService {
     });
 
     this.cache.delete(key);
-    if (redis?.status === "ready") {
-      redis.del(`settings:${key}`).catch(() => {});
+    try {
+      await (redis as any).del(`settings:${key}`);
+    } catch {
+      /* ignore */
     }
   }
 

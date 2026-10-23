@@ -25,7 +25,7 @@ const REFRESH_COOKIE = "fcn_refresh_token";
 const cookieOptions = {
   httpOnly: true,
   secure: env.NODE_ENV === "production",
-  sameSite: "none" as const,
+  sameSite: (env.NODE_ENV === "production" ? "none" : "lax") as "none" | "lax",
   path: "/",
   maxAge: 7 * 24 * 60 * 60 * 1000
 };

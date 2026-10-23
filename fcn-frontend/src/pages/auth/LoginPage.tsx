@@ -142,12 +142,21 @@ const LoginPage = () => {
       redirectUser(loginPayload.user);
     } catch (err: any) {
       const code = err?.response?.data?.error?.code;
+      const serverMessage = err?.response?.data?.error?.message;
       if (code === "GOOGLE_ACCOUNT_ONLY") {
         setGoogleOnly(true);
         setError(null);
-      } else if (code === "ACCOUNT_SUSPENDED") setError({ type: "danger", message: err?.response?.data?.error?.message ?? "Account suspended" });
-      else if (code === "ACCOUNT_REJECTED") setError({ type: "danger", message: err?.response?.data?.error?.message ?? "Account application was rejected" });
-      else setError({ type: "danger", message: "Invalid email or password" });
+      } else if (code === "ACCOUNT_SUSPENDED") {
+        setError({ type: "danger", message: serverMessage ?? "Account suspended" });
+      } else if (code === "ACCOUNT_REJECTED") {
+        setError({ type: "danger", message: serverMessage ?? "Account application was rejected" });
+      } else if (!err.response) {
+        setError({ type: "danger", message: "Cannot connect to server. Please ensure the backend is running." });
+      } else if (err.response.status === 401) {
+        setError({ type: "danger", message: "Invalid email or password" });
+      } else {
+        setError({ type: "danger", message: serverMessage ?? "Login failed. Please try again." });
+      }
     } finally {
       setIsLoading(false);
     }
