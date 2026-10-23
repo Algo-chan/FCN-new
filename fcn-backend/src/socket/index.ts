@@ -292,7 +292,7 @@ export const initSocket = (server: HttpServer): Server => {
       }
     });
 
-    socket.on("send_file", async ({ appointmentId, fileData, fileName, fileType, fileSize }, callback) => {
+    socket.on("send_file", async ({ appointmentId, fileData, fileName, fileType, fileSize, messageText, isLabResult }, callback) => {
       const ack = typeof callback === "function" ? callback : () => {};
       try {
         const room = consultationRoom(appointmentId);
@@ -388,18 +388,24 @@ export const initSocket = (server: HttpServer): Server => {
           recipientId = appointment.patient_id;
         }
 
+        const resolvedFileName = isLabResult
+          ? (fileName.startsWith("[Lab Result]") ? fileName : `[Lab Result] ${fileName}`)
+          : fileName;
+
+        const resolvedNote = typeof messageText === "string" ? messageText.trim() : "";
+
         const message = await prisma.message.create({
           data: {
             conversation_id: appointmentId,
             appointment_id: appointmentId,
             sender_user_id: user.id,
             recipient_user_id: recipientId,
-            message_text: "",
+            message_text: resolvedNote,
             message_iv: "",
             message_type: "file",
             file_url: uploadResult.secure_url,
             file_type: isImage ? "image" : "pdf",
-            file_name: fileName,
+            file_name: resolvedFileName,
             file_size_bytes: fileSize
           },
           include: {
@@ -414,7 +420,7 @@ export const initSocket = (server: HttpServer): Server => {
           sender_user_id: message.sender_user_id,
           recipient_user_id: message.recipient_user_id,
           sender_name: message.sender.full_name,
-          message_text: "",
+          message_text: message.message_text,
           message_type: "file",
           file_url: message.file_url,
           file_type: message.file_type,

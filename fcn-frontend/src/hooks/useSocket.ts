@@ -7,7 +7,7 @@ interface UseSocketReturn {
   isConnected: boolean;
   joinConsultation: (appointmentId: string) => void;
   sendMessage: (appointmentId: string, text: string) => void;
-  sendFile: (appointmentId: string, file: File) => Promise<void>;
+  sendFile: (appointmentId: string, file: File, options?: { messageText?: string; isLabResult?: boolean }) => Promise<void>;
   startTyping: (appointmentId: string) => void;
   stopTyping: (appointmentId: string) => void;
   markRead: (appointmentId: string, messageIds: string[]) => void;
@@ -71,7 +71,7 @@ export const useSocket = (): UseSocketReturn => {
     });
   }, []);
 
-  const sendFile = useCallback(async (appointmentId: string, file: File) => {
+  const sendFile = useCallback(async (appointmentId: string, file: File, options?: { messageText?: string; isLabResult?: boolean }) => {
     let processedFile = file;
 
     if (file.type.startsWith("image/")) {
@@ -98,7 +98,9 @@ export const useSocket = (): UseSocketReturn => {
           {
             appointmentId,
             fileData: base64Data,
-            fileName: processedFile.name,
+            fileName: options?.isLabResult ? (processedFile.name.startsWith("[Lab Result]") ? processedFile.name : `[Lab Result] ${processedFile.name}`) : processedFile.name,
+            messageText: options?.messageText || "",
+            isLabResult: !!options?.isLabResult,
             fileType: processedFile.type,
             fileSize: processedFile.size
           },

@@ -328,10 +328,10 @@ export default function ConsultationPage() {
   );
 
   const handleSendFile = useCallback(
-    async (file: File) => {
+    async (file: File, options?: { messageText?: string; isLabResult?: boolean }) => {
       if (appointmentId) {
         try {
-          await sendFile(appointmentId, file);
+          await sendFile(appointmentId, file, options);
           playSuccess();
         } catch {
           toast.error("Failed to send file");
