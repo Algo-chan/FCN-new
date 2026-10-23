@@ -237,6 +237,171 @@ async function main(): Promise<void> {
   });
   console.log("  patient: Dagem Tesfaye (demo.patient@fcncare.com)");
 
+  // Demo Articles for Doctor Articles & SEO Engine
+  const drAbebe = await prisma.user.findUnique({ where: { email: "demo.doctor1@fcncare.com" } });
+  const drSara = await prisma.user.findUnique({ where: { email: "demo.doctor2@fcncare.com" } });
+  const drDawit = await prisma.user.findUnique({ where: { email: "demo.doctor3@fcncare.com" } });
+  const drHelen = await prisma.user.findUnique({ where: { email: "demo.doctor4@fcncare.com" } });
+
+  if (drAbebe && drSara && drDawit && drHelen) {
+    const demoArticles = [
+      {
+        slug: "managing-diabetes-in-ethiopia-dietary-habits-teff-and-blood-glucose",
+        title: "Managing Diabetes in Ethiopia: Dietary Habits, Teff, and Blood Glucose",
+        excerpt: "An evidence-based clinical guide for Ethiopian patients navigating diabetes management while enjoying traditional staple foods like injera, lentils, and local vegetables.",
+        category: "General Medicine",
+        author_id: drAbebe.id,
+        status: "published" as const,
+        views_count: 342,
+        reading_time_minutes: 6,
+        published_at: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+        cover_image_url: "https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=1200&q=80",
+        content: `## The Modern Landscape of Diabetes in Ethiopia
+
+Diabetes mellitus is rapidly increasing across Ethiopian urban and semi-urban populations. Traditionally regarded as an uncommon illness in our highlands, shifting dietary habits, higher consumption of refined carbohydrates, and more sedentary urban lifestyles have elevated Type 2 Diabetes into a primary chronic condition managed in Ethiopian outpatient clinics.
+
+### Can Patients with Diabetes Still Eat Injera?
+
+The most common question I receive from newly diagnosed patients in Dire Dawa and Addis Ababa is: *"Doctor, do I have to stop eating Injera?"*
+
+The short answer is **no**, but the type of grain and portion control matters significantly:
+- **100% Pure Teff Injera**: Teff has a lower glycemic index compared to wheat or maize. Its high fiber content slows carbohydrate breakdown, leading to smoother postprandial glucose curves.
+- **Mixed Injera (Teff blended with wheat or rice)**: Many commercial bakeries mix teff with refined white wheat flour to lower production costs. This significantly increases the glycemic index. Patients should inquire about the flour purity or prepare injera at home.
+
+### Practical Steps for Daily Blood Sugar Control
+
+1. **Prioritize Fiber and Legumes First**: When dining, eat your shiro, misir (red lentils), and green vegetables (*gomen*) first before consuming large portions of the injera base.
+2. **Beware of Hidden Sugars in Hot Beverages**: Ethiopian tea (*shai*) is culturally served with heavy scoops of cane sugar. Train your palate to drink black tea or spiced tea with no added sweetener.
+3. **Daily Brisk Walking**: A 30-minute brisk walk after your evening meal significantly enhances insulin sensitivity.
+
+> **Clinical Disclaimer:** This guide is for educational awareness and does not replace personalized clinical advice. Consult your physician for individualized medication adjustments and laboratory HbA1c targets.`
+      },
+      {
+        slug: "pediatric-fever-and-dehydration-when-to-seek-emergency-care",
+        title: "Pediatric Fever & Dehydration: When to Seek Immediate Emergency Care",
+        excerpt: "Essential clinical instructions for parents on managing childhood fevers safely at home and recognizing the danger signs of severe dehydration in young infants.",
+        category: "Pediatrics",
+        author_id: drSara.id,
+        status: "published" as const,
+        views_count: 518,
+        reading_time_minutes: 5,
+        published_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+        cover_image_url: "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=1200&q=80",
+        content: `## Understanding Fever in Children
+
+A fever is not a disease in itself; it is your child's immune system actively mounting a defense against bacterial or viral pathogens. However, rapid temperature spikes in children under 5 years can quickly lead to dehydration and discomfort.
+
+### Critical Warning Signs (Red Flags)
+
+Seek urgent hospital or clinic evaluation immediately if your child displays any of the following symptoms:
+- Sunken eyes or sunken fontanelle (the soft spot on an infant's head)
+- Inability to drink liquids or keep any oral rehydration down
+- Lethargy, extreme floppiness, or difficulty waking up
+- Very fast or grunting breathing with chest indrawing
+- Absence of wet diapers for more than 6 consecutive hours
+
+### Safe Home Care & Oral Rehydration Solution (ORS)
+
+When treating mild fever and diarrhea at home:
+1. **Never withhold fluids**: Continue frequent breastfeeding or small, regular sips of clean boiled water with standard ORS packets.
+2. **Avoid cold water sponging**: Tepid, room-temperature sponge baths are safer. Cold water can induce shivering, which paradoxically drives internal body temperatures higher.
+3. **Accurate paracetamol dosing**: Administer paracetamol based on your child's body weight, NOT their age. Always consult with a doctor or licensed pharmacist to calculate the exact milligram dosage.
+
+> **Specialist Note:** If an infant under 3 months develops a rectal temperature of 38°C (100.4°F) or above, immediate emergency physician evaluation is mandatory.`
+      },
+      {
+        slug: "recognizing-silent-warning-signs-of-hypertension-in-urban-ethiopia",
+        title: "Recognizing Silent Warning Signs of Hypertension in Urban Ethiopia",
+        excerpt: "Why high blood pressure is dubbed the silent killer, common misconceptions about headache symptoms, and how routine blood pressure checks prevent heart disease.",
+        category: "Cardiology",
+        author_id: drDawit.id,
+        status: "published" as const,
+        views_count: 289,
+        reading_time_minutes: 7,
+        published_at: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000),
+        cover_image_url: "https://images.unsplash.com/photo-1628348068343-c6a848d2b6dd?auto=format&fit=crop&w=1200&q=80",
+        content: `## The "Silent Killer" Myth vs Reality
+
+In cardiovascular medicine, hypertension is universally termed the *Silent Killer* because severe vascular damage occurs over years without triggering overt symptoms. Many patients believe they only need blood pressure medication when they feel an occipital headache or neck stiffness.
+
+This is a dangerous misconception: **most patients with stage 2 hypertension feel completely normal until an acute stroke, heart failure, or renal impairment strikes.**
+
+### Understanding Blood Pressure Numbers
+
+- **Normal**: Systolic < 120 mmHg and Diastolic < 80 mmHg
+- **Elevated**: Systolic 120–129 mmHg and Diastolic < 80 mmHg
+- **Stage 1 Hypertension**: Systolic 130–139 mmHg or Diastolic 80–89 mmHg
+- **Stage 2 Hypertension**: Systolic ≥ 140 mmHg or Diastolic ≥ 90 mmHg
+
+### Salt and the Ethiopian Palate
+
+Traditional Ethiopian stews (*wots*) often incorporate generous amounts of berbere paste, salt, and clarified butter (*niter kibbeh*). While culturally cherished, excess sodium draws water into the bloodstream, elevating vascular resistance.
+
+### Recommended Lifestyle Interventions
+
+1. Check your blood pressure at least once every month at any local pharmacy or clinic.
+2. Moderate sodium intake by reducing added salt in home cooking.
+3. Schedule regular cardiovascular reviews if you have a family history of early heart attack or stroke.`
+      },
+      {
+        slug: "skin-rashes-in-humid-climates-identification-and-first-aid",
+        title: "Skin Rashes in Humid Climates: Identification and First Aid",
+        excerpt: "A clinical guide to differentiating fungal infections from allergic contact dermatitis during humid seasonal transitions.",
+        category: "Dermatology",
+        author_id: drHelen.id,
+        status: "pending_review" as const,
+        views_count: 0,
+        reading_time_minutes: 4,
+        published_at: null,
+        cover_image_url: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1200&q=80",
+        content: `## Heat Rash vs Fungal Ringworm (Tinea)
+
+During humid months, dermatological presentations spike significantly across Ethiopian outpatient clinics. Misdiagnosis often leads patients to apply topical corticosteroid creams onto active fungal infections, creating a widespread condition known as *Tinea Incognito*.
+
+### Identifying Characteristic Features
+
+- **Tinea Corporis**: Annular (ring-shaped) lesions with raised, scaly active borders and central clearing. Often intensely pruritic.
+- **Miliaria (Heat Rash)**: Pinhead-sized clear or erythematous vesicles located on sweat-rich regions such as the chest, neck, and skin folds.
+
+### Do Not Self-Medicate with Triple Combination Creams
+
+Over-the-counter creams combining antifungals, antibacterials, and strong steroids can thin the skin and worsen fungal propagation. Always obtain a clinical assessment before initiating topical therapies.`
+      }
+    ];
+
+    for (const a of demoArticles) {
+      await prisma.article.upsert({
+        where: { slug: a.slug },
+        update: {
+          title: a.title,
+          excerpt: a.excerpt,
+          category: a.category,
+          author_id: a.author_id,
+          status: a.status,
+          views_count: a.views_count,
+          reading_time_minutes: a.reading_time_minutes,
+          published_at: a.published_at,
+          cover_image_url: a.cover_image_url,
+          content: a.content
+        },
+        create: {
+          slug: a.slug,
+          title: a.title,
+          excerpt: a.excerpt,
+          category: a.category,
+          author_id: a.author_id,
+          status: a.status,
+          views_count: a.views_count,
+          reading_time_minutes: a.reading_time_minutes,
+          published_at: a.published_at,
+          cover_image_url: a.cover_image_url,
+          content: a.content
+        }
+      });
+      console.log(`  article [${a.status}]: ${a.title}`);
+    }
+  }
+
   console.log("\nDone. Demo accounts:");
   console.log("  doctors : demo.doctorN@fcncare.com / Doctor@123");
   console.log("  patient : demo.patient@fcncare.com / Patient@123");

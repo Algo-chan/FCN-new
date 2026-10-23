@@ -97,6 +97,13 @@ enum RefillStatus {
   DECLINED
 }
 
+enum ArticleStatus {
+  draft
+  pending_review
+  published
+  rejected
+}
+
 model User {
   id               String          @id @default(uuid()) @db.Uuid
   full_name        String
@@ -235,6 +242,7 @@ model DoctorProfile {
   user      User      @relation("DoctorUser", fields: [user_id], references: [id], onDelete: Cascade)
   hospital  Hospital? @relation(fields: [hospital_id], references: [id], onDelete: SetNull)
   approver  User?     @relation("DoctorApprover", fields: [approved_by], references: [id], onDelete: SetNull)
+  articles  Article[]
 
   @@index([specialty])
   @@index([availability_status])
@@ -719,4 +727,30 @@ model WaitlistEntry {
   notified   Boolean  @default(false)
 
   @@map("waitlist_entries")
+}
+
+model Article {
+  id                   String        @id @default(uuid()) @db.Uuid
+  slug                 String        @unique
+  title                String
+  excerpt              String
+  content              String        @db.Text
+  cover_image_url      String?
+  category             String
+  author_id            String        @db.Uuid
+  status               ArticleStatus @default(draft)
+  rejection_reason     String?
+  views_count          Int           @default(0)
+  reading_time_minutes Int           @default(3)
+  published_at         DateTime?
+  created_at           DateTime      @default(now())
+  updated_at           DateTime      @updatedAt
+
+  author DoctorProfile @relation(fields: [author_id], references: [user_id], onDelete: Cascade)
+
+  @@index([status])
+  @@index([category])
+  @@index([author_id])
+  @@index([published_at])
+  @@map("articles")
 }
