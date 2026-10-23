@@ -31,6 +31,7 @@ interface FormData {
   years_experience: string;
   hospital_name: string;
   hospital_id: string;
+  phone: string;
   nursing_license_number: string;
   coverage_zone: string;
 }
@@ -108,6 +109,7 @@ const RegisterPage = () => {
     years_experience: "",
     hospital_name: "",
     hospital_id: "",
+    phone: "",
     nursing_license_number: "",
     coverage_zone: "",
   });
@@ -180,6 +182,11 @@ const RegisterPage = () => {
     if (form.role === "doctor") {
       if (!form.license_number.trim()) errs.license_number = "License number required";
       if (!form.specialty) errs.specialty = "Specialty required";
+      if (!form.phone.trim()) {
+        errs.phone = "Consultation phone number is required for direct patient calls";
+      } else if (!/^(\+251|0)?(9|7)\d{8}$/.test(form.phone.replace(/[\s-]/g, ""))) {
+        errs.phone = "Enter a valid Ethiopian phone (e.g. +251 91 234 5678 or 0912345678)";
+      }
     }
     if (form.role === "nurse" || form.role === "rural_health_officer") {
       if (!form.nursing_license_number.trim()) errs.nursing_license_number = "License number required";
@@ -252,6 +259,7 @@ const RegisterPage = () => {
       payload.specialty = form.specialty;
       payload.years_experience = form.years_experience ? parseInt(form.years_experience) : 0;
       payload.hospital_name = form.hospital_name.trim() || undefined;
+      payload.phone = form.phone.trim();
     }
     if (form.role === "nurse" || form.role === "rural_health_officer") {
       payload.nursing_license_number = form.nursing_license_number.trim();
@@ -662,6 +670,27 @@ const RegisterPage = () => {
                             aria-label="Years experience"
                           />
                         </label>
+
+                        <label className="block">
+                          <span className="mb-1 block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider flex items-center justify-between">
+                            <span>Direct Call Phone Number (2G / Cellular)</span>
+                            <span className="text-[10px] text-teal-600 dark:text-teal-400 font-bold lowercase">Required</span>
+                          </span>
+                          <input
+                            type="tel"
+                            value={form.phone}
+                            onChange={(e) => update("phone", e.target.value)}
+                            className="h-12 w-full rounded-2xl border border-slate-200 bg-slate-50/50 px-3.5 text-sm text-slate-900 outline-none focus:border-teal-500 dark:border-white/10 dark:bg-white/5 dark:text-white"
+                            placeholder="+251 91 234 5678 or 0912345678"
+                            aria-label="Direct Consultation Phone Number"
+                          />
+                          <p className="mt-1 text-[11px] text-slate-500">
+                            Elderly and rural patients with poor 2G connectivity can call this number directly during scheduled consultations.
+                          </p>
+                          {errors.phone && (
+                            <p className="mt-1 text-xs text-rose-500 font-medium">{errors.phone}</p>
+                          )}
+                        </label>
                       </motion.div>
                     )}
 
@@ -791,6 +820,14 @@ const RegisterPage = () => {
                             <span className="text-slate-500 dark:text-slate-400">Hospital</span>
                             <span className="font-bold text-slate-800 dark:text-slate-200">
                               {form.hospital_name}
+                            </span>
+                          </div>
+                        )}
+                        {form.phone && (
+                          <div className="flex justify-between text-xs sm:text-sm">
+                            <span className="text-slate-500 dark:text-slate-400">Direct Call Phone</span>
+                            <span className="font-bold text-slate-800 dark:text-slate-200">
+                              {form.phone}
                             </span>
                           </div>
                         )}

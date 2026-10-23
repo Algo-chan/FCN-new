@@ -11,6 +11,7 @@ export const RegisterSchema = z
     full_name: z.string().trim().min(2).max(100),
     email: z.string().trim().email(),
     password: passwordSchema,
+    phone: z.string().trim().optional(),
     role: z.enum(["patient", "doctor", "nurse", "rural_health_officer"]),
     license_number: z.string().trim().optional(),
     specialty: z.string().trim().optional(),
@@ -27,6 +28,13 @@ export const RegisterSchema = z
       }
       if (!data.specialty) {
         ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["specialty"], message: "Specialty is required" });
+      }
+      if (data.role === "doctor") {
+        if (!data.phone) {
+          ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["phone"], message: "Consultation phone number is required for direct call service" });
+        } else if (!/^(\+251|0)?(9|7)\d{8}$/.test(data.phone.replace(/[\s-]/g, ""))) {
+          ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["phone"], message: "Must be a valid Ethiopian phone number (+251 9... / 09...)" });
+        }
       }
     }
 
@@ -87,6 +95,7 @@ export const RegisterGoogleSchema = z
     googleId: z.string().trim().min(1),
     email: z.string().trim().email(),
     full_name: z.string().trim().min(2).max(100),
+    phone: z.string().trim().optional(),
     role: z.enum(["patient", "doctor", "nurse", "rural_health_officer"]),
     license_number: z.string().trim().optional(),
     specialty: z.string().trim().optional(),
@@ -102,6 +111,13 @@ export const RegisterGoogleSchema = z
       }
       if (!data.specialty) {
         ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["specialty"], message: "Specialty is required" });
+      }
+      if (data.role === "doctor") {
+        if (!data.phone) {
+          ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["phone"], message: "Consultation phone number is required for direct call service" });
+        } else if (!/^(\+251|0)?(9|7)\d{8}$/.test(data.phone.replace(/[\s-]/g, ""))) {
+          ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["phone"], message: "Must be a valid Ethiopian phone number (+251 9... / 09...)" });
+        }
       }
     }
 
@@ -129,6 +145,7 @@ export const VerifyRegistrationOTPSchema = z.object({
 export const RegisterStep2Schema = z
   .object({
     email: z.string().trim().email(),
+    phone: z.string().trim().optional(),
     role: z.enum(["patient", "doctor", "nurse", "rural_health_officer"]),
     license_number: z.string().trim().optional(),
     specialty: z.string().trim().optional(),
@@ -145,6 +162,13 @@ export const RegisterStep2Schema = z
       }
       if (!data.specialty) {
         ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["specialty"], message: "Specialty is required" });
+      }
+      if (data.role === "doctor") {
+        if (!data.phone) {
+          ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["phone"], message: "Consultation phone number is required for direct call service" });
+        } else if (!/^(\+251|0)?(9|7)\d{8}$/.test(data.phone.replace(/[\s-]/g, ""))) {
+          ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["phone"], message: "Must be a valid Ethiopian phone number (+251 9... / 09...)" });
+        }
       }
     }
 

@@ -13,6 +13,7 @@ import {
   ArrowLeft,
   Sparkles,
   PhoneCall,
+  Phone,
   Lock,
   Clock,
   AlertTriangle
@@ -30,6 +31,7 @@ import { PatientHealthPassport } from "@/components/consultation/PatientHealthPa
 import { PrescribePanel } from "@/components/consultation/PrescribePanel";
 import { ConsultationTimer } from "@/components/consultation/ConsultationTimer";
 import { ExtensionApprovalModal } from "@/components/consultation/ExtensionApprovalModal";
+import { DirectCallModal } from "@/components/consultation/DirectCallModal";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import type { ConsultationContext, Message } from "@/types";
@@ -67,6 +69,7 @@ export default function ConsultationPage() {
   const [durationMinutes, setDurationMinutes] = useState(15);
   const [extensionRequest, setExtensionRequest] = useState<{ doctorName: string; minutes: number } | null>(null);
   const [isExtending, setIsExtending] = useState(false);
+  const [isDirectCallOpen, setIsDirectCallOpen] = useState(false);
   const queryClient = useQueryClient();
   const pageFocusedRef = useRef(true);
 
@@ -472,6 +475,7 @@ export default function ConsultationPage() {
             showNoteInput={showNoteInput}
             onRequestExtension={handleRequestExtension}
             isExtending={isExtending}
+            onDirectCall={() => setIsDirectCallOpen(true)}
           />
 
           {isReadOnly && (
@@ -633,6 +637,7 @@ export default function ConsultationPage() {
               showNoteInput={showNoteInput}
               onRequestExtension={handleRequestExtension}
               isExtending={isExtending}
+              onDirectCall={() => setIsDirectCallOpen(true)}
             />
 
             {isReadOnly && (
@@ -738,6 +743,15 @@ export default function ConsultationPage() {
         onApprove={(mins) => handleRespondExtension(true, mins)}
         onDecline={() => handleRespondExtension(false, extensionRequest?.minutes ?? 10)}
       />
+
+      {/* Direct Cellular Call Modal (2G / Phone) */}
+      <DirectCallModal
+        isOpen={isDirectCallOpen}
+        onClose={() => setIsDirectCallOpen(false)}
+        doctorName={otherPartyName ?? "Doctor"}
+        doctorSpecialty={otherPartySpecialty}
+        doctorPhone={contextData?.appointment?.doctor?.phone ?? null}
+      />
     </motion.div>
   );
 }
@@ -754,7 +768,8 @@ function TopBar({
   onAddNote,
   showNoteInput,
   onRequestExtension,
-  isExtending
+  isExtending,
+  onDirectCall
 }: {
   otherPartyName: string;
   otherPartySpecialty?: string;
@@ -768,6 +783,7 @@ function TopBar({
   showNoteInput: boolean;
   onRequestExtension?: (minutes: number) => void;
   isExtending?: boolean;
+  onDirectCall?: () => void;
 }) {
   return (
     <div className="flex items-center justify-between border-b border-fcn-primary/10 bg-white/80 dark:bg-fcn-surface-dark/80 backdrop-blur-sm px-4 py-3">
@@ -791,6 +807,18 @@ function TopBar({
       </div>
 
       <div className="flex items-center gap-2">
+        {!isDoctor && !isReadOnly && onDirectCall && (
+          <button
+            type="button"
+            onClick={onDirectCall}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/15 border border-emerald-500/35 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/25 active:scale-95 text-xs font-bold transition-all shadow-xs shrink-0"
+            title="Make direct cellular call to doctor (works on 2G)"
+          >
+            <Phone className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400 animate-pulse" />
+            <span className="hidden xs:inline">Direct Call (2G)</span>
+          </button>
+        )}
+
         <ConsultationTimer
           startedAt={startedAt}
           durationMinutes={durationMinutes}

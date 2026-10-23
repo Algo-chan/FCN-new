@@ -18,6 +18,17 @@ const OTP_TTL_SECONDS = 10 * 60;
 const OTP_LOCK_TTL_SECONDS = 15 * 60;
 type SafeUser = Omit<User, "password_hash"> & { patient_profile?: { onboarding_completed: boolean } | null };
 
+export function normalizeEthiopianPhone(phone: string): string {
+  const digits = phone.replace(/[\s\-\(\)]/g, "");
+  if (digits.startsWith("+251")) return digits;
+  if (digits.startsWith("0")) return `+251${digits.slice(1)}`;
+  if (digits.startsWith("251")) return `+${digits}`;
+  if (digits.length === 9 && (digits.startsWith("9") || digits.startsWith("7"))) {
+    return `+251${digits}`;
+  }
+  return digits;
+}
+
 export class AuthService {
   async register(data: RegisterDto): Promise<{ user: SafeUser; tokens?: AuthTokens }> {
     const passwordHash = await hashPassword(data.password);
@@ -28,7 +39,7 @@ export class AuthService {
         data: {
           full_name: data.full_name,
           email: data.email,
-          phone: null,
+          phone: data.phone ? normalizeEthiopianPhone(data.phone) : null,
           password_hash: passwordHash,
           role: data.role,
           status,
@@ -61,7 +72,8 @@ export class AuthService {
             license_number: data.license_number!,
             specialty: data.specialty!,
             years_experience: data.years_experience ?? 0,
-            hospital_id
+            hospital_id,
+            show_phone: true
           }
         });
       }
@@ -159,9 +171,9 @@ export class AuthService {
         data: {
           full_name: tempData.full_name,
           email: tempData.email,
-          phone: null,
           password_hash: tempData.password_hash,
           role: roleData.role,
+          phone: roleData.phone ? normalizeEthiopianPhone(roleData.phone) : null,
           status,
           email_verified: true,
           phone_verified: false
@@ -192,7 +204,8 @@ export class AuthService {
             license_number: roleData.license_number!,
             specialty: roleData.specialty!,
             years_experience: roleData.years_experience ?? 0,
-            hospital_id
+            hospital_id,
+            show_phone: true
           }
         });
       }
@@ -467,6 +480,7 @@ export class AuthService {
     role: "patient" | "doctor" | "nurse" | "rural_health_officer";
     license_number?: string;
     specialty?: string;
+    phone?: string;
     hospital_id?: string;
     years_experience?: number;
     nursing_license_number?: string;
@@ -484,7 +498,7 @@ export class AuthService {
         data: {
           full_name: data.full_name,
           email: data.email,
-          phone: null,
+          phone: data.phone ? normalizeEthiopianPhone(data.phone) : null,
           password_hash: null,
           google_id: data.googleId,
           role: data.role,
@@ -518,7 +532,8 @@ export class AuthService {
             license_number: data.license_number!,
             specialty: data.specialty!,
             years_experience: data.years_experience ?? 0,
-            hospital_id
+            hospital_id,
+            show_phone: true
           }
         });
       }

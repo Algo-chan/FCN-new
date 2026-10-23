@@ -398,6 +398,7 @@ export interface ConsultationContext {
     doctor: {
       id: string;
       full_name: string;
+      phone?: string | null;
       specialty?: string | null;
       photo_url?: string | null;
       bio?: string | null;

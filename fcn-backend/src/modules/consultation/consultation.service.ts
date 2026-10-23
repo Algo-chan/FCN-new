@@ -75,6 +75,7 @@ export class ConsultationService {
             id: true,
             full_name: true,
             email: true,
+            phone: true,
             doctor_profile: true
           }
         }
