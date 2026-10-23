@@ -94,28 +94,26 @@ export async function getPublishedArticles(query: ArticleQueryParams) {
     ];
   }
 
-  const [total, articles] = await Promise.all([
-    prisma.article.count({ where }),
-    prisma.article.findMany({
-      where,
-      skip,
-      take: limit,
-      orderBy: { published_at: "desc" },
-      select: {
-        id: true,
-        slug: true,
-        title: true,
-        excerpt: true,
-        cover_image_url: true,
-        category: true,
-        reading_time_minutes: true,
-        views_count: true,
-        published_at: true,
-        created_at: true,
-        author: authorPublicSelect
-      }
-    })
-  ]);
+  const total = await prisma.article.count({ where });
+  const articles = await prisma.article.findMany({
+    where,
+    skip,
+    take: limit,
+    orderBy: { published_at: "desc" },
+    select: {
+      id: true,
+      slug: true,
+      title: true,
+      excerpt: true,
+      cover_image_url: true,
+      category: true,
+      reading_time_minutes: true,
+      views_count: true,
+      published_at: true,
+      created_at: true,
+      author: authorPublicSelect
+    }
+  });
 
   return {
     articles,
@@ -196,21 +194,19 @@ export async function getDoctorArticles(
     ];
   }
 
-  const [total, articles, statsGroup] = await Promise.all([
-    prisma.article.count({ where }),
-    prisma.article.findMany({
-      where,
-      skip,
-      take: limit,
-      orderBy: { updated_at: "desc" }
-    }),
-    prisma.article.groupBy({
-      by: ["status"],
-      where: { author_id: doctorId },
-      _count: { _all: true },
-      _sum: { views_count: true }
-    })
-  ]);
+  const total = await prisma.article.count({ where });
+  const articles = await prisma.article.findMany({
+    where,
+    skip,
+    take: limit,
+    orderBy: { updated_at: "desc" }
+  });
+  const statsGroup = await prisma.article.groupBy({
+    by: ["status"],
+    where: { author_id: doctorId },
+    _count: { _all: true },
+    _sum: { views_count: true }
+  });
 
   const stats: Record<string, number> = {
     total: 0,
@@ -394,33 +390,31 @@ export async function getAdminArticles(query: ArticleQueryParams) {
     ];
   }
 
-  const [total, articles, statsGroup] = await Promise.all([
-    prisma.article.count({ where }),
-    prisma.article.findMany({
-      where,
-      skip,
-      take: limit,
-      orderBy: { created_at: "desc" },
-      include: {
-        author: {
-          select: {
-            user_id: true,
-            license_number: true,
-            specialty: true,
-            verified: true,
-            years_experience: true,
-            photo_url: true,
-            hospital: { select: { name: true } },
-            user: { select: { id: true, full_name: true, email: true, phone: true } }
-          }
+  const total = await prisma.article.count({ where });
+  const articles = await prisma.article.findMany({
+    where,
+    skip,
+    take: limit,
+    orderBy: { created_at: "desc" },
+    include: {
+      author: {
+        select: {
+          user_id: true,
+          license_number: true,
+          specialty: true,
+          verified: true,
+          years_experience: true,
+          photo_url: true,
+          hospital: { select: { name: true } },
+          user: { select: { id: true, full_name: true, email: true, phone: true } }
         }
       }
-    }),
-    prisma.article.groupBy({
-      by: ["status"],
-      _count: { _all: true }
-    })
-  ]);
+    }
+  });
+  const statsGroup = await prisma.article.groupBy({
+    by: ["status"],
+    _count: { _all: true }
+  });
 
   const stats: Record<string, number> = {
     total: 0,
