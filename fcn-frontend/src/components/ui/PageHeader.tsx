@@ -13,11 +13,14 @@ export type PageHeaderVariant =
   | "indigo"
   | "slate";
 
+export type PageHeaderLayout = "card" | "plain";
+
 interface PageHeaderProps {
   title: string | React.ReactNode;
   description?: string | React.ReactNode;
   icon?: React.ComponentType<{ className?: string }>;
   iconVariant?: PageHeaderVariant;
+  layout?: PageHeaderLayout;
   eyebrow?: string;
   badge?: React.ReactNode;
   actions?: React.ReactNode;
@@ -35,74 +38,92 @@ const VARIANT_MAP: Record<
     gradient: string;
     shadow: string;
     glow: string;
+    glowBg: string;
     ring: string;
     eyebrow: string;
+    dot: string;
   }
 > = {
   teal: {
     gradient: "from-teal-500 via-teal-600 to-emerald-600",
-    shadow: "shadow-teal-500/25",
-    glow: "bg-teal-500/25",
+    shadow: "shadow-teal-500/30",
+    glow: "bg-teal-500/30",
+    glowBg: "bg-teal-500/15 dark:bg-teal-400/10",
     ring: "ring-teal-500/20",
     eyebrow:
-      "text-teal-700 dark:text-teal-300 bg-teal-50 dark:bg-teal-950/60 border-teal-500/25"
+      "text-teal-700 dark:text-teal-300 bg-teal-50/90 dark:bg-teal-950/70 border-teal-500/30",
+    dot: "bg-teal-500 dark:bg-teal-400"
   },
   sky: {
     gradient: "from-sky-500 via-blue-600 to-indigo-600",
-    shadow: "shadow-sky-500/25",
-    glow: "bg-sky-500/25",
+    shadow: "shadow-sky-500/30",
+    glow: "bg-sky-500/30",
+    glowBg: "bg-sky-500/15 dark:bg-sky-400/10",
     ring: "ring-sky-500/20",
     eyebrow:
-      "text-sky-700 dark:text-sky-300 bg-sky-50 dark:bg-sky-950/60 border-sky-500/25"
+      "text-sky-700 dark:text-sky-300 bg-sky-50/90 dark:bg-sky-950/70 border-sky-500/30",
+    dot: "bg-sky-500 dark:bg-sky-400"
   },
   emerald: {
     gradient: "from-emerald-500 via-teal-600 to-green-600",
-    shadow: "shadow-emerald-500/25",
-    glow: "bg-emerald-500/25",
+    shadow: "shadow-emerald-500/30",
+    glow: "bg-emerald-500/30",
+    glowBg: "bg-emerald-500/15 dark:bg-emerald-400/10",
     ring: "ring-emerald-500/20",
     eyebrow:
-      "text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 border-emerald-500/25"
+      "text-emerald-700 dark:text-emerald-300 bg-emerald-50/90 dark:bg-emerald-950/70 border-emerald-500/30",
+    dot: "bg-emerald-500 dark:bg-emerald-400"
   },
   violet: {
     gradient: "from-violet-500 via-purple-600 to-indigo-600",
-    shadow: "shadow-violet-500/25",
-    glow: "bg-violet-500/25",
+    shadow: "shadow-violet-500/30",
+    glow: "bg-violet-500/30",
+    glowBg: "bg-violet-500/15 dark:bg-violet-400/10",
     ring: "ring-violet-500/20",
     eyebrow:
-      "text-violet-700 dark:text-violet-300 bg-violet-50 dark:bg-violet-950/60 border-violet-500/25"
+      "text-violet-700 dark:text-violet-300 bg-violet-50/90 dark:bg-violet-950/70 border-violet-500/30",
+    dot: "bg-violet-500 dark:bg-violet-400"
   },
   rose: {
     gradient: "from-rose-500 via-pink-600 to-red-600",
-    shadow: "shadow-rose-500/25",
-    glow: "bg-rose-500/25",
+    shadow: "shadow-rose-500/30",
+    glow: "bg-rose-500/30",
+    glowBg: "bg-rose-500/15 dark:bg-rose-400/10",
     ring: "ring-rose-500/20",
     eyebrow:
-      "text-rose-700 dark:text-rose-300 bg-rose-50 dark:bg-rose-950/60 border-rose-500/25"
+      "text-rose-700 dark:text-rose-300 bg-rose-50/90 dark:bg-rose-950/70 border-rose-500/30",
+    dot: "bg-rose-500 dark:bg-rose-400"
   },
   amber: {
     gradient: "from-amber-500 via-amber-600 to-orange-600",
-    shadow: "shadow-amber-500/25",
-    glow: "bg-amber-500/25",
+    shadow: "shadow-amber-500/30",
+    glow: "bg-amber-500/30",
+    glowBg: "bg-amber-500/15 dark:bg-amber-400/10",
     ring: "ring-amber-500/20",
     eyebrow:
-      "text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/60 border-amber-500/25"
+      "text-amber-700 dark:text-amber-300 bg-amber-50/90 dark:bg-amber-950/70 border-amber-500/30",
+    dot: "bg-amber-500 dark:bg-amber-400"
   },
   indigo: {
     gradient: "from-indigo-600 via-violet-600 to-purple-700",
-    shadow: "shadow-indigo-600/25",
-    glow: "bg-indigo-600/25",
+    shadow: "shadow-indigo-600/30",
+    glow: "bg-indigo-600/30",
+    glowBg: "bg-indigo-600/15 dark:bg-indigo-400/10",
     ring: "ring-indigo-500/20",
     eyebrow:
-      "text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/60 border-indigo-500/25"
+      "text-indigo-700 dark:text-indigo-300 bg-indigo-50/90 dark:bg-indigo-950/70 border-indigo-500/30",
+    dot: "bg-indigo-500 dark:bg-indigo-400"
   },
   slate: {
     gradient:
       "from-slate-700 via-slate-800 to-slate-900 dark:from-slate-600 dark:to-slate-800",
     shadow: "shadow-slate-500/20",
     glow: "bg-slate-500/20",
+    glowBg: "bg-slate-500/10 dark:bg-slate-400/10",
     ring: "ring-slate-500/20",
     eyebrow:
-      "text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 border-slate-300 dark:border-white/10"
+      "text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 border-slate-300 dark:border-white/10",
+    dot: "bg-slate-500 dark:bg-slate-400"
   }
 };
 
@@ -111,6 +132,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
   description,
   icon: Icon,
   iconVariant = "teal",
+  layout = "card",
   eyebrow,
   badge,
   actions,
@@ -118,82 +140,114 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
   className
 }) => {
   const style = VARIANT_MAP[iconVariant] || VARIANT_MAP.teal;
+  const isCard = layout === "card";
 
   return (
     <div
       className={clsx(
-        "flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2",
+        "relative transition-all duration-200",
+        isCard
+          ? "overflow-hidden rounded-2xl sm:rounded-3xl border border-slate-200/80 dark:border-white/[0.08] bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl p-4 sm:p-5 md:p-6 shadow-[0_4px_20px_-4px_rgba(15,23,42,0.05)] dark:shadow-[0_4px_24px_-4px_rgba(0,0,0,0.35)]"
+          : "pb-2",
         className
       )}
     >
-      <div className="flex items-start sm:items-center gap-3.5 sm:gap-4 min-w-0">
-        {backButton && (
-          <Link
-            to={backButton.to || "#"}
-            onClick={backButton.onClick}
-            className="flex h-10 w-10 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-2xl border border-slate-200/80 bg-white text-slate-600 shadow-sm hover:bg-slate-50 hover:text-slate-900 dark:border-white/10 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 transition-colors"
-            aria-label={backButton.label || "Go back"}
-          >
-            <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
-          </Link>
-        )}
+      {/* Ambient Radial Aura for Card Layout */}
+      {isCard && (
+        <div
+          className={clsx(
+            "absolute -top-16 -right-16 w-56 h-56 sm:w-72 sm:h-72 rounded-full blur-3xl pointer-events-none transition-opacity",
+            style.glowBg
+          )}
+        />
+      )}
 
-        {Icon && (
-          <div className="relative shrink-0 group">
-            {/* Ambient Ambient Glow */}
-            <div
-              className={clsx(
-                "absolute -inset-1 rounded-2xl blur-md opacity-60 group-hover:opacity-100 transition-opacity",
-                style.glow
-              )}
-            />
-            {/* Squircle Badge */}
-            <div
-              className={clsx(
-                "relative flex h-11 w-11 sm:h-12 sm:w-12 md:h-13 md:w-13 items-center justify-center rounded-2xl bg-gradient-to-br text-white shadow-md ring-1 ring-white/20 transition-transform duration-300 group-hover:scale-105 active:scale-95",
-                style.gradient,
-                style.shadow
-              )}
+      <div className="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        {/* Left Side: Back button + Icon + Text hierarchy */}
+        <div className="flex items-start sm:items-center gap-3 sm:gap-4 min-w-0 flex-1">
+          {backButton && (
+            <Link
+              to={backButton.to || "#"}
+              onClick={backButton.onClick}
+              className="flex h-10 w-10 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-xl sm:rounded-2xl border border-slate-200/80 bg-white text-slate-600 shadow-sm hover:bg-slate-50 hover:text-slate-900 dark:border-white/10 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 transition-all active:scale-95"
+              aria-label={backButton.label || "Go back"}
             >
-              <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
-            </div>
-          </div>
-        )}
+              <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
+            </Link>
+          )}
 
-        <div className="min-w-0 flex-1">
-          {eyebrow && (
-            <div className="mb-1">
-              <span
+          {Icon && (
+            <div className="relative shrink-0 group">
+              {/* Ambient Glow */}
+              <div
                 className={clsx(
-                  "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold uppercase tracking-wider border shadow-xs",
-                  style.eyebrow
+                  "absolute -inset-1 rounded-2xl blur-md opacity-60 group-hover:opacity-100 transition-opacity",
+                  style.glow
+                )}
+              />
+              {/* Responsive Squircle Badge */}
+              <div
+                className={clsx(
+                  "relative flex h-11 w-11 sm:h-12 sm:w-12 md:h-13 md:w-13 items-center justify-center rounded-xl sm:rounded-2xl bg-gradient-to-br text-white shadow-md ring-1 ring-inset ring-white/30 transition-transform duration-300 group-hover:scale-105 active:scale-95",
+                  style.gradient,
+                  style.shadow
                 )}
               >
-                {eyebrow}
-              </span>
+                <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
+              </div>
             </div>
           )}
 
-          <div className="flex items-center gap-2.5 flex-wrap">
-            <h1 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight text-slate-900 dark:text-white leading-tight">
-              {title}
-            </h1>
-            {badge}
+          <div className="min-w-0 flex-1">
+            {eyebrow && (
+              <div className="mb-1.5 flex items-center">
+                <span
+                  className={clsx(
+                    "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold uppercase tracking-wider border shadow-2xs",
+                    style.eyebrow
+                  )}
+                >
+                  <span className="relative flex h-1.5 w-1.5 shrink-0">
+                    <span
+                      className={clsx(
+                        "animate-ping absolute inline-flex h-full w-full rounded-full opacity-75",
+                        style.dot
+                      )}
+                    />
+                    <span
+                      className={clsx(
+                        "relative inline-flex rounded-full h-1.5 w-1.5",
+                        style.dot
+                      )}
+                    />
+                  </span>
+                  <span>{eyebrow}</span>
+                </span>
+              </div>
+            )}
+
+            <div className="flex items-center gap-2.5 flex-wrap">
+              <h1 className="text-lg sm:text-2xl md:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight">
+                {title}
+              </h1>
+              {badge}
+            </div>
+
+            {description && (
+              <p className="mt-1 text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-300/90 leading-relaxed max-w-2xl">
+                {description}
+              </p>
+            )}
           </div>
-
-          {description && (
-            <p className="mt-1 text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400 leading-relaxed max-w-2xl">
-              {description}
-            </p>
-          )}
         </div>
+
+        {/* Right Side / Mobile Bottom Actions */}
+        {actions && (
+          <div className="relative z-10 flex flex-wrap items-center gap-2 sm:gap-2.5 shrink-0 w-full sm:w-auto pt-3 sm:pt-0 border-t border-slate-100 dark:border-white/5 sm:border-0">
+            {actions}
+          </div>
+        )}
       </div>
-
-      {actions && (
-        <div className="flex flex-wrap items-center gap-2 sm:gap-2.5 self-start sm:self-auto shrink-0 w-full sm:w-auto">
-          {actions}
-        </div>
-      )}
     </div>
   );
 };
