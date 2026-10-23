@@ -3,6 +3,7 @@ export type ArticleStatus = "draft" | "pending_review" | "published" | "rejected
 export interface ArticleAuthor {
   user_id: string;
   specialty: string;
+  license_number?: string;
   photo_url?: string | null;
   verified: boolean;
   years_experience?: number;

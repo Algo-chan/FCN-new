@@ -6,6 +6,7 @@ import AdminHospitalsPage from "@/pages/admin/AdminHospitalsPage";
 import AdminPharmaciesPage from "@/pages/admin/AdminPharmaciesPage";
 import AdminSettingsPage from "@/pages/admin/AdminSettingsPage";
 import AdminLogsPage from "@/pages/admin/AdminLogsPage";
+import { AdminArticlesModerationPage } from "@/pages/admin/AdminArticlesModerationPage";
 import AISymptomCheckPage from "@/pages/ai-check/AISymptomCheckPage";
 import BookAppointmentPage from "@/pages/appointments/BookAppointmentPage";
 import MyAppointmentsPage from "@/pages/appointments/MyAppointmentsPage";
@@ -184,6 +185,7 @@ export const AppRouter = () => (
       <Route path="/admin/users" element={<AdminUsersPage />} />
       <Route path="/admin/hospitals" element={<AdminHospitalsPage />} />
       <Route path="/admin/pharmacies" element={<AdminPharmaciesPage />} />
+      <Route path="/admin/articles" element={<AdminArticlesModerationPage />} />
       <Route path="/admin/settings" element={<AdminSettingsPage />} />
       <Route path="/admin/logs" element={<AdminLogsPage />} />
     </Route>
