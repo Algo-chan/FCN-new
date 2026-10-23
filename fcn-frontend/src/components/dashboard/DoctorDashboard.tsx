@@ -13,6 +13,7 @@ import { DoctorScheduleView } from "@/components/doctor-dashboard/DoctorSchedule
 import { ActivePatientCard } from "@/components/doctor-dashboard/ActivePatientCard";
 import { PreviousPatientsSection } from "@/components/doctor-dashboard/PreviousPatientsSection";
 import { EarningsSummaryPanel } from "@/components/doctor-dashboard/EarningsSummaryPanel";
+import { PageHeader } from "@/components/ui/PageHeader";
 
 interface StatCardProps {
   label: string;
@@ -98,30 +99,20 @@ export const DoctorDashboard = () => {
 
   return (
     <div className="space-y-6 pb-20 md:pb-8">
-      {/* Doctor Header Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-500 to-emerald-600 text-white shadow-md shadow-teal-500/20">
-            <Stethoscope className="h-6 w-6" />
-          </div>
-          <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
-              {greeting}, Dr. {lastName}
-            </h1>
-            {subtitle && (
-              <p className={clsx("text-xs sm:text-sm font-medium mt-0.5", stats?.pending_requests ? "text-amber-600 dark:text-amber-400" : "text-fcn-text-light/60 dark:text-fcn-text-dark/60")}>
-                {subtitle}
-              </p>
-            )}
-          </div>
-        </div>
-
-        {stats && (
-          <div className="self-start sm:self-auto">
-            <AvailabilityStatusToggle currentStatus={stats.current_status} doctorId={doctorId} />
-          </div>
-        )}
-      </div>
+      <PageHeader
+        title={`${greeting}, Dr. ${lastName}`}
+        description={subtitle || "Physician Clinical Practice & Telehealth Operations"}
+        icon={Stethoscope}
+        iconVariant="teal"
+        eyebrow="Physician Practice"
+        actions={
+          stats && (
+            <div className="self-start sm:self-auto">
+              <AvailabilityStatusToggle currentStatus={stats.current_status} doctorId={doctorId} />
+            </div>
+          )
+        }
+      />
 
       {/* 4 Stat Cards */}
       {stats && (

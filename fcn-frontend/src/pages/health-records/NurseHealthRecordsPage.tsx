@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Search, Stethoscope, Activity, Users } from "lucide-react";
 import { PageTransition } from "@/components/animations/PageTransition";
 import { NursePatientCard } from "@/components/health-records/NursePatientCard";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { healthRecordsService } from "@/services/health-records.service";
 
 interface NursePatient {
@@ -55,15 +56,20 @@ const NurseHealthRecordsPage = () => {
   return (
     <PageTransition>
       <div className="mx-auto max-w-6xl space-y-6 px-4 py-6">
-        {/* Header */}
-        <div>
-          <h1 className="text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
-            Patient Vitals
-          </h1>
-          <p className="text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">
-            View and record vitals for your assigned patients
-          </p>
-        </div>
+        <PageHeader
+          title="Patient Vitals Management"
+          description="View, record, and track bedside vitals for assigned community care patients"
+          icon={Activity}
+          iconVariant="emerald"
+          eyebrow="Clinical Observations"
+          badge={
+            criticalCount > 0 ? (
+              <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-50 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300 border border-rose-500/20">
+                {criticalCount} Critical Alert{criticalCount > 1 ? "s" : ""}
+              </span>
+            ) : null
+          }
+        />
 
         {error && (
           <motion.div

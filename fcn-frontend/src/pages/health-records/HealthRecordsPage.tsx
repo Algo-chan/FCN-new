@@ -24,6 +24,7 @@ import { VitalsHistoryTable } from "@/components/health-records/VitalsHistoryTab
 import { SpO2Alert } from "@/components/health-records/SpO2Alert";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { healthRecordsService } from "@/services/health-records.service";
 import { useAuthStore } from "@/store/auth.store";
 import { classifyVital, classifySpo2 } from "@/utils/vitals-classifier";
@@ -120,63 +121,56 @@ const HealthRecordsPage = () => {
     <PageTransition>
       <div className="mx-auto max-w-6xl space-y-6 pb-20 md:pb-8">
         {/* Header */}
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-3">
-            {routePatientId && (
-              <Link
-                to="/health-records/nurse"
-                className="flex h-10 w-10 items-center justify-center rounded-xl border border-fcn-primary/15 text-fcn-text-light/60 hover:bg-fcn-primary/5 dark:text-fcn-text-dark/60 transition-colors"
-                aria-label="Back"
-              >
-                <ArrowLeft className="h-5 w-5" />
-              </Link>
-            )}
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-md shadow-emerald-500/20">
-              <Activity className="h-6 w-6" />
-            </div>
-            <div>
-              <h1 className="text-xl sm:text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
-                {routePatientId ? "Patient Vitals" : "Health Records & Vitals"}
-              </h1>
-              <p className="text-xs sm:text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60 mt-0.5">
-                {routePatientId ? "Clinical monitoring and historical charts" : "Track blood pressure, glucose, SpO2, and vital signs"}
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2.5">
-            {hasVitals && (
+        <PageHeader
+          title={routePatientId ? "Patient Vitals" : "Health Records & Vitals"}
+          description={
+            routePatientId
+              ? "Clinical physiological monitoring and historical telemetry charts"
+              : "Track blood pressure, blood glucose, SpO2, and physiological vital signs"
+          }
+          icon={Activity}
+          iconVariant="emerald"
+          eyebrow="Clinical Telemetry"
+          backButton={
+            routePatientId
+              ? { to: "/health-records/nurse", label: "Back to nurse records" }
+              : undefined
+          }
+          actions={
+            <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+              {hasVitals && (
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={handleExport}
+                  loading={isExporting}
+                  className="h-10 text-xs sm:text-sm"
+                >
+                  <Download className="h-4 w-4 mr-1.5" />
+                  <span>Export PDF</span>
+                </Button>
+              )}
               <Button
-                variant="secondary"
                 size="sm"
-                onClick={handleExport}
-                loading={isExporting}
+                variant={showForm ? "secondary" : "primary"}
+                onClick={() => setShowForm(!showForm)}
                 className="h-10 text-xs sm:text-sm"
               >
-                <Download className="h-4 w-4 mr-1.5" />
-                <span>Export PDF</span>
+                {showForm ? (
+                  <>
+                    <X className="h-4 w-4 mr-1.5" />
+                    Cancel
+                  </>
+                ) : (
+                  <>
+                    <Plus className="h-4 w-4 mr-1.5" />
+                    Record Vitals
+                  </>
+                )}
               </Button>
-            )}
-            <Button
-              size="sm"
-              variant={showForm ? "secondary" : "primary"}
-              onClick={() => setShowForm(!showForm)}
-              className="h-10 text-xs sm:text-sm"
-            >
-              {showForm ? (
-                <>
-                  <X className="h-4 w-4 mr-1.5" />
-                  <span>Close</span>
-                </>
-              ) : (
-                <>
-                  <Plus className="h-4 w-4 mr-1.5" />
-                  <span>Record Vitals</span>
-                </>
-              )}
-            </Button>
-          </div>
-        </div>
+            </div>
+          }
+        />
 
         {error && (
           <motion.div

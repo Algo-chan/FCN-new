@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Spinner } from "@/components/ui/Spinner";
 import { Avatar } from "@/components/ui/Avatar";
 import { Button } from "@/components/ui/Button";
+import { PageHeader } from "@/components/ui/PageHeader";
 
 const tabs = [
   { key: "active", label: "Active Patients", icon: Activity },
@@ -67,7 +68,7 @@ const ActivePatientCard = ({ patient, onView }: { patient: ActivePatient; onView
         <VitalBadge label="BP" value={patient.vitals_summary.bp_systolic} unit={`/${patient.vitals_summary.bp_diastolic ?? ""}`} />
         <VitalBadge label="HR" value={patient.vitals_summary.heart_rate_bpm} unit=" bpm" />
         <VitalBadge label="SpO2" value={patient.vitals_summary.spo2_percent} unit="%" />
-        <VitalBadge label="Temp" value={patient.vitals_summary.temperature_celsius} unit="°" />
+        <VitalBadge label="Temp" value={patient.vitals_summary.temperature_celsius} unit="Â°" />
         <VitalBadge label="Glucose" value={patient.vitals_summary.blood_glucose_mg_dl} unit=" mg/dL" />
       </div>
     )}
@@ -76,7 +77,7 @@ const ActivePatientCard = ({ patient, onView }: { patient: ActivePatient; onView
       <div className="flex items-center gap-2 text-xs text-fcn-text-light/50 dark:text-fcn-text-dark/50">
         <Calendar className="h-3.5 w-3.5" />
         <span>
-          Next: {format(parseISO(patient.next_appointment.scheduled_at), "MMM d, h:mm a")} — {patient.next_appointment.status}
+          Next: {format(parseISO(patient.next_appointment.scheduled_at), "MMM d, h:mm a")} â€” {patient.next_appointment.status}
         </span>
       </div>
     )}
@@ -89,7 +90,7 @@ const PreviousPatientRow = ({ patient }: { patient: PreviousPatient }) => (
     <div className="flex-1 min-w-0">
       <p className="font-medium text-fcn-text-light dark:text-fcn-text-dark truncate">{patient.full_name}</p>
       <p className="text-xs text-fcn-text-light/50 dark:text-fcn-text-dark/50">
-        {patient.age != null ? `Age ${patient.age}` : "Age unknown"} • {patient.total_consultations} consultation{patient.total_consultations !== 1 ? "s" : ""}
+        {patient.age != null ? `Age ${patient.age}` : "Age unknown"} â€¢ {patient.total_consultations} consultation{patient.total_consultations !== 1 ? "s" : ""}
       </p>
     </div>
     <div className="text-right">
@@ -132,12 +133,13 @@ const DoctorPatientsPage = () => {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">My Patients</h1>
-        <p className="text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">
-          {activePatients.length} active • {previousPatients.length} previous
-        </p>
-      </div>
+      <PageHeader
+        title="My Patients"
+        description={`${activePatients.length} active patients under care • ${previousPatients.length} completed consultations`}
+        icon={Users}
+        iconVariant="teal"
+        eyebrow="Clinical Patient Roster"
+      />
 
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex rounded-full border border-fcn-primary/10 bg-fcn-primary/5 p-0.5">

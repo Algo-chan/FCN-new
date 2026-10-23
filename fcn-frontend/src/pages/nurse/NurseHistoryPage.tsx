@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/Card";
 import { Spinner } from "@/components/ui/Spinner";
 import { Badge } from "@/components/ui/Badge";
 import { Avatar } from "@/components/ui/Avatar";
+import { PageHeader } from "@/components/ui/PageHeader";
 
 interface VisitHistoryItem {
   id: string;
@@ -34,12 +35,18 @@ const NurseHistoryPage = () => {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">Visit History</h1>
-        <p className="text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">
-          {visits.length} completed visit{visits.length !== 1 ? "s" : ""}
-        </p>
-      </div>
+      <PageHeader
+        title="Visit History"
+        description="Comprehensive log of completed community home visits, clinical check-ups, and recorded observations"
+        icon={Clock}
+        iconVariant="emerald"
+        eyebrow="Community Nursing"
+        badge={
+          <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-500/20">
+            {visits.length} {visits.length === 1 ? "Completed Visit" : "Completed Visits"}
+          </span>
+        }
+      />
 
       <div className="relative">
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-fcn-text-light/30" />

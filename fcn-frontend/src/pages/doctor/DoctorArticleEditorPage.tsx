@@ -5,6 +5,7 @@ import { ArrowLeft, BookOpen, Sparkles } from "lucide-react";
 import { articleService } from "@/services/article.service";
 import { ArticleEditor } from "@/components/articles/ArticleEditor";
 import { Spinner } from "@/components/ui/Spinner";
+import { PageHeader } from "@/components/ui/PageHeader";
 import type { CreateArticleInput } from "@/types";
 import toast from "react-hot-toast";
 
@@ -71,30 +72,22 @@ export const DoctorArticleEditorPage = () => {
 
   return (
     <div className="mx-auto max-w-5xl px-4 sm:px-6 py-8 space-y-6">
-      {/* Header & Back link */}
-      <div className="flex items-center justify-between">
-        <Link
-          to="/doctor/articles"
-          className="inline-flex items-center gap-1.5 text-xs font-bold text-teal-600 hover:text-teal-700 dark:text-teal-400 dark:hover:text-teal-300 transition-colors"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          <span>Back to Articles</span>
-        </Link>
-
-        <span className="text-xs font-semibold text-slate-400">
-          {isEditing ? "Editing Article" : "New Article Draft"}
-        </span>
-      </div>
-
-      <div>
-        <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">
-          {isEditing ? "Edit Clinical Article" : "Write Clinical Article"}
-        </h1>
-        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-          Craft evidence-based health articles for Ethiopian patients. Provide structured headings,
-          dietary advice, and key medical warnings.
-        </p>
-      </div>
+      <PageHeader
+        backButton={{
+          to: "/doctor/articles",
+          label: "Back to Articles"
+        }}
+        icon={BookOpen}
+        iconVariant="teal"
+        eyebrow={isEditing ? "Article Revision" : "Clinical Publishing"}
+        title={isEditing ? "Edit Clinical Article" : "Write Clinical Article"}
+        description="Craft evidence-based health articles for Ethiopian patients. Provide structured headings, dietary advice, and key medical warnings."
+        badge={
+          <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-white/10">
+            {isEditing ? "Draft Revision" : "New Draft"}
+          </span>
+        }
+      />
 
       {/* Article Editor Component */}
       <ArticleEditor

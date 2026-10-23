@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/Card";
 import { Navbar } from "@/components/landing/Navbar";
 import { Footer } from "@/components/landing/Footer";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
+import { PageHeader } from "@/components/ui/PageHeader";
 
 const apiBase = (import.meta.env.VITE_API_URL ?? "http://localhost:5000/api/v1").replace(/\/api\/v1\/?$/, "");
 const searchEndpoint = `${apiBase}/search`;
@@ -60,12 +61,13 @@ const SearchPage = () => {
       <div className="mx-auto w-full max-w-7xl px-4 pt-20 sm:px-6 lg:px-8">
         <Breadcrumbs />
         <div className="mx-auto max-w-4xl space-y-4 py-6 md:space-y-6">
-          <div>
-        <h1 className="text-xl md:text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">Search</h1>
-        <p className="mt-1 text-xs md:text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">
-          Find doctors, hospitals, and specialties across Fast Care Now
-        </p>
-      </div>
+          <PageHeader
+            title="Search Directory"
+            description="Find licensed doctors, hospital facilities, and clinical specialties across Ethiopia"
+            icon={Search}
+            iconVariant="teal"
+            eyebrow="Healthcare Directory"
+          />
 
       <div className="relative">
         <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-fcn-primary" />

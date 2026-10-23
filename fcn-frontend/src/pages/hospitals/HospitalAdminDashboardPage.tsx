@@ -5,6 +5,7 @@ import { profileService } from "@/services/profile.service";
 import { OccupancyUpdateForm } from "@/components/hospitals/OccupancyUpdateForm";
 import { Card } from "@/components/ui/Card";
 import { SkeletonCard } from "@/components/dashboard/SkeletonCard";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { Building2, Clock, Stethoscope, Users, Bed, Activity, AlertCircle } from "lucide-react";
 
 const HospitalAdminDashboardPage = () => {
@@ -68,22 +69,22 @@ const HospitalAdminDashboardPage = () => {
 
   return (
     <div className="mx-auto max-w-5xl space-y-6 pb-20 md:pb-8">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-rose-500 to-red-600 text-white shadow-md shadow-rose-500/20">
-            <Building2 className="h-6 w-6" />
-          </div>
-          <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
-              Welcome, {user?.full_name?.split(" ")[0] ?? "Admin"}
-            </h1>
-            <p className="text-xs sm:text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60 mt-0.5">
-              Facility Management: <strong>{hospital.name}</strong>
-            </p>
-          </div>
-        </div>
-      </div>
+      <PageHeader
+        title="Facility Administration"
+        description={
+          <span>
+            Operating command center for <strong>{hospital.name}</strong> • Real-time bed occupancy, triage capacity & staff management
+          </span>
+        }
+        icon={Building2}
+        iconVariant="rose"
+        eyebrow="Hospital Operations"
+        badge={
+          <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300 border border-rose-500/20">
+            {hospital.name}
+          </span>
+        }
+      />
 
       {/* Advisory Alert Banner */}
       <div className="flex items-start gap-3 rounded-2xl border border-fcn-primary/15 bg-fcn-surface-light dark:bg-fcn-surface-dark p-4 shadow-sm text-xs text-fcn-text-light/80 dark:text-fcn-text-dark/80">

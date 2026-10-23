@@ -21,6 +21,7 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { SkeletonCard } from "@/components/dashboard/SkeletonCard";
 import { useNotifications } from "@/hooks/useNotifications";
+import { PageHeader } from "@/components/ui/PageHeader";
 
 interface StatCardProps {
   label: string;
@@ -127,30 +128,22 @@ export const AdminDashboard = () => {
 
   return (
     <div className="mx-auto max-w-7xl space-y-6 pb-20 md:pb-8">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-700 text-white shadow-md shadow-indigo-600/20">
-            <Shield className="h-6 w-6" />
-          </div>
-          <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
-              Executive Control Tower
-            </h1>
-            <p className="text-xs sm:text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60 mt-0.5">
-              National Fast Care Now user base, capacity, and active services
-            </p>
-          </div>
-        </div>
-
-        <Link
-          to="/admin"
-          className="inline-flex items-center gap-1.5 rounded-xl bg-fcn-primary px-4 py-2.5 text-xs sm:text-sm font-semibold text-white shadow-sm hover:bg-fcn-primary/90 transition-colors self-start sm:self-auto"
-        >
-          <span>Open Full Analytics</span>
-          <ArrowRight className="h-4 w-4" />
-        </Link>
-      </div>
+      <PageHeader
+        title="Executive Control Tower"
+        description="National Fast Care Now healthcare network, clinical capacity, and live telemetry"
+        icon={Shield}
+        iconVariant="indigo"
+        eyebrow="Platform Operations"
+        actions={
+          <Link
+            to="/admin"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-700 px-4 py-2.5 text-xs sm:text-sm font-semibold text-white shadow-md shadow-indigo-600/20 hover:from-indigo-700 hover:to-violet-800 transition-all self-start sm:self-auto"
+          >
+            <span>Open Full Analytics</span>
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+        }
+      />
 
       {/* 6 Key Stats Cards */}
       <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">

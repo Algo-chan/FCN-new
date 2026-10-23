@@ -18,6 +18,7 @@ import {
   ExternalLink,
   Pill,
   CalendarPlus,
+  Calendar,
 } from "lucide-react";
 
 import { Card } from "@/components/ui/Card";
@@ -25,6 +26,7 @@ import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Spinner } from "@/components/ui/Spinner";
 import { Modal } from "@/components/ui/Modal";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { PageTransition } from "@/components/animations/PageTransition";
 import { useNotifications } from "@/hooks/useNotifications";
 import { useAuthStore } from "@/store/auth.store";
@@ -205,24 +207,23 @@ const MyAppointmentsPage = () => {
     <PageTransition>
       <div className="mx-auto max-w-4xl space-y-6 pb-20 sm:pb-8">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
-              {userRole === "doctor" ? "Patient Appointments" : "My Appointments"}
-            </h1>
-            <p className="mt-1 text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium">
-              Manage your upcoming consultations and review medical records
-            </p>
-          </div>
-          <Button
-            variant="action"
-            onClick={() => navigate("/appointments/book")}
-            className="min-h-[44px] self-start sm:self-auto"
-          >
-            <CalendarPlus className="w-4 h-4 mr-1.5" />
-            <span>Book New Appointment</span>
-          </Button>
-        </div>
+        <PageHeader
+          title={userRole === "doctor" ? "Patient Appointments" : "My Appointments"}
+          description="Manage your upcoming consultations, review session notes, and medical records"
+          icon={Calendar}
+          iconVariant="teal"
+          eyebrow={userRole === "doctor" ? "Physician Schedule" : "Patient Consultations"}
+          actions={
+            <Button
+              variant="action"
+              onClick={() => navigate("/appointments/book")}
+              className="min-h-[44px] w-full sm:w-auto shadow-md"
+            >
+              <CalendarPlus className="w-4 h-4 mr-1.5" />
+              <span>Book New Appointment</span>
+            </Button>
+          }
+        />
 
         {/* Filter Tabs (Horizontal Carousel on Mobile) */}
         <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">

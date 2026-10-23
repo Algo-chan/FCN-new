@@ -1,15 +1,16 @@
+import { Building2 } from "lucide-react";
 import { HospitalManagementPanel } from "@/components/admin/HospitalManagementPanel";
+import { PageHeader } from "@/components/ui/PageHeader";
 
 const AdminHospitalsPage = () => (
   <div className="space-y-6">
-    <div>
-      <h1 className="text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
-        Admin - Hospital Management
-      </h1>
-      <p className="mt-1 text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">
-        Manage all hospitals and hospital administrators
-      </p>
-    </div>
+    <PageHeader
+      title="Hospital Management"
+      description="Register, verify, and monitor Ethiopian hospitals and facility administrators"
+      icon={Building2}
+      iconVariant="indigo"
+      eyebrow="Healthcare Infrastructure"
+    />
     <HospitalManagementPanel />
   </div>
 );

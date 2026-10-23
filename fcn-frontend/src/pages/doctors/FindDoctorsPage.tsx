@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { ChevronLeft, ChevronRight, Frown, Sparkles } from "lucide-react";
+import { ChevronLeft, ChevronRight, Frown, Sparkles, Stethoscope } from "lucide-react";
 import { doctorsService } from "@/services/doctors.service";
 import { DoctorCard } from "@/components/doctors/DoctorCard";
 import { DoctorDetailModal } from "@/components/doctors/DoctorDetailModal";
@@ -12,6 +12,7 @@ import { Footer } from "@/components/landing/Footer";
 import { PageLayout } from "@/components/layout/PageLayout";
 import { PageTransition } from "@/components/animations/PageTransition";
 import { Button } from "@/components/ui/Button";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { useTranslation } from "@/i18n";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
 import { useAuthStore } from "@/store/auth.store";
@@ -125,20 +126,14 @@ const FindDoctorsPage = () => {
   const pageContent = (
     <div className="space-y-5">
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
-            {t("doctors.pageTitle")}
-          </h1>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium mt-1">
-            {t("doctors.pageSubtitle")}
-          </p>
-        </div>
-
-        <div className="self-start sm:self-auto">
-          <LanguageSwitcher variant="pill" />
-        </div>
-      </div>
+      <PageHeader
+        title={t("doctors.pageTitle")}
+        description={t("doctors.pageSubtitle")}
+        icon={Stethoscope}
+        iconVariant="teal"
+        eyebrow="Verified Telehealth Network"
+        actions={<LanguageSwitcher variant="pill" />}
+      />
 
       {/* Upfront Transparent Pricing Banner */}
       <div className="rounded-2xl border border-teal-500/25 bg-gradient-to-r from-teal-500/10 via-emerald-500/5 to-transparent dark:from-teal-950/40 dark:via-emerald-950/20 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">

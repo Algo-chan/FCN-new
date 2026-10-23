@@ -7,6 +7,7 @@ import { format } from "date-fns";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { FadeIn } from "@/components/animations/FadeIn";
 import { NotificationItem } from "@/components/notifications/NotificationItem";
 import { useAuthStore } from "@/store/auth.store";
@@ -119,39 +120,45 @@ const NotificationsPage = () => {
   return (
     <FadeIn>
       <div className="mx-auto max-w-4xl space-y-4 md:space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-          <div className="flex items-center gap-3">
-            <h1 className="text-xl md:text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
-              Notifications
-            </h1>
-            {totalUnread > 0 && (
-              <Badge variant="warning">{totalUnread} unread</Badge>
-            )}
-          </div>
-          <div className="flex gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              icon={<CheckCheck className="h-4 w-4" />}
-              onClick={() => markAllMutation.mutate()}
-              loading={markAllMutation.isPending}
-              disabled={totalUnread === 0}
-            >
-              <span className="hidden sm:inline">Mark All Read</span>
-              <span className="sm:hidden">Mark Read</span>
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              icon={<Trash2 className="h-4 w-4" />}
-              onClick={() => clearReadMutation.mutate()}
-              loading={clearReadMutation.isPending}
-            >
-              <span className="hidden sm:inline">Clear Read</span>
-              <span className="sm:hidden">Clear</span>
-            </Button>
-          </div>
-        </div>
+        <PageHeader
+          title="Notifications"
+          description="Stay updated with consultations, prescriptions, clinical alerts, and account activity"
+          icon={Bell}
+          iconVariant="amber"
+          eyebrow="Activity Center"
+          badge={
+            totalUnread > 0 ? (
+              <Badge variant="warning" className="animate-pulse">
+                {totalUnread} unread
+              </Badge>
+            ) : null
+          }
+          actions={
+            <div className="flex items-center gap-2">
+              <Button
+                variant="secondary"
+                size="sm"
+                icon={<CheckCheck className="h-4 w-4" />}
+                onClick={() => markAllMutation.mutate()}
+                loading={markAllMutation.isPending}
+                disabled={totalUnread === 0}
+              >
+                <span className="hidden sm:inline">Mark All Read</span>
+                <span className="sm:hidden">Mark Read</span>
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                icon={<Trash2 className="h-4 w-4" />}
+                onClick={() => clearReadMutation.mutate()}
+                loading={clearReadMutation.isPending}
+              >
+                <span className="hidden sm:inline">Clear Read</span>
+                <span className="sm:hidden">Clear</span>
+              </Button>
+            </div>
+          }
+        />
 
         <div className="flex gap-1 overflow-x-auto rounded-lg border border-fcn-primary/20 p-1 hide-scrollbar">
           {groups.map((group) => {

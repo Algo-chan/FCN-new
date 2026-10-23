@@ -22,6 +22,7 @@ import { OccupancyUpdateForm } from "@/components/hospitals/OccupancyUpdateForm"
 import { SkeletonCard } from "@/components/dashboard/SkeletonCard";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { ImagePlaceholder } from "@/components/landing/ImagePlaceholder";
 import type { Hospital, HospitalDetail } from "@/types";
 
@@ -95,37 +96,29 @@ const HospitalCheckerPage = () => {
   return (
     <div className="mx-auto max-w-6xl space-y-6 pb-20 md:pb-8">
       {/* Header */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-rose-500 to-red-600 text-white shadow-md shadow-rose-500/20">
-            <Building2 className="h-6 w-6" />
-          </div>
-          <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
-              Hospital Capacity
-            </h1>
-            <p className="text-xs sm:text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60 mt-0.5">
-              Check real-time ICU beds, occupancy rates, and doctors on duty
-            </p>
-          </div>
-        </div>
-
-        {/* Live Summary Chips */}
-        {totalHospitals > 0 && (
-          <div className="flex items-center gap-2 text-xs font-semibold">
-            <div className="rounded-xl border border-fcn-primary/10 bg-white dark:bg-fcn-dark px-3 py-1.5 shadow-sm">
-              <span className="text-fcn-text-light/50 dark:text-fcn-text-dark/50">Avg Occupancy: </span>
-              <span className={clsx("font-bold", avgOccupancy > 80 ? "text-rose-500" : "text-emerald-500")}>
-                {avgOccupancy}%
-              </span>
+      <PageHeader
+        title="Hospital Capacity"
+        description="Check real-time ICU beds, occupancy rates, and doctors on duty"
+        icon={Building2}
+        iconVariant="rose"
+        eyebrow="Emergency & Bed Tracker"
+        actions={
+          totalHospitals > 0 ? (
+            <div className="flex flex-wrap items-center gap-2 text-xs font-semibold">
+              <div className="rounded-xl border border-slate-200 bg-white dark:border-white/10 dark:bg-slate-900 px-3 py-1.5 shadow-sm">
+                <span className="text-slate-400">Avg Occupancy: </span>
+                <span className={clsx("font-bold ml-1", avgOccupancy > 80 ? "text-rose-500" : "text-emerald-500")}>
+                  {avgOccupancy}%
+                </span>
+              </div>
+              <div className="rounded-xl border border-slate-200 bg-white dark:border-white/10 dark:bg-slate-900 px-3 py-1.5 shadow-sm">
+                <span className="text-slate-400">On Duty: </span>
+                <span className="font-bold text-teal-600 dark:text-teal-400 ml-1">{activeDoctors} Doctors</span>
+              </div>
             </div>
-            <div className="rounded-xl border border-fcn-primary/10 bg-white dark:bg-fcn-dark px-3 py-1.5 shadow-sm">
-              <span className="text-fcn-text-light/50 dark:text-fcn-text-dark/50">On Duty: </span>
-              <span className="font-bold text-fcn-primary">{activeDoctors} Doctors</span>
-            </div>
-          </div>
-        )}
-      </div>
+          ) : undefined
+        }
+      />
 
       {isHospitalAdmin && userHospital && (
         <Card className="border-fcn-accent/30 bg-fcn-accent/5 p-4 sm:p-5 rounded-2xl">

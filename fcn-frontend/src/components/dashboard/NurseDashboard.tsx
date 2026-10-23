@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Spinner } from "@/components/ui/Spinner";
 import { TodayVisitCard } from "@/components/nurse-dashboard/TodayVisitCard";
+import { PageHeader } from "@/components/ui/PageHeader";
 
 interface StatCardProps {
   label: string;
@@ -94,30 +95,22 @@ export const NurseDashboard = () => {
 
   return (
     <div className="space-y-6 pb-20 md:pb-8">
-      {/* Header Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white shadow-md shadow-indigo-500/20">
-            <HeartHandshake className="h-6 w-6" />
-          </div>
-          <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
-              {greeting}, {firstName}
-            </h1>
-            <p className="text-xs sm:text-sm font-medium text-fcn-text-light/60 dark:text-fcn-text-dark/60 mt-0.5">
-              {stats?.today_visits ?? 0} {visitLabelPlural} scheduled for patient care today
-            </p>
-          </div>
-        </div>
-
-        <a
-          href="/health-records/nurse"
-          className="inline-flex items-center gap-2 rounded-xl bg-fcn-primary px-4 py-2.5 text-xs sm:text-sm font-semibold text-white shadow-sm hover:bg-fcn-primary/90 transition-colors self-start sm:self-auto"
-        >
-          <Activity className="h-4 w-4" />
-          Quick Vitals Log
-        </a>
-      </div>
+      <PageHeader
+        title={`${greeting}, ${firstName}`}
+        description={`${stats?.today_visits ?? 0} ${visitLabelPlural} scheduled for patient care today`}
+        icon={HeartHandshake}
+        iconVariant="emerald"
+        eyebrow={isRural ? "Rural Health Officer" : "Community Nursing"}
+        actions={
+          <a
+            href="/health-records/nurse"
+            className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 px-4 py-2.5 text-xs sm:text-sm font-semibold text-white shadow-md shadow-emerald-500/20 hover:from-emerald-700 hover:to-teal-700 transition-all self-start sm:self-auto"
+          >
+            <Activity className="h-4 w-4" />
+            Quick Vitals Log
+          </a>
+        }
+      />
 
       {/* 3 Stat Cards */}
       {stats && (

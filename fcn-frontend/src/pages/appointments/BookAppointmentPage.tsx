@@ -15,6 +15,7 @@ import {
   User,
   AlertCircle,
   Calendar,
+  CalendarPlus,
   Sparkles,
 } from "lucide-react";
 import { format, addDays, parseISO } from "date-fns";
@@ -27,6 +28,7 @@ import { StepIndicator } from "@/components/ui/StepIndicator";
 import { StickyActionButton } from "@/components/ui/StickyActionButton";
 import { BookingSummaryCard } from "@/components/appointments/BookingSummaryCard";
 import { ConfirmationModal } from "@/components/appointments/ConfirmationModal";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { PageTransition } from "@/components/animations/PageTransition";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useNotifications } from "@/hooks/useNotifications";
@@ -176,14 +178,15 @@ const BookAppointmentPage = () => {
     <PageTransition>
       <div className="mx-auto max-w-4xl pb-36 sm:pb-28 md:pb-6">
         {/* Header */}
-        <div className="mb-6">
-          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
-            Book an Appointment
-          </h1>
-          <p className="mt-1 text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium">
-            Find and book a consultation with a verified healthcare specialist
-          </p>
-        </div>
+        <PageHeader
+          title="Book an Appointment"
+          description="Schedule a remote or in-person consultation with a verified Ethiopian physician"
+          icon={CalendarPlus}
+          iconVariant="teal"
+          eyebrow="Specialist Booking"
+          backButton={{ to: "/doctors", label: "Back to doctors" }}
+          className="mb-6"
+        />
 
         {/* KILLER FEATURE: Instant Consult Hero Banner */}
         <div className="mb-6 relative overflow-hidden rounded-2xl sm:rounded-3xl border border-teal-500/35 bg-gradient-to-r from-teal-950 via-slate-900 to-sky-950 p-4 sm:p-5 text-white shadow-lg">

@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Spinner } from "@/components/ui/Spinner";
 import { FadeIn } from "@/components/animations/FadeIn";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { RefillRequestsPanel } from "@/components/pharmacy/RefillRequestsPanel";
 import { pharmacyService } from "@/services/pharmacy.service";
 import { formatDate } from "@/utils/formatters";
@@ -38,20 +39,21 @@ const DoctorPrescriptionsPage = () => {
   return (
     <FadeIn>
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
-              Prescriptions Issued
-            </h1>
-            <p className="text-sm text-fcn-text-light/50 dark:text-fcn-text-dark/50">
-              Manage prescriptions and refill requests
-            </p>
-          </div>
-          <Badge variant="warning" size="md">
-            <RefreshCw className="mr-1 h-3.5 w-3.5" />
-            {pendingCount} Pending
-          </Badge>
-        </div>
+        <PageHeader
+          title="Prescriptions Issued"
+          description="Manage digital prescriptions, track dispensing status, and process patient refill authorizations"
+          icon={FileText}
+          iconVariant="sky"
+          eyebrow="Clinical Pharmacy"
+          badge={
+            pendingCount > 0 ? (
+              <Badge variant="warning" size="md">
+                <RefreshCw className="mr-1 h-3.5 w-3.5 animate-spin-slow" />
+                {pendingCount} Pending Refill{pendingCount > 1 ? "s" : ""}
+              </Badge>
+            ) : null
+          }
+        />
 
         <div className="grid gap-4 sm:grid-cols-3">
           {[

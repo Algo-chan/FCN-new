@@ -8,6 +8,7 @@ import { VitalsChart } from "@/components/health-records/VitalsChart";
 import { VitalsHistoryTable } from "@/components/health-records/VitalsHistoryTable";
 import { SpO2Alert } from "@/components/health-records/SpO2Alert";
 import { Button } from "@/components/ui/Button";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { healthRecordsService } from "@/services/health-records.service";
 import { classifyVital, classifySpo2 } from "@/utils/vitals-classifier";
 import { generateVitalsReport, type VitalsPDFData } from "@/utils/pdf-generator";
@@ -75,35 +76,28 @@ const PatientRecordsViewPage = () => {
   return (
     <PageTransition>
       <div className="mx-auto max-w-6xl space-y-6 px-4 py-6">
-        {/* Header */}
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <Link
-              to="/health-records"
-              className="flex h-9 w-9 items-center justify-center rounded-lg border border-fcn-primary/15 text-fcn-text-light/60 hover:bg-fcn-primary/5 dark:text-fcn-text-dark/60"
-              aria-label="Back"
+        <PageHeader
+          backButton={{
+            to: "/health-records",
+            label: "Back to Health Records"
+          }}
+          icon={Activity}
+          iconVariant="emerald"
+          title={patientName || "Patient Vitals"}
+          description="Detailed clinical vitals telemetry, biometric trends, and longitudinal health metrics"
+          eyebrow="Clinical Telemetry"
+          actions={
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={handleExport}
+              loading={isExporting}
+              icon={<Download className="h-4 w-4" />}
             >
-              <ArrowLeft className="h-4 w-4" />
-            </Link>
-            <div>
-              <h1 className="text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
-                {patientName}
-              </h1>
-              <p className="text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">
-                Patient Vital Records
-              </p>
-            </div>
-          </div>
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={handleExport}
-            loading={isExporting}
-          >
-            <Download className="h-4 w-4" />
-            Export PDF
-          </Button>
-        </div>
+              Export Clinical PDF
+            </Button>
+          }
+        />
 
         {error && (
           <motion.div

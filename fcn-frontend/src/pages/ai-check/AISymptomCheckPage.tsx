@@ -36,6 +36,7 @@ import { AssessmentHistoryCard } from "@/components/ai-triage/AssessmentHistoryC
 import { AssessmentDetailModal } from "@/components/ai-triage/AssessmentDetailModal";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { useSound } from "@/hooks/useSound";
 import type { SupportedLanguage } from "@/types";
 
@@ -417,30 +418,19 @@ Recommended: See ${store.finalAssessment.recommended_specialty || "a doctor"}`;
   return (
     <div className="mx-auto max-w-5xl space-y-6 pb-24 md:pb-8">
       {/* Page Header */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500 to-indigo-600 text-white shadow-md shadow-violet-500/20">
-            <span ref={sparkleRef} className="inline-flex">
-              <Sparkles className="h-6 w-6" />
-            </span>
-          </div>
-          <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
-              AI Health Triage
-            </h1>
-            <p className="text-xs sm:text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60 mt-0.5">
-              Instant clinical assessment and doctor recommendations
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2">
+      <PageHeader
+        title="AI Health Triage"
+        description="Instant clinical symptom assessment and doctor recommendations powered by Fast Care AI"
+        icon={Sparkles}
+        iconVariant="violet"
+        eyebrow="Clinical Triage Intelligence"
+        badge={
           <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/10 px-3 py-1 text-xs font-semibold text-amber-700 dark:text-amber-300 border border-amber-500/20">
             <ShieldCheck className="h-3.5 w-3.5" />
             AI Guidance Only — Not a Diagnosis
           </span>
-        </div>
-      </div>
+        }
+      />
 
       {/* Incomplete assessment resume banner */}
       {incompleteBanner && (

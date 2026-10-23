@@ -8,6 +8,7 @@ export * from "./HealthMetricCard";
 export * from "./ImagePlaceholder";
 export * from "./Input";
 export * from "./Modal";
+export * from "./PageHeader";
 export * from "./Spinner";
 export * from "./StepIndicator";
 export * from "./StickyActionButton";

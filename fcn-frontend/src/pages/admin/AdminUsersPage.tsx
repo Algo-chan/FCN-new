@@ -1,5 +1,7 @@
 import { useState, useCallback } from "react";
+import { Users } from "lucide-react";
 import { UserManagementTable } from "@/components/admin/UserManagementTable";
+import { PageHeader } from "@/components/ui/PageHeader";
 import type { UserFilters } from "@/services/admin.service";
 
 const AdminUsersPage = () => {
@@ -11,14 +13,13 @@ const AdminUsersPage = () => {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
-          User Management
-        </h1>
-        <p className="mt-1 text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">
-          Manage all platform users and their roles
-        </p>
-      </div>
+      <PageHeader
+        title="User Management"
+        description="Oversee and manage patient, doctor, nurse, and admin accounts across Fast Care Now"
+        icon={Users}
+        iconVariant="indigo"
+        eyebrow="Platform Governance"
+      />
       <UserManagementTable
         filters={userFilters}
         onFiltersChange={handleUserFiltersChange}

@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { articleService } from "@/services/article.service";
 import { Spinner } from "@/components/ui/Spinner";
+import { PageHeader } from "@/components/ui/PageHeader";
 import type { ArticleStatus } from "@/types";
 import toast from "react-hot-toast";
 
@@ -221,12 +222,12 @@ export const DoctorArticlesListPage = () => {
                     <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-600 dark:bg-slate-800 dark:text-slate-400">
                       {article.category}
                     </span>
-                    <span className="text-xs text-slate-400">•</span>
+                    <span className="text-xs text-slate-400">â€¢</span>
                     <span className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1">
                       <Clock className="h-3 w-3" />
                       {article.reading_time_minutes} min read
                     </span>
-                    <span className="text-xs text-slate-400">•</span>
+                    <span className="text-xs text-slate-400">â€¢</span>
                     <span className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1">
                       <Eye className="h-3 w-3" />
                       {article.views_count} views

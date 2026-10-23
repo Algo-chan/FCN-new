@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { format, parseISO } from "date-fns";
@@ -9,6 +9,7 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Spinner } from "@/components/ui/Spinner";
 import { Button } from "@/components/ui/Button";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { Avatar } from "@/components/ui/Avatar";
 import { useNotifications } from "@/hooks/useNotifications";
 
@@ -176,12 +177,13 @@ const DoctorPrescriptionsListPage = () => {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">Prescriptions Issued</h1>
-        <p className="text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">
-          {prescriptions.length} prescriptions issued • {pendingCount} pending refill{pendingCount !== 1 ? "s" : ""}
-        </p>
-      </div>
+      <PageHeader
+        title="Prescriptions Issued"
+        description={`${prescriptions.length} prescriptions issued • ${pendingCount} pending refill${pendingCount !== 1 ? "s" : ""}`}
+        icon={FileText}
+        iconVariant="sky"
+        eyebrow="E-Prescription Records"
+      />
 
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex rounded-full border border-fcn-primary/10 bg-fcn-primary/5 p-0.5">

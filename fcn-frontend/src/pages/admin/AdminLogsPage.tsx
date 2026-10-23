@@ -1,5 +1,7 @@
 import { useState, useCallback } from "react";
+import { ClipboardList } from "lucide-react";
 import { ActivityLogsTable } from "@/components/admin/ActivityLogsTable";
+import { PageHeader } from "@/components/ui/PageHeader";
 import type { ActivityLogFilters } from "@/services/admin.service";
 
 const AdminLogsPage = () => {
@@ -11,14 +13,13 @@ const AdminLogsPage = () => {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
-          Activity Logs
-        </h1>
-        <p className="mt-1 text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">
-          View all platform activity and audit trails
-        </p>
-      </div>
+      <PageHeader
+        title="Activity Logs & Audit Trail"
+        description="Monitor system events, clinical actions, authentication records, and administrative modifications in real-time"
+        icon={ClipboardList}
+        iconVariant="indigo"
+        eyebrow="Audit & Security"
+      />
       <ActivityLogsTable
         filters={logFilters}
         onFiltersChange={handleLogFiltersChange}

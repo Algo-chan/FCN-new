@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { FadeIn } from "@/components/animations/FadeIn";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { QRScannerPortal } from "@/components/pharmacy/QRScannerPortal";
 import { pharmacyService } from "@/services/pharmacy.service";
 import { formatDate } from "@/utils/formatters";
@@ -60,25 +61,19 @@ const PharmacyAdminPortalPage = () => {
   return (
     <FadeIn>
       <div className="mx-auto max-w-6xl space-y-6 pb-20 md:pb-8">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-md shadow-emerald-500/20">
-              <Pill className="h-6 w-6" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-xl sm:text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
-                  Pharmacy Verification Portal
-                </h1>
-                <Badge variant="success" size="sm">Partner Pharmacist</Badge>
-              </div>
-              <p className="text-xs sm:text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">
-                {user?.full_name ?? "Pharmacist"} — Verify e-prescriptions and record dispenses
-              </p>
-            </div>
-          </div>
-        </div>
+        <PageHeader
+          title="Pharmacy Verification Portal"
+          description={`${user?.full_name ?? "Licensed Pharmacist"} • Verify electronic prescriptions, check authenticity QR codes, and log dispensing`}
+          icon={Pill}
+          iconVariant="emerald"
+          eyebrow="Pharmacy Partner"
+          badge={
+            <Badge variant="success" size="sm">
+              <ShieldCheck className="mr-1 h-3.5 w-3.5" />
+              Authorized Dispenser
+            </Badge>
+          }
+        />
 
         {/* 3 Metric Cards */}
         <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-3">

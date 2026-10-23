@@ -5,6 +5,7 @@ import { Pill, Search, ShoppingBag, Plus, Sparkles, Building, MapPin } from "luc
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Spinner } from "@/components/ui/Spinner";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { FadeIn } from "@/components/animations/FadeIn";
 import { StaggerChildren, StaggerItem } from "@/components/animations/StaggerChildren";
 import { PrescriptionCard } from "@/components/pharmacy/PrescriptionCard";
@@ -63,31 +64,24 @@ const PharmacyPage = () => {
     <FadeIn>
       <div className="mx-auto max-w-6xl space-y-6 pb-20 md:pb-8">
         {/* Header */}
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-500 to-blue-600 text-white shadow-md shadow-sky-500/20">
-              <Pill className="h-6 w-6" />
-            </div>
-            <div>
-              <h1 className="text-xl sm:text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
-                Pharmacy & Prescriptions
-              </h1>
-              <p className="text-xs sm:text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60 mt-0.5">
-                Manage medications, track refills, and find partner pharmacies
-              </p>
-            </div>
-          </div>
-
-          <Button
-            size="sm"
-            variant="secondary"
-            onClick={() => navigate("/appointments/book")}
-            className="h-10 text-xs sm:text-sm self-start sm:self-auto"
-          >
-            <Sparkles className="h-4 w-4 mr-1.5" />
-            Request Doctor Consult
-          </Button>
-        </div>
+        <PageHeader
+          title="Pharmacy & Prescriptions"
+          description="Manage medications, track active refills, and locate partner pharmacies across Ethiopia"
+          icon={Pill}
+          iconVariant="sky"
+          eyebrow="E-Pharmacy Network"
+          actions={
+            <Button
+              size="sm"
+              variant="action"
+              onClick={() => navigate("/appointments/book")}
+              className="h-10 text-xs sm:text-sm w-full sm:w-auto shadow-md"
+            >
+              <Sparkles className="h-4 w-4 mr-1.5" />
+              <span>Request Doctor Consult</span>
+            </Button>
+          }
+        />
 
         {/* Tab Switcher */}
         <div className="flex rounded-xl bg-fcn-surface-light dark:bg-fcn-surface-dark border border-fcn-primary/10 p-1 max-w-md">

@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Badge } from "@/components/ui/Badge";
 import { Spinner } from "@/components/ui/Spinner";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { InitialsAvatar } from "@/components/profile/InitialsAvatar";
 import { PatientHealthPassportCard } from "@/components/profile/PatientHealthPassportCard";
 import { DoctorProfileEditor } from "@/components/profile/DoctorProfileEditor";
@@ -142,6 +143,19 @@ const ProfilePage = () => {
 
   return (
     <div className="space-y-4 md:space-y-6">
+      <PageHeader
+        title="Account & Settings"
+        description="Manage your clinical profile, credentials, security configurations, and personal preferences"
+        icon={User}
+        iconVariant="teal"
+        eyebrow="My Account"
+        badge={
+          <Badge variant={roleBadgeVariant[user.role] ?? "neutral"}>
+            {roleLabels[user.role] ?? user.role}
+          </Badge>
+        }
+      />
+
       {/* Tab Navigation */}
       <div className="relative flex gap-1 md:gap-4 rounded-lg bg-fcn-primary/5 p-1 w-full overflow-x-auto hide-scrollbar">
         {availableTabs.map((tab) => (

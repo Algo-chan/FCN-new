@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/Card";
 import { Spinner } from "@/components/ui/Spinner";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { PageHeader } from "@/components/ui/PageHeader";
 
 interface StatCardProps {
   icon: typeof Clock;
@@ -54,29 +55,21 @@ const NurseTodayVisitsPage = () => {
 
   return (
     <div className="mx-auto max-w-6xl space-y-6 pb-20 md:pb-8">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white shadow-md shadow-indigo-500/20">
-            <Calendar className="h-6 w-6" />
-          </div>
-          <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">
-              Today's Care Schedule
-            </h1>
-            <p className="text-xs sm:text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60 mt-0.5">
-              {format(new Date(), "EEEE, MMMM d, yyyy")} • Community health visits
-            </p>
-          </div>
-        </div>
-
-        <a
-          href="/health-records/nurse"
-          className="inline-flex items-center gap-2 rounded-xl bg-fcn-primary px-4 py-2.5 text-xs sm:text-sm font-semibold text-white shadow-sm hover:bg-fcn-primary/90 transition-colors self-start sm:self-auto"
-        >
-          Record Vitals Directly
-        </a>
-      </div>
+      <PageHeader
+        title="Today's Care Schedule"
+        description={`${format(new Date(), "EEEE, MMMM d, yyyy")} • Community health visits & patient check-ins`}
+        icon={Calendar}
+        iconVariant="emerald"
+        eyebrow="Community Nursing"
+        actions={
+          <a
+            href="/health-records/nurse"
+            className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 px-4 py-2.5 text-xs sm:text-sm font-semibold text-white shadow-md shadow-emerald-500/20 hover:from-emerald-700 hover:to-teal-700 transition-all self-start sm:self-auto"
+          >
+            Record Vitals Directly
+          </a>
+        }
+      />
 
       {loadingStats ? (
         <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">

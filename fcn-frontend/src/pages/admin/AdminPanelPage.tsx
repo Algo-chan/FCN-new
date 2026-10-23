@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+﻿import { useState, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useAuthStore } from "@/store/auth.store";
 import { Shield, Sparkles, TrendingUp, Users, Calendar, Activity } from "lucide-react";
@@ -10,6 +10,7 @@ import { AnalyticsOverviewCards } from "@/components/admin/AnalyticsOverviewCard
 import { ConsultationsTrendChart } from "@/components/admin/ConsultationsTrendChart";
 import { RegistrationsTrendChart } from "@/components/admin/RegistrationsTrendChart";
 import { TopDoctorsTable } from "@/components/admin/TopDoctorsTable";
+import { PageHeader } from "@/components/ui/PageHeader";
 
 const AdminPanelPage = () => {
   const user = useAuthStore((s) => s.user);

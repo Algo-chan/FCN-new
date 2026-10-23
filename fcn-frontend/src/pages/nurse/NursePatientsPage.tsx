@@ -8,6 +8,7 @@ import { healthRecordsService } from "@/services/health-records.service";
 import { Card } from "@/components/ui/Card";
 import { Spinner } from "@/components/ui/Spinner";
 import { Avatar } from "@/components/ui/Avatar";
+import { PageHeader } from "@/components/ui/PageHeader";
 
 const NursePatientsPage = () => {
   const [search, setSearch] = useState("");
@@ -26,12 +27,18 @@ const NursePatientsPage = () => {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">My Patients</h1>
-        <p className="text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">
-          {patients.length} patient{patients.length !== 1 ? "s" : ""} assigned
-        </p>
-      </div>
+      <PageHeader
+        title="My Patients"
+        description="Community patients under your primary nursing observation, vital monitoring, and routine home care"
+        icon={Users}
+        iconVariant="emerald"
+        eyebrow="Community Nursing"
+        badge={
+          <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-500/20">
+            {patients.length} {patients.length === 1 ? "Patient" : "Patients"}
+          </span>
+        }
+      />
 
       <div className="relative">
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-fcn-text-light/30" />
