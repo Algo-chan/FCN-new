@@ -1,5 +1,5 @@
 import { useEffect, useCallback, useRef, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -32,8 +32,10 @@ import { PrescribePanel } from "@/components/consultation/PrescribePanel";
 import { ConsultationTimer } from "@/components/consultation/ConsultationTimer";
 import { ExtensionApprovalModal } from "@/components/consultation/ExtensionApprovalModal";
 import { DirectCallModal } from "@/components/consultation/DirectCallModal";
+import { ConsultationWaitingRoom } from "@/components/consultation/ConsultationWaitingRoom";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { Spinner } from "@/components/ui/Spinner";
 import type { ConsultationContext, Message } from "@/types";
 import { clsx } from "clsx";
 
@@ -41,6 +43,7 @@ type MobileTab = "chat" | "info";
 
 export default function ConsultationPage() {
   const { appointmentId } = useParams<{ appointmentId: string }>();
+  const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
   const isDoctor = user?.role === "doctor";
   const {
@@ -112,12 +115,13 @@ export default function ConsultationPage() {
   );
 
   useEffect(() => {
-    if (appointmentId && initialLoad) {
+    const isLockedForPatient = contextData?.timeLock?.isLocked && !isDoctor;
+    if (appointmentId && initialLoad && !isLockedForPatient && contextData) {
       joinConsultation(appointmentId);
       loadMessages(1);
       setInitialLoad(false);
     }
-  }, [appointmentId, joinConsultation, loadMessages, initialLoad]);
+  }, [appointmentId, joinConsultation, loadMessages, initialLoad, contextData, isDoctor]);
 
   useEffect(() => {
     if (contextData?.isReadOnly) {
@@ -162,7 +166,14 @@ export default function ConsultationPage() {
 
   // Initial doctor auto-greeting simulation with typing indicator on mount for instant consultations
   useEffect(() => {
-    if (!contextData?.appointment || messages.length > 0 || isDoctor || isReadOnly) return;
+    if (
+      !contextData?.appointment ||
+      messages.length > 0 ||
+      isDoctor ||
+      isReadOnly ||
+      contextData?.timeLock?.isLocked
+    )
+      return;
 
     const doctorName = contextData.appointment.doctor?.full_name ?? "Doctor";
     const timer1 = setTimeout(() => {
@@ -450,6 +461,60 @@ export default function ConsultationPage() {
         </div>
       </div>
     );
+  }
+
+  if (contextLoading) {
+    return (
+      <div className="flex h-[calc(100vh-4rem)] items-center justify-center bg-slate-50 dark:bg-slate-950">
+        <Spinner size="lg" />
+      </div>
+    );
+  }
+
+  if (contextData?.timeLock?.isLocked && !isDoctor) {
+    if (contextData.timeLock.reason === "too_early") {
+      return (
+        <ConsultationWaitingRoom
+          appointment={contextData.appointment}
+          timeLock={contextData.timeLock}
+          onOpen={() => refetchContext()}
+        />
+      );
+    }
+
+    if (contextData.timeLock.reason === "expired") {
+      return (
+        <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center p-6 bg-slate-50 dark:bg-slate-950">
+          <div className="max-w-md w-full rounded-3xl border border-slate-200/80 bg-white dark:border-white/10 dark:bg-slate-900 p-8 shadow-xl text-center space-y-4">
+            <div className="flex h-16 w-16 mx-auto items-center justify-center rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-500">
+              <Clock className="h-8 w-8" />
+            </div>
+            <h2 className="text-xl font-black text-slate-900 dark:text-white">
+              Consultation Window Closed
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+              The time window for this appointment has passed. If you missed this session, please contact your doctor or schedule a new appointment.
+            </p>
+            <div className="pt-2 flex flex-col gap-2">
+              <Button
+                variant="action"
+                onClick={() => navigate("/appointments/book")}
+                className="w-full"
+              >
+                Book New Appointment
+              </Button>
+              <Button
+                variant="secondary"
+                onClick={() => navigate("/appointments")}
+                className="w-full"
+              >
+                View My Appointments
+              </Button>
+            </div>
+          </div>
+        </div>
+      );
+    }
   }
 
   return (

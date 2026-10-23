@@ -32,6 +32,7 @@ import { useNotifications } from "@/hooks/useNotifications";
 import { useAuthStore } from "@/store/auth.store";
 import { appointmentsService } from "@/services/appointments.service";
 import { FollowUpPrescriptionPanel } from "@/components/doctor-dashboard/FollowUpPrescriptionPanel";
+import { getAppointmentTimeInfo } from "@/utils/appointment-time";
 import type { Appointment, AppointmentStatus } from "@/types";
 
 const statusConfig: Record<string, { label: string; variant: "success" | "warning" | "danger" | "info" | "neutral" }> = {
@@ -292,6 +293,12 @@ const MyAppointmentsPage = () => {
                 const TypeIcon = typeIcons[apt.appointment_type] ?? Video;
                 const config = statusConfig[apt.status] ?? statusConfig.pending;
                 const scheduledDate = parseISO(apt.scheduled_at);
+                const timeInfo = getAppointmentTimeInfo(
+                  apt.scheduled_at,
+                  apt.duration_minutes ?? 30,
+                  apt.status,
+                  userRole === "doctor"
+                );
 
                 return (
                   <motion.div
@@ -379,18 +386,50 @@ const MyAppointmentsPage = () => {
                         </div>
                       )}
 
+                      {/* Virtual Room Status Note if too early */}
+                      {timeInfo.state === "too_early" && (
+                        <div className="flex items-center gap-2 rounded-xl bg-sky-50 dark:bg-sky-950/40 border border-sky-500/20 px-3 py-2 text-xs text-sky-700 dark:text-sky-300">
+                          <Clock className="h-3.5 w-3.5 shrink-0 text-sky-500" />
+                          <span>
+                            <strong>Virtual Room:</strong> {timeInfo.helperText}
+                          </span>
+                        </div>
+                      )}
+
                       {/* Action Buttons Row */}
                       <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-slate-100 dark:border-white/5">
-                        {canJoin(apt.status) && (
+                        {/* Allowed to join right now (Open, In session, or Doctor preview) */}
+                        {timeInfo.canJoin && (
                           <Button
                             variant="action"
                             size="sm"
                             onClick={() => navigate(`/consultation/${apt.id}`)}
                             icon={<Video className="h-4 w-4" />}
+                            className="min-h-[40px] shadow-sm animate-pulse"
+                          >
+                            {timeInfo.label}
+                          </Button>
+                        )}
+
+                        {/* Too early for patient: Offer to enter countdown Waiting Room */}
+                        {!timeInfo.canJoin && timeInfo.state === "too_early" && (
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            onClick={() => navigate(`/consultation/${apt.id}`)}
+                            icon={<Clock className="h-4 w-4 text-teal-600 dark:text-teal-400" />}
                             className="min-h-[40px]"
                           >
-                            Join Consultation
+                            Waiting Room
                           </Button>
+                        )}
+
+                        {/* Expired Window */}
+                        {timeInfo.state === "expired" && ["confirmed", "scheduled"].includes(apt.status) && (
+                          <span className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 text-xs font-semibold">
+                            <Clock className="h-3.5 w-3.5" />
+                            Session Expired
+                          </span>
                         )}
                         {canReschedule(apt.status) && (
                           <Button

@@ -440,6 +440,15 @@ export interface ConsultationContext {
     };
   } | null;
   isReadOnly: boolean;
+  timeLock?: {
+    isLocked: boolean;
+    reason?: "too_early" | "expired";
+    opensAt?: string;
+    scheduledAt?: string;
+    closedAt?: string;
+    earlyBufferMinutes?: number;
+    minutesUntilOpen?: number;
+  };
 }
 
 export interface ConsultationSummary {

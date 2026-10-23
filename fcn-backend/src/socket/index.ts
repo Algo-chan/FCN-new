@@ -110,7 +110,14 @@ export const initSocket = (server: HttpServer): Server => {
       try {
         const appointment = await prisma.appointment.findUnique({
           where: { id: appointmentId },
-          select: { patient_id: true, doctor_id: true, nurse_id: true, status: true }
+          select: {
+            patient_id: true,
+            doctor_id: true,
+            nurse_id: true,
+            status: true,
+            scheduled_at: true,
+            duration_minutes: true
+          }
         });
 
         if (!appointment) {
@@ -131,6 +138,37 @@ export const initSocket = (server: HttpServer): Server => {
         if (!isPatient && !isDoctor && !isNurse) {
           socket.emit("error", { message: "You are not authorized for this consultation" });
           return;
+        }
+
+        // Enforce time boundary for patient (10 minutes before start, up to duration + 30 min grace)
+        if (isPatient && appointment.status !== "in_session") {
+          const now = new Date();
+          const scheduledAt = new Date(appointment.scheduled_at);
+          const duration = appointment.duration_minutes ?? 30;
+          const earlyBufferMs = 10 * 60 * 1000;
+          const lateGraceMs = 30 * 60 * 1000;
+          const startWindow = new Date(scheduledAt.getTime() - earlyBufferMs);
+          const endWindow = new Date(scheduledAt.getTime() + (duration * 60 * 1000) + lateGraceMs);
+
+          if (now < startWindow) {
+            socket.emit("error", {
+              code: "TIME_LOCKED",
+              message: "Consultation room opens 10 minutes prior to scheduled start time.",
+              opensAt: startWindow.toISOString(),
+              scheduledAt: scheduledAt.toISOString()
+            });
+            return;
+          }
+
+          if (now > endWindow) {
+            socket.emit("error", {
+              code: "TIME_EXPIRED",
+              message: "Consultation session time window has ended.",
+              closedAt: endWindow.toISOString(),
+              scheduledAt: scheduledAt.toISOString()
+            });
+            return;
+          }
         }
 
         socket.join(consultationRoom(appointmentId));

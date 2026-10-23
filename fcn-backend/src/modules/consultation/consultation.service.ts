@@ -19,7 +19,13 @@ export class ConsultationService {
   ) {
     const appointment = await prisma.appointment.findUnique({
       where: { id: appointmentId },
-      select: { patient_id: true, doctor_id: true }
+      select: {
+        patient_id: true,
+        doctor_id: true,
+        scheduled_at: true,
+        duration_minutes: true,
+        status: true
+      }
     });
 
     if (!appointment) {
@@ -28,6 +34,22 @@ export class ConsultationService {
 
     if (appointment.patient_id !== requesterId && appointment.doctor_id !== requesterId) {
       throw new AppError("You are not authorized to view these messages", 403, "FORBIDDEN");
+    }
+
+    const isPatient = appointment.patient_id === requesterId;
+    if (isPatient && !["in_session", "completed", "cancelled"].includes(appointment.status)) {
+      const now = new Date();
+      const scheduledAt = new Date(appointment.scheduled_at);
+      const earlyBufferMs = 10 * 60 * 1000;
+      const startWindow = new Date(scheduledAt.getTime() - earlyBufferMs);
+
+      if (now < startWindow) {
+        throw new AppError(
+          "Consultation room is not open yet. It opens 10 minutes before your scheduled appointment time.",
+          403,
+          "TIME_LOCKED"
+        );
+      }
     }
 
     const total = await prisma.message.count({
@@ -94,6 +116,43 @@ export class ConsultationService {
     }
 
     const isReadOnly = appointment.status === "completed" || appointment.status === "cancelled";
+    const isInSession = appointment.status === "in_session";
+
+    const now = new Date();
+    const scheduledAt = new Date(appointment.scheduled_at);
+    const durationMinutes = appointment.duration_minutes ?? 30;
+    const earlyBufferMs = 10 * 60 * 1000;
+    const lateGraceMs = 30 * 60 * 1000;
+    const startWindow = new Date(scheduledAt.getTime() - earlyBufferMs);
+    const endWindow = new Date(scheduledAt.getTime() + (durationMinutes * 60 * 1000) + lateGraceMs);
+
+    const timeLock: {
+      isLocked: boolean;
+      reason?: "too_early" | "expired";
+      opensAt: string;
+      scheduledAt: string;
+      closedAt: string;
+      earlyBufferMinutes: number;
+      minutesUntilOpen: number;
+    } = {
+      isLocked: false,
+      opensAt: startWindow.toISOString(),
+      scheduledAt: scheduledAt.toISOString(),
+      closedAt: endWindow.toISOString(),
+      earlyBufferMinutes: 10,
+      minutesUntilOpen: 0
+    };
+
+    if (isPatient && !isInSession && !isReadOnly) {
+      if (now < startWindow) {
+        timeLock.isLocked = true;
+        timeLock.reason = "too_early";
+        timeLock.minutesUntilOpen = Math.max(1, Math.ceil((startWindow.getTime() - now.getTime()) / (60 * 1000)));
+      } else if (now > endWindow) {
+        timeLock.isLocked = true;
+        timeLock.reason = "expired";
+      }
+    }
 
     let consultationContext = null;
 
@@ -218,7 +277,8 @@ export class ConsultationService {
         }
       },
       consultationContext,
-      isReadOnly
+      isReadOnly,
+      timeLock
     };
   }
 

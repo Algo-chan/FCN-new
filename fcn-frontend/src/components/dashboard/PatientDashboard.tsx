@@ -23,6 +23,7 @@ import { CircularProgress } from "@/components/ui/CircularProgress";
 import { FitnessCard } from "@/components/ui/FitnessCard";
 import { SkeletonCard } from "@/components/dashboard/SkeletonCard";
 import { HealthScoreModal } from "@/components/dashboard/HealthScoreModal";
+import { getAppointmentTimeInfo } from "@/utils/appointment-time";
 import type { VitalStatus } from "@/types";
 import { clsx } from "clsx";
 
@@ -342,34 +343,64 @@ export const PatientDashboard = () => {
             </div>
           ) : (
             <div className="space-y-2.5">
-              {data.upcomingAppointments.map((apt) => (
-                <div
-                  key={apt.id}
-                  className="flex items-center justify-between gap-3 p-3.5 rounded-2xl bg-slate-50/80 dark:bg-white/[0.03] border border-slate-200/60 dark:border-white/5 transition-all hover:bg-slate-100/60"
-                >
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-bold text-slate-900 dark:text-white">
-                      Dr. {apt.doctor?.full_name ?? "Doctor"}
-                    </p>
-                    <div className="flex items-center gap-1.5 mt-0.5 text-xs text-slate-500 dark:text-slate-400">
-                      <Clock className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
-                      <span className="truncate">
-                        {new Date(apt.scheduled_at).toLocaleDateString("en-US", {
-                          weekday: "short",
-                          month: "short",
-                          day: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
-                      </span>
+              {data.upcomingAppointments.map((apt) => {
+                const timeInfo = getAppointmentTimeInfo(
+                  apt.scheduled_at,
+                  apt.duration_minutes ?? 30,
+                  apt.status,
+                  false
+                );
+                return (
+                  <div
+                    key={apt.id}
+                    className="flex items-center justify-between gap-3 p-3.5 rounded-2xl bg-slate-50/80 dark:bg-white/[0.03] border border-slate-200/60 dark:border-white/5 transition-all hover:bg-slate-100/60"
+                  >
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-bold text-slate-900 dark:text-white">
+                        Dr. {apt.doctor?.full_name ?? "Doctor"}
+                      </p>
+                      <div className="flex items-center gap-1.5 mt-0.5 text-xs text-slate-500 dark:text-slate-400">
+                        <Clock className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
+                        <span className="truncate">
+                          {new Date(apt.scheduled_at).toLocaleDateString("en-US", {
+                            weekday: "short",
+                            month: "short",
+                            day: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 shrink-0">
+                      {timeInfo.canJoin ? (
+                        <Button
+                          variant="action"
+                          size="sm"
+                          onClick={() => navigate(`/consultation/${apt.id}`)}
+                          className="h-8 px-3 text-xs shadow-sm animate-pulse"
+                        >
+                          Join Call
+                        </Button>
+                      ) : timeInfo.state === "too_early" ? (
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          onClick={() => navigate(`/consultation/${apt.id}`)}
+                          className="h-8 px-2.5 text-[11px]"
+                        >
+                          Waiting Room
+                        </Button>
+                      ) : (
+                        <Badge variant={getAppointmentStatusVariant(apt.status)} size="sm">
+                          {apt.status}
+                        </Badge>
+                      )}
                     </div>
                   </div>
-
-                  <Badge variant={getAppointmentStatusVariant(apt.status)} size="sm">
-                    {apt.status}
-                  </Badge>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
