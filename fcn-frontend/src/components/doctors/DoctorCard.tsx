@@ -136,10 +136,23 @@ export const DoctorCard = ({ doctor, index, onClick }: DoctorCardProps) => {
             >
               {doctor.full_name}
             </Link>
-            {doctor.rating_average > 0 && (
-              <div className="flex items-center gap-1 text-amber-500 flex-shrink-0 text-xs font-bold bg-amber-500/10 px-2 py-0.5 rounded-full">
-                <Star className="h-3 w-3 fill-amber-500" />
+            {doctor.rating_average > 0 ? (
+              <div
+                className="flex items-center gap-1 text-amber-600 dark:text-amber-400 flex-shrink-0 text-xs font-bold bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-full shadow-2xs"
+                title={`${doctor.rating_average.toFixed(1)} out of 5 (${doctor.rating_count} reviews)`}
+              >
+                <Star className="h-3 w-3 fill-amber-500 text-amber-500" />
                 <span>{doctor.rating_average.toFixed(1)}</span>
+                {doctor.rating_count > 0 && (
+                  <span className="text-[10px] sm:text-[11px] font-normal text-slate-500 dark:text-slate-400">
+                    ({doctor.rating_count})
+                  </span>
+                )}
+              </div>
+            ) : (
+              <div className="flex items-center gap-1 text-teal-600 dark:text-teal-400 flex-shrink-0 text-[10px] sm:text-[11px] font-semibold bg-teal-500/10 border border-teal-500/20 px-2 py-0.5 rounded-full">
+                <Star className="h-3 w-3 fill-teal-500/30 text-teal-500" />
+                <span>New</span>
               </div>
             )}
           </div>

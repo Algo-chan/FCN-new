@@ -31,6 +31,14 @@ export const GetAppointmentsQuerySchema = z.object({
   })
 });
 
+export const RateConsultationSchema = z.object({
+  body: z.object({
+    rating: z.number().int().min(1, "Rating must be at least 1 star").max(5, "Rating cannot exceed 5 stars"),
+    review_text: z.string().max(1000, "Review cannot exceed 1000 characters").optional().nullable()
+  })
+});
+
 export type CreateAppointmentDto = z.infer<typeof CreateAppointmentSchema>["body"];
 export type CancelAppointmentDto = z.infer<typeof CancelAppointmentSchema>["body"];
 export type RescheduleAppointmentDto = z.infer<typeof RescheduleAppointmentSchema>["body"];
+export type RateConsultationDto = z.infer<typeof RateConsultationSchema>["body"];

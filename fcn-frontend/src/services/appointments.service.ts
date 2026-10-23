@@ -38,5 +38,8 @@ export const appointmentsService = {
     api.patch<ApiResponse<void>>(`/appointments/${id}/start`).then((r) => r.data),
 
   complete: (id: string) =>
-    api.patch<ApiResponse<void>>(`/appointments/${id}/complete`).then((r) => r.data)
+    api.patch<ApiResponse<void>>(`/appointments/${id}/complete`).then((r) => r.data),
+
+  rate: (id: string, rating: number, review_text?: string) =>
+    api.post<ApiResponse<{ rating: any; doctor: { id: string; full_name: string } }>>(`/appointments/${id}/rate`, { rating, review_text }).then((r) => r.data)
 };

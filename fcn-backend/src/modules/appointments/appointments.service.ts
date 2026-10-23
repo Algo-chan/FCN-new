@@ -5,7 +5,7 @@ import { logger } from "../../utils/logger";
 import { systemSettings } from "../../utils/system-settings";
 import { chapaService } from "../payments/chapa.service";
 import { notificationService } from "../notifications/notification.service";
-import type { CreateAppointmentDto, RescheduleAppointmentDto } from "./appointments.validators";
+import type { CreateAppointmentDto, RescheduleAppointmentDto, RateConsultationDto } from "./appointments.validators";
 
 interface AppointmentResult {
   id: string;
@@ -32,6 +32,7 @@ interface AppointmentResult {
   updated_at: Date;
   doctor?: { id: string; full_name: string; doctor_profile?: { specialty: string } | null };
   patient?: { id: string; full_name: string };
+  consultation_rating?: { id: string; rating: number; review_text: string | null; created_at: Date } | null;
 }
 
 interface AppointmentListResult {
@@ -184,6 +185,9 @@ export class AppointmentsService {
           },
           patient: {
             select: { id: true, full_name: true }
+          },
+          consultation_rating: {
+            select: { id: true, rating: true, review_text: true, created_at: true }
           }
         }
       })
@@ -212,6 +216,7 @@ export class AppointmentsService {
         orderBy: { scheduled_at: "desc" },
         include: {
           patient: { select: { id: true, full_name: true } },
+        consultation_rating: { select: { id: true, rating: true, review_text: true, created_at: true } },
           doctor: {
             select: { id: true, full_name: true, doctor_profile: { select: { specialty: true } } }
           }
@@ -494,6 +499,74 @@ export class AppointmentsService {
     });
   }
 
+
+  async rateAppointment(
+    appointmentId: string,
+    patientId: string,
+    dto: RateConsultationDto
+  ): Promise<{ rating: any; doctor: { id: string; full_name: string } }> {
+    const appointment = await prisma.appointment.findUnique({
+      where: { id: appointmentId },
+      include: {
+        doctor: { select: { id: true, full_name: true } }
+      }
+    });
+
+    if (!appointment) {
+      throw new AppError("Appointment not found", 404, "NOT_FOUND");
+    }
+
+    if (appointment.patient_id !== patientId) {
+      throw new AppError("Only the patient who booked this appointment can rate it", 403, "FORBIDDEN");
+    }
+
+    if (appointment.status !== "completed") {
+      throw new AppError("Only completed consultations can be rated", 400, "NOT_COMPLETED");
+    }
+
+    const ratingRecord = await prisma.$transaction(async (tx) => {
+      const saved = await tx.consultationRating.upsert({
+        where: { appointment_id: appointmentId },
+        create: {
+          appointment_id: appointmentId,
+          patient_id: patientId,
+          doctor_id: appointment.doctor_id,
+          rating: dto.rating,
+          review_text: dto.review_text?.trim() || null
+        },
+        update: {
+          rating: dto.rating,
+          review_text: dto.review_text?.trim() || null
+        }
+      });
+
+      // Recalculate doctor average rating and count
+      const agg = await tx.consultationRating.aggregate({
+        where: { doctor_id: appointment.doctor_id },
+        _avg: { rating: true },
+        _count: { rating: true }
+      });
+
+      const newAvg = agg._avg.rating ? Number(agg._avg.rating.toFixed(2)) : dto.rating;
+      const newCount = agg._count.rating || 1;
+
+      // Update doctor profile with new rating stats
+      await tx.$executeRawUnsafe(
+        'UPDATE doctor_profiles SET rating_average = $1, rating_count = $2 WHERE user_id = $3::uuid',
+        newAvg,
+        newCount,
+        appointment.doctor_id
+      );
+
+      return saved;
+    });
+
+    return {
+      rating: ratingRecord,
+      doctor: appointment.doctor
+    };
+  }
+
   private mapAppointment(a: any): AppointmentResult {
     return {
       id: a.id,
@@ -519,7 +592,8 @@ export class AppointmentsService {
       created_at: a.created_at,
       updated_at: a.updated_at,
       doctor: a.doctor ? { id: a.doctor.id, full_name: a.doctor.full_name, doctor_profile: a.doctor.doctor_profile ? { specialty: a.doctor.doctor_profile.specialty } : null } : undefined,
-      patient: a.patient ? { id: a.patient.id, full_name: a.patient.full_name } : undefined
+      patient: a.patient ? { id: a.patient.id, full_name: a.patient.full_name } : undefined,
+      consultation_rating: a.consultation_rating ? { id: a.consultation_rating.id, rating: a.consultation_rating.rating, review_text: a.consultation_rating.review_text, created_at: a.consultation_rating.created_at } : null
     };
   }
 }

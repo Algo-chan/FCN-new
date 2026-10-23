@@ -16,7 +16,8 @@ import {
   Phone,
   Lock,
   Clock,
-  AlertTriangle
+  AlertTriangle,
+  Star
 } from "lucide-react";
 import { format } from "date-fns";
 import toast from "react-hot-toast";
@@ -32,6 +33,7 @@ import { PrescribePanel } from "@/components/consultation/PrescribePanel";
 import { ConsultationTimer } from "@/components/consultation/ConsultationTimer";
 import { ExtensionApprovalModal } from "@/components/consultation/ExtensionApprovalModal";
 import { DirectCallModal } from "@/components/consultation/DirectCallModal";
+import { RateDoctorModal } from "@/components/consultation/RateDoctorModal";
 import { ConsultationWaitingRoom } from "@/components/consultation/ConsultationWaitingRoom";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
@@ -73,6 +75,7 @@ export default function ConsultationPage() {
   const [extensionRequest, setExtensionRequest] = useState<{ doctorName: string; minutes: number } | null>(null);
   const [isExtending, setIsExtending] = useState(false);
   const [isDirectCallOpen, setIsDirectCallOpen] = useState(false);
+  const [isRateModalOpen, setIsRateModalOpen] = useState(false);
   const queryClient = useQueryClient();
   const pageFocusedRef = useRef(true);
 
@@ -544,9 +547,21 @@ export default function ConsultationPage() {
           />
 
           {isReadOnly && (
-            <div className="flex items-center justify-center gap-2 bg-amber-500/10 border-b border-amber-500/20 px-4 py-2 text-xs font-semibold text-amber-700 dark:text-amber-300">
-              <Lock className="h-3.5 w-3.5" />
-              <span>Consultation session completed and locked. Conversation is archived for clinical reference.</span>
+            <div className="flex items-center justify-between gap-3 bg-amber-500/10 border-b border-amber-500/20 px-4 py-2.5 text-xs font-semibold text-amber-700 dark:text-amber-300">
+              <div className="flex items-center gap-2">
+                <Lock className="h-3.5 w-3.5 shrink-0" />
+                <span>Consultation session completed and locked. Conversation is archived for clinical reference.</span>
+              </div>
+              {!isDoctor && (
+                <button
+                  type="button"
+                  onClick={() => setIsRateModalOpen(true)}
+                  className="flex items-center gap-1.5 px-3 py-1 text-xs font-bold rounded-xl bg-amber-500 hover:bg-amber-600 text-white shadow-xs transition-all active:scale-95 shrink-0"
+                >
+                  <Star className="h-3.5 w-3.5 fill-white" />
+                  <span>Rate Doctor</span>
+                </button>
+              )}
             </div>
           )}
 
@@ -706,9 +721,21 @@ export default function ConsultationPage() {
             />
 
             {isReadOnly && (
-              <div className="flex items-center justify-center gap-1.5 bg-amber-500/10 border-b border-amber-500/20 px-3 py-1.5 text-[11px] font-semibold text-amber-700 dark:text-amber-300">
-                <Lock className="h-3 w-3" />
-                <span>Session completed & locked</span>
+              <div className="flex items-center justify-between gap-2 bg-amber-500/10 border-b border-amber-500/20 px-3 py-1.5 text-[11px] font-semibold text-amber-700 dark:text-amber-300">
+                <div className="flex items-center gap-1.5">
+                  <Lock className="h-3 w-3 shrink-0" />
+                  <span>Session completed & locked</span>
+                </div>
+                {!isDoctor && (
+                  <button
+                    type="button"
+                    onClick={() => setIsRateModalOpen(true)}
+                    className="flex items-center gap-1 px-2.5 py-0.5 text-[11px] font-bold rounded-lg bg-amber-500 text-white shadow-xs shrink-0"
+                  >
+                    <Star className="h-3 w-3 fill-white" />
+                    <span>Rate Doctor</span>
+                  </button>
+                )}
               </div>
             )}
 
@@ -817,6 +844,21 @@ export default function ConsultationPage() {
         doctorSpecialty={otherPartySpecialty}
         doctorPhone={contextData?.appointment?.doctor?.phone ?? null}
       />
+      {/* Rate Doctor Modal */}
+      {appointmentId && !isDoctor && (
+        <RateDoctorModal
+          isOpen={isRateModalOpen}
+          onClose={() => setIsRateModalOpen(false)}
+          appointmentId={appointmentId}
+          doctorName={contextData?.appointment?.doctor?.full_name ?? otherPartyName ?? "Doctor"}
+          doctorSpecialty={contextData?.appointment?.doctor?.specialty ?? otherPartySpecialty}
+          doctorPhoto={contextData?.appointment?.doctor?.photo_url}
+          onRated={() => {
+            refetchContext();
+          }}
+        />
+      )}
+
     </motion.div>
   );
 }

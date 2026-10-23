@@ -6,7 +6,8 @@ import {
   CreateAppointmentSchema,
   CancelAppointmentSchema,
   RescheduleAppointmentSchema,
-  GetAppointmentsQuerySchema
+  GetAppointmentsQuerySchema,
+  RateConsultationSchema
 } from "./appointments.validators";
 
 export const createAppointmentController = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -126,6 +127,18 @@ export const completeAppointmentController = async (req: Request, res: Response,
     }
     await appointmentsService.completeAppointment(req.params.id, req.user!.id);
     successResponse(res, { message: "Appointment completed" });
+  } catch (error) {
+    next(error);
+  }
+};
+export const rateAppointmentController = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    if (!req.params.id || typeof req.params.id !== "string") {
+      throw new AppError("Appointment ID is required", 400, "ID_REQUIRED");
+    }
+    const body = RateConsultationSchema.parse({ body: req.body }).body;
+    const result = await appointmentsService.rateAppointment(req.params.id, req.user!.id, body);
+    successResponse(res, result, 201);
   } catch (error) {
     next(error);
   }

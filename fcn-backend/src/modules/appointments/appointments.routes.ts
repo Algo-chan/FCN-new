@@ -11,7 +11,8 @@ import {
   cancelAppointmentController,
   rescheduleAppointmentController,
   startAppointmentController,
-  completeAppointmentController
+  completeAppointmentController,
+  rateAppointmentController
 } from "./appointments.controller";
 
 export const appointmentRoutes = Router();
@@ -21,6 +22,7 @@ appointmentRoutes.get("/", authMiddleware, getMyAppointmentsController);
 appointmentRoutes.get("/doctor", authMiddleware, requireRole("doctor"), getDoctorAppointmentsController);
 appointmentRoutes.get("/admin/all", authMiddleware, requireRole("super_admin", "hospital_admin"), requireHospitalScope, getAdminAppointmentsController);
 appointmentRoutes.get("/:id", authMiddleware, getAppointmentByIdController);
+appointmentRoutes.post("/:id/rate", authMiddleware, requireRole("patient"), rateAppointmentController);
 appointmentRoutes.patch("/:id/cancel", authMiddleware, cancelAppointmentController);
 appointmentRoutes.patch("/:id/reschedule", authMiddleware, rescheduleAppointmentController);
 appointmentRoutes.patch("/:id/start", authMiddleware, requireRole("doctor"), startAppointmentController);

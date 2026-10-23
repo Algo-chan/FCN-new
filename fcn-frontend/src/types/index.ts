@@ -220,6 +220,7 @@ export interface Appointment {
   doctor?: { id: string; full_name: string; doctor_profile?: { specialty?: string } };
   patient?: { id: string; full_name: string };
   nurse?: { id: string; full_name: string };
+  consultation_rating?: { id: string; rating: number; review_text: string | null; created_at: string } | null;
 }
 
 export interface SystemSetting {

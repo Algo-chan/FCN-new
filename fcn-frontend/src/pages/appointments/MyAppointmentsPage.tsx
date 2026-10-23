@@ -19,6 +19,7 @@ import {
   Pill,
   CalendarPlus,
   Calendar,
+  Star,
 } from "lucide-react";
 
 import { Card } from "@/components/ui/Card";
@@ -32,6 +33,7 @@ import { useNotifications } from "@/hooks/useNotifications";
 import { useAuthStore } from "@/store/auth.store";
 import { appointmentsService } from "@/services/appointments.service";
 import { FollowUpPrescriptionPanel } from "@/components/doctor-dashboard/FollowUpPrescriptionPanel";
+import { RateDoctorModal } from "@/components/consultation/RateDoctorModal";
 import { getAppointmentTimeInfo } from "@/utils/appointment-time";
 import type { Appointment, AppointmentStatus } from "@/types";
 
@@ -81,6 +83,7 @@ const MyAppointmentsPage = () => {
   const [rescheduleReason, setRescheduleReason] = useState("");
   const [followUpModalOpen, setFollowUpModalOpen] = useState(false);
   const [followUpAppointment, setFollowUpAppointment] = useState<Appointment | null>(null);
+  const [ratingModalAppointment, setRatingModalAppointment] = useState<Appointment | null>(null);
 
   const userRole = useAuthStore((s) => s.user?.role);
 
@@ -452,6 +455,31 @@ const MyAppointmentsPage = () => {
                             Cancel
                           </Button>
                         )}
+                        
+                        {/* Rate Doctor for completed appointments (patient only) */}
+                        {apt.status === "completed" && userRole === "patient" && (
+                          apt.consultation_rating ? (
+                            <Button
+                              size="sm"
+                              variant="secondary"
+                              onClick={() => setRatingModalAppointment(apt)}
+                              icon={<Star className="h-4 w-4 fill-amber-400 text-amber-500" />}
+                              className="min-h-[40px] border-amber-500/25 bg-amber-500/10 text-amber-700 dark:text-amber-300 font-semibold"
+                            >
+                              ⭐ {apt.consultation_rating.rating}/5 Rated • Edit
+                            </Button>
+                          ) : (
+                            <Button
+                              size="sm"
+                              onClick={() => setRatingModalAppointment(apt)}
+                              icon={<Star className="h-4 w-4 fill-white text-white" />}
+                              className="min-h-[40px] bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-bold shadow-xs active:scale-95 transition-all"
+                            >
+                              ⭐ Rate Doctor
+                            </Button>
+                          )
+                        )}
+
                         {canFollowUp(apt) && apt.follow_up_prescription_deadline && (
                           <Button
                             size="sm"
@@ -619,6 +647,21 @@ const MyAppointmentsPage = () => {
             />
           )}
         </Modal>
+        {/* Rate Doctor Modal */}
+        {ratingModalAppointment && (
+          <RateDoctorModal
+            isOpen={!!ratingModalAppointment}
+            onClose={() => setRatingModalAppointment(null)}
+            appointmentId={ratingModalAppointment.id}
+            doctorName={ratingModalAppointment.doctor?.full_name ?? "Doctor"}
+            doctorSpecialty={ratingModalAppointment.doctor?.doctor_profile?.specialty}
+            existingRating={ratingModalAppointment.consultation_rating}
+            onRated={() => {
+              queryClient.invalidateQueries({ queryKey: ["my-appointments"] });
+            }}
+          />
+        )}
+
       </div>
     </PageTransition>
   );

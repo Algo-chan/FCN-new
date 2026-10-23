@@ -243,9 +243,11 @@ export const DoctorDetailModal = ({ doctor, isOpen, onClose }: DoctorDetailModal
           <div className="rounded-lg border border-fcn-primary/10 bg-fcn-primary/5 p-3 text-center">
             <Star className="mx-auto h-5 w-5 text-fcn-warning mb-1" />
             <div className="text-lg font-bold text-fcn-text-light dark:text-fcn-text-dark">
-              {doctor.rating_average.toFixed(1)}
+              {doctor.rating_average > 0 ? doctor.rating_average.toFixed(1) : "New"}
             </div>
-            <div className="text-xs text-fcn-text-light/60 dark:text-fcn-text-dark/60">{t("modal.rating")}</div>
+            <div className="text-xs text-fcn-text-light/60 dark:text-fcn-text-dark/60">
+              {doctor.rating_count > 0 ? `${doctor.rating_count} reviews` : t("modal.rating")}
+            </div>
           </div>
         </div>
 
