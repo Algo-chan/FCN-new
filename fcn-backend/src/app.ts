@@ -28,6 +28,7 @@ import { profileRoutes } from "./modules/profile/profile.routes";
 import { instantConsultRoutes } from "./modules/instant-consult/instant-consult.routes";
 import { waitlistRoutes } from "./modules/waitlist/waitlist.routes";
 import { searchRoutes } from "./modules/search/search.routes";
+import { articleRoutes, adminArticleRoutes } from "./modules/articles/articles.routes";
 import { successResponse } from "./utils/response";
 import { logger } from "./utils/logger";
 
@@ -95,6 +96,8 @@ app.use("/api/v1/profile", profileRoutes);
 app.use("/api/v1/instant-consult", instantConsultRoutes);
 
 app.use("/api/v1/waitlist", waitlistRoutes);
+app.use("/api/v1/articles", articleRoutes);
+app.use("/api/v1/admin/articles", adminArticleRoutes);
 app.use("/search", searchRoutes);
 
 app.use(errorMiddleware);
