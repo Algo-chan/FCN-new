@@ -23,6 +23,7 @@ import { CircularProgress } from "@/components/ui/CircularProgress";
 import { FitnessCard } from "@/components/ui/FitnessCard";
 import { SkeletonCard } from "@/components/dashboard/SkeletonCard";
 import { HealthScoreModal } from "@/components/dashboard/HealthScoreModal";
+import { LifelinePulse } from "./LifelinePulse";
 import { getAppointmentTimeInfo } from "@/utils/appointment-time";
 import type { VitalStatus } from "@/types";
 import { clsx } from "clsx";
@@ -152,6 +153,10 @@ export const PatientDashboard = () => {
             <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
               {greeting}, {firstName}!
             </h1>
+
+            {/* Medical Lifeline EKG pulse with left-to-right diminishing animation */}
+            <LifelinePulse className="my-1.5 sm:my-2 max-w-xs sm:max-w-md" />
+
             <p className="mt-1 text-xs sm:text-sm text-teal-100/80 font-medium max-w-md">
               {nextAppointment
                 ? `You have an appointment coming up with Dr. ${nextAppointment.doctor?.full_name ?? "Doctor"}.`
