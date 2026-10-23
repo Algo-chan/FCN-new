@@ -152,6 +152,9 @@ export const PatientDashboard = () => {
           <div>
             <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
               {greeting}, {firstName}!
+              <span className="hidden sm:inline-block ml-2 select-none" aria-hidden="true">
+                👋
+              </span>
             </h1>
 
             {/* Medical Lifeline EKG pulse - active only on mobile screens */}
