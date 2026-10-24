@@ -49,21 +49,8 @@ export const ConsultationTimer = ({
   const isLowTime = secondsLeft < 120;
   const isMedTime = secondsLeft <= 300 && !isLowTime;
 
-  // Determine Duration Tier badge
-  const tierLabel =
-    durationMinutes <= 15
-      ? "General (15m)"
-      : durationMinutes <= 30
-        ? "Specialist (30m)"
-        : `Complex (${durationMinutes}m)`;
-
   return (
     <div className="flex items-center gap-2">
-      {/* Duration Tier Pill */}
-      <span className="hidden sm:inline-flex items-center px-2 py-0.5 rounded-lg text-[10px] font-extrabold uppercase tracking-wider bg-slate-100 text-slate-600 dark:bg-white/10 dark:text-slate-300 border border-slate-200 dark:border-white/10">
-        {tierLabel}
-      </span>
-
       {/* Live Countdown Badge */}
       <div
         className={clsx(
