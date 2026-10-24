@@ -600,7 +600,10 @@ Recommended: See ${store.finalAssessment.recommended_specialty || "a doctor"}`;
             transition={{ duration: 0.25 }}
             className="flex justify-center py-4"
           >
-            <LanguageSelector onSelect={handleLanguageSelect} />
+            <LanguageSelector
+              onSelect={handleLanguageSelect}
+              defaultLanguage={store.language || (localStorage.getItem(PREFERRED_LANG_KEY) as SupportedLanguage) || undefined}
+            />
           </motion.div>
         ) : pageState === "symptoms_input" ? (
           <motion.div
