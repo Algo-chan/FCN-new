@@ -355,14 +355,6 @@ export function ChatInput({
         </button>
       </div>
 
-      {/* Helpful shortcut hint for desktop */}
-      <div className="hidden sm:flex items-center justify-between mt-1.5 px-1 text-[10px] text-slate-400 select-none">
-        <span>Press <kbd className="font-mono text-[9px] px-1 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700">Enter ↵</kbd> to send, <kbd className="font-mono text-[9px] px-1 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700">Shift+Enter</kbd> for new line</span>
-        <span className="flex items-center gap-1">
-          <FlaskConical className="h-2.5 w-2.5 text-emerald-500" />
-          Lab upload supports image & PDF
-        </span>
-      </div>
 
       {/* ── Lab Result Review & Thoughts Modal ───────────────────────────── */}
       <AnimatePresence>
