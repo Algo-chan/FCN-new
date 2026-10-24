@@ -547,7 +547,7 @@ export default function ConsultationPage() {
     >
       {/* Desktop Split View: 65% Chat Stream, 35% Health Passport */}
       <div className="hidden flex-1 lg:flex">
-        <div className="flex w-[65%] flex-col border-r border-fcn-primary/10 bg-white dark:bg-fcn-surface-dark">
+        <div className="flex w-[65%] flex-col border-r border-slate-200 dark:border-white/10 bg-slate-50/50 dark:bg-slate-950/50 shadow-xs">
           <TopBar
             otherPartyName={otherPartyName ?? "Connecting..."}
             otherPartySpecialty={isDoctor ? undefined : otherPartySpecialty ?? undefined}
@@ -715,46 +715,34 @@ export default function ConsultationPage() {
         </div>
 
         {/* Right side: Patient Passport / Clinical Info & AI Co-Pilot */}
-        <div className="relative flex w-[35%] flex-col overflow-hidden bg-fcn-surface-light/50 dark:bg-fcn-dark/50">
+        <div className="relative flex w-[35%] flex-col overflow-hidden bg-slate-100/90 dark:bg-[#0c1219]">
           {isDoctor && (
-            <div className="flex border-b border-fcn-primary/10 bg-white dark:bg-fcn-surface-dark shrink-0">
+            <div className="flex border-b border-slate-200/80 dark:border-white/10 bg-slate-100/80 dark:bg-slate-900/60 p-1.5 shrink-0 gap-1.5 select-none">
               <button
                 type="button"
                 onClick={() => setDoctorTab("passport")}
                 className={clsx(
-                  "relative flex flex-1 items-center justify-center gap-1.5 py-3 text-xs font-bold transition-colors",
+                  "relative flex flex-1 items-center justify-center gap-1.5 py-2 px-3 rounded-xl text-xs font-bold transition-all",
                   doctorTab === "passport"
-                    ? "text-fcn-primary dark:text-fcn-accent"
-                    : "text-fcn-text-light/50 hover:text-fcn-text-light dark:text-fcn-text-dark/50"
+                    ? "bg-white dark:bg-slate-800 text-teal-700 dark:text-teal-300 shadow-sm"
+                    : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-white/50 dark:hover:bg-slate-800/50"
                 )}
               >
                 <User className="h-3.5 w-3.5" />
                 <span>Patient Passport</span>
-                {doctorTab === "passport" && (
-                  <motion.div
-                    layoutId="desktopDoctorTabIndicator"
-                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-fcn-primary dark:bg-fcn-accent"
-                  />
-                )}
               </button>
               <button
                 type="button"
                 onClick={() => setDoctorTab("ai")}
                 className={clsx(
-                  "relative flex flex-1 items-center justify-center gap-1.5 py-3 text-xs font-bold transition-colors",
+                  "relative flex flex-1 items-center justify-center gap-1.5 py-2 px-3 rounded-xl text-xs font-bold transition-all",
                   doctorTab === "ai"
-                    ? "text-fcn-primary dark:text-fcn-accent"
-                    : "text-fcn-text-light/50 hover:text-fcn-text-light dark:text-fcn-text-dark/50"
+                    ? "bg-white dark:bg-slate-800 text-teal-700 dark:text-teal-300 shadow-sm"
+                    : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-white/50 dark:hover:bg-slate-800/50"
                 )}
               >
-                <Sparkles className="h-3.5 w-3.5" />
+                <Sparkles className="h-3.5 w-3.5 text-teal-500" />
                 <span>AI Co-Pilot</span>
-                {doctorTab === "ai" && (
-                  <motion.div
-                    layoutId="desktopDoctorTabIndicator"
-                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-fcn-primary dark:bg-fcn-accent"
-                  />
-                )}
               </button>
             </div>
           )}
@@ -791,7 +779,7 @@ export default function ConsultationPage() {
       {/* Mobile Experience: Tabbed Switcher (Chat vs Info) */}
       <div className="flex flex-1 flex-col lg:hidden">
         {/* Mobile Tab Header */}
-        <div className="flex border-b border-fcn-primary/10 bg-white dark:bg-fcn-surface-dark">
+        <div className="flex border-b border-slate-200/80 dark:border-white/10 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md">
           <button
             onClick={() => { setMobileTab("chat"); resetUnread(); }}
             className={clsx(
@@ -850,7 +838,7 @@ export default function ConsultationPage() {
         </div>
 
         {mobileTab === "chat" ? (
-          <div className="flex flex-1 flex-col overflow-hidden bg-white dark:bg-fcn-surface-dark">
+          <div className="flex flex-1 flex-col overflow-hidden bg-slate-50/50 dark:bg-slate-950/50">
             <TopBar
               otherPartyName={otherPartyName ?? "Connecting..."}
               otherPartySpecialty={isDoctor ? undefined : otherPartySpecialty ?? undefined}

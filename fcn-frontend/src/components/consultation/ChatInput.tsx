@@ -80,16 +80,18 @@ export function ChatInput({
   // Read-only Concluded State
   if (isReadOnly) {
     return (
-      <div className="border-t border-slate-200/80 bg-slate-50/80 dark:border-white/10 dark:bg-slate-900/80 px-4 py-3.5 text-center backdrop-blur-sm">
-        <div className="flex items-center justify-center gap-2 text-xs font-semibold text-slate-500 dark:text-slate-400">
-          <div className="flex h-5 w-5 items-center justify-center rounded-full bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
-            <Lock className="h-3 w-3" />
+      <div className="p-3 sm:p-4 pt-1">
+        <div className="rounded-2xl border border-slate-200/90 dark:border-white/10 bg-white/95 dark:bg-slate-900/95 px-4 py-3 text-center shadow-md backdrop-blur-sm">
+          <div className="flex items-center justify-center gap-2 text-xs font-semibold text-slate-500 dark:text-slate-400">
+            <div className="flex h-5 w-5 items-center justify-center rounded-full bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+              <Lock className="h-3 w-3" />
+            </div>
+            <span>
+              This consultation has concluded
+              {endedAt ? ` on ${format(new Date(endedAt), "MMM d, yyyy 'at' hh:mm a")}` : ""}.
+              Chat is archived and read-only.
+            </span>
           </div>
-          <span>
-            This consultation has concluded
-            {endedAt ? ` on ${format(new Date(endedAt), "MMM d, yyyy 'at' hh:mm a")}` : ""}.
-            Chat is archived and read-only.
-          </span>
         </div>
       </div>
     );
@@ -201,7 +203,7 @@ export function ChatInput({
   const hasContent = text.trim().length > 0 || selectedFile !== null;
 
   return (
-    <div className="relative border-t border-slate-200/80 bg-white/90 dark:border-white/10 dark:bg-slate-900/90 p-3 sm:p-4 backdrop-blur-md">
+    <div className="relative px-3 sm:px-4 pb-3 sm:pb-4 pt-1 bg-gradient-to-t from-slate-100/80 via-slate-100/40 to-transparent dark:from-slate-950 dark:via-slate-950/40 dark:to-transparent select-none">
       {/* File attachment preview chip */}
       <AnimatePresence>
         {selectedFile && (
@@ -209,7 +211,7 @@ export function ChatInput({
             initial={{ opacity: 0, y: 10, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.98 }}
-            className="mb-3 flex items-center justify-between rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-100/90 dark:bg-slate-800/90 p-2.5 shadow-xs"
+            className="mb-2 flex items-center justify-between rounded-2xl border border-slate-200/90 dark:border-white/10 bg-white/95 dark:bg-slate-900/95 p-2.5 shadow-md backdrop-blur-md"
           >
             <div className="flex items-center gap-2.5 min-w-0">
               {selectedFile.type.startsWith("image/") ? (
@@ -236,7 +238,7 @@ export function ChatInput({
             <button
               type="button"
               onClick={() => setSelectedFile(null)}
-              className="rounded-xl p-1.5 text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-slate-700 dark:hover:text-slate-200 transition-colors ml-2"
+              className="rounded-xl p-1.5 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-200 transition-colors ml-2"
               title="Remove attachment"
             >
               <X className="h-4 w-4" />
@@ -245,114 +247,116 @@ export function ChatInput({
         )}
       </AnimatePresence>
 
-      {/* Main Input Controls Row: Textarea -> Lab Result -> Emoji -> Attachment -> Send */}
-      <div className="flex items-end gap-1.5 sm:gap-2">
-        {/* 1. Dynamic Auto-Expanding Textarea */}
-        <div className="flex-1 min-w-0">
-          <textarea
-            ref={textareaRef}
-            value={text}
-            onChange={(e) => handleChange(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder={placeholder}
-            rows={1}
-            className="max-h-[130px] min-h-[40px] h-[40px] w-full resize-none rounded-2xl border border-slate-200/80 bg-slate-100/70 dark:border-white/10 dark:bg-slate-800/70 px-4 py-2 text-xs sm:text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 outline-none transition-all focus:border-teal-500 focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-teal-500/20 leading-5"
-          />
-        </div>
+      {/* Floating Island Dock Container */}
+      <div className="rounded-3xl border border-slate-200/90 dark:border-white/15 bg-white dark:bg-slate-900 p-1.5 sm:p-2 shadow-xl shadow-slate-900/8 dark:shadow-black/60 backdrop-blur-md transition-all focus-within:border-teal-500/60 focus-within:ring-2 focus-within:ring-teal-500/20">
+        <div className="flex items-end gap-1.5 sm:gap-2">
+          {/* 1. Dynamic Auto-Expanding Textarea */}
+          <div className="flex-1 min-w-0">
+            <textarea
+              ref={textareaRef}
+              value={text}
+              onChange={(e) => handleChange(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder={placeholder}
+              rows={1}
+              className="max-h-[130px] min-h-[40px] h-[40px] w-full resize-none rounded-2xl border-0 bg-transparent px-3.5 py-2 text-xs sm:text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 outline-none leading-5"
+            />
+          </div>
 
-        {/* 2. Lab Result Quick Trigger Pill */}
-        <button
-          type="button"
-          onClick={() => labFileInputRef.current?.click()}
-          className="flex h-10 items-center gap-1.5 px-2.5 sm:px-3 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/20 active:scale-95 text-xs font-bold transition-all shadow-xs shrink-0 select-none"
-          title="Photograph or upload paper lab result for immediate doctor review"
-        >
-          <FlaskConical className="h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-          <span className="hidden md:inline">Lab Result</span>
-        </button>
-
-        {/* Hidden Lab Result File Input */}
-        <input
-          ref={labFileInputRef}
-          type="file"
-          accept="image/*,.pdf"
-          className="hidden"
-          onChange={handleLabFileSelect}
-        />
-
-        {/* 3. Emoji Selector Popover */}
-        <div ref={emojiPickerRef} className="relative shrink-0">
+          {/* 2. Lab Result Quick Trigger Pill */}
           <button
             type="button"
-            onClick={() => setShowEmojis(!showEmojis)}
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-slate-200/80 dark:border-white/10 text-slate-500 hover:text-teal-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-            title="Insert emoji"
+            onClick={() => labFileInputRef.current?.click()}
+            className="flex h-10 items-center gap-1.5 px-2.5 sm:px-3 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/20 active:scale-95 text-xs font-bold transition-all shadow-xs shrink-0 select-none"
+            title="Photograph or upload paper lab result for immediate doctor review"
           >
-            <Smile className="h-4 w-4" />
+            <FlaskConical className="h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+            <span className="hidden md:inline">Lab Result</span>
           </button>
 
-          <AnimatePresence>
-            {showEmojis && (
-              <motion.div
-                initial={{ opacity: 0, y: 8, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 8, scale: 0.95 }}
-                transition={{ duration: 0.15 }}
-                className="absolute bottom-full right-0 mb-2.5 grid w-64 grid-cols-5 gap-1 rounded-2xl border border-slate-200 dark:border-white/15 bg-white dark:bg-slate-900 p-2 shadow-2xl z-30"
-              >
-                {EMOJIS.map((emoji) => (
-                  <button
-                    key={emoji}
-                    type="button"
-                    onClick={() => handleEmojiClick(emoji)}
-                    className="flex h-9 w-9 items-center justify-center rounded-xl text-base hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-                  >
-                    {emoji}
-                  </button>
-                ))}
-              </motion.div>
+          {/* Hidden Lab Result File Input */}
+          <input
+            ref={labFileInputRef}
+            type="file"
+            accept="image/*,.pdf"
+            className="hidden"
+            onChange={handleLabFileSelect}
+          />
+
+          {/* 3. Emoji Selector Popover */}
+          <div ref={emojiPickerRef} className="relative shrink-0">
+            <button
+              type="button"
+              onClick={() => setShowEmojis(!showEmojis)}
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-slate-200/80 dark:border-white/10 text-slate-500 hover:text-teal-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              title="Insert emoji"
+            >
+              <Smile className="h-4 w-4" />
+            </button>
+
+            <AnimatePresence>
+              {showEmojis && (
+                <motion.div
+                  initial={{ opacity: 0, y: 8, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 8, scale: 0.95 }}
+                  transition={{ duration: 0.15 }}
+                  className="absolute bottom-full right-0 mb-3 grid w-64 grid-cols-5 gap-1 rounded-2xl border border-slate-200 dark:border-white/15 bg-white dark:bg-slate-900 p-2 shadow-2xl z-30"
+                >
+                  {EMOJIS.map((emoji) => (
+                    <button
+                      key={emoji}
+                      type="button"
+                      onClick={() => handleEmojiClick(emoji)}
+                      className="flex h-9 w-9 items-center justify-center rounded-xl text-base hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                    >
+                      {emoji}
+                    </button>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* 4. Regular Attachment Button (Paperclip) */}
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-slate-200/80 dark:border-white/10 text-slate-500 hover:text-teal-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            title="Attach PDF or image document"
+          >
+            <Paperclip className="h-4 w-4" />
+          </button>
+
+          {/* Hidden Standard File Input */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".jpg,.jpeg,.png,.webp,.pdf"
+            className="hidden"
+            onChange={handleFileSelect}
+          />
+
+          {/* 5. Send Action Button */}
+          <button
+            type="button"
+            onClick={handleSend}
+            disabled={!hasContent || sending}
+            className={clsx(
+              "flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl transition-all shadow-md active:scale-95",
+              hasContent && !sending
+                ? "bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-teal-900/25 hover:from-teal-500 hover:to-emerald-500"
+                : "bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-600 cursor-not-allowed border border-slate-200/60 dark:border-white/5"
             )}
-          </AnimatePresence>
+            title="Send message (Enter)"
+          >
+            {sending ? (
+              <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+            ) : (
+              <ArrowUp className="h-5 w-5 stroke-[2.5]" />
+            )}
+          </button>
         </div>
-
-        {/* 4. Regular Attachment Button (Paperclip) */}
-        <button
-          type="button"
-          onClick={() => fileInputRef.current?.click()}
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-slate-200/80 dark:border-white/10 text-slate-500 hover:text-teal-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-          title="Attach PDF or image document"
-        >
-          <Paperclip className="h-4 w-4" />
-        </button>
-
-        {/* Hidden Standard File Input */}
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept=".jpg,.jpeg,.png,.webp,.pdf"
-          className="hidden"
-          onChange={handleFileSelect}
-        />
-
-        {/* 5. Send Action Button */}
-        <button
-          type="button"
-          onClick={handleSend}
-          disabled={!hasContent || sending}
-          className={clsx(
-            "flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl transition-all shadow-xs active:scale-95",
-            hasContent && !sending
-              ? "bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-md shadow-teal-900/20 hover:from-teal-500 hover:to-emerald-500"
-              : "bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-600 cursor-not-allowed border border-slate-200/60 dark:border-white/5"
-          )}
-          title="Send message (Enter)"
-        >
-          {sending ? (
-            <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-          ) : (
-            <ArrowUp className="h-5 w-5 stroke-[2.5]" />
-          )}
-        </button>
       </div>
 
 
