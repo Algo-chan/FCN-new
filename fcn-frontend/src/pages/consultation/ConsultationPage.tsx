@@ -19,7 +19,6 @@ import {
   AlertTriangle,
   Star,
   X,
-  Stethoscope,
   MoreVertical
 } from "lucide-react";
 import { format } from "date-fns";
@@ -602,12 +601,8 @@ export default function ConsultationPage() {
         <div className="flex w-[65%] flex-col rounded-3xl border border-slate-200/90 dark:border-white/10 bg-white dark:bg-slate-900 shadow-xl shadow-slate-900/5 dark:shadow-black/60 overflow-hidden ring-1 ring-slate-900/5 dark:ring-white/5">
           <TopBar
             otherPartyName={otherPartyName ?? "Connecting..."}
-            otherPartySpecialty={isDoctor ? undefined : otherPartySpecialty ?? undefined}
             isDoctor={isDoctor}
             isReadOnly={isReadOnly}
-            startedAt={startedAt}
-            durationMinutes={durationMinutes}
-            chiefComplaint={contextData?.appointment?.chief_complaint}
             backUrl={isDoctor ? "/doctor/schedule" : "/appointments"}
             onPrescribe={() => setPrescribeOpen(true)}
             onEndConsultation={handleEndConsultation}
@@ -895,12 +890,8 @@ export default function ConsultationPage() {
           <div className="flex flex-1 flex-col overflow-hidden bg-white dark:bg-slate-900">
             <TopBar
               otherPartyName={otherPartyName ?? "Connecting..."}
-              otherPartySpecialty={isDoctor ? undefined : otherPartySpecialty ?? undefined}
               isDoctor={isDoctor}
               isReadOnly={isReadOnly}
-              startedAt={startedAt}
-              durationMinutes={durationMinutes}
-              chiefComplaint={contextData?.appointment?.chief_complaint}
               backUrl={isDoctor ? "/doctor/schedule" : "/appointments"}
               onPrescribe={() => setPrescribeOpen(true)}
               onEndConsultation={handleEndConsultation}
@@ -1111,12 +1102,8 @@ export default function ConsultationPage() {
 
 function TopBar({
   otherPartyName,
-  otherPartySpecialty,
   isDoctor,
   isReadOnly,
-  startedAt,
-  durationMinutes = 15,
-  chiefComplaint,
   backUrl,
   onPrescribe,
   onEndConsultation,
@@ -1127,12 +1114,8 @@ function TopBar({
   onDirectCall
 }: {
   otherPartyName: string;
-  otherPartySpecialty?: string;
   isDoctor: boolean;
   isReadOnly: boolean;
-  startedAt?: string | null;
-  durationMinutes?: number;
-  chiefComplaint?: string | null;
   backUrl?: string;
   onPrescribe: () => void;
   onEndConsultation: () => void;
@@ -1201,31 +1184,14 @@ function TopBar({
         </div>
 
         <div className="min-w-0">
-          <div className="flex items-center gap-1.5">
-            <h2 className="truncate text-xs sm:text-sm font-extrabold text-slate-900 dark:text-white">
-              {otherPartyName}
-            </h2>
-            {!isDoctor ? (
-              <span className="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded-md bg-sky-500/10 text-sky-700 dark:text-sky-300 border border-sky-500/20 text-[10px] font-extrabold uppercase tracking-wider">
-                <Stethoscope className="h-2.5 w-2.5" />
-                {otherPartySpecialty || "Doctor"}
-              </span>
-            ) : (
-              <span className="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded-md bg-teal-500/10 text-teal-700 dark:text-teal-300 border border-teal-500/20 text-[10px] font-extrabold uppercase tracking-wider">
-                Patient
-              </span>
-            )}
-          </div>
+          <h2 className="truncate text-xs sm:text-sm font-extrabold text-slate-900 dark:text-white">
+            {otherPartyName}
+          </h2>
 
-          <div className="flex items-center gap-2 text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400">
+          <div className="flex items-center gap-2 text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
             <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-medium">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
               Online
-            </span>
-            <span className="opacity-40">•</span>
-            <span className="flex items-center gap-1 text-slate-400 truncate max-w-[130px] sm:max-w-[200px]">
-              <Lock className="h-2.5 w-2.5 text-teal-600 dark:text-teal-400 shrink-0" />
-              {isDoctor && chiefComplaint ? `Chief: ${chiefComplaint}` : "Encrypted Telehealth Room"}
             </span>
           </div>
         </div>
