@@ -827,22 +827,26 @@ export default function ConsultationPage() {
 
       {/* Mobile Experience: Tabbed Switcher (Chat vs Info) */}
       <div className="flex flex-1 flex-col rounded-2xl sm:rounded-3xl border border-slate-200/90 dark:border-white/10 bg-white dark:bg-slate-900 shadow-xl overflow-hidden lg:hidden">
-        {/* Mobile Tab Header */}
+        {/* Mobile Tab Header (Icon-only on mobile/small screens to prevent overflow) */}
         <div className="flex border-b border-slate-200/80 dark:border-white/10 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md">
           <button
+            type="button"
             onClick={() => { setMobileTab("chat"); resetUnread(); }}
+            title="Consultation Chat"
+            aria-label="Consultation Chat"
             className={clsx(
-              "relative flex flex-1 items-center justify-center gap-2 py-3 text-xs sm:text-sm font-semibold transition-colors",
+              "relative flex flex-1 items-center justify-center py-3 min-h-[44px] transition-colors active:scale-95",
               mobileTab === "chat" ? "text-fcn-primary dark:text-fcn-accent" : "text-fcn-text-light/50 dark:text-fcn-text-dark/50"
             )}
           >
-            <MessageCircle className="h-4 w-4" />
-            Consultation Chat
-            {unreadCount > 0 && (
-              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">
-                {unreadCount}
-              </span>
-            )}
+            <div className="relative flex items-center justify-center">
+              <MessageCircle className="h-5 w-5" />
+              {unreadCount > 0 && (
+                <span className="absolute -top-1.5 -right-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-500 px-1 text-[9px] font-bold text-white shadow-xs">
+                  {unreadCount}
+                </span>
+              )}
+            </div>
             {mobileTab === "chat" && (
               <motion.div
                 layoutId="mobileConsultTab"
@@ -851,14 +855,16 @@ export default function ConsultationPage() {
             )}
           </button>
           <button
+            type="button"
             onClick={() => setMobileTab("info")}
+            title={isDoctor ? "Patient Passport" : "Doctor Profile"}
+            aria-label={isDoctor ? "Patient Passport" : "Doctor Profile"}
             className={clsx(
-              "relative flex flex-1 items-center justify-center gap-2 py-3 text-xs sm:text-sm font-semibold transition-colors",
+              "relative flex flex-1 items-center justify-center py-3 min-h-[44px] transition-colors active:scale-95",
               mobileTab === "info" ? "text-fcn-primary dark:text-fcn-accent" : "text-fcn-text-light/50 dark:text-fcn-text-dark/50"
             )}
           >
-            <User className="h-4 w-4" />
-            {isDoctor ? "Patient Passport" : "Doctor Profile"}
+            <User className="h-5 w-5" />
             {mobileTab === "info" && (
               <motion.div
                 layoutId="mobileConsultTab"
@@ -868,14 +874,16 @@ export default function ConsultationPage() {
           </button>
           {isDoctor && (
             <button
+              type="button"
               onClick={() => setMobileTab("ai")}
+              title="AI Co-Pilot"
+              aria-label="AI Co-Pilot"
               className={clsx(
-                "relative flex flex-1 items-center justify-center gap-1.5 py-3 text-xs sm:text-sm font-semibold transition-colors",
+                "relative flex flex-1 items-center justify-center py-3 min-h-[44px] transition-colors active:scale-95",
                 mobileTab === "ai" ? "text-fcn-primary dark:text-fcn-accent" : "text-fcn-text-light/50 dark:text-fcn-text-dark/50"
               )}
             >
-              <Sparkles className="h-4 w-4" />
-              AI Co-Pilot
+              <Sparkles className="h-5 w-5" />
               {mobileTab === "ai" && (
                 <motion.div
                   layoutId="mobileConsultTab"
