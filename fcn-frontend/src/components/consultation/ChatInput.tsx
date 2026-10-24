@@ -114,7 +114,7 @@ export function ChatInput({
     setText("");
     onTyping(false);
     if (textareaRef.current) {
-      textareaRef.current.style.height = "auto";
+      textareaRef.current.style.height = "40px";
     }
   }, [text, selectedFile, onSendMessage, onSendFile, onTyping]);
 
@@ -130,7 +130,7 @@ export function ChatInput({
     onTyping(value.length > 0);
 
     if (textareaRef.current) {
-      textareaRef.current.style.height = "auto";
+      textareaRef.current.style.height = "40px";
       textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 130)}px`;
     }
   };
@@ -245,17 +245,30 @@ export function ChatInput({
         )}
       </AnimatePresence>
 
-      {/* Main Input Controls Row */}
-      <div className="flex items-end gap-2">
-        {/* Lab Result Quick Trigger Pill */}
+      {/* Main Input Controls Row: Textarea -> Lab Result -> Emoji -> Attachment -> Send */}
+      <div className="flex items-end gap-1.5 sm:gap-2">
+        {/* 1. Dynamic Auto-Expanding Textarea */}
+        <div className="flex-1 min-w-0">
+          <textarea
+            ref={textareaRef}
+            value={text}
+            onChange={(e) => handleChange(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder={placeholder}
+            rows={1}
+            className="max-h-[130px] min-h-[40px] h-[40px] w-full resize-none rounded-2xl border border-slate-200/80 bg-slate-100/70 dark:border-white/10 dark:bg-slate-800/70 px-4 py-2 text-xs sm:text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 outline-none transition-all focus:border-teal-500 focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-teal-500/20 leading-5"
+          />
+        </div>
+
+        {/* 2. Lab Result Quick Trigger Pill */}
         <button
           type="button"
           onClick={() => labFileInputRef.current?.click()}
-          className="flex h-10 items-center gap-1.5 px-3 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/20 active:scale-95 text-xs font-bold transition-all shadow-xs shrink-0 select-none"
+          className="flex h-10 items-center gap-1.5 px-2.5 sm:px-3 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/20 active:scale-95 text-xs font-bold transition-all shadow-xs shrink-0 select-none"
           title="Photograph or upload paper lab result for immediate doctor review"
         >
           <FlaskConical className="h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-          <span className="hidden sm:inline">Lab Result</span>
+          <span className="hidden md:inline">Lab Result</span>
         </button>
 
         {/* Hidden Lab Result File Input */}
@@ -267,7 +280,42 @@ export function ChatInput({
           onChange={handleLabFileSelect}
         />
 
-        {/* Regular Attachment Button (Paperclip) */}
+        {/* 3. Emoji Selector Popover */}
+        <div ref={emojiPickerRef} className="relative shrink-0">
+          <button
+            type="button"
+            onClick={() => setShowEmojis(!showEmojis)}
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-slate-200/80 dark:border-white/10 text-slate-500 hover:text-teal-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            title="Insert emoji"
+          >
+            <Smile className="h-4 w-4" />
+          </button>
+
+          <AnimatePresence>
+            {showEmojis && (
+              <motion.div
+                initial={{ opacity: 0, y: 8, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 8, scale: 0.95 }}
+                transition={{ duration: 0.15 }}
+                className="absolute bottom-full right-0 mb-2.5 grid w-64 grid-cols-5 gap-1 rounded-2xl border border-slate-200 dark:border-white/15 bg-white dark:bg-slate-900 p-2 shadow-2xl z-30"
+              >
+                {EMOJIS.map((emoji) => (
+                  <button
+                    key={emoji}
+                    type="button"
+                    onClick={() => handleEmojiClick(emoji)}
+                    className="flex h-9 w-9 items-center justify-center rounded-xl text-base hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                  >
+                    {emoji}
+                  </button>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* 4. Regular Attachment Button (Paperclip) */}
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
@@ -286,55 +334,7 @@ export function ChatInput({
           onChange={handleFileSelect}
         />
 
-        {/* Emoji Selector Popover */}
-        <div ref={emojiPickerRef} className="relative">
-          <button
-            type="button"
-            onClick={() => setShowEmojis(!showEmojis)}
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-slate-200/80 dark:border-white/10 text-slate-500 hover:text-teal-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-            title="Insert emoji"
-          >
-            <Smile className="h-4 w-4" />
-          </button>
-
-          <AnimatePresence>
-            {showEmojis && (
-              <motion.div
-                initial={{ opacity: 0, y: 8, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 8, scale: 0.95 }}
-                transition={{ duration: 0.15 }}
-                className="absolute bottom-full left-0 mb-2.5 grid w-64 grid-cols-5 gap-1 rounded-2xl border border-slate-200 dark:border-white/15 bg-white dark:bg-slate-900 p-2 shadow-2xl z-30"
-              >
-                {EMOJIS.map((emoji) => (
-                  <button
-                    key={emoji}
-                    type="button"
-                    onClick={() => handleEmojiClick(emoji)}
-                    className="flex h-9 w-9 items-center justify-center rounded-xl text-base hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-                  >
-                    {emoji}
-                  </button>
-                ))}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-
-        {/* Dynamic Auto-Expanding Textarea */}
-        <div className="flex-1 min-w-0">
-          <textarea
-            ref={textareaRef}
-            value={text}
-            onChange={(e) => handleChange(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder={placeholder}
-            rows={1}
-            className="max-h-[130px] min-h-[42px] w-full resize-none rounded-2xl border border-slate-200/80 bg-slate-100/70 dark:border-white/10 dark:bg-slate-800/70 px-4 py-2.5 text-xs sm:text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 outline-none transition-all focus:border-teal-500 focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-teal-500/20"
-          />
-        </div>
-
-        {/* Send Action Button */}
+        {/* 5. Send Action Button */}
         <button
           type="button"
           onClick={handleSend}
