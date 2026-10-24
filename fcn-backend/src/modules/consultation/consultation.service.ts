@@ -303,7 +303,7 @@ export class ConsultationService {
       throw new AppError("You are not the doctor for this appointment", 403, "FORBIDDEN");
     }
 
-    if (appointment.status !== "in_session") {
+    if (appointment.status !== "in_session" && appointment.status !== "confirmed") {
       throw new AppError("Cannot issue prescription when consultation is not active", 400, "BAD_REQUEST");
     }
 

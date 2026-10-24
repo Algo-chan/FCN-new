@@ -173,6 +173,28 @@ export const initSocket = (server: HttpServer): Server => {
 
         socket.join(consultationRoom(appointmentId));
 
+        if (appointment.status === "confirmed" || appointment.status === "scheduled") {
+          const now = new Date();
+          await prisma.appointment.update({
+            where: { id: appointmentId },
+            data: {
+              status: "in_session",
+              actual_start_time: now,
+              consultation_started_at: now
+            }
+          });
+          if (isDoctor) {
+            await prisma.doctorProfile.update({
+              where: { user_id: user.id },
+              data: { availability_status: "in_session" }
+            });
+          }
+          io.to(consultationRoom(appointmentId)).emit("session_started", {
+            appointmentId,
+            started_at: now.toISOString()
+          });
+        }
+
         const appointmentFull = await prisma.appointment.findUnique({
           where: { id: appointmentId },
           include: {
@@ -265,7 +287,7 @@ export const initSocket = (server: HttpServer): Server => {
           select: { status: true, patient_id: true, doctor_id: true, nurse_id: true }
         });
 
-        if (!appointment || appointment.status !== "in_session") {
+        if (!appointment || (appointment.status !== "in_session" && appointment.status !== "confirmed")) {
           socket.emit("error", { message: "Cannot send messages when consultation is not active" });
           return;
         }
@@ -365,7 +387,7 @@ export const initSocket = (server: HttpServer): Server => {
           select: { status: true, patient_id: true, doctor_id: true, nurse_id: true }
         });
 
-        if (!appointment || appointment.status !== "in_session") {
+        if (!appointment || (appointment.status !== "in_session" && appointment.status !== "confirmed")) {
           ack({ error: "Cannot send files when consultation is not active" });
           return;
         }
