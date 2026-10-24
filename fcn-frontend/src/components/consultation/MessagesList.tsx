@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { format, isToday, isYesterday } from "date-fns";
+import { ArrowDown, ShieldCheck, Lock, Sparkles, MessageCircle } from "lucide-react";
 import type { Message } from "@/types";
 import { ChatMessage } from "./ChatMessage";
 import { clsx } from "clsx";
@@ -13,6 +14,9 @@ interface MessagesListProps {
   hasMoreMessages: boolean;
   onLoadMore: () => void;
   onNewMessageBelow?: (message: Message) => void;
+  isDoctor?: boolean;
+  otherPartySpecialty?: string;
+  otherPartyName?: string;
 }
 
 function getDateLabel(date: Date): string {
@@ -39,7 +43,7 @@ function shouldGroupMessages(current: Message, previous: Message | undefined): b
   const diff = Math.abs(
     new Date(current.sent_at).getTime() - new Date(previous.sent_at).getTime()
   );
-  return diff < 120000;
+  return diff < 120000; // 2 minutes
 }
 
 export function MessagesList({
@@ -48,7 +52,10 @@ export function MessagesList({
   isLoadingMore,
   hasMoreMessages,
   onLoadMore,
-  onNewMessageBelow
+  onNewMessageBelow,
+  isDoctor,
+  otherPartySpecialty,
+  otherPartyName
 }: MessagesListProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -116,36 +123,61 @@ export function MessagesList({
     }
   }, [messages.length]);
 
-  const handleBannerClick = () => {
+  const scrollToBottom = () => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
     setShowNewMessageBanner(false);
   };
 
   return (
-    <div className="relative flex-1 overflow-hidden">
+    <div className="relative flex-1 overflow-hidden bg-slate-50/50 dark:bg-slate-950/40">
       <div
         ref={containerRef}
-        className="h-full overflow-y-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-700"
+        className="h-full overflow-y-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-700"
       >
-        <div className="py-4">
+        <div className="py-4 space-y-1">
+          {/* Top Pagination Loading Indicator */}
           {isLoadingMore && (
-            <div className="flex justify-center py-4">
-              <div className="h-6 w-6 animate-spin rounded-full border-2 border-teal-400 border-t-transparent" />
+            <div className="flex justify-center py-3">
+              <div className="flex items-center gap-2 rounded-full border border-slate-200/80 bg-white/80 dark:border-white/10 dark:bg-slate-800/80 px-3.5 py-1 text-xs text-slate-500 shadow-xs">
+                <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-teal-500 border-t-transparent" />
+                <span>Loading previous clinical messages...</span>
+              </div>
             </div>
           )}
 
+          {/* Infinite Scroll Trigger Sentinel */}
           {hasMoreMessages && !isLoadingMore && (
             <div ref={topSentinelRef} className="h-4" />
           )}
 
+          {/* Retention Notice */}
           {!hasMoreMessages && messages.length > 0 && (
-            <div className="px-4 pb-2 text-center">
-              <p className="text-[10px] text-gray-600">
-                Some older messages were removed per Fast Care Now&apos;s 30-day retention policy
+            <div className="px-4 py-2 text-center">
+              <div className="inline-flex items-center gap-1.5 rounded-full border border-slate-200/60 bg-white/60 dark:border-white/5 dark:bg-slate-900/60 px-3 py-1 text-[11px] text-slate-400">
+                <Lock className="h-3 w-3 text-teal-600 dark:text-teal-400" />
+                <span>End-to-end encrypted session • 30-day clinical retention</span>
+              </div>
+            </div>
+          )}
+
+          {/* Empty Conversation Welcome Banner */}
+          {messages.length === 0 && !isLoadingMore && (
+            <div className="flex flex-col items-center justify-center p-8 text-center my-auto min-h-[300px]">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-teal-500/10 text-teal-600 dark:text-teal-400 border border-teal-500/20 shadow-sm mb-4">
+                <ShieldCheck className="h-7 w-7" />
+              </div>
+              <h3 className="text-base font-bold text-slate-800 dark:text-slate-100">
+                Secure Telehealth Room Ready
+              </h3>
+              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">
+                {isDoctor
+                  ? `You are connected with ${otherPartyName || "your patient"}. Review their health passport on the right and begin the clinical consultation.`
+                  : `You are connected with Dr. ${otherPartyName || "your physician"}. Send your questions, current symptoms, or tap Lab Result to share paper test results.`}
               </p>
             </div>
           )}
 
+          {/* Messages Feed */}
           {messages.map((message, index) => {
             const prevMessage = index > 0 ? messages[index - 1] : undefined;
             const showDate = shouldShowDateSeparator(message, prevMessage);
@@ -154,41 +186,52 @@ export function MessagesList({
 
             return (
               <div key={message.id}>
+                {/* Date Separator */}
                 {showDate && (
-                  <div className="my-3 flex items-center justify-center">
-                    <div className="rounded-full bg-gray-800 px-3 py-1">
-                      <span className="text-xs text-gray-400">
+                  <div className="my-4 flex items-center justify-center px-4">
+                    <div className="relative flex w-full items-center justify-center">
+                      <div className="absolute inset-0 flex items-center">
+                        <div className="w-full border-t border-slate-200/80 dark:border-white/10" />
+                      </div>
+                      <div className="relative rounded-full border border-slate-200/80 bg-white/90 dark:border-white/10 dark:bg-slate-900/90 px-3.5 py-1 text-[11px] font-semibold text-slate-500 dark:text-slate-400 shadow-xs backdrop-blur-xs">
                         {getDateLabel(new Date(message.sent_at))}
-                      </span>
+                      </div>
                     </div>
                   </div>
                 )}
-                <div className={clsx("py-0.5", grouped && index > 0 ? "my-0" : "mt-2")}>
+
+                {/* Message Bubble Item */}
+                <div className={clsx("transition-all", grouped ? "mt-1" : "mt-3")}>
                   <ChatMessage
                     message={message}
                     isSender={message.sender_user_id === currentUserId}
                     showAvatar={!grouped}
                     isNew={isNew}
+                    isDoctor={isDoctor}
+                    otherPartySpecialty={otherPartySpecialty}
                   />
                 </div>
               </div>
             );
           })}
 
-          <div ref={bottomRef} />
+          <div ref={bottomRef} className="h-1" />
         </div>
       </div>
 
+      {/* Floating "New message below" pill */}
       <AnimatePresence>
         {showNewMessageBanner && messages.length > 0 && (
           <motion.button
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 20, opacity: 0 }}
-            onClick={handleBannerClick}
-            className="absolute bottom-4 left-1/2 z-10 -translate-x-1/2 rounded-full bg-teal-500 px-4 py-1.5 text-xs font-medium text-white shadow-lg hover:bg-teal-400"
+            initial={{ y: 20, opacity: 0, scale: 0.95 }}
+            animate={{ y: 0, opacity: 1, scale: 1 }}
+            exit={{ y: 20, opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.2 }}
+            onClick={scrollToBottom}
+            className="absolute bottom-4 left-1/2 z-20 -translate-x-1/2 flex items-center gap-2 rounded-full bg-gradient-to-r from-teal-600 to-emerald-600 px-4 py-2 text-xs font-bold text-white shadow-lg shadow-teal-900/20 hover:from-teal-500 hover:to-emerald-500 active:scale-95 transition-all"
           >
-            New message below ↓
+            <span>New clinical message below</span>
+            <ArrowDown className="h-3.5 w-3.5 animate-bounce" />
           </motion.button>
         )}
       </AnimatePresence>

@@ -1,6 +1,15 @@
-import { useState, useRef, useCallback, type KeyboardEvent } from "react";
+import { useState, useRef, useCallback, useEffect, type KeyboardEvent } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Paperclip, ArrowUp, X, FlaskConical, Sparkles, FileText, Check } from "lucide-react";
+import {
+  Paperclip,
+  ArrowUp,
+  X,
+  FlaskConical,
+  Smile,
+  FileText,
+  Lock,
+  Image as ImageIcon
+} from "lucide-react";
 import { format } from "date-fns";
 import { clsx } from "clsx";
 
@@ -11,9 +20,14 @@ interface ChatInputProps {
   onSendMessage: (text: string) => void;
   onSendFile: (file: File, options?: { messageText?: string; isLabResult?: boolean }) => Promise<void> | void;
   onTyping: (typing: boolean) => void;
+  placeholder?: string;
 }
 
-const EMOJIS = ["😊", "👍", "❤️", "🙏", "✅", "👋", "😄", "🎉", "💊", "🏥", "📋", "🩺", "👨‍⚕️", "👩‍⚕️", "💉", "🧬", "📊", "🔬", "🫀", "🧠"];
+const EMOJIS = [
+  "😊", "👍", "❤️", "🙏", "✅", "👋", "😄", "🎉",
+  "💊", "🏥", "📋", "🩺", "👨‍⚕️", "👩‍⚕️", "💉", "🧬",
+  "📊", "🔬", "🫀", "🧠"
+];
 
 const LAB_TAG_SUGGESTIONS = [
   "Blood Test",
@@ -31,7 +45,8 @@ export function ChatInput({
   endedAt,
   onSendMessage,
   onSendFile,
-  onTyping
+  onTyping,
+  placeholder = "Type your message or clinical question..."
 }: ChatInputProps) {
   const [text, setText] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -47,15 +62,35 @@ export function ChatInput({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const labFileInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const emojiPickerRef = useRef<HTMLDivElement>(null);
 
+  // Close emoji picker on click outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (emojiPickerRef.current && !emojiPickerRef.current.contains(e.target as Node)) {
+        setShowEmojis(false);
+      }
+    };
+    if (showEmojis) {
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => document.removeEventListener("mousedown", handleClickOutside);
+    }
+  }, [showEmojis]);
+
+  // Read-only Concluded State
   if (isReadOnly) {
     return (
-      <div className="border-t border-gray-800 bg-gray-900/50 px-4 py-3 text-center">
-        <p className="text-sm text-gray-500">
-          🔒 This consultation has ended
-          {endedAt ? ` on ${format(new Date(endedAt), "MMM d, yyyy 'at' hh:mm a")}` : ""}.
-          Chat is read-only.
-        </p>
+      <div className="border-t border-slate-200/80 bg-slate-50/80 dark:border-white/10 dark:bg-slate-900/80 px-4 py-3.5 text-center backdrop-blur-sm">
+        <div className="flex items-center justify-center gap-2 text-xs font-semibold text-slate-500 dark:text-slate-400">
+          <div className="flex h-5 w-5 items-center justify-center rounded-full bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+            <Lock className="h-3 w-3" />
+          </div>
+          <span>
+            This consultation has concluded
+            {endedAt ? ` on ${format(new Date(endedAt), "MMM d, yyyy 'at' hh:mm a")}` : ""}.
+            Chat is archived and read-only.
+          </span>
+        </div>
       </div>
     );
   }
@@ -63,9 +98,12 @@ export function ChatInput({
   const handleSend = useCallback(async () => {
     if (selectedFile) {
       setSending(true);
-      await onSendFile(selectedFile);
-      setSelectedFile(null);
-      setSending(false);
+      try {
+        await onSendFile(selectedFile);
+        setSelectedFile(null);
+      } finally {
+        setSending(false);
+      }
       return;
     }
 
@@ -89,11 +127,11 @@ export function ChatInput({
 
   const handleChange = (value: string) => {
     setText(value);
-    onTyping(true);
+    onTyping(value.length > 0);
 
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
-      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 120)}px`;
+      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 130)}px`;
     }
   };
 
@@ -155,36 +193,51 @@ export function ChatInput({
   const handleEmojiClick = (emoji: string) => {
     setText((prev) => prev + emoji);
     setShowEmojis(false);
+    if (textareaRef.current) {
+      textareaRef.current.focus();
+    }
   };
 
   const hasContent = text.trim().length > 0 || selectedFile !== null;
 
   return (
-    <div className="border-t border-gray-800 bg-gray-900/80 px-4 py-3">
-      {/* Standard selected file preview banner */}
+    <div className="relative border-t border-slate-200/80 bg-white/90 dark:border-white/10 dark:bg-slate-900/90 p-3 sm:p-4 backdrop-blur-md">
+      {/* File attachment preview chip */}
       <AnimatePresence>
         {selectedFile && (
           <motion.div
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 20, opacity: 0 }}
-            className="mb-2 flex items-center gap-2 rounded-lg bg-gray-800 px-3 py-2"
+            initial={{ opacity: 0, y: 10, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 10, scale: 0.98 }}
+            className="mb-3 flex items-center justify-between rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-100/90 dark:bg-slate-800/90 p-2.5 shadow-xs"
           >
-            {selectedFile.type.startsWith("image/") ? (
-              <img
-                src={URL.createObjectURL(selectedFile)}
-                alt="Preview"
-                className="h-10 w-10 rounded object-cover"
-              />
-            ) : (
-              <span className="text-sm text-gray-300">{selectedFile.name}</span>
-            )}
-            <span className="text-xs text-gray-500">
-              ({(selectedFile.size / 1024).toFixed(1)} KB)
-            </span>
+            <div className="flex items-center gap-2.5 min-w-0">
+              {selectedFile.type.startsWith("image/") ? (
+                <img
+                  src={URL.createObjectURL(selectedFile)}
+                  alt="Attachment preview"
+                  className="h-10 w-10 rounded-xl object-cover ring-1 ring-black/10 shrink-0"
+                />
+              ) : (
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-teal-500/10 text-teal-600 dark:text-teal-400">
+                  <FileText className="h-5 w-5" />
+                </div>
+              )}
+              <div className="min-w-0">
+                <p className="truncate text-xs font-bold text-slate-800 dark:text-slate-100">
+                  {selectedFile.name}
+                </p>
+                <p className="text-[11px] text-slate-500 tabular-nums">
+                  {(selectedFile.size / 1024).toFixed(1)} KB • Ready to send
+                </p>
+              </div>
+            </div>
+
             <button
+              type="button"
               onClick={() => setSelectedFile(null)}
-              className="ml-auto rounded-full p-1 text-gray-400 hover:bg-gray-700 hover:text-white"
+              className="rounded-xl p-1.5 text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-slate-700 dark:hover:text-slate-200 transition-colors ml-2"
+              title="Remove attachment"
             >
               <X className="h-4 w-4" />
             </button>
@@ -192,19 +245,20 @@ export function ChatInput({
         )}
       </AnimatePresence>
 
+      {/* Main Input Controls Row */}
       <div className="flex items-end gap-2">
-        {/* Dedicated "Lab Result" Button */}
+        {/* Lab Result Quick Trigger Pill */}
         <button
           type="button"
           onClick={() => labFileInputRef.current?.click()}
-          className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-500/15 border border-emerald-500/35 text-emerald-400 hover:bg-emerald-500/25 active:scale-95 text-xs font-bold transition-all shadow-xs shrink-0"
-          title="Photograph or upload paper lab result for doctor"
+          className="flex h-10 items-center gap-1.5 px-3 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/20 active:scale-95 text-xs font-bold transition-all shadow-xs shrink-0 select-none"
+          title="Photograph or upload paper lab result for immediate doctor review"
         >
-          <FlaskConical className="h-4 w-4 text-emerald-400 shrink-0" />
-          <span className="hidden xs:inline">Lab Result</span>
+          <FlaskConical className="h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+          <span className="hidden sm:inline">Lab Result</span>
         </button>
 
-        {/* Hidden Lab Result File / Camera Input */}
+        {/* Hidden Lab Result File Input */}
         <input
           ref={labFileInputRef}
           type="file"
@@ -213,15 +267,17 @@ export function ChatInput({
           onChange={handleLabFileSelect}
         />
 
-        {/* Standard attachment button */}
+        {/* Regular Attachment Button (Paperclip) */}
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
-          className="rounded-full p-2 text-gray-400 hover:bg-gray-800 hover:text-teal-400"
-          title="Attach other file"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-slate-200/80 dark:border-white/10 text-slate-500 hover:text-teal-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+          title="Attach PDF or image document"
         >
-          <Paperclip className="h-5 w-5" />
+          <Paperclip className="h-4 w-4" />
         </button>
+
+        {/* Hidden Standard File Input */}
         <input
           ref={fileInputRef}
           type="file"
@@ -230,30 +286,32 @@ export function ChatInput({
           onChange={handleFileSelect}
         />
 
-        {/* Emoji picker */}
-        <div className="relative">
+        {/* Emoji Selector Popover */}
+        <div ref={emojiPickerRef} className="relative">
           <button
             type="button"
             onClick={() => setShowEmojis(!showEmojis)}
-            className="rounded-full p-2 text-gray-400 hover:bg-gray-800 hover:text-teal-400"
-            title="Emoji"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-slate-200/80 dark:border-white/10 text-slate-500 hover:text-teal-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            title="Insert emoji"
           >
-            <span className="text-lg">😊</span>
+            <Smile className="h-4 w-4" />
           </button>
+
           <AnimatePresence>
             {showEmojis && (
               <motion.div
-                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                initial={{ opacity: 0, y: 8, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                className="absolute bottom-full left-0 mb-2 grid w-64 grid-cols-5 gap-1 rounded-lg border border-gray-700 bg-gray-900 p-2 shadow-xl z-30"
+                exit={{ opacity: 0, y: 8, scale: 0.95 }}
+                transition={{ duration: 0.15 }}
+                className="absolute bottom-full left-0 mb-2.5 grid w-64 grid-cols-5 gap-1 rounded-2xl border border-slate-200 dark:border-white/15 bg-white dark:bg-slate-900 p-2 shadow-2xl z-30"
               >
                 {EMOJIS.map((emoji) => (
                   <button
                     key={emoji}
                     type="button"
                     onClick={() => handleEmojiClick(emoji)}
-                    className="rounded p-1 text-lg hover:bg-gray-800"
+                    className="flex h-9 w-9 items-center justify-center rounded-xl text-base hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                   >
                     {emoji}
                   </button>
@@ -263,62 +321,72 @@ export function ChatInput({
           </AnimatePresence>
         </div>
 
-        {/* Chat text input */}
-        <div className="flex-1">
+        {/* Dynamic Auto-Expanding Textarea */}
+        <div className="flex-1 min-w-0">
           <textarea
             ref={textareaRef}
             value={text}
             onChange={(e) => handleChange(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Type a message or share a question..."
+            placeholder={placeholder}
             rows={1}
-            className="max-h-[120px] min-h-[40px] w-full resize-none rounded-xl border border-gray-700 bg-gray-800 px-4 py-2.5 text-sm text-gray-100 placeholder-gray-500 outline-none focus:border-teal-500/50 focus:ring-1 focus:ring-teal-500/30"
+            className="max-h-[130px] min-h-[42px] w-full resize-none rounded-2xl border border-slate-200/80 bg-slate-100/70 dark:border-white/10 dark:bg-slate-800/70 px-4 py-2.5 text-xs sm:text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 outline-none transition-all focus:border-teal-500 focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-teal-500/20"
           />
         </div>
 
-        {/* Send message button */}
+        {/* Send Action Button */}
         <button
           type="button"
           onClick={handleSend}
           disabled={!hasContent || sending}
           className={clsx(
-            "flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-colors",
+            "flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl transition-all shadow-xs active:scale-95",
             hasContent && !sending
-              ? "bg-teal-500 text-white hover:bg-teal-400 shadow-md shadow-teal-500/20"
-              : "bg-gray-800 text-gray-600"
+              ? "bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-md shadow-teal-900/20 hover:from-teal-500 hover:to-emerald-500"
+              : "bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-600 cursor-not-allowed border border-slate-200/60 dark:border-white/5"
           )}
+          title="Send message (Enter)"
         >
           {sending ? (
-            <div className="h-4 w-4 animate-spin rounded-full border-2 border-teal-400 border-t-transparent" />
+            <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
           ) : (
-            <ArrowUp className="h-5 w-5" />
+            <ArrowUp className="h-5 w-5 stroke-[2.5]" />
           )}
         </button>
       </div>
 
-      {/* ── Lab Result Review & Add Thoughts Modal ───────────────────────── */}
+      {/* Helpful shortcut hint for desktop */}
+      <div className="hidden sm:flex items-center justify-between mt-1.5 px-1 text-[10px] text-slate-400 select-none">
+        <span>Press <kbd className="font-mono text-[9px] px-1 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700">Enter ↵</kbd> to send, <kbd className="font-mono text-[9px] px-1 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700">Shift+Enter</kbd> for new line</span>
+        <span className="flex items-center gap-1">
+          <FlaskConical className="h-2.5 w-2.5 text-emerald-500" />
+          Lab upload supports image & PDF
+        </span>
+      </div>
+
+      {/* ── Lab Result Review & Thoughts Modal ───────────────────────────── */}
       <AnimatePresence>
         {isLabModalOpen && labFile && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
             <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-lg rounded-3xl border border-emerald-500/30 bg-slate-900 p-6 shadow-2xl flex flex-col max-h-[92vh] overflow-hidden"
-              data-lenis-prevent
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              transition={{ duration: 0.2 }}
+              className="relative w-full max-w-lg rounded-3xl border border-emerald-500/30 bg-white dark:bg-slate-900 p-6 shadow-2xl flex flex-col max-h-[90vh] overflow-hidden"
             >
               {/* Header */}
-              <div className="flex items-center justify-between border-b border-slate-800 pb-4 mb-4">
+              <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4 mb-4">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/25">
                     <FlaskConical className="h-5 w-5" />
                   </div>
                   <div>
-                    <h3 className="text-base font-extrabold text-white">
-                      Share Paper Lab Result
+                    <h3 className="text-base font-extrabold text-slate-900 dark:text-white">
+                      Share Clinical Lab Result
                     </h3>
-                    <p className="text-xs text-slate-400 font-medium">
-                      Doctor will review these values immediately
+                    <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                      Physician will review these values immediately
                     </p>
                   </div>
                 </div>
@@ -327,7 +395,7 @@ export function ChatInput({
                   type="button"
                   onClick={handleCloseLabModal}
                   disabled={sendingLab}
-                  className="rounded-xl p-2 text-slate-400 hover:bg-slate-800 hover:text-white transition-colors"
+                  className="rounded-xl p-2 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-white transition-colors"
                 >
                   <X className="h-5 w-5" />
                 </button>
@@ -336,7 +404,7 @@ export function ChatInput({
               {/* Scrollable Content */}
               <div className="flex-1 overflow-y-auto space-y-4 pr-1">
                 {/* Visual Preview */}
-                <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-3 text-center">
+                <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60 p-3 text-center">
                   {labFile.type.startsWith("image/") ? (
                     <div className="relative group">
                       <img
@@ -344,21 +412,21 @@ export function ChatInput({
                         alt="Lab Result Preview"
                         className="max-h-56 w-auto mx-auto rounded-xl object-contain shadow-md"
                       />
-                      <div className="absolute top-2 right-2 px-2 py-1 rounded-md bg-black/70 text-[10px] font-bold text-emerald-400 border border-emerald-500/40">
+                      <div className="absolute top-2 right-2 px-2 py-0.5 rounded-md bg-black/75 text-[10px] font-bold text-emerald-400 border border-emerald-500/40">
                         High Res Preview
                       </div>
                     </div>
                   ) : (
-                    <div className="flex flex-col items-center justify-center py-8 text-slate-400">
-                      <FileText className="h-12 w-12 text-emerald-400 mb-2" />
-                      <p className="text-sm font-bold text-white">{labFile.name}</p>
-                      <p className="text-xs text-slate-500">PDF Document</p>
+                    <div className="flex flex-col items-center justify-center py-6 text-slate-400">
+                      <FileText className="h-10 w-10 text-emerald-500 mb-2" />
+                      <p className="text-sm font-bold text-slate-900 dark:text-white">{labFile.name}</p>
+                      <p className="text-xs text-slate-500">PDF Clinical Report</p>
                     </div>
                   )}
 
-                  <div className="mt-2.5 flex items-center justify-between px-1 text-xs text-slate-400">
+                  <div className="mt-2.5 flex items-center justify-between px-1 text-xs text-slate-500 dark:text-slate-400">
                     <span className="truncate max-w-[200px] font-medium">{labFile.name}</span>
-                    <span className="font-semibold text-emerald-400">
+                    <span className="font-semibold text-emerald-600 dark:text-emerald-400 tabular-nums">
                       {(labFile.size / 1024).toFixed(1)} KB
                     </span>
                   </div>
@@ -366,8 +434,8 @@ export function ChatInput({
 
                 {/* Quick Test Tags */}
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
-                    Quick Tag (Click to Add):
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">
+                    Quick Clinical Tags (Click to Add):
                   </label>
                   <div className="flex flex-wrap gap-1.5">
                     {LAB_TAG_SUGGESTIONS.map((tag) => (
@@ -376,10 +444,10 @@ export function ChatInput({
                         type="button"
                         onClick={() => handleAddTagToLabNote(tag)}
                         className={clsx(
-                          "px-2.5 py-1 rounded-lg text-xs font-semibold transition-all border",
+                          "px-2.5 py-1 rounded-xl text-xs font-semibold transition-all border",
                           labNote.includes(tag)
-                            ? "bg-emerald-500/25 border-emerald-500 text-emerald-300"
-                            : "bg-slate-800/80 border-slate-700/80 text-slate-300 hover:border-emerald-500/50 hover:text-white"
+                            ? "bg-emerald-500/20 border-emerald-500 text-emerald-700 dark:text-emerald-300"
+                            : "bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-emerald-500/40"
                         )}
                       >
                         {tag}
@@ -388,31 +456,31 @@ export function ChatInput({
                   </div>
                 </div>
 
-                {/* Patient Thoughts / Notes */}
+                {/* Patient Context / Notes */}
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">
-                    Your notes or context for the doctor:
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
+                    Your notes or context for the physician:
                   </label>
                   <textarea
                     value={labNote}
                     onChange={(e) => setLabNote(e.target.value)}
-                    placeholder="e.g. Taken this morning at Tikur Anbessa Hospital after 12 hours fasting. Doctor wanted to check my glucose levels..."
+                    placeholder="e.g. Taken this morning at Tikur Anbessa Hospital after 12 hours fasting..."
                     rows={3}
-                    className="w-full rounded-xl border border-slate-700 bg-slate-800/90 px-3.5 py-2.5 text-xs sm:text-sm text-white placeholder:text-slate-500 outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/30 resize-none"
+                    className="w-full rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2.5 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 resize-none transition-all"
                   />
-                  <p className="mt-1 text-[11px] text-slate-500">
-                    Sharing test date, hospital name, or specific symptoms helps the doctor interpret your result accurately.
+                  <p className="mt-1 text-[11px] text-slate-400">
+                    Sharing test date or specific symptoms helps the doctor interpret your result accurately.
                   </p>
                 </div>
               </div>
 
               {/* Modal Footer */}
-              <div className="mt-4 pt-4 border-t border-slate-800 flex items-center justify-between gap-3">
+              <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-3">
                 <button
                   type="button"
                   onClick={handleCloseLabModal}
                   disabled={sendingLab}
-                  className="px-4 py-2.5 rounded-xl border border-slate-700 text-xs font-bold text-slate-300 hover:bg-slate-800 transition-colors"
+                  className="px-4 py-2.5 rounded-2xl border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                 >
                   Cancel
                 </button>
@@ -421,17 +489,17 @@ export function ChatInput({
                   type="button"
                   onClick={handleSendLabResult}
                   disabled={sendingLab}
-                  className="flex-1 flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-bold text-xs sm:text-sm hover:from-emerald-400 hover:to-teal-400 shadow-lg shadow-emerald-500/25 transition-all disabled:opacity-50"
+                  className="flex-1 flex items-center justify-center gap-2 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold text-xs sm:text-sm hover:from-emerald-500 hover:to-teal-500 shadow-lg shadow-emerald-900/20 transition-all disabled:opacity-50 active:scale-95"
                 >
                   {sendingLab ? (
                     <>
                       <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                      <span>Sending to Doctor...</span>
+                      <span>Transmitting Lab Document...</span>
                     </>
                   ) : (
                     <>
                       <FlaskConical className="h-4 w-4" />
-                      <span>Send Lab Result to Doctor</span>
+                      <span>Transmit Lab Result to Doctor</span>
                     </>
                   )}
                 </button>
