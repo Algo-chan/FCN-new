@@ -578,6 +578,17 @@ export default function ConsultationPage() {
     }
   }
 
+  const timerOverlay = (
+    <ConsultationTimer
+      startedAt={startedAt}
+      durationMinutes={durationMinutes}
+      isReadOnly={isReadOnly}
+      isDoctor={isDoctor}
+      onRequestExtension={handleRequestExtension}
+      isExtending={isExtending}
+    />
+  );
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.98 }}
@@ -725,6 +736,7 @@ export default function ConsultationPage() {
             isDoctor={isDoctor}
             otherPartySpecialty={isDoctor ? undefined : otherPartySpecialty ?? undefined}
             otherPartyName={otherPartyName ?? (isDoctor ? "Patient" : "Doctor")}
+            headerOverlay={timerOverlay}
           />
 
           <AnimatePresence>
@@ -1002,6 +1014,7 @@ export default function ConsultationPage() {
               isDoctor={isDoctor}
               otherPartySpecialty={isDoctor ? undefined : otherPartySpecialty ?? undefined}
               otherPartyName={otherPartyName ?? (isDoctor ? "Patient" : "Doctor")}
+              headerOverlay={timerOverlay}
             />
 
             <AnimatePresence>
@@ -1233,15 +1246,7 @@ function TopBar({
           </button>
         )}
 
-        {/* Live Countdown Timer (Visible on both Mobile & Desktop) */}
-        <ConsultationTimer
-          startedAt={startedAt}
-          durationMinutes={durationMinutes}
-          isReadOnly={isReadOnly}
-          isDoctor={isDoctor}
-          onRequestExtension={onRequestExtension}
-          isExtending={isExtending}
-        />
+
 
         {/* Desktop Doctor Clinical Actions (md+) */}
         {isDoctor && !isReadOnly && (

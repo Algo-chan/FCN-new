@@ -205,7 +205,7 @@ export function ChatInput({
   const hasContent = text.trim().length > 0 || selectedFile !== null;
 
   return (
-    <div className="relative px-3 sm:px-4 pb-3 sm:pb-4 pt-1 bg-gradient-to-t from-white via-white/80 to-transparent dark:from-slate-900 dark:via-slate-900/80 dark:to-transparent select-none">
+    <div className="relative px-2 sm:px-4 pb-2 sm:pb-4 pt-1 bg-gradient-to-t from-white via-white/80 to-transparent dark:from-slate-900 dark:via-slate-900/80 dark:to-transparent select-none">
       {/* File attachment preview chip */}
       <AnimatePresence>
         {selectedFile && (
@@ -249,55 +249,19 @@ export function ChatInput({
         )}
       </AnimatePresence>
 
-      {/* Floating Island Dock Container */}
-      <div className="rounded-3xl border border-slate-200 dark:border-white/10 bg-slate-50/90 dark:bg-slate-800/90 p-1.5 sm:p-2 shadow-lg shadow-slate-900/5 dark:shadow-black/40 backdrop-blur-md transition-all focus-within:border-teal-500/60 focus-within:ring-2 focus-within:ring-teal-500/20">
-        <div className="flex items-end gap-1.5 sm:gap-2">
-          {/* 1. Dynamic Auto-Expanding Textarea */}
-          <div className="flex-1 min-w-0">
-            <textarea
-              ref={textareaRef}
-              value={text}
-              onChange={(e) => handleChange(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder={placeholder}
-              rows={1}
-              className="max-h-[130px] min-h-[40px] h-[40px] w-full resize-none rounded-2xl border-0 bg-transparent px-3.5 py-2 text-xs sm:text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 outline-none leading-5"
-            />
-          </div>
-
-          {/* 2. Lab Result Quick Trigger Pill (Doctor side only) */}
-          {isDoctor && (
-            <>
-              <button
-                type="button"
-                onClick={() => labFileInputRef.current?.click()}
-                className="flex h-10 items-center gap-1.5 px-2.5 sm:px-3 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/20 active:scale-95 text-xs font-bold transition-all shadow-xs shrink-0 select-none"
-                title="Photograph or upload paper lab result for immediate review"
-              >
-                <FlaskConical className="h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                <span className="hidden md:inline">Lab Result</span>
-              </button>
-
-              {/* Hidden Lab Result File Input */}
-              <input
-                ref={labFileInputRef}
-                type="file"
-                accept="image/*,.pdf"
-                className="hidden"
-                onChange={handleLabFileSelect}
-              />
-            </>
-          )}
-
-          {/* 3. Emoji Selector Popover */}
-          <div ref={emojiPickerRef} className="relative shrink-0">
+      {/* WhatsApp / Telegram Unified Floating Pill Dock */}
+      <div className="flex items-end gap-1.5 sm:gap-2">
+        {/* Main Integrated Capsule (Emoji + Textarea + Attachments) */}
+        <div className="flex-1 min-w-0 flex items-end rounded-2xl sm:rounded-3xl border border-slate-200/90 dark:border-white/10 bg-slate-50/95 dark:bg-slate-800/95 px-1.5 sm:px-2 py-1 shadow-md shadow-slate-900/5 dark:shadow-black/30 backdrop-blur-md transition-all focus-within:border-teal-500/60 focus-within:ring-2 focus-within:ring-teal-500/20">
+          {/* Emoji Trigger Button (Inside left) */}
+          <div ref={emojiPickerRef} className="relative shrink-0 self-end mb-0.5">
             <button
               type="button"
               onClick={() => setShowEmojis(!showEmojis)}
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-slate-200/80 dark:border-white/10 text-slate-500 hover:text-teal-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              className="flex h-8 w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-xl text-slate-500 dark:text-slate-400 hover:text-teal-600 dark:hover:text-teal-400 hover:bg-slate-200/60 dark:hover:bg-slate-700/60 transition-colors"
               title="Insert emoji"
             >
-              <Smile className="h-4 w-4" />
+              <Smile className="h-4 w-4 sm:h-5 sm:w-5" />
             </button>
 
             <AnimatePresence>
@@ -307,7 +271,7 @@ export function ChatInput({
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 8, scale: 0.95 }}
                   transition={{ duration: 0.15 }}
-                  className="absolute bottom-full right-0 mb-3 grid w-64 grid-cols-5 gap-1 rounded-2xl border border-slate-200 dark:border-white/15 bg-white dark:bg-slate-900 p-2 shadow-2xl z-30"
+                  className="absolute bottom-full left-0 mb-3 grid w-64 max-w-[calc(100vw-3rem)] grid-cols-5 gap-1 rounded-2xl border border-slate-200 dark:border-white/15 bg-white dark:bg-slate-900 p-2 shadow-2xl z-30"
                 >
                   {EMOJIS.map((emoji) => (
                     <button
@@ -324,47 +288,81 @@ export function ChatInput({
             </AnimatePresence>
           </div>
 
-          {/* 4. Regular Attachment Button (Paperclip) */}
-          <button
-            type="button"
-            onClick={() => fileInputRef.current?.click()}
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-slate-200/80 dark:border-white/10 text-slate-500 hover:text-teal-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-            title="Attach PDF or image document"
-          >
-            <Paperclip className="h-4 w-4" />
-          </button>
+          {/* Auto-Expanding Textarea (Spans the entire middle) */}
+          <div className="flex-1 min-w-0 px-1 py-0.5">
+            <textarea
+              ref={textareaRef}
+              value={text}
+              onChange={(e) => handleChange(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder={placeholder}
+              rows={1}
+              className="max-h-[120px] min-h-[36px] sm:min-h-[38px] h-[36px] sm:h-[38px] w-full resize-none border-0 bg-transparent px-1 py-1.5 text-xs sm:text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 outline-none leading-5"
+            />
+          </div>
 
-          {/* Hidden Standard File Input */}
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept=".jpg,.jpeg,.png,.webp,.pdf"
-            className="hidden"
-            onChange={handleFileSelect}
-          />
+          {/* Right Action Icons inside capsule */}
+          <div className="flex items-center shrink-0 self-end mb-0.5 gap-0.5">
+            {/* Lab Result Quick Trigger (Doctor only) */}
+            {isDoctor && (
+              <>
+                <button
+                  type="button"
+                  onClick={() => labFileInputRef.current?.click()}
+                  className="flex h-8 w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-xl text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/15 transition-colors"
+                  title="Upload clinical lab result"
+                >
+                  <FlaskConical className="h-4 w-4" />
+                </button>
+                <input
+                  ref={labFileInputRef}
+                  type="file"
+                  accept="image/*,.pdf"
+                  className="hidden"
+                  onChange={handleLabFileSelect}
+                />
+              </>
+            )}
 
-          {/* 5. Send Action Button */}
-          <button
-            type="button"
-            onClick={handleSend}
-            disabled={!hasContent || sending}
-            className={clsx(
-              "flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl transition-all shadow-md active:scale-95",
-              hasContent && !sending
-                ? "bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-teal-900/25 hover:from-teal-500 hover:to-emerald-500"
-                : "bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-600 cursor-not-allowed border border-slate-200/60 dark:border-white/5"
-            )}
-            title="Send message (Enter)"
-          >
-            {sending ? (
-              <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-            ) : (
-              <ArrowUp className="h-5 w-5 stroke-[2.5]" />
-            )}
-          </button>
+            {/* Standard Attachment (Paperclip) */}
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="flex h-8 w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-xl text-slate-500 dark:text-slate-400 hover:text-teal-600 dark:hover:text-teal-400 hover:bg-slate-200/60 dark:hover:bg-slate-700/60 transition-colors"
+              title="Attach PDF or image document"
+            >
+              <Paperclip className="h-4 w-4" />
+            </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".jpg,.jpeg,.png,.webp,.pdf"
+              className="hidden"
+              onChange={handleFileSelect}
+            />
+          </div>
         </div>
-      </div>
 
+        {/* Floating Circular Send Action Button (Standalone, Telegram/WhatsApp style) */}
+        <button
+          type="button"
+          onClick={handleSend}
+          disabled={!hasContent || sending}
+          className={clsx(
+            "flex h-10 w-10 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-full transition-all shadow-md active:scale-95",
+            hasContent && !sending
+              ? "bg-gradient-to-tr from-teal-600 to-emerald-600 text-white shadow-teal-500/25 hover:from-teal-500 hover:to-emerald-500 scale-100"
+              : "bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-600 cursor-not-allowed opacity-60"
+          )}
+          title="Send message (Enter)"
+        >
+          {sending ? (
+            <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+          ) : (
+            <ArrowUp className="h-5 w-5 stroke-[2.5]" />
+          )}
+        </button>
+      </div>
 
       {/* ── Lab Result Review & Thoughts Modal ───────────────────────────── */}
       <AnimatePresence>

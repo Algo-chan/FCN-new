@@ -17,6 +17,7 @@ interface MessagesListProps {
   isDoctor?: boolean;
   otherPartySpecialty?: string;
   otherPartyName?: string;
+  headerOverlay?: React.ReactNode;
 }
 
 function getDateLabel(date: Date): string {
@@ -55,7 +56,8 @@ export function MessagesList({
   onNewMessageBelow,
   isDoctor,
   otherPartySpecialty,
-  otherPartyName
+  otherPartyName,
+  headerOverlay
 }: MessagesListProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -130,6 +132,13 @@ export function MessagesList({
 
   return (
     <div className="relative flex-1 overflow-hidden bg-slate-50/40 dark:bg-slate-950/30">
+      {/* Floating Top-Right Time Counter inside Message Show Area */}
+      {headerOverlay && (
+        <div className="absolute top-2.5 right-2.5 sm:top-3.5 sm:right-4 z-20 pointer-events-auto">
+          {headerOverlay}
+        </div>
+      )}
+
       <div
         ref={containerRef}
         className="h-full overflow-y-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-700"

@@ -54,12 +54,12 @@ export const ConsultationTimer = ({
       {/* Live Countdown Badge */}
       <div
         className={clsx(
-          "flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-black transition-all tabular-nums select-none shadow-xs",
+          "flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black transition-all tabular-nums select-none shadow-md backdrop-blur-md border",
           isLowTime
-            ? "bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/30 animate-pulse"
+            ? "bg-rose-500/20 text-rose-600 dark:text-rose-400 border-rose-500/40 animate-pulse"
             : isMedTime
-              ? "bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30"
-              : "bg-teal-500/15 text-teal-700 dark:text-teal-300 border border-teal-500/25"
+              ? "bg-amber-500/20 text-amber-700 dark:text-amber-300 border-amber-500/40"
+              : "bg-white/90 dark:bg-slate-900/90 text-teal-700 dark:text-teal-300 border-teal-500/30 dark:border-teal-400/20"
         )}
         title={
           isMedTime
