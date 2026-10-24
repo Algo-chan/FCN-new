@@ -21,6 +21,7 @@ interface ChatInputProps {
   onSendFile: (file: File, options?: { messageText?: string; isLabResult?: boolean }) => Promise<void> | void;
   onTyping: (typing: boolean) => void;
   placeholder?: string;
+  isDoctor?: boolean;
 }
 
 const EMOJIS = [
@@ -46,7 +47,8 @@ export function ChatInput({
   onSendMessage,
   onSendFile,
   onTyping,
-  placeholder = "Type your message or clinical question..."
+  placeholder = "Type your message or clinical question...",
+  isDoctor = false
 }: ChatInputProps) {
   const [text, setText] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -263,25 +265,29 @@ export function ChatInput({
             />
           </div>
 
-          {/* 2. Lab Result Quick Trigger Pill */}
-          <button
-            type="button"
-            onClick={() => labFileInputRef.current?.click()}
-            className="flex h-10 items-center gap-1.5 px-2.5 sm:px-3 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/20 active:scale-95 text-xs font-bold transition-all shadow-xs shrink-0 select-none"
-            title="Photograph or upload paper lab result for immediate doctor review"
-          >
-            <FlaskConical className="h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-            <span className="hidden md:inline">Lab Result</span>
-          </button>
+          {/* 2. Lab Result Quick Trigger Pill (Doctor side only) */}
+          {isDoctor && (
+            <>
+              <button
+                type="button"
+                onClick={() => labFileInputRef.current?.click()}
+                className="flex h-10 items-center gap-1.5 px-2.5 sm:px-3 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/20 active:scale-95 text-xs font-bold transition-all shadow-xs shrink-0 select-none"
+                title="Photograph or upload paper lab result for immediate review"
+              >
+                <FlaskConical className="h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                <span className="hidden md:inline">Lab Result</span>
+              </button>
 
-          {/* Hidden Lab Result File Input */}
-          <input
-            ref={labFileInputRef}
-            type="file"
-            accept="image/*,.pdf"
-            className="hidden"
-            onChange={handleLabFileSelect}
-          />
+              {/* Hidden Lab Result File Input */}
+              <input
+                ref={labFileInputRef}
+                type="file"
+                accept="image/*,.pdf"
+                className="hidden"
+                onChange={handleLabFileSelect}
+              />
+            </>
+          )}
 
           {/* 3. Emoji Selector Popover */}
           <div ref={emojiPickerRef} className="relative shrink-0">

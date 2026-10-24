@@ -172,7 +172,7 @@ export function MessagesList({
               <p className="mt-1 text-xs text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">
                 {isDoctor
                   ? `You are connected with ${otherPartyName || "your patient"}. Review their health passport on the right and begin the clinical consultation.`
-                  : `You are connected with Dr. ${otherPartyName || "your physician"}. Send your questions, current symptoms, or tap Lab Result to share paper test results.`}
+                  : `You are connected with Dr. ${otherPartyName || "your physician"}. Send your questions, current symptoms, or attach medical documents.`}
               </p>
             </div>
           )}

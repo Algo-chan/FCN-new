@@ -706,10 +706,11 @@ export default function ConsultationPage() {
             onSendMessage={handleSendMessage}
             onSendFile={handleSendFile}
             onTyping={handleTyping}
+            isDoctor={isDoctor}
             placeholder={
               isDoctor
                 ? "Message patient, advise on care, or request clarifying info..."
-                : `Ask Dr. ${otherPartyName || "a question"}, describe symptoms, or share lab results...`
+                : `Ask Dr. ${otherPartyName || "a question"}, describe symptoms, or attach documents...`
             }
           />
         </div>
@@ -982,6 +983,7 @@ export default function ConsultationPage() {
               onSendMessage={handleSendMessage}
               onSendFile={handleSendFile}
               onTyping={handleTyping}
+              isDoctor={isDoctor}
               placeholder={
                 isDoctor
                   ? "Message patient or request info..."
