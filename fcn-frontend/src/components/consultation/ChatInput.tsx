@@ -118,7 +118,7 @@ export function ChatInput({
     setText("");
     onTyping(false);
     if (textareaRef.current) {
-      textareaRef.current.style.height = "40px";
+      textareaRef.current.style.height = "24px";
     }
   }, [text, selectedFile, onSendMessage, onSendFile, onTyping]);
 
@@ -134,8 +134,9 @@ export function ChatInput({
     onTyping(value.trim().length > 0);
 
     if (textareaRef.current) {
-      textareaRef.current.style.height = "40px";
-      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 130)}px`;
+      textareaRef.current.style.height = "auto";
+      const scrollH = textareaRef.current.scrollHeight;
+      textareaRef.current.style.height = `${Math.min(Math.max(scrollH, 24), 120)}px`;
     }
   };
 
@@ -250,25 +251,25 @@ export function ChatInput({
       </AnimatePresence>
 
       {/* WhatsApp / Telegram Unified Floating Pill Dock */}
-      <div className="flex items-end gap-1.5 sm:gap-2">
+      <div className="flex items-center gap-1.5 sm:gap-2">
         {/* Main Integrated Capsule (Emoji + Textarea + Attachments) */}
-        <div className="flex-1 min-w-0 flex items-end rounded-2xl sm:rounded-3xl border border-slate-200/90 dark:border-white/10 bg-slate-50/95 dark:bg-slate-800/95 px-1.5 sm:px-2 py-1 shadow-md shadow-slate-900/5 dark:shadow-black/30 backdrop-blur-md transition-all focus-within:border-teal-500/60 focus-within:ring-2 focus-within:ring-teal-500/20">
+        <div className="flex-1 min-w-0 flex items-center rounded-2xl sm:rounded-full border border-slate-200/90 dark:border-white/10 bg-slate-50/95 dark:bg-slate-800/95 px-2 sm:px-2.5 h-[42px] min-h-[42px] max-h-[130px] shadow-sm shadow-slate-900/5 dark:shadow-black/20 backdrop-blur-md transition-all focus-within:border-teal-500/60 focus-within:ring-2 focus-within:ring-teal-500/20">
           {/* Emoji Trigger Button (Inside left) */}
-          <div ref={emojiPickerRef} className="relative shrink-0 self-end mb-0.5">
+          <div ref={emojiPickerRef} className="relative shrink-0 flex items-center justify-center">
             <button
               type="button"
               onClick={() => setShowEmojis(!showEmojis)}
-              className="flex h-8 w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-xl text-slate-500 dark:text-slate-400 hover:text-teal-600 dark:hover:text-teal-400 hover:bg-slate-200/60 dark:hover:bg-slate-700/60 transition-colors"
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-slate-500 dark:text-slate-400 hover:text-teal-600 dark:hover:text-teal-400 hover:bg-slate-200/60 dark:hover:bg-slate-700/60 transition-colors"
               title="Insert emoji"
             >
-              <Smile className="h-4 w-4 sm:h-5 sm:w-5" />
+              <Smile className="h-4 w-4 sm:h-[18px] sm:w-[18px]" />
             </button>
 
             <AnimatePresence>
               {showEmojis && (
                 <motion.div
                   initial={{ opacity: 0, y: 8, scale: 0.95 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, y: 8, scale: 0.95 }}
                   transition={{ duration: 0.15 }}
                   className="absolute bottom-full left-0 mb-3 grid w-64 max-w-[calc(100vw-3rem)] grid-cols-5 gap-1 rounded-2xl border border-slate-200 dark:border-white/15 bg-white dark:bg-slate-900 p-2 shadow-2xl z-30"
@@ -288,8 +289,8 @@ export function ChatInput({
             </AnimatePresence>
           </div>
 
-          {/* Auto-Expanding Textarea (Spans the entire middle) */}
-          <div className="flex-1 min-w-0 px-1 py-0.5">
+          {/* Auto-Expanding Textarea (Spans the entire middle, perfectly centered) */}
+          <div className="flex-1 min-w-0 px-1.5 flex items-center">
             <textarea
               ref={textareaRef}
               value={text}
@@ -297,19 +298,19 @@ export function ChatInput({
               onKeyDown={handleKeyDown}
               placeholder={placeholder}
               rows={1}
-              className="max-h-[120px] min-h-[36px] sm:min-h-[38px] h-[36px] sm:h-[38px] w-full resize-none border-0 bg-transparent px-1 py-1.5 text-xs sm:text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 outline-none leading-5"
+              className="max-h-[120px] min-h-[24px] h-[24px] w-full resize-none border-0 bg-transparent p-0 text-xs sm:text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 outline-none leading-6 placeholder:leading-6"
             />
           </div>
 
           {/* Right Action Icons inside capsule */}
-          <div className="flex items-center shrink-0 self-end mb-0.5 gap-0.5">
+          <div className="flex items-center shrink-0 gap-0.5">
             {/* Lab Result Quick Trigger (Doctor only) */}
             {isDoctor && (
               <>
                 <button
                   type="button"
                   onClick={() => labFileInputRef.current?.click()}
-                  className="flex h-8 w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-xl text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/15 transition-colors"
+                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/15 transition-colors"
                   title="Upload clinical lab result"
                 >
                   <FlaskConical className="h-4 w-4" />
@@ -328,7 +329,7 @@ export function ChatInput({
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="flex h-8 w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-xl text-slate-500 dark:text-slate-400 hover:text-teal-600 dark:hover:text-teal-400 hover:bg-slate-200/60 dark:hover:bg-slate-700/60 transition-colors"
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-slate-500 dark:text-slate-400 hover:text-teal-600 dark:hover:text-teal-400 hover:bg-slate-200/60 dark:hover:bg-slate-700/60 transition-colors"
               title="Attach PDF or image document"
             >
               <Paperclip className="h-4 w-4" />
@@ -343,13 +344,13 @@ export function ChatInput({
           </div>
         </div>
 
-        {/* Floating Circular Send Action Button (Standalone, Telegram/WhatsApp style) */}
+        {/* Floating Circular Send Action Button (42px, identical height to the capsule!) */}
         <button
           type="button"
           onClick={handleSend}
           disabled={!hasContent || sending}
           className={clsx(
-            "flex h-10 w-10 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-full transition-all shadow-md active:scale-95",
+            "flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-full transition-all shadow-md active:scale-95",
             hasContent && !sending
               ? "bg-gradient-to-tr from-teal-600 to-emerald-600 text-white shadow-teal-500/25 hover:from-teal-500 hover:to-emerald-500 scale-100"
               : "bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-600 cursor-not-allowed opacity-60"
