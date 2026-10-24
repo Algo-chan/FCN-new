@@ -499,7 +499,7 @@ export default function ConsultationPage() {
 
   if (!appointmentId) {
     return (
-      <div className="flex h-[calc(100vh-4rem)] items-center justify-center bg-fcn-surface-light dark:bg-fcn-dark p-6 text-center">
+      <div className="flex h-full items-center justify-center bg-fcn-surface-light dark:bg-fcn-dark p-6 text-center">
         <div className="max-w-md rounded-2xl border border-fcn-primary/15 bg-white dark:bg-fcn-surface-dark p-8 shadow-xl">
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-fcn-primary/10 text-fcn-primary">
             <MessageCircle className="h-8 w-8" />
@@ -525,7 +525,7 @@ export default function ConsultationPage() {
 
   if (contextLoading) {
     return (
-      <div className="flex h-[calc(100vh-4rem)] items-center justify-center bg-slate-50 dark:bg-slate-950">
+      <div className="flex h-full items-center justify-center bg-slate-50 dark:bg-slate-950">
         <Spinner size="lg" />
       </div>
     );
@@ -544,7 +544,7 @@ export default function ConsultationPage() {
 
     if (contextData.timeLock.reason === "expired") {
       return (
-        <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center p-6 bg-slate-50 dark:bg-slate-950">
+        <div className="h-full flex items-center justify-center p-6 bg-slate-50 dark:bg-slate-950">
           <div className="max-w-md w-full rounded-3xl border border-slate-200/80 bg-white dark:border-white/10 dark:bg-slate-900 p-8 shadow-xl text-center space-y-4">
             <div className="flex h-16 w-16 mx-auto items-center justify-center rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-500">
               <Clock className="h-8 w-8" />
@@ -593,7 +593,7 @@ export default function ConsultationPage() {
       initial={{ opacity: 0, scale: 0.98 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
-      className="flex h-[calc(100vh-4rem)] overflow-hidden bg-slate-100/90 dark:bg-[#070b10] p-2 sm:p-3 lg:p-4 gap-3 lg:gap-4"
+      className="flex h-full w-full max-h-full overflow-hidden bg-slate-100/90 dark:bg-[#070b10] p-1.5 sm:p-2 lg:p-2.5 gap-2 lg:gap-3"
     >
       {/* Desktop Split View: 65% Chat Stream, 35% Health Passport */}
       <div className="hidden flex-1 lg:flex gap-3 lg:gap-4">

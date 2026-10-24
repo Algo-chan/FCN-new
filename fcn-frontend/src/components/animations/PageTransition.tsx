@@ -2,8 +2,13 @@ import { useEffect, type PropsWithChildren } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { useSound } from "@/hooks/useSound";
 import { MOTION } from "@/styles/motion";
+import { clsx } from "clsx";
 
-export const PageTransition = ({ children }: PropsWithChildren) => {
+interface PageTransitionProps {
+  className?: string;
+}
+
+export const PageTransition = ({ children, className }: PropsWithChildren<PageTransitionProps>) => {
   const shouldReduceMotion = useReducedMotion();
   const { playTransition } = useSound();
 
@@ -17,7 +22,7 @@ export const PageTransition = ({ children }: PropsWithChildren) => {
       animate={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
       exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -20 }}
       transition={{ duration: shouldReduceMotion ? 0 : MOTION.standard.duration, ease: MOTION.standard.ease }}
-      className="min-h-full"
+      className={clsx("min-h-full", className)}
     >
       {children}
     </motion.div>

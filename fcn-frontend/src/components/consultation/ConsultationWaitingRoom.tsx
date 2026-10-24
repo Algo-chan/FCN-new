@@ -93,7 +93,7 @@ export const ConsultationWaitingRoom: React.FC<ConsultationWaitingRoomProps> = (
   const doctorSpecialty = appointment.doctor?.specialty ?? "General Practice";
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex flex-col items-center justify-center px-4 py-8 sm:py-12 bg-slate-50/60 dark:bg-slate-950/80">
+    <div className="min-h-full h-full overflow-y-auto flex flex-col items-center justify-center px-4 py-8 sm:py-12 bg-slate-50/60 dark:bg-slate-950/80">
       <div className="w-full max-w-2xl space-y-6">
         {/* Top Back Navigation */}
         <div className="flex items-center justify-between">

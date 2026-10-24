@@ -1,4 +1,5 @@
 import { type PropsWithChildren, useCallback } from "react";
+import { useLocation } from "react-router-dom";
 import { clsx } from "clsx";
 import { PageTransition } from "@/components/animations/PageTransition";
 import { Sidebar } from "@/components/layout/Sidebar";
@@ -20,6 +21,9 @@ export const PageLayout = ({ children }: PropsWithChildren) => {
   const user = useAuthStore((state) => state.user);
   const { width } = useWindowSize();
   const isMobile = width < 1024;
+  const location = useLocation();
+  const isConsultation = location.pathname.startsWith("/consultation");
+
   const updateActivity = useCallback(() => {
     useAuthStore.getState().updateActivity();
   }, []);
@@ -34,17 +38,34 @@ export const PageLayout = ({ children }: PropsWithChildren) => {
 
   return (
     <div
-      className="min-h-screen bg-slate-50/70 text-slate-800 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-200"
+      className={clsx(
+        "bg-slate-50/70 text-slate-800 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-200",
+        isConsultation ? "h-screen max-h-screen overflow-hidden" : "min-h-screen"
+      )}
       onClick={updateActivity}
       onKeyDown={updateActivity}
       role="none"
     >
       <Sidebar />
-      <div className={clsx("min-h-screen transition-[margin] duration-300", sidebarWidth)}>
+      <div
+        className={clsx(
+          "transition-[margin] duration-300",
+          sidebarWidth,
+          isConsultation ? "h-screen max-h-screen overflow-hidden flex flex-col" : "min-h-screen"
+        )}
+      >
         <TopBar />
-        <main className="mx-auto w-full max-w-7xl px-3 py-4 sm:px-4 sm:py-6 md:px-6 lg:px-8 lg:py-8 pb-28 lg:pb-8">
-          <Breadcrumbs />
-          <PageTransition>{children}</PageTransition>
+        <main
+          className={clsx(
+            isConsultation
+              ? "w-full flex-1 overflow-hidden p-0 m-0 max-w-none min-h-0"
+              : "mx-auto w-full max-w-7xl px-3 py-4 sm:px-4 sm:py-6 md:px-6 lg:px-8 lg:py-8 pb-28 lg:pb-8"
+          )}
+        >
+          {!isConsultation && <Breadcrumbs />}
+          <PageTransition className={isConsultation ? "h-full w-full flex flex-col min-h-0" : undefined}>
+            {children}
+          </PageTransition>
         </main>
       </div>
 
@@ -61,9 +82,11 @@ export const PageLayout = ({ children }: PropsWithChildren) => {
         ))}
       </div>
 
-      <div className="lg:hidden">
-        <BottomNavBar />
-      </div>
+      {!isConsultation && (
+        <div className="lg:hidden">
+          <BottomNavBar />
+        </div>
+      )}
 
       {/* Instant Consultation Overlay for Patients */}
       <InstantConsultOverlay />
