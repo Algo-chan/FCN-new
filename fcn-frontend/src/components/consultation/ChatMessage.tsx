@@ -458,8 +458,8 @@ export function ChatMessage({
         {/* Message Meta Info (Timestamp + Read Receipts) */}
         <div
           className={clsx(
-            "mt-1 flex items-center gap-1 px-1 select-none",
-            isSender ? "flex-row-reverse" : "flex-row"
+            "mt-1 flex items-center gap-1.5 px-1 select-none",
+            isSender ? "justify-end" : "justify-start"
           )}
         >
           <span className="text-[10px] text-slate-400 dark:text-slate-500 tabular-nums">
@@ -470,15 +470,15 @@ export function ChatMessage({
               className={clsx(
                 "flex items-center transition-colors",
                 message.read_at
-                  ? "text-teal-600 dark:text-teal-400"
+                  ? "text-sky-500 dark:text-sky-400"
                   : "text-slate-400 dark:text-slate-500"
               )}
-              title={message.read_at ? "Read by recipient" : "Delivered to server"}
+              title={message.read_at ? "Read by recipient" : "Sent"}
             >
               {message.read_at ? (
-                <CheckCheck className="h-3 w-3 stroke-[2.5]" />
+                <CheckCheck className="h-3.5 w-3.5 stroke-[2.5]" />
               ) : (
-                <Check className="h-3 w-3 stroke-[2.5]" />
+                <Check className="h-3.5 w-3.5 stroke-[2.5]" />
               )}
             </span>
           )}

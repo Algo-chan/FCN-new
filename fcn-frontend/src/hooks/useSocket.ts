@@ -19,6 +19,7 @@ export const useSocket = (): UseSocketReturn => {
   const socketRef = useRef<Socket | null>(null);
   const [socket, setSocket] = useState<Socket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
+  const isTypingRef = useRef(false);
   const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -56,6 +57,7 @@ export const useSocket = (): UseSocketReturn => {
       socketRef.current = null;
       setSocket(null);
       setIsConnected(false);
+      isTypingRef.current = false;
     };
   }, [accessToken]);
 
@@ -119,13 +121,17 @@ export const useSocket = (): UseSocketReturn => {
   }, []);
 
   const startTyping = useCallback((appointmentId: string) => {
-    socketRef.current?.emit("typing_start", { appointmentId });
+    if (!isTypingRef.current) {
+      isTypingRef.current = true;
+      socketRef.current?.emit("typing_start", { appointmentId });
+    }
 
     if (typingTimeoutRef.current) {
       clearTimeout(typingTimeoutRef.current);
     }
 
     typingTimeoutRef.current = setTimeout(() => {
+      isTypingRef.current = false;
       socketRef.current?.emit("typing_stop", { appointmentId });
     }, 3000);
   }, []);
@@ -133,8 +139,12 @@ export const useSocket = (): UseSocketReturn => {
   const stopTyping = useCallback((appointmentId: string) => {
     if (typingTimeoutRef.current) {
       clearTimeout(typingTimeoutRef.current);
+      typingTimeoutRef.current = null;
     }
-    socketRef.current?.emit("typing_stop", { appointmentId });
+    if (isTypingRef.current) {
+      isTypingRef.current = false;
+      socketRef.current?.emit("typing_stop", { appointmentId });
+    }
   }, []);
 
   const markRead = useCallback((appointmentId: string, messageIds: string[]) => {

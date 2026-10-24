@@ -131,7 +131,7 @@ export function ChatInput({
 
   const handleChange = (value: string) => {
     setText(value);
-    onTyping(value.length > 0);
+    onTyping(value.trim().length > 0);
 
     if (textareaRef.current) {
       textareaRef.current.style.height = "40px";

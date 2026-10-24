@@ -85,7 +85,7 @@ export default function ConsultationPage() {
   const queryClient = useQueryClient();
   const pageFocusedRef = useRef(true);
 
-  const { socket, joinConsultation, sendMessage, sendFile, startTyping, stopTyping, endConsultation } =
+  const { socket, joinConsultation, sendMessage, sendFile, startTyping, stopTyping, markRead, endConsultation } =
     useSocket();
   const { playNotification, playSuccess } = useSound();
 
@@ -116,11 +116,22 @@ export default function ConsultationPage() {
           setMessages([...msgs, ...storeMessages]);
         }
         setHasMoreMessages(meta ? p < meta.totalPages! : false);
+
+        // Immediately mark any unread messages from the other user as read
+        if (user?.id) {
+          const unreadIds = msgs
+            .filter((m) => m.sender_user_id !== user.id && !m.read_at && !m.is_system_message)
+            .map((m) => m.id);
+          if (unreadIds.length > 0) {
+            markRead(appointmentId, unreadIds);
+            markMessagesRead(unreadIds);
+          }
+        }
       } catch {
         toast.error("Failed to load messages");
       }
     },
-    [appointmentId, setMessages]
+    [appointmentId, setMessages, user?.id, markRead, markMessagesRead]
   );
 
   useEffect(() => {
@@ -173,45 +184,8 @@ export default function ConsultationPage() {
 
   const showFiveMinWarning = !isReadOnly && remainingSecs <= 300 && remainingSecs > 0;
 
-  // Initial doctor auto-greeting simulation with typing indicator on mount for instant consultations
-  useEffect(() => {
-    if (
-      !contextData?.appointment ||
-      messages.length > 0 ||
-      isDoctor ||
-      isReadOnly ||
-      contextData?.timeLock?.isLocked
-    )
-      return;
-
-    const doctorName = contextData.appointment.doctor?.full_name ?? "Doctor";
-    const timer1 = setTimeout(() => {
-      setTyping({ userId: contextData.appointment.doctor_id, userName: `Dr. ${doctorName}` });
-    }, 1200);
-
-    const timer2 = setTimeout(() => {
-      setTyping(null);
-      const greetingMessage: Message = {
-        id: `greeting-${Date.now()}`,
-        conversation_id: appointmentId!,
-        appointment_id: appointmentId!,
-        sender_user_id: contextData.appointment.doctor_id,
-        recipient_user_id: user?.id ?? "",
-        sender_name: `Dr. ${doctorName}`,
-        message_text: `Hello! I'm Dr. ${doctorName}. I have reviewed your file and chief complaint. How are you feeling right now?`,
-        message_type: "text",
-        is_system_message: false,
-        sent_at: new Date().toISOString()
-      };
-      addMessage(greetingMessage);
-      playNotification();
-    }, 3200);
-
-    return () => {
-      clearTimeout(timer1);
-      clearTimeout(timer2);
-    };
-  }, [contextData, messages.length, isDoctor, isReadOnly, appointmentId, user?.id, setTyping, addMessage, playNotification]);
+  // typingExpiryRef: automatically clear typing state if sender disconnects or event drops
+  const typingExpiryRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (!socket || !appointmentId) return;
@@ -219,7 +193,20 @@ export default function ConsultationPage() {
     const handleNewMessage = (message: Message) => {
       addMessage(message);
       if (message.sender_user_id !== user?.id) {
-        incrementUnread();
+        if (typingExpiryRef.current) {
+          clearTimeout(typingExpiryRef.current);
+          typingExpiryRef.current = null;
+        }
+        setTyping(null);
+
+        // Active tab view: instantly mark as read so sender gets double checkmark
+        if (pageFocusedRef.current && appointmentId) {
+          markRead(appointmentId, [message.id]);
+          markMessagesRead([message.id]);
+        } else {
+          incrementUnread();
+        }
+
         if (!pageFocusedRef.current) {
           playNotification();
         }
@@ -229,10 +216,21 @@ export default function ConsultationPage() {
     const handleUserTyping = (data: { userId: string; userName: string }) => {
       if (data.userId !== user?.id) {
         setTyping({ userId: data.userId, userName: data.userName });
+        if (typingExpiryRef.current) {
+          clearTimeout(typingExpiryRef.current);
+        }
+        typingExpiryRef.current = setTimeout(() => {
+          setTyping(null);
+          typingExpiryRef.current = null;
+        }, 4000);
       }
     };
 
     const handleUserStoppedTyping = () => {
+      if (typingExpiryRef.current) {
+        clearTimeout(typingExpiryRef.current);
+        typingExpiryRef.current = null;
+      }
       setTyping(null);
     };
 
@@ -258,6 +256,15 @@ export default function ConsultationPage() {
     const handleConsultationJoined = (data: { recentMessages?: Message[] }) => {
       if (data.recentMessages && data.recentMessages.length > 0) {
         setMessages(data.recentMessages);
+        if (user?.id && appointmentId) {
+          const unreadIds = data.recentMessages
+            .filter((m) => m.sender_user_id !== user.id && !m.read_at && !m.is_system_message)
+            .map((m) => m.id);
+          if (unreadIds.length > 0) {
+            markRead(appointmentId, unreadIds);
+            markMessagesRead(unreadIds);
+          }
+        }
       }
     };
 
@@ -308,6 +315,9 @@ export default function ConsultationPage() {
       socket.off("extension_requested", handleExtensionRequested);
       socket.off("extension_granted", handleExtensionGranted);
       socket.off("extension_declined", handleExtensionDeclined);
+      if (typingExpiryRef.current) {
+        clearTimeout(typingExpiryRef.current);
+      }
     };
   }, [
     socket,
@@ -317,6 +327,7 @@ export default function ConsultationPage() {
     addMessage,
     incrementUnread,
     setTyping,
+    markRead,
     markMessagesRead,
     setReadOnly,
     playNotification,
@@ -325,15 +336,41 @@ export default function ConsultationPage() {
   ]);
 
   useEffect(() => {
-    const handleFocus = () => { pageFocusedRef.current = true; };
+    const markUnreadNow = () => {
+      pageFocusedRef.current = true;
+      resetUnread();
+      if (appointmentId && user?.id) {
+        const currentMessages = useConsultationStore.getState().messages;
+        const unreadIds = currentMessages
+          .filter((m) => m.sender_user_id !== user.id && !m.read_at && !m.is_system_message)
+          .map((m) => m.id);
+        if (unreadIds.length > 0) {
+          markRead(appointmentId, unreadIds);
+          markMessagesRead(unreadIds);
+        }
+      }
+    };
+
+    const handleFocus = () => markUnreadNow();
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        markUnreadNow();
+      } else {
+        pageFocusedRef.current = false;
+      }
+    };
     const handleBlur = () => { pageFocusedRef.current = false; };
+
     window.addEventListener("focus", handleFocus);
     window.addEventListener("blur", handleBlur);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
     return () => {
       window.removeEventListener("focus", handleFocus);
       window.removeEventListener("blur", handleBlur);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, []);
+  }, [appointmentId, user?.id, markRead, markMessagesRead, resetUnread]);
 
   useEffect(() => {
     return () => {
@@ -344,15 +381,17 @@ export default function ConsultationPage() {
   const handleSendMessage = useCallback(
     (text: string) => {
       if (appointmentId) {
+        stopTyping(appointmentId);
         sendMessage(appointmentId, text);
       }
     },
-    [appointmentId, sendMessage]
+    [appointmentId, sendMessage, stopTyping]
   );
 
   const handleSendFile = useCallback(
     async (file: File, options?: { messageText?: string; isLabResult?: boolean }) => {
       if (appointmentId) {
+        stopTyping(appointmentId);
         try {
           await sendFile(appointmentId, file, options);
           playSuccess();
@@ -361,7 +400,7 @@ export default function ConsultationPage() {
         }
       }
     },
-    [appointmentId, sendFile, playSuccess]
+    [appointmentId, sendFile, stopTyping, playSuccess]
   );
 
   const handleTyping = useCallback(
