@@ -248,6 +248,20 @@ function computeAge(dateOfBirth: Date): number {
   return age;
 }
 
+function parseConversationField(raw: unknown): ConversationEntry[] {
+  if (!raw) return [];
+  if (Array.isArray(raw)) return raw as ConversationEntry[];
+  if (typeof raw === "string") {
+    try {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) return parsed;
+    } catch {
+      return [];
+    }
+  }
+  return [];
+}
+
 class AITriageService {
   async getPatientContext(patientId: string): Promise<PatientContext> {
     const user = await prisma.user.findUnique({
@@ -371,7 +385,51 @@ class AITriageService {
     }
 
     if (assessment.is_complete) {
-      throw new AppError("Assessment already completed", 400, "ALREADY_COMPLETE");
+      const conversation = parseConversationField(assessment.conversation);
+      const sanitizedMessage = sanitizeInput(patientMessage);
+
+      const patientContext = await this.getPatientContext(patientId);
+      const systemPrompt =
+        buildSystemPrompt(assessment.language, patientContext) +
+        "\n\nNOTE: The formal symptom triage assessment is already complete. The patient is asking a follow-up clinical question. Answer their question clearly, safely, and directly according to Ethiopian medical guidelines. Advise them to seek physical care or book an appointment if symptoms worsen.";
+
+      const history: AIMessage[] = conversation.map((msg) => ({
+        role: msg.role === "assistant" ? "assistant" : "user",
+        content: msg.content
+      }));
+
+      const aiResponse = await callAI(
+        systemPrompt,
+        [...history, { role: "user", content: sanitizedMessage }]
+      );
+
+      const conversationalMessage = extractConversationalMessage(aiResponse);
+
+      conversation.push(
+        { role: "user", content: sanitizedMessage, timestamp: new Date().toISOString() },
+        { role: "assistant", content: conversationalMessage, round: assessment.round_count, timestamp: new Date().toISOString() }
+      );
+
+      await prisma.symptomAssessment.update({
+        where: { id: assessmentId },
+        data: {
+          conversation: JSON.stringify(conversation)
+        }
+      });
+
+      let parsed: ParsedAssessment | undefined;
+      if (assessment.final_assessment) {
+        try {
+          parsed = this.parseFinalAssessment(assessment.final_assessment);
+        } catch { }
+      }
+
+      return {
+        aiResponse: conversationalMessage,
+        round: assessment.round_count,
+        isComplete: true,
+        finalAssessment: parsed
+      };
     }
 
     const maxRounds = parseInt((await systemSettings.get("ai_max_rounds")) || "3", 10);
@@ -380,7 +438,7 @@ class AITriageService {
       return this.completeAssessment(assessmentId, patientId);
     }
 
-    const conversation: ConversationEntry[] = JSON.parse(assessment.conversation as string);
+    const conversation: ConversationEntry[] = parseConversationField(assessment.conversation);
     const sanitizedMessage = sanitizeInput(patientMessage);
 
     const newRound = assessment.round_count + 1;
@@ -482,7 +540,7 @@ class AITriageService {
       };
     }
 
-    const conversation: ConversationEntry[] = JSON.parse(assessment.conversation as string);
+    const conversation: ConversationEntry[] = parseConversationField(assessment.conversation);
     const patientContext = await this.getPatientContext(patientId);
     const systemPrompt = buildSystemPrompt(assessment.language, patientContext);
     const roundPrompt = buildRoundPrompt(3, assessment.language);
@@ -642,19 +700,18 @@ class AITriageService {
       throw new AppError("Unauthorized access to this assessment", 403, "FORBIDDEN");
     }
 
-    if (assessment.conversation && typeof assessment.conversation === "string") {
+    let conversationList = parseConversationField(assessment.conversation);
+    conversationList = conversationList.map((msg: any) => {
+      if (msg.role === "assistant" && (msg.content?.includes("FINAL_ASSESSMENT") || msg.content?.includes('"risk_level"'))) {
+        return { ...msg, content: extractConversationalMessage(msg.content) };
+      }
+      return msg;
+    });
+    (assessment as any).conversation = conversationList;
+
+    if (assessment.final_assessment) {
       try {
-        const parsed = JSON.parse(assessment.conversation as string);
-        if (Array.isArray(parsed)) {
-          (assessment as any).conversation = parsed.map((msg: any) => {
-            if (msg.role === "assistant" && (msg.content?.includes("FINAL_ASSESSMENT") || msg.content?.includes('"risk_level"'))) {
-              return { ...msg, content: extractConversationalMessage(msg.content) };
-            }
-            return msg;
-          });
-        } else {
-          (assessment as any).conversation = parsed;
-        }
+        (assessment as any).parsed_assessment = this.parseFinalAssessment(assessment.final_assessment);
       } catch { }
     }
 

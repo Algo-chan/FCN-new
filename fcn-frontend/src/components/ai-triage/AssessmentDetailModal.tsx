@@ -15,9 +15,10 @@ interface AssessmentDetailModalProps {
   isOpen: boolean;
   onClose: () => void;
   assessmentId: string;
+  onResume?: (id: string) => void;
 }
 
-export const AssessmentDetailModal = ({ isOpen, onClose, assessmentId }: AssessmentDetailModalProps) => {
+export const AssessmentDetailModal = ({ isOpen, onClose, assessmentId, onResume }: AssessmentDetailModalProps) => {
   const [assessment, setAssessment] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -185,6 +186,21 @@ export const AssessmentDetailModal = ({ isOpen, onClose, assessmentId }: Assessm
               </div>
             )}
           </div>
+
+          {onResume && (
+            <div className="flex justify-end pt-2 border-t border-fcn-primary/10">
+              <button
+                type="button"
+                onClick={() => {
+                  onClose();
+                  onResume(assessment.id);
+                }}
+                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-fcn-primary text-white text-xs font-bold hover:bg-fcn-primary-hover shadow-xs transition-all active:scale-95"
+              >
+                <span>{assessment.is_complete ? "Open in Consultation Chat" : "Resume This Assessment"}</span>
+              </button>
+            </div>
+          )}
         </div>
       )}
     </Modal>

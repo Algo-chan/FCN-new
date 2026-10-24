@@ -16,7 +16,7 @@ import {
   Plus
 } from "lucide-react";
 import gsap from "gsap";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams, useParams } from "react-router-dom";
 import { clsx } from "clsx";
 import toast from "react-hot-toast";
 import { useAuthStore } from "@/store/auth.store";
@@ -26,6 +26,7 @@ import {
   continueConversation as apiContinueConversation,
   completeAssessment as apiCompleteAssessment,
   getAssessmentHistory as apiGetHistory,
+  getAssessmentById as apiGetAssessmentById,
   markBookingInitiated as apiMarkBooking
 } from "@/services/ai-triage.service";
 import type { AssessmentHistoryResponse } from "@/services/ai-triage.service";
@@ -38,7 +39,8 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { useSound } from "@/hooks/useSound";
-import type { SupportedLanguage } from "@/types";
+import { cleanAssessmentMessage } from "@/utils/markdown";
+import type { SupportedLanguage, ConversationMessage, ParsedAssessment } from "@/types";
 
 type PageState = "language_select" | "symptoms_input" | "conversation";
 
@@ -102,6 +104,8 @@ const PREFERRED_LANG_KEY = "fcn_preferred_language";
 
 const AISymptomCheckPage = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const { id: routeId } = useParams<{ id?: string }>();
   const authUser = useAuthStore((state) => state.user);
   const patientProfile = (authUser as any)?.patient_profile;
 
@@ -192,9 +196,92 @@ const AISymptomCheckPage = () => {
     }
   }, [store.isLoading]);
 
+  const resumeAssessment = useCallback(
+    async (id: string) => {
+      setStarting(true);
+      setIncompleteBanner(null);
+      try {
+        const res = await apiGetAssessmentById(id);
+        if (res.success && res.data) {
+          const item = res.data;
+          let conv: ConversationMessage[] = [];
+          if (Array.isArray(item.conversation)) {
+            conv = item.conversation;
+          } else if (typeof item.conversation === "string") {
+            try {
+              conv = JSON.parse(item.conversation);
+            } catch {
+              conv = [];
+            }
+          }
+
+          // Clean conversational messages if assistant output had JSON blocks
+          conv = conv.map((msg) => {
+            if (msg.role === "assistant" && (msg.content?.includes("FINAL_ASSESSMENT") || msg.content?.includes('"risk_level"'))) {
+              return { ...msg, content: cleanAssessmentMessage(msg.content) };
+            }
+            return msg;
+          });
+
+          let parsedFinal: ParsedAssessment | null = (item as any).parsed_assessment || null;
+          if (!parsedFinal && item.final_assessment) {
+            try {
+              const match =
+                typeof item.final_assessment === "string"
+                  ? item.final_assessment.match(/\{[\s\S]*"risk_level"[\s\S]*\}/)
+                  : null;
+              if (match) {
+                parsedFinal = JSON.parse(match[0]);
+              } else if (typeof item.final_assessment === "object") {
+                parsedFinal = item.final_assessment as any;
+              }
+            } catch { }
+          }
+
+          const maxRoundInMessages = conv.reduce((max, m) => Math.max(max, m.round || 0), 0);
+          const roundCount = item.round_count || maxRoundInMessages || 1;
+
+          store.restoreAssessment({
+            assessmentId: item.id,
+            language: (item.language as SupportedLanguage) || "en",
+            conversation: conv,
+            currentRound: roundCount,
+            isComplete: item.is_complete,
+            finalAssessment: parsedFinal,
+            bookingInitiated: Boolean((item as any).booking_initiated)
+          });
+
+          if (item.language) {
+            localStorage.setItem(PREFERRED_LANG_KEY, item.language);
+          }
+
+          setShowFinalCard(item.is_complete && !!parsedFinal);
+          setActiveTab("new");
+          setPageState("conversation");
+          playTransition();
+          toast.success(item.is_complete ? "Consultation loaded" : "Resumed consultation");
+        } else {
+          toast.error(res.error?.message || "Failed to load past consultation");
+        }
+      } catch (err: any) {
+        toast.error(err?.response?.data?.error?.message || "Failed to resume consultation");
+      } finally {
+        setStarting(false);
+      }
+    },
+    [playTransition, store]
+  );
+
   useEffect(() => {
     checkIncomplete();
   }, []);
+
+  useEffect(() => {
+    const urlId = routeId || searchParams.get("id") || searchParams.get("resume");
+    if (urlId) {
+      resumeAssessment(urlId);
+    }
+  }, [routeId, searchParams, resumeAssessment]);
 
   const checkIncomplete = async () => {
     try {
@@ -370,11 +457,7 @@ const AISymptomCheckPage = () => {
   };
 
   const handleResumeIncomplete = async (id: string) => {
-    setIncompleteBanner(null);
-    store.reset();
-    store.setAssessmentId(id);
-    setPageState("conversation");
-    setActiveTab("new");
+    await resumeAssessment(id);
   };
 
   const handleStartFresh = () => {
@@ -398,11 +481,8 @@ Recommended: See ${store.finalAssessment.recommended_specialty || "a doctor"}`;
     window.print();
   };
 
-  const handleResumeFromHistory = (id: string) => {
-    store.reset();
-    store.setAssessmentId(id);
-    setPageState("conversation");
-    setActiveTab("new");
+  const handleResumeFromHistory = async (id: string) => {
+    await resumeAssessment(id);
   };
 
   const severityColor = (() => {
@@ -903,6 +983,7 @@ Recommended: See ${store.finalAssessment.recommended_specialty || "a doctor"}`;
         isOpen={!!modalAssessmentId}
         onClose={() => setModalAssessmentId(null)}
         assessmentId={modalAssessmentId || ""}
+        onResume={(id) => resumeAssessment(id)}
       />
     </div>
   );

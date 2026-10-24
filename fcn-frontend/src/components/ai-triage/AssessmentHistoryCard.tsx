@@ -77,23 +77,26 @@ export const AssessmentHistoryCard = ({
         <span>Completed in {round_count} round{round_count !== 1 ? "s" : ""}</span>
       </div>
 
-      <div className="flex gap-2">
+      <div className="flex gap-2 flex-wrap">
+        <button
+          onClick={() => onResume(id)}
+          className={clsx(
+            "flex items-center gap-1 rounded-md px-3 py-1.5 text-xs font-semibold transition-colors shadow-xs active:scale-95",
+            is_complete
+              ? "bg-fcn-primary text-white hover:bg-fcn-primary-hover"
+              : "bg-amber-500 text-white hover:bg-amber-600"
+          )}
+        >
+          <ArrowRight className="h-3.5 w-3.5" />
+          {is_complete ? "Open in Chat" : "Resume Assessment"}
+        </button>
         <button
           onClick={() => onView(id)}
           className="flex items-center gap-1 rounded-md bg-fcn-primary/10 px-3 py-1.5 text-xs font-medium text-fcn-primary transition-colors hover:bg-fcn-primary/20"
         >
           <Eye className="h-3.5 w-3.5" />
-          {is_complete ? "View Full Assessment" : "View Details"}
+          Quick Preview
         </button>
-        {!is_complete && (
-          <button
-            onClick={() => onResume(id)}
-            className="flex items-center gap-1 rounded-md bg-fcn-warning/10 px-3 py-1.5 text-xs font-medium text-fcn-warning transition-colors hover:bg-fcn-warning/20"
-          >
-            <ArrowRight className="h-3.5 w-3.5" />
-            Resume Assessment
-          </button>
-        )}
       </div>
     </motion.div>
   );

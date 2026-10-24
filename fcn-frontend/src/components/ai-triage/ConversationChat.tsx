@@ -243,47 +243,53 @@ export const ConversationChat = ({
         <div ref={chatEndRef} />
       </div>
 
-      {!isComplete && (
-        <div className="border-t border-fcn-primary/10 p-4">
-          <div className="relative">
-            <textarea
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder={
-                currentRound === 0
+      <div className="border-t border-fcn-primary/10 p-4">
+        <div className="relative">
+          <textarea
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder={
+              isComplete
+                ? "Ask a follow-up question or clarify details..."
+                : currentRound === 0
                   ? "Describe your symptoms in detail..."
                   : currentRound === 1
                     ? "Answer the questions above..."
                     : "Provide any additional information..."
-              }
-              disabled={isLoading}
-              maxLength={1000}
-              rows={2}
-              className="w-full resize-none rounded-lg border border-fcn-primary/10 bg-fcn-light/50 px-4 py-3 pr-20 text-sm text-fcn-text-light placeholder-gray-400 outline-none transition-colors focus:border-fcn-accent dark:bg-fcn-dark/50 dark:text-fcn-text-dark"
-            />
-            <div className="absolute bottom-3 right-3 flex items-center gap-2">
-              <span className="text-xs text-gray-400">{input.length}/1000</span>
-              {currentRound < 2 && (
-                <button
-                  onClick={onSkipToAssessment}
-                  disabled={isLoading}
-                  className="text-xs text-fcn-primary hover:text-fcn-accent disabled:opacity-50"
-                >
-                  Skip to Assessment
-                </button>
-              )}
+            }
+            disabled={isLoading}
+            maxLength={1000}
+            rows={2}
+            className="w-full resize-none rounded-lg border border-fcn-primary/10 bg-fcn-light/50 px-4 py-3 pr-20 text-sm text-fcn-text-light placeholder-gray-400 outline-none transition-colors focus:border-fcn-accent dark:bg-fcn-dark/50 dark:text-fcn-text-dark"
+          />
+          <div className="absolute bottom-3 right-3 flex items-center gap-2">
+            <span className="text-xs text-gray-400">{input.length}/1000</span>
+            {!isComplete && currentRound < 2 && (
               <button
-                onClick={handleSend}
-                disabled={!input.trim() || isLoading}
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-fcn-primary text-white transition-all hover:shadow-[0_0_16px_rgba(10,126,164,0.35)] disabled:opacity-50"
+                onClick={onSkipToAssessment}
+                disabled={isLoading}
+                className="text-xs text-fcn-primary hover:text-fcn-accent disabled:opacity-50"
               >
-                <ArrowUp className="h-4 w-4" />
+                Skip to Assessment
               </button>
-            </div>
+            )}
+            <button
+              onClick={handleSend}
+              disabled={!input.trim() || isLoading}
+              className="flex h-8 w-8 items-center justify-center rounded-full bg-fcn-primary text-white transition-all hover:shadow-[0_0_16px_rgba(10,126,164,0.35)] disabled:opacity-50"
+              title={isComplete ? "Send follow-up" : "Send message"}
+            >
+              <ArrowUp className="h-4 w-4" />
+            </button>
           </div>
         </div>
-      )}
+        {isComplete && (
+          <p className="mt-1 text-[11px] text-fcn-text-light/50 dark:text-fcn-text-dark/50">
+            💬 You can ask follow-up questions, or book an appointment with a doctor below.
+          </p>
+        )}
+      </div>
     </div>
   );
 };

@@ -142,6 +142,7 @@ export const AppRouter = () => (
     <Route element={<PatientRoute />}>
       <Route path="/appointments/book" element={<BookAppointmentPage />} />
       <Route path="/ai-check" element={<AISymptomCheckPage />} />
+      <Route path="/ai-check/:id" element={<AISymptomCheckPage />} />
       <Route path="/pharmacy" element={<PharmacyPage />} />
     </Route>
 
