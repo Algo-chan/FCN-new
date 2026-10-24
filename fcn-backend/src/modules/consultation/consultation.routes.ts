@@ -8,7 +8,8 @@ import {
   saveSummaryNoteController,
   getConsultationSummaryController,
   requestExtensionController,
-  respondExtensionController
+  respondExtensionController,
+  getAiClinicalAssistanceController
 } from "./consultation.controller";
 
 export const consultationRoutes = Router();
@@ -22,3 +23,4 @@ consultationRoutes.post("/:appointmentId/prescribe", requireRole("doctor"), issu
 consultationRoutes.post("/:appointmentId/summary-note", requireRole("doctor"), saveSummaryNoteController);
 consultationRoutes.post("/:appointmentId/extension/request", requireRole("doctor"), requestExtensionController);
 consultationRoutes.post("/:appointmentId/extension/respond", requireRole("patient"), respondExtensionController);
+consultationRoutes.post("/:appointmentId/ai-assist", requireRole("doctor"), getAiClinicalAssistanceController);

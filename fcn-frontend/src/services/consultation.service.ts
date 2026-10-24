@@ -1,5 +1,5 @@
 import { api } from "./api";
-import type { ApiResponse, ConsultationContext, ConsultationSummary } from "@/types";
+import type { ApiResponse, ConsultationContext, ConsultationSummary, ClinicalAiAssessment } from "@/types";
 import type { Message } from "@/types";
 
 export interface IssuePrescriptionDto {
@@ -67,6 +67,13 @@ export const consultationService = {
     const response = await api.post<ApiResponse<{ approved: boolean; duration_minutes?: number; addedMinutes?: number }>>(
       `/consultations/${appointmentId}/extension/respond`,
       { approved, minutes }
+    );
+    return response.data;
+  },
+
+  getAiAssistance: async (appointmentId: string) => {
+    const response = await api.post<ApiResponse<ClinicalAiAssessment>>(
+      `/consultations/${appointmentId}/ai-assist`
     );
     return response.data;
   }

@@ -29,7 +29,8 @@ import { consultationService } from "@/services/consultation.service";
 import { MessagesList } from "@/components/consultation/MessagesList";
 import { ChatInput } from "@/components/consultation/ChatInput";
 import { PatientHealthPassport } from "@/components/consultation/PatientHealthPassport";
-import { PrescribePanel } from "@/components/consultation/PrescribePanel";
+import { PrescribePanel, type PrescribePanelPrefill } from "@/components/consultation/PrescribePanel";
+import { DoctorAICopilotTab } from "@/components/consultation/DoctorAICopilotTab";
 import { ConsultationTimer } from "@/components/consultation/ConsultationTimer";
 import { ExtensionApprovalModal } from "@/components/consultation/ExtensionApprovalModal";
 import { DirectCallModal } from "@/components/consultation/DirectCallModal";
@@ -41,7 +42,8 @@ import { Spinner } from "@/components/ui/Spinner";
 import type { ConsultationContext, Message } from "@/types";
 import { clsx } from "clsx";
 
-type MobileTab = "chat" | "info";
+type MobileTab = "chat" | "info" | "ai";
+type DoctorWorkspaceTab = "passport" | "ai";
 
 export default function ConsultationPage() {
   const { appointmentId } = useParams<{ appointmentId: string }>();
@@ -65,6 +67,8 @@ export default function ConsultationPage() {
   } = useConsultationStore();
 
   const [mobileTab, setMobileTab] = useState<MobileTab>("chat");
+  const [doctorTab, setDoctorTab] = useState<DoctorWorkspaceTab>("passport");
+  const [prefillMedication, setPrefillMedication] = useState<PrescribePanelPrefill | null>(null);
   const [prescribeOpen, setPrescribeOpen] = useState(false);
   const [showNoteInput, setShowNoteInput] = useState(false);
   const [summaryNote, setSummaryNote] = useState("");
@@ -399,7 +403,19 @@ export default function ConsultationPage() {
   const handlePrescriptionIssued = useCallback(() => {
     playSuccess();
     refetchContext();
+    setPrefillMedication(null);
   }, [playSuccess, refetchContext]);
+
+  const handlePreFillPrescription = useCallback((med: PrescribePanelPrefill) => {
+    setPrefillMedication(med);
+    setPrescribeOpen(true);
+    toast.success(`Pre-filled ${med.drug_name} into prescription panel`);
+  }, []);
+
+  const handleInsertNoteFromAi = useCallback((text: string) => {
+    setShowNoteInput(true);
+    setSummaryNote((prev) => (prev.trim() ? `${prev}\n\n${text}` : text));
+  }, []);
 
   const handleRequestExtension = useCallback(
     async (minutes = 10) => {
@@ -642,12 +658,68 @@ export default function ConsultationPage() {
           />
         </div>
 
-        {/* Right side: Patient Passport / Clinical Info */}
-        <div className="relative w-[35%] overflow-y-auto bg-fcn-surface-light/50 dark:bg-fcn-dark/50">
-          <PatientHealthPassport
-            context={contextData ?? null}
-            isLoading={contextLoading}
-          />
+        {/* Right side: Patient Passport / Clinical Info & AI Co-Pilot */}
+        <div className="relative flex w-[35%] flex-col overflow-hidden bg-fcn-surface-light/50 dark:bg-fcn-dark/50">
+          {isDoctor && (
+            <div className="flex border-b border-fcn-primary/10 bg-white dark:bg-fcn-surface-dark shrink-0">
+              <button
+                type="button"
+                onClick={() => setDoctorTab("passport")}
+                className={clsx(
+                  "relative flex flex-1 items-center justify-center gap-1.5 py-3 text-xs font-bold transition-colors",
+                  doctorTab === "passport"
+                    ? "text-fcn-primary dark:text-fcn-accent"
+                    : "text-fcn-text-light/50 hover:text-fcn-text-light dark:text-fcn-text-dark/50"
+                )}
+              >
+                <User className="h-3.5 w-3.5" />
+                <span>Patient Passport</span>
+                {doctorTab === "passport" && (
+                  <motion.div
+                    layoutId="desktopDoctorTabIndicator"
+                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-fcn-primary dark:bg-fcn-accent"
+                  />
+                )}
+              </button>
+              <button
+                type="button"
+                onClick={() => setDoctorTab("ai")}
+                className={clsx(
+                  "relative flex flex-1 items-center justify-center gap-1.5 py-3 text-xs font-bold transition-colors",
+                  doctorTab === "ai"
+                    ? "text-fcn-primary dark:text-fcn-accent"
+                    : "text-fcn-text-light/50 hover:text-fcn-text-light dark:text-fcn-text-dark/50"
+                )}
+              >
+                <Sparkles className="h-3.5 w-3.5" />
+                <span>AI Co-Pilot</span>
+                {doctorTab === "ai" && (
+                  <motion.div
+                    layoutId="desktopDoctorTabIndicator"
+                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-fcn-primary dark:bg-fcn-accent"
+                  />
+                )}
+              </button>
+            </div>
+          )}
+
+          <div className="flex-1 overflow-y-auto">
+            {(!isDoctor || doctorTab === "passport") && (
+              <PatientHealthPassport
+                context={contextData ?? null}
+                isLoading={contextLoading}
+              />
+            )}
+
+            {isDoctor && doctorTab === "ai" && (
+              <DoctorAICopilotTab
+                appointmentId={appointmentId ?? ""}
+                patientName={contextData?.appointment?.patient?.full_name ?? "Patient"}
+                onPreFillPrescription={handlePreFillPrescription}
+                onInsertNote={handleInsertNoteFromAi}
+              />
+            )}
+          </div>
 
           <PrescribePanel
             appointmentId={appointmentId ?? ""}
@@ -655,6 +727,7 @@ export default function ConsultationPage() {
             isOpen={isDoctor && prescribeOpen}
             onClose={() => setPrescribeOpen(false)}
             onPrescriptionIssued={handlePrescriptionIssued}
+            prefillMedication={prefillMedication}
           />
         </div>
       </div>
@@ -700,6 +773,24 @@ export default function ConsultationPage() {
               />
             )}
           </button>
+          {isDoctor && (
+            <button
+              onClick={() => setMobileTab("ai")}
+              className={clsx(
+                "relative flex flex-1 items-center justify-center gap-1.5 py-3 text-xs sm:text-sm font-semibold transition-colors",
+                mobileTab === "ai" ? "text-fcn-primary dark:text-fcn-accent" : "text-fcn-text-light/50 dark:text-fcn-text-dark/50"
+              )}
+            >
+              <Sparkles className="h-4 w-4" />
+              AI Co-Pilot
+              {mobileTab === "ai" && (
+                <motion.div
+                  layoutId="mobileConsultTab"
+                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-fcn-primary"
+                />
+              )}
+            </button>
+          )}
         </div>
 
         {mobileTab === "chat" ? (
@@ -809,6 +900,15 @@ export default function ConsultationPage() {
               onTyping={handleTyping}
             />
           </div>
+        ) : mobileTab === "ai" && isDoctor ? (
+          <div className="flex-1 overflow-y-auto bg-fcn-surface-light/50 dark:bg-fcn-dark/50 pb-20">
+            <DoctorAICopilotTab
+              appointmentId={appointmentId ?? ""}
+              patientName={contextData?.appointment?.patient?.full_name ?? "Patient"}
+              onPreFillPrescription={handlePreFillPrescription}
+              onInsertNote={handleInsertNoteFromAi}
+            />
+          </div>
         ) : (
           <div className="flex-1 overflow-y-auto bg-fcn-surface-light/50 dark:bg-fcn-dark/50 pb-20">
             <PatientHealthPassport
@@ -824,6 +924,7 @@ export default function ConsultationPage() {
           isOpen={isDoctor && prescribeOpen}
           onClose={() => setPrescribeOpen(false)}
           onPrescriptionIssued={handlePrescriptionIssued}
+          prefillMedication={prefillMedication}
         />
       </div>
 

@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import { consultationService } from "./consultation.service";
+import { consultationAiService } from "./consultation-ai.service";
 import { IssuePrescriptionSchema, SaveSummaryNoteSchema } from "./consultation.validators";
 import { successResponse, errorResponse } from "../../utils/response";
 import { getIO } from "../../socket";
@@ -138,6 +139,23 @@ export const respondExtensionController = async (
       minutes
     );
     successResponse(res, result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getAiClinicalAssistanceController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { appointmentId } = req.params;
+    const assessment = await consultationAiService.generateConsultationAiAssessment(
+      appointmentId,
+      req.user!.id
+    );
+    successResponse(res, assessment);
   } catch (error) {
     next(error);
   }

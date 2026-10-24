@@ -466,6 +466,44 @@ export interface ConsultationSummary {
   created_at: string;
 }
 
+export interface ClinicalAiDiagnosis {
+  condition: string;
+  probability: "High" | "Moderate" | "Low";
+  icd10_hint?: string;
+  reasoning: string;
+  supporting_symptoms: string[];
+  key_distinguishing_features?: string;
+}
+
+export interface ClinicalAiMedication {
+  drug_name: string;
+  dosage: string;
+  form: string;
+  frequency_per_day: number;
+  duration_days: number;
+  instructions: string;
+  guideline_note?: string;
+}
+
+export interface ClinicalAiAssessment {
+  consultation_summary: string;
+  differential_diagnoses: ClinicalAiDiagnosis[];
+  red_flags: string[];
+  allergy_warnings: string[];
+  recommended_treatment: {
+    first_line_medications: ClinicalAiMedication[];
+    non_pharmacological: string[];
+    patient_counseling: string[];
+  };
+  recommended_lab_tests: {
+    test_name: string;
+    rationale: string;
+    urgency: "Immediate" | "Routine";
+  }[];
+  suggested_clinical_questions: string[];
+  analyzed_at: string;
+}
+
 export interface Notification {
   id: string;
   user_id: string;

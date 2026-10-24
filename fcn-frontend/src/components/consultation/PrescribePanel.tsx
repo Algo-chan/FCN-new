@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Plus, Minus, Pill, AlertCircle } from "lucide-react";
 import { clsx } from "clsx";
@@ -18,12 +18,23 @@ interface MedicationEntry {
   quantity: number | undefined;
 }
 
+export interface PrescribePanelPrefill {
+  drug_name: string;
+  dosage: string;
+  form?: string;
+  instructions: string;
+  frequency_per_day?: number;
+  duration_days?: number;
+}
+
 interface PrescribePanelProps {
   appointmentId: string;
   patientName: string;
   isOpen: boolean;
   onClose: () => void;
   onPrescriptionIssued: () => void;
+  prefillMedication?: PrescribePanelPrefill | null;
+
 }
 
 const COMMON_MEDICATIONS = [
@@ -61,12 +72,39 @@ export function PrescribePanel({
   patientName,
   isOpen,
   onClose,
-  onPrescriptionIssued
+  onPrescriptionIssued,
+  prefillMedication
 }: PrescribePanelProps) {
   const [medications, setMedications] = useState<MedicationEntry[]>([createMedication()]);
   const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState<Record<string, boolean>>({});
+
+  useEffect(() => {
+    if (prefillMedication && isOpen) {
+      medicationIdCounter++;
+      const newEntry: MedicationEntry = {
+        id: `med-${medicationIdCounter}`,
+        drug_name: prefillMedication.drug_name || "",
+        strength: prefillMedication.dosage || "",
+        form: prefillMedication.form || "Tablet",
+        instructions: prefillMedication.instructions || "",
+        frequency_per_day: prefillMedication.frequency_per_day || 2,
+        reminder_times: [],
+        supply_days: prefillMedication.duration_days || 30,
+        is_ongoing: false,
+        quantity: undefined
+      };
+      setMedications((prev) => {
+        if (prev.length === 1 && !prev[0].drug_name.trim() && !prev[0].instructions.trim()) {
+          return [newEntry];
+        }
+        const exists = prev.some((m) => m.drug_name.toLowerCase() === newEntry.drug_name.toLowerCase());
+        if (exists) return prev;
+        return [...prev, newEntry];
+      });
+    }
+  }, [prefillMedication, isOpen]);
 
   const addMedication = useCallback(() => {
     setMedications((prev) => [...prev, createMedication()]);
