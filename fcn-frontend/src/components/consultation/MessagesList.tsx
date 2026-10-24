@@ -129,7 +129,7 @@ export function MessagesList({
   };
 
   return (
-    <div className="relative flex-1 overflow-hidden bg-slate-50/50 dark:bg-slate-950/40">
+    <div className="relative flex-1 overflow-hidden bg-slate-50/40 dark:bg-slate-950/30">
       <div
         ref={containerRef}
         className="h-full overflow-y-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-700"

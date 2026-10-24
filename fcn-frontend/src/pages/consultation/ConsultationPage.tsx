@@ -543,11 +543,12 @@ export default function ConsultationPage() {
       initial={{ opacity: 0, scale: 0.98 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
-      className="flex h-[calc(100vh-4rem)] overflow-hidden bg-fcn-surface-light dark:bg-fcn-dark"
+      className="flex h-[calc(100vh-4rem)] overflow-hidden bg-slate-100/90 dark:bg-[#070b10] p-2 sm:p-3 lg:p-4 gap-3 lg:gap-4"
     >
       {/* Desktop Split View: 65% Chat Stream, 35% Health Passport */}
-      <div className="hidden flex-1 lg:flex">
-        <div className="flex w-[65%] flex-col border-r border-slate-200 dark:border-white/10 bg-slate-50/50 dark:bg-slate-950/50 shadow-xs">
+      <div className="hidden flex-1 lg:flex gap-3 lg:gap-4">
+        {/* Floating Enclosed Chat Card (65%) */}
+        <div className="flex w-[65%] flex-col rounded-3xl border border-slate-200/90 dark:border-white/10 bg-white dark:bg-slate-900 shadow-xl shadow-slate-900/5 dark:shadow-black/60 overflow-hidden ring-1 ring-slate-900/5 dark:ring-white/5">
           <TopBar
             otherPartyName={otherPartyName ?? "Connecting..."}
             otherPartySpecialty={isDoctor ? undefined : otherPartySpecialty ?? undefined}
@@ -716,7 +717,7 @@ export default function ConsultationPage() {
         </div>
 
         {/* Right side: Patient Passport / Clinical Info & AI Co-Pilot */}
-        <div className="relative flex w-[35%] flex-col overflow-hidden bg-slate-100/90 dark:bg-[#0c1219]">
+        <div className="relative flex w-[35%] flex-col rounded-3xl border border-slate-200/90 dark:border-white/10 bg-white/80 dark:bg-slate-900/80 shadow-md shadow-slate-900/5 dark:shadow-black/40 overflow-hidden backdrop-blur-sm">
           {isDoctor && (
             <div className="flex border-b border-slate-200/80 dark:border-white/10 bg-slate-100/80 dark:bg-slate-900/60 p-1.5 shrink-0 gap-1.5 select-none">
               <button
@@ -778,7 +779,7 @@ export default function ConsultationPage() {
       </div>
 
       {/* Mobile Experience: Tabbed Switcher (Chat vs Info) */}
-      <div className="flex flex-1 flex-col lg:hidden">
+      <div className="flex flex-1 flex-col rounded-2xl sm:rounded-3xl border border-slate-200/90 dark:border-white/10 bg-white dark:bg-slate-900 shadow-xl overflow-hidden lg:hidden">
         {/* Mobile Tab Header */}
         <div className="flex border-b border-slate-200/80 dark:border-white/10 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md">
           <button
@@ -839,7 +840,7 @@ export default function ConsultationPage() {
         </div>
 
         {mobileTab === "chat" ? (
-          <div className="flex flex-1 flex-col overflow-hidden bg-slate-50/50 dark:bg-slate-950/50">
+          <div className="flex flex-1 flex-col overflow-hidden bg-white dark:bg-slate-900">
             <TopBar
               otherPartyName={otherPartyName ?? "Connecting..."}
               otherPartySpecialty={isDoctor ? undefined : otherPartySpecialty ?? undefined}

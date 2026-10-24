@@ -205,7 +205,7 @@ export function ChatInput({
   const hasContent = text.trim().length > 0 || selectedFile !== null;
 
   return (
-    <div className="relative px-3 sm:px-4 pb-3 sm:pb-4 pt-1 bg-gradient-to-t from-slate-100/80 via-slate-100/40 to-transparent dark:from-slate-950 dark:via-slate-950/40 dark:to-transparent select-none">
+    <div className="relative px-3 sm:px-4 pb-3 sm:pb-4 pt-1 bg-gradient-to-t from-white via-white/80 to-transparent dark:from-slate-900 dark:via-slate-900/80 dark:to-transparent select-none">
       {/* File attachment preview chip */}
       <AnimatePresence>
         {selectedFile && (
@@ -250,7 +250,7 @@ export function ChatInput({
       </AnimatePresence>
 
       {/* Floating Island Dock Container */}
-      <div className="rounded-3xl border border-slate-200/90 dark:border-white/15 bg-white dark:bg-slate-900 p-1.5 sm:p-2 shadow-xl shadow-slate-900/8 dark:shadow-black/60 backdrop-blur-md transition-all focus-within:border-teal-500/60 focus-within:ring-2 focus-within:ring-teal-500/20">
+      <div className="rounded-3xl border border-slate-200 dark:border-white/10 bg-slate-50/90 dark:bg-slate-800/90 p-1.5 sm:p-2 shadow-lg shadow-slate-900/5 dark:shadow-black/40 backdrop-blur-md transition-all focus-within:border-teal-500/60 focus-within:ring-2 focus-within:ring-teal-500/20">
         <div className="flex items-end gap-1.5 sm:gap-2">
           {/* 1. Dynamic Auto-Expanding Textarea */}
           <div className="flex-1 min-w-0">
