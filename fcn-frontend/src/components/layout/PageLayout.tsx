@@ -58,7 +58,7 @@ export const PageLayout = ({ children }: PropsWithChildren) => {
         <main
           className={clsx(
             isConsultation
-              ? "w-full flex-1 overflow-hidden p-0 m-0 max-w-none min-h-0"
+              ? "w-full flex-1 overflow-hidden p-0 m-0 max-w-none min-h-0 flex flex-col pb-[calc(4rem+max(8px,env(safe-area-inset-bottom)))] lg:pb-0"
               : "mx-auto w-full max-w-7xl px-3 py-4 sm:px-4 sm:py-6 md:px-6 lg:px-8 lg:py-8 pb-28 lg:pb-8"
           )}
         >
@@ -82,11 +82,9 @@ export const PageLayout = ({ children }: PropsWithChildren) => {
         ))}
       </div>
 
-      {!isConsultation && (
-        <div className="lg:hidden">
-          <BottomNavBar />
-        </div>
-      )}
+      <div className="lg:hidden">
+        <BottomNavBar />
+      </div>
 
       {/* Instant Consultation Overlay for Patients */}
       <InstantConsultOverlay />

@@ -22,7 +22,7 @@ export const PageTransition = ({ children, className }: PropsWithChildren<PageTr
       animate={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
       exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -20 }}
       transition={{ duration: shouldReduceMotion ? 0 : MOTION.standard.duration, ease: MOTION.standard.ease }}
-      className={clsx("min-h-full", className)}
+      className={clsx(className ?? "min-h-full")}
     >
       {children}
     </motion.div>
