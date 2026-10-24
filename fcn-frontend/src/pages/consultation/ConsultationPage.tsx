@@ -18,8 +18,7 @@ import {
   Clock,
   AlertTriangle,
   Star,
-  X,
-  Stethoscope
+  X
 } from "lucide-react";
 import { format } from "date-fns";
 import toast from "react-hot-toast";
@@ -590,7 +589,6 @@ export default function ConsultationPage() {
         <div className="flex w-[65%] flex-col rounded-3xl border border-slate-200/90 dark:border-white/10 bg-white dark:bg-slate-900 shadow-xl shadow-slate-900/5 dark:shadow-black/60 overflow-hidden ring-1 ring-slate-900/5 dark:ring-white/5">
           <TopBar
             otherPartyName={otherPartyName ?? "Connecting..."}
-            otherPartySpecialty={isDoctor ? undefined : otherPartySpecialty ?? undefined}
             isDoctor={isDoctor}
             isReadOnly={isReadOnly}
             startedAt={startedAt}
@@ -882,7 +880,6 @@ export default function ConsultationPage() {
           <div className="flex flex-1 flex-col overflow-hidden bg-white dark:bg-slate-900">
             <TopBar
               otherPartyName={otherPartyName ?? "Connecting..."}
-              otherPartySpecialty={isDoctor ? undefined : otherPartySpecialty ?? undefined}
               isDoctor={isDoctor}
               isReadOnly={isReadOnly}
               startedAt={startedAt}
@@ -1097,7 +1094,6 @@ export default function ConsultationPage() {
 
 function TopBar({
   otherPartyName,
-  otherPartySpecialty,
   isDoctor,
   isReadOnly,
   startedAt,
@@ -1113,7 +1109,6 @@ function TopBar({
   onDirectCall
 }: {
   otherPartyName: string;
-  otherPartySpecialty?: string;
   isDoctor: boolean;
   isReadOnly: boolean;
   startedAt?: string | null;
@@ -1164,12 +1159,7 @@ function TopBar({
             <h2 className="truncate text-xs sm:text-sm font-extrabold text-slate-900 dark:text-white">
               {otherPartyName}
             </h2>
-            {!isDoctor ? (
-              <span className="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded-md bg-sky-500/10 text-sky-700 dark:text-sky-300 border border-sky-500/20 text-[10px] font-extrabold uppercase tracking-wider">
-                <Stethoscope className="h-2.5 w-2.5" />
-                {otherPartySpecialty || "Doctor"}
-              </span>
-            ) : (
+            {isDoctor && (
               <span className="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded-md bg-teal-500/10 text-teal-700 dark:text-teal-300 border border-teal-500/20 text-[10px] font-extrabold uppercase tracking-wider">
                 Patient
               </span>
