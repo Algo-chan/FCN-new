@@ -42,15 +42,6 @@ const languages: LanguageOption[] = [
     region: "Oromiyaa",
     sample: "Mataa dhukkubbi, ho'a...",
     buttonText: "Afaan Oromootiin Itti Fufi"
-  },
-  {
-    code: "so",
-    name: "Somali",
-    nativeName: "Soomaali",
-    flag: "🇸🇴",
-    region: "Soomaali",
-    sample: "Madax xanuun, qandho...",
-    buttonText: "Ku Sii Wad Af-Soomaali"
   }
 ];
 
@@ -100,7 +91,7 @@ export const LanguageSelector = ({ onSelect, defaultLanguage }: LanguageSelector
       variants={shouldReduceMotion ? undefined : containerVariants}
       initial="hidden"
       animate="visible"
-      className="mx-auto flex w-full max-w-xl flex-col items-center px-1 sm:px-0"
+      className="mx-auto flex w-full max-w-md flex-col items-center px-1 sm:px-0"
     >
       {/* Ambient Header Pill */}
       <div className="inline-flex items-center gap-2 rounded-full border border-teal-500/25 bg-teal-500/10 dark:bg-teal-400/15 px-3 py-1 text-xs font-bold text-teal-700 dark:text-teal-300 mb-2.5 shadow-sm">
@@ -116,8 +107,8 @@ export const LanguageSelector = ({ onSelect, defaultLanguage }: LanguageSelector
         Choose the language you feel most comfortable describing your symptoms in
       </p>
 
-      {/* Language Options Grid (Mobile-First Ergonomic Stack, 2-col on Tablet/Desktop) */}
-      <div className="grid w-full grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
+      {/* Language Options Stack (Mobile-First Ergonomic Stack) */}
+      <div className="flex flex-col w-full gap-2.5 sm:gap-3">
         {languages.map((lang) => {
           const isSelected = selected === lang.code;
           return (
