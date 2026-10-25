@@ -308,22 +308,7 @@ export function ChatMessage({
           isSender ? "items-end" : "items-start"
         )}
       >
-        {/* Name header for received messages when avatar is shown */}
-        {showAvatar && !isSender && (
-          <div className="flex items-center gap-1.5 px-1 mb-1 select-none">
-            <span className="text-xs font-bold text-slate-700 dark:text-slate-300">
-              {isOtherPartyDoctor && !senderDisplayName.startsWith("Dr.")
-                ? `Dr. ${senderDisplayName}`
-                : senderDisplayName}
-            </span>
-            {isOtherPartyDoctor && (
-              <span className="inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded-md bg-sky-500/10 text-sky-700 dark:text-sky-300 border border-sky-500/20 text-[10px] font-extrabold uppercase tracking-wider">
-                <Stethoscope className="h-2.5 w-2.5" />
-                {otherPartySpecialty || "Doctor"}
-              </span>
-            )}
-          </div>
-        )}
+
 
         {/* Failed to send error chip */}
         {message.error && (
