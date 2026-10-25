@@ -48,7 +48,11 @@ authRoutes.get("/google", (req, res, next) => {
 });
 authRoutes.get(
   "/google/callback",
-  passport.authenticate("google", { failureRedirect: `${env.FRONTEND_URL}/login?error=google` }),
+  (req, res, next) => {
+    const isLocal = req.headers.host?.includes("localhost") || req.headers.host?.includes("127.0.0.1");
+    const failureRedirect = `${isLocal ? "http://localhost:5173" : env.FRONTEND_URL}/login?error=google`;
+    passport.authenticate("google", { failureRedirect })(req, res, next);
+  },
   googleCallbackController
 );
 authRoutes.get("/me", authMiddleware, getMeController);

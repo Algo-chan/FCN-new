@@ -159,6 +159,9 @@ export const googleCallbackController = async (req: Request, res: Response, next
       throw new AppError("Google authentication failed", 401, "GOOGLE_AUTH_FAILED");
     }
 
+    const isLocal = req.headers.host?.includes("localhost") || req.headers.host?.includes("127.0.0.1");
+    const frontendUrl = isLocal ? "http://localhost:5173" : env.FRONTEND_URL;
+
     if (passportUser.isNewGoogleUser) {
       const params = new URLSearchParams({
         googleRegister: "true",
@@ -166,7 +169,7 @@ export const googleCallbackController = async (req: Request, res: Response, next
         email: passportUser.email,
         name: passportUser.full_name
       });
-      res.redirect(`${env.FRONTEND_URL}/register?${params.toString()}`);
+      res.redirect(`${frontendUrl}/register?${params.toString()}`);
       return;
     }
 
@@ -180,7 +183,7 @@ export const googleCallbackController = async (req: Request, res: Response, next
           ? "/admin"
           : "/dashboard";
 
-    res.redirect(`${env.FRONTEND_URL}/auth/callback?accessToken=${encodeURIComponent(tokens.accessToken)}&destination=${encodeURIComponent(destination)}`);
+    res.redirect(`${frontendUrl}/auth/callback?accessToken=${encodeURIComponent(tokens.accessToken)}&destination=${encodeURIComponent(destination)}`);
   } catch (error) {
     next(error);
   }
