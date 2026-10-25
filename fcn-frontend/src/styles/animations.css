@@ -86,7 +86,10 @@
   to {
     transform: rotate(360deg);
   }
-}.medical-cross {
+}
+
+.medical-cross {
+  color: white;
   position: absolute;
   width: 24px;
   height: 24px;

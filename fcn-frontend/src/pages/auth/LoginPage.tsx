@@ -71,16 +71,30 @@ const LoginPage = () => {
   }, []);
 
   useEffect(() => {
-    if (shouldReduceMotion) return;
+    if (shouldReduceMotion) {
+      if (headlineRef.current) {
+        const words = headlineRef.current.querySelectorAll(".word");
+        words.forEach((w) => ((w as HTMLElement).style.opacity = "1"));
+      }
+      return;
+    }
 
     if (heartbeatRef.current) {
       const length = heartbeatRef.current.getTotalLength();
-      gsap.fromTo(heartbeatRef.current, { strokeDasharray: length, strokeDashoffset: length }, { strokeDashoffset: 0, duration: 2, ease: "power2.inOut" });
+      gsap.fromTo(
+        heartbeatRef.current,
+        { strokeDasharray: length, strokeDashoffset: length },
+        { strokeDashoffset: 0, duration: 2, ease: "power2.inOut" }
+      );
     }
 
     if (headlineRef.current) {
       const words = headlineRef.current.querySelectorAll(".word");
-      gsap.fromTo(words, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.5, stagger: 0.12, ease: "power2.out" });
+      gsap.fromTo(
+        words,
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.5, stagger: 0.12, ease: "power2.out" }
+      );
     }
   }, [shouldReduceMotion]);
 
@@ -177,7 +191,7 @@ const LoginPage = () => {
     <div className="flex min-h-screen">
       {/* Left Panel */}
       <div className="relative hidden w-3/5 overflow-hidden bg-gradient-to-br from-fcn-primary to-fcn-dark md:block">
-        <div className="absolute inset-0 opacity-[0.03]">
+        <div className="absolute inset-0 opacity-[0.04] text-white">
           {Array.from({ length: 12 }).map((_, i) => (
             <div key={i} className="medical-cross" style={{ left: `${(i * 9 + 3) % 100}%`, top: `${(i * 7 + 5) % 100}%`, animationDelay: `${i * 0.7}s`, animationDuration: `${4 + (i % 3)}s` }} />
           ))}

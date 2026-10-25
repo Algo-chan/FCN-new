@@ -1,8 +1,9 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { Activity, Check, Lock, Mail, MapPin, Phone, Stethoscope, User } from "lucide-react";
+import gsap from "gsap";
+import { Activity, Check, Lock, Mail, MapPin, Stethoscope, User } from "lucide-react";
 import { authService } from "@/services/auth.service";
 import { doctorsService } from "@/services/doctors.service";
 import { hospitalsService } from "@/services/hospitals.service";
@@ -74,6 +75,27 @@ const RegisterPage = () => {
     role: null, license_number: "", specialty: "", years_experience: "",
     hospital_name: "", hospital_id: "", phone: "", nursing_license_number: "", coverage_zone: ""
   });
+
+  const headlineRef = useRef<HTMLHeadingElement>(null);
+
+  useEffect(() => {
+    if (shouldReduceMotion) {
+      if (headlineRef.current) {
+        const words = headlineRef.current.querySelectorAll(".word");
+        words.forEach((w) => ((w as HTMLElement).style.opacity = "1"));
+      }
+      return;
+    }
+
+    if (headlineRef.current) {
+      const words = headlineRef.current.querySelectorAll(".word");
+      gsap.fromTo(
+        words,
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.5, stagger: 0.12, ease: "power2.out" }
+      );
+    }
+  }, [shouldReduceMotion]);
 
   const { data: hospitalsResponse, isError: hospitalsError } = useQuery({
     queryKey: ["hospitals", "active"],
@@ -241,7 +263,7 @@ const RegisterPage = () => {
     <div className="flex min-h-screen">
       {/* Left Panel */}
       <div className="relative hidden w-3/5 overflow-hidden bg-gradient-to-br from-fcn-primary to-fcn-dark md:block">
-        <div className="absolute inset-0 opacity-[0.03]">
+        <div className="absolute inset-0 opacity-[0.04] text-white">
           {Array.from({ length: 12 }).map((_, i) => (
             <div key={i} className="medical-cross" style={{ left: `${(i * 9 + 3) % 100}%`, top: `${(i * 7 + 5) % 100}%`, animationDelay: `${i * 0.7}s`, animationDuration: `${4 + (i % 3)}s` }} />
           ))}
@@ -254,7 +276,11 @@ const RegisterPage = () => {
           />
         </div>
         <div className="relative z-10 flex h-full flex-col justify-center px-16 pb-24">
-          <h1 className="mb-6 text-5xl font-bold leading-tight text-white">Join Fast Care Now Today</h1>
+          <h1 ref={headlineRef} className="mb-6 text-5xl font-bold leading-tight text-white">
+            {"Join Fast Care Now Today".split(" ").map((word, i) => (
+              <span key={i} className="word mr-3 inline-block opacity-0">{word}</span>
+            ))}
+          </h1>
           <p className="max-w-md text-lg text-white/70">Connect with patients, access AI-powered diagnostics, and deliver quality healthcare across Ethiopia.</p>
         </div>
       </div>
