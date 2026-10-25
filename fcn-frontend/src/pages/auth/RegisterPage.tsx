@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { Activity, Lock, Mail, MapPin, Stethoscope, User, ArrowRight, ArrowLeft } from "lucide-react";
+import { Activity, Check, Lock, Mail, MapPin, Phone, Stethoscope, User } from "lucide-react";
 import { authService } from "@/services/auth.service";
 import { doctorsService } from "@/services/doctors.service";
 import { hospitalsService } from "@/services/hospitals.service";
@@ -13,9 +13,6 @@ import { Button } from "@/components/ui/Button";
 import { INSTALL_PROMPT_KEY } from "@/components/pwa/InstallPromptBanner";
 import { Spinner } from "@/components/ui/Spinner";
 import { OTPVerification } from "@/components/auth/OTPVerification";
-import { StepIndicator } from "@/components/ui/StepIndicator";
-import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
-import { clsx } from "clsx";
 
 type Role = "patient" | "doctor" | "nurse" | "rural_health_officer";
 type Phase = "account" | "otp" | "role" | "review";
@@ -37,38 +34,10 @@ interface FormData {
 }
 
 const roleCards = [
-  {
-    role: "patient" as Role,
-    icon: User,
-    title: "Patient",
-    desc: "Get remote healthcare from home",
-    accent: "text-teal-600 dark:text-teal-400",
-    bg: "bg-teal-500/10 dark:bg-teal-400/20",
-  },
-  {
-    role: "doctor" as Role,
-    icon: Stethoscope,
-    title: "Doctor",
-    desc: "Consult patients remotely",
-    accent: "text-sky-600 dark:text-sky-400",
-    bg: "bg-sky-500/10 dark:bg-sky-400/20",
-  },
-  {
-    role: "nurse" as Role,
-    icon: Activity,
-    title: "Nurse / Health Worker",
-    desc: "Provide home care services",
-    accent: "text-emerald-600 dark:text-emerald-400",
-    bg: "bg-emerald-500/10 dark:bg-emerald-400/20",
-  },
-  {
-    role: "rural_health_officer" as Role,
-    icon: MapPin,
-    title: "Rural Health Officer",
-    desc: "Connect rural communities to care",
-    accent: "text-amber-600 dark:text-amber-400",
-    bg: "bg-amber-500/10 dark:bg-amber-400/20",
-  },
+  { role: "patient" as Role, icon: User, title: "Patient", desc: "Get remote healthcare from home" },
+  { role: "doctor" as Role, icon: Stethoscope, title: "Doctor", desc: "Consult patients remotely" },
+  { role: "nurse" as Role, icon: Activity, title: "Nurse / Health Worker", desc: "Provide home care services" },
+  { role: "rural_health_officer" as Role, icon: MapPin, title: "Rural Health Officer", desc: "Connect rural communities to care" }
 ];
 
 const calcStrength = (pw: string): { label: string; color: string; width: string } => {
@@ -80,11 +49,13 @@ const calcStrength = (pw: string): { label: string; color: string; width: string
   return { label: "Strong", color: "#10B981", width: "100%" };
 };
 
+const VITE_API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:5000/api/v1";
+
 const RegisterPage = () => {
   usePageMeta({
     title: "Register | Fast Care Now",
     description: "Create your Fast Care Now account as a patient, doctor, nurse, or rural health officer. Join Ethiopia's platform for immediate, reliable healthcare.",
-    canonical: "https://fcncare.com/register",
+    canonical: "https://fcncare.com/register"
   });
 
   const navigate = useNavigate();
@@ -99,25 +70,15 @@ const RegisterPage = () => {
 
   const [phase, setPhase] = useState<Phase>(isGoogle ? "role" : "account");
   const [form, setForm] = useState<FormData>({
-    full_name: googleName,
-    email: googleEmail,
-    password: "",
-    confirmPassword: "",
-    role: null,
-    license_number: "",
-    specialty: "",
-    years_experience: "",
-    hospital_name: "",
-    hospital_id: "",
-    phone: "",
-    nursing_license_number: "",
-    coverage_zone: "",
+    full_name: googleName, email: googleEmail, password: "", confirmPassword: "",
+    role: null, license_number: "", specialty: "", years_experience: "",
+    hospital_name: "", hospital_id: "", phone: "", nursing_license_number: "", coverage_zone: ""
   });
 
   const { data: hospitalsResponse, isError: hospitalsError } = useQuery({
     queryKey: ["hospitals", "active"],
     queryFn: () => hospitalsService.getAllHospitals("active"),
-    enabled: form.role === "doctor",
+    enabled: form.role === "doctor"
   });
 
   const hospitals = useMemo(() => hospitalsResponse?.data ?? [], [hospitalsResponse]);
@@ -125,7 +86,7 @@ const RegisterPage = () => {
   const { data: hospitalSpecialties, isLoading: specialtiesLoading } = useQuery({
     queryKey: ["hospital-specialties", form.hospital_id],
     queryFn: () => doctorsService.getHospitalSpecialties(form.hospital_id),
-    enabled: !!form.hospital_id && form.role === "doctor",
+    enabled: !!form.hospital_id && form.role === "doctor"
   });
 
   const dynamicSpecialties = useMemo(() => {
@@ -143,7 +104,7 @@ const RegisterPage = () => {
 
   const pwStrength = useMemo(() => calcStrength(form.password), [form.password]);
 
-  const currentStepNumber = phase === "account" || phase === "otp" ? 1 : phase === "role" ? 2 : 3;
+  const displayStep = phase === "account" || phase === "otp" ? 1 : phase === "role" ? 2 : 3;
 
   const update = (field: keyof FormData, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -153,39 +114,26 @@ const RegisterPage = () => {
   const validateStep1 = useCallback(() => {
     if (isGoogle) return true;
     const errs: Record<string, string> = {};
-    if (!form.full_name.trim() || form.full_name.trim().length < 2) {
-      errs.full_name = "Name must be at least 2 characters";
-    }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
-      errs.email = "Valid email required";
-    }
-    if (form.password.length < 8) {
-      errs.password = "At least 8 characters required";
-    } else if (!/[A-Z]/.test(form.password)) {
-      errs.password = "Need an uppercase letter";
-    } else if (!/\d/.test(form.password)) {
-      errs.password = "Need a number";
-    }
-    if (form.password !== form.confirmPassword) {
-      errs.confirmPassword = "Passwords do not match";
-    }
+    if (!form.full_name.trim() || form.full_name.trim().length < 2) errs.full_name = "Name must be at least 2 characters";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errs.email = "Valid email required";
+    if (form.password.length < 8) errs.password = "At least 8 characters";
+    else if (!/[A-Z]/.test(form.password)) errs.password = "Need an uppercase letter";
+    else if (!/\d/.test(form.password)) errs.password = "Need a number";
+    if (form.password !== form.confirmPassword) errs.confirmPassword = "Passwords do not match";
     setErrors(errs);
     return Object.keys(errs).length === 0;
   }, [form, isGoogle]);
 
   const validateStep2 = useCallback(() => {
-    if (!form.role) {
-      setErrors({ role: "Please select a role to continue" });
-      return false;
-    }
+    if (!form.role) { setErrors({ role: "Select a role" }); return false; }
     const errs: Record<string, string> = {};
     if (form.role === "doctor") {
       if (!form.license_number.trim()) errs.license_number = "License number required";
       if (!form.specialty) errs.specialty = "Specialty required";
       if (!form.phone.trim()) {
-        errs.phone = "Consultation phone number is required for direct patient calls";
+        errs.phone = "Consultation phone number is required for direct call service";
       } else if (!/^(\+251|0)?(9|7)\d{8}$/.test(form.phone.replace(/[\s-]/g, ""))) {
-        errs.phone = "Enter a valid Ethiopian phone (e.g. +251 91 234 5678 or 0912345678)";
+        errs.phone = "Must be a valid Ethiopian phone (+251 9... / 09...)";
       }
     }
     if (form.role === "nurse" || form.role === "rural_health_officer") {
@@ -203,7 +151,7 @@ const RegisterPage = () => {
       await authService.registerStep1({
         full_name: form.full_name.trim(),
         email: form.email.trim(),
-        password: form.password,
+        password: form.password
       });
       setPhase("otp");
     } catch (err: any) {
@@ -237,16 +185,13 @@ const RegisterPage = () => {
   };
 
   const handleSubmit = async () => {
-    if (!agreeTerms) {
-      setApiError("You must agree to the terms to complete registration");
-      return;
-    }
+    if (!agreeTerms) { setApiError("You must agree to the terms"); return; }
     setIsSubmitting(true);
     setApiError(null);
 
     const payload: Record<string, unknown> = {
       email: form.email.trim(),
-      role: form.role,
+      role: form.role
     };
 
     if (isGoogle) {
@@ -293,618 +238,244 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors">
-      {/* Left Brand Panel (Desktop) */}
-      <div className="relative hidden w-3/5 overflow-hidden bg-gradient-to-br from-teal-900 via-slate-900 to-sky-950 md:flex flex-col justify-between p-12 lg:p-16 text-white">
-        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#2dd4bf_1px,transparent_1px)] [background-size:24px_24px]" />
-
-        <div className="relative z-10 flex items-center justify-between">
-          <Link to="/">
-            <img
-              src="/logo/fcn-logo-full.png"
-              alt="Fast Care Now Logo"
-              className="h-10 w-auto object-contain brightness-110"
-            />
-          </Link>
-          <LanguageSwitcher variant="pill" />
+    <div className="flex min-h-screen">
+      {/* Left Panel */}
+      <div className="relative hidden w-3/5 overflow-hidden bg-gradient-to-br from-fcn-primary to-fcn-dark md:block">
+        <div className="absolute inset-0 opacity-[0.03]">
+          {Array.from({ length: 12 }).map((_, i) => (
+            <div key={i} className="medical-cross" style={{ left: `${(i * 9 + 3) % 100}%`, top: `${(i * 7 + 5) % 100}%`, animationDelay: `${i * 0.7}s`, animationDuration: `${4 + (i % 3)}s` }} />
+          ))}
         </div>
-
-        <div className="relative z-10 my-auto py-8">
-          <h1 className="mb-4 text-4xl lg:text-5xl font-black leading-tight tracking-tight">
-            Join Fast Care Now Today
-          </h1>
-          <p className="max-w-md text-base text-slate-300 font-medium mb-8 leading-relaxed">
-            Connect with patients, access AI-powered diagnostics, and deliver quality healthcare across Ethiopia.
-          </p>
+        <div className="absolute left-8 top-8 z-10">
+          <img
+            src="/logo/fcn-logo-full.png"
+            alt="Fast Care Now Logo"
+            className="h-10 w-auto"
+          />
         </div>
-
-        <div className="relative z-10 text-xs text-slate-400 border-t border-white/10 pt-6">
-          © {new Date().getFullYear()} Fast Care Now. All rights reserved.
+        <div className="relative z-10 flex h-full flex-col justify-center px-16 pb-24">
+          <h1 className="mb-6 text-5xl font-bold leading-tight text-white">Join Fast Care Now Today</h1>
+          <p className="max-w-md text-lg text-white/70">Connect with patients, access AI-powered diagnostics, and deliver quality healthcare across Ethiopia.</p>
         </div>
       </div>
 
-      {/* Right Form Panel */}
-      <div className="flex w-full items-center justify-center px-4 sm:px-8 py-10 md:w-2/5">
-        <div className="w-full max-w-md">
-          {/* Mobile Top Header */}
-          <div className="mb-6 flex items-center justify-between md:hidden">
-            <Link to="/">
-              <img
-                src="/logo/fcn-logo-full.png"
-                alt="Fast Care Now Logo"
-                className="h-8 w-auto object-contain"
-              />
-            </Link>
-            <LanguageSwitcher variant="pill" />
+      {/* Right Panel */}
+      <div className="flex w-full items-center justify-center bg-white px-6 dark:bg-fcn-dark md:w-2/5 md:px-10">
+        <motion.div initial={!shouldReduceMotion ? { opacity: 0, x: 20 } : undefined} animate={{ opacity: 1, x: 0 }} className="w-full max-w-sm">
+
+          {/* Step Indicator */}
+          <div className="mb-8 flex items-center justify-center gap-2">
+            {(isGoogle ? [2, 3] : [1, 2, 3]).map((s, i) => (
+              <div key={s} className="flex items-center gap-2">
+                <motion.div layoutId={displayStep === s ? "step" : undefined} className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold ${displayStep > s ? "bg-fcn-accent text-white" : displayStep === s ? "bg-fcn-primary text-white" : "bg-fcn-primary/10 text-fcn-text-light/50 dark:text-fcn-text-dark/50"}`}>
+                  {displayStep > s ? <Check className="h-4 w-4" /> : i + 1}
+                </motion.div>
+                {s < 3 && <span className={`h-0.5 w-8 ${displayStep > s ? "bg-fcn-accent" : "bg-fcn-primary/10"}`} />}
+              </div>
+            ))}
           </div>
 
-          <motion.div
-            initial={!shouldReduceMotion ? { opacity: 0, y: 15 } : undefined}
-            animate={{ opacity: 1, y: 0 }}
-            className="rounded-3xl border border-slate-200/80 bg-white/95 dark:border-white/10 dark:bg-slate-900/90 p-6 sm:p-8 shadow-[0_12px_36px_rgba(0,0,0,0.06)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.3)] backdrop-blur-md"
-          >
-            {/* Step Indicator */}
-            <div className="mb-6">
-              <StepIndicator
-                currentStep={currentStepNumber}
-                totalSteps={3}
-                stepTitles={["Account Info", "Role & License", "Review & Confirm"]}
+          <AnimatePresence mode="wait">
+            {phase === "account" && (
+              <motion.div key="account" initial={!shouldReduceMotion ? { opacity: 0, x: 40 } : undefined} animate={{ opacity: 1, x: 0 }} exit={!shouldReduceMotion ? { opacity: 0, x: -40 } : undefined} className="space-y-4">
+                <div className="mb-4 text-center">
+                  <h2 className="text-xl font-bold text-fcn-text-light dark:text-fcn-text-dark">Create your account</h2>
+                  <p className="text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">Step 1 of 3 — Account info</p>
+                </div>
+
+                <a href={`${VITE_API_URL}/auth/google`} className="flex w-full items-center justify-center gap-3 rounded-md border border-fcn-primary/20 bg-white px-4 py-2.5 text-sm font-medium text-fcn-text-light shadow-sm transition hover:shadow-md dark:bg-fcn-dark dark:text-fcn-text-dark">
+                  <svg className="h-5 w-5" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+                  Sign up with Google
+                </a>
+
+                <div className="flex items-center gap-3"><span className="h-px flex-1 bg-fcn-primary/10" /><span className="text-xs text-fcn-text-light/50">or</span><span className="h-px flex-1 bg-fcn-primary/10" /></div>
+
+                {apiError && <p className="rounded-md bg-fcn-danger/10 px-3 py-2 text-sm text-fcn-danger">{apiError}</p>}
+
+                <label className="block">
+                  <span className="mb-1.5 block text-sm font-medium text-fcn-text-light dark:text-fcn-text-dark">Full name</span>
+                  <span className="relative block">
+                    <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-fcn-primary" />
+                    <input type="text" value={form.full_name} onChange={(e) => update("full_name", e.target.value)} className="h-11 w-full rounded-md border border-fcn-primary/20 bg-white pl-10 pr-3 text-sm text-fcn-text-light outline-none focus:border-fcn-accent focus:ring-2 focus:ring-fcn-accent/30 dark:bg-fcn-dark dark:text-fcn-text-dark" placeholder="John Doe" aria-label="Full name" />
+                  </span>
+                  {errors.full_name && <p className="mt-1 text-xs text-fcn-danger">{errors.full_name}</p>}
+                </label>
+
+                <label className="block">
+                  <span className="mb-1.5 block text-sm font-medium text-fcn-text-light dark:text-fcn-text-dark">Email</span>
+                  <span className="relative block">
+                    <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-fcn-primary" />
+                    <input type="email" value={form.email} onChange={(e) => update("email", e.target.value)} autoComplete="email" className="h-11 w-full rounded-md border border-fcn-primary/20 bg-white pl-10 pr-3 text-sm text-fcn-text-light outline-none focus:border-fcn-accent focus:ring-2 focus:ring-fcn-accent/30 dark:bg-fcn-dark dark:text-fcn-text-dark" placeholder="you@example.com" aria-label="Email" />
+                  </span>
+                  {errors.email && <p className="mt-1 text-xs text-fcn-danger">{errors.email}</p>}
+                </label>
+
+                <label className="block">
+                  <span className="mb-1.5 block text-sm font-medium text-fcn-text-light dark:text-fcn-text-dark">Password</span>
+                  <span className="relative block">
+                    <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-fcn-primary" />
+                    <input type="password" value={form.password} onChange={(e) => update("password", e.target.value)} autoComplete="new-password" className="h-11 w-full rounded-md border border-fcn-primary/20 bg-white pl-10 pr-3 text-sm text-fcn-text-light outline-none focus:border-fcn-accent focus:ring-2 focus:ring-fcn-accent/30 dark:bg-fcn-dark dark:text-fcn-text-dark" placeholder="••••••••" aria-label="Password" />
+                  </span>
+                  {form.password && <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-fcn-primary/10"><motion.div className="h-full rounded-full" initial={{ width: 0 }} animate={{ width: pwStrength.width, backgroundColor: pwStrength.color }} transition={{ duration: 0.3 }} /></div>}
+                  {form.password && <p className="mt-0.5 text-xs" style={{ color: pwStrength.color }}>{pwStrength.label}</p>}
+                  {errors.password && <p className="mt-1 text-xs text-fcn-danger">{errors.password}</p>}
+                </label>
+
+                <label className="block">
+                  <span className="mb-1.5 block text-sm font-medium text-fcn-text-light dark:text-fcn-text-dark">Confirm password</span>
+                  <input type="password" value={form.confirmPassword} onChange={(e) => update("confirmPassword", e.target.value)} autoComplete="new-password" className="h-11 w-full rounded-md border border-fcn-primary/20 bg-white px-3 text-sm text-fcn-text-light outline-none focus:border-fcn-accent focus:ring-2 focus:ring-fcn-accent/30 dark:bg-fcn-dark dark:text-fcn-text-dark" placeholder="••••••••" aria-label="Confirm password" />
+                  {errors.confirmPassword && <p className="mt-1 text-xs text-fcn-danger">{errors.confirmPassword}</p>}
+                </label>
+
+                <Button onClick={() => { if (validateStep1()) handleSendOTP(); }} loading={isSubmitting} className="w-full">Next</Button>
+                <p className="text-center text-xs text-fcn-text-light/60 dark:text-fcn-text-dark/60">Already have an account? <Link to="/login" className="font-medium text-fcn-primary hover:underline">Login</Link></p>
+              </motion.div>
+            )}
+
+            {phase === "otp" && (
+              <OTPVerification
+                key="otp"
+                email={form.email.trim()}
+                onVerify={handleVerifyOTP}
+                onResend={handleResendOTP}
+                onBack={() => setPhase("account")}
+                isLoading={isOTPLoading}
+                error={otpError}
+                locked={otpLocked}
+                title="Verify your email"
+                subtitle="Enter the 6-digit code sent to"
               />
-            </div>
+            )}
 
-            <AnimatePresence mode="wait">
-              {phase === "account" && (
-                <motion.div
-                  key="account"
-                  initial={!shouldReduceMotion ? { opacity: 0, x: 20 } : undefined}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={!shouldReduceMotion ? { opacity: 0, x: -20 } : undefined}
-                  className="space-y-4"
-                >
-                  <div className="mb-4">
-                    <h2 className="text-xl font-black text-slate-900 dark:text-white tracking-tight">
-                      Create your account
-                    </h2>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">
-                      Enter your name, email and password to begin
-                    </p>
-                  </div>
+            {phase === "role" && (
+              <motion.div key="role" initial={!shouldReduceMotion ? { opacity: 0, x: 40 } : undefined} animate={{ opacity: 1, x: 0 }} exit={!shouldReduceMotion ? { opacity: 0, x: -40 } : undefined} className="space-y-4">
+                <div className="mb-2 text-center">
+                  <h2 className="text-xl font-bold text-fcn-text-light dark:text-fcn-text-dark">I am joining Fast Care Now as...</h2>
+                  <p className="text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">Step 2 of 3 — Select your role</p>
+                </div>
 
-                  {apiError && (
-                    <div className="rounded-2xl px-4 py-3 text-xs font-semibold bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20">
-                      {apiError}
-                    </div>
-                  )}
+                {errors.role && <p className="text-center text-xs text-fcn-danger">{errors.role}</p>}
 
-                  <label className="block">
-                    <span className="mb-1.5 block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-                      Full name
-                    </span>
-                    <div className="relative">
-                      <User className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-teal-600 dark:text-teal-400" />
-                      <input
-                        type="text"
-                        value={form.full_name}
-                        onChange={(e) => update("full_name", e.target.value)}
-                        className="h-12 w-full rounded-2xl border border-slate-200 bg-slate-50/50 pl-10 pr-3 text-sm text-slate-900 outline-none transition focus:border-teal-500 focus:bg-white focus:ring-4 focus:ring-teal-500/15 dark:border-white/10 dark:bg-white/5 dark:text-white dark:focus:border-teal-400 dark:focus:bg-slate-900"
-                        placeholder="Dr. Abebe Bikila"
-                        aria-label="Full name"
-                      />
-                    </div>
-                    {errors.full_name && <p className="mt-1 text-xs text-rose-500 font-medium">{errors.full_name}</p>}
-                  </label>
+                <div className="grid grid-cols-2 gap-3">
+                  {roleCards.map((card) => (
+                    <motion.button key={card.role} type="button" whileHover={shouldReduceMotion ? {} : { scale: 1.03 }} whileTap={shouldReduceMotion ? {} : { scale: 0.98 }} onClick={() => { setForm((prev) => ({ ...prev, role: card.role })); setErrors((prev) => ({ ...prev, role: "" })); }} className={`rounded-lg border-2 p-3 text-left transition ${form.role === card.role ? "border-fcn-accent bg-fcn-accent/5 shadow-[0_0_16px_rgba(45,212,191,0.2)]" : "border-fcn-primary/10 hover:border-fcn-primary/30"}`}>
+                      <card.icon className={`mb-1.5 h-6 w-6 ${form.role === card.role ? "text-fcn-accent" : "text-fcn-primary"}`} />
+                      <div className={`text-sm font-semibold ${form.role === card.role ? "text-fcn-accent" : "text-fcn-text-light dark:text-fcn-text-dark"}`}>{card.title}</div>
+                      <div className="mt-0.5 text-xs text-fcn-text-light/50 dark:text-fcn-text-dark/50">{card.desc}</div>
+                    </motion.button>
+                  ))}
+                </div>
 
-                  <label className="block">
-                    <span className="mb-1.5 block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-                      Email
-                    </span>
-                    <div className="relative">
-                      <Mail className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-teal-600 dark:text-teal-400" />
-                      <input
-                        type="email"
-                        value={form.email}
-                        onChange={(e) => update("email", e.target.value)}
-                        autoComplete="email"
-                        className="h-12 w-full rounded-2xl border border-slate-200 bg-slate-50/50 pl-10 pr-3 text-sm text-slate-900 outline-none transition focus:border-teal-500 focus:bg-white focus:ring-4 focus:ring-teal-500/15 dark:border-white/10 dark:bg-white/5 dark:text-white dark:focus:border-teal-400 dark:focus:bg-slate-900"
-                        placeholder="you@example.com"
-                        aria-label="Email"
-                      />
-                    </div>
-                    {errors.email && <p className="mt-1 text-xs text-rose-500 font-medium">{errors.email}</p>}
-                  </label>
+                <AnimatePresence>
+                  {form.role === "doctor" && (
+                    <motion.div key="doctor-fields" initial={!shouldReduceMotion ? { height: 0, opacity: 0 } : undefined} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="space-y-3 overflow-hidden">
+                      <label className="block"><span className="mb-1 block text-sm font-medium">License number</span><input type="text" value={form.license_number} onChange={(e) => update("license_number", e.target.value)} className="h-11 w-full rounded-md border border-fcn-primary/20 bg-white px-3 text-sm outline-none focus:border-fcn-accent focus:ring-2 focus:ring-fcn-accent/30 dark:bg-fcn-dark" aria-label="License number" />{errors.license_number && <p className="mt-1 text-xs text-fcn-danger">{errors.license_number}</p>}</label>
 
-                  <label className="block">
-                    <span className="mb-1.5 block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-                      Password
-                    </span>
-                    <div className="relative">
-                      <Lock className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-teal-600 dark:text-teal-400" />
-                      <input
-                        type="password"
-                        value={form.password}
-                        onChange={(e) => update("password", e.target.value)}
-                        autoComplete="new-password"
-                        className="h-12 w-full rounded-2xl border border-slate-200 bg-slate-50/50 pl-10 pr-3 text-sm text-slate-900 outline-none transition focus:border-teal-500 focus:bg-white focus:ring-4 focus:ring-teal-500/15 dark:border-white/10 dark:bg-white/5 dark:text-white dark:focus:border-teal-400 dark:focus:bg-slate-900"
-                        placeholder="••••••••"
-                        aria-label="Password"
-                      />
-                    </div>
-                    {form.password && (
-                      <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700">
-                        <motion.div
-                          className="h-full rounded-full"
-                          initial={{ width: 0 }}
-                          animate={{ width: pwStrength.width, backgroundColor: pwStrength.color }}
-                          transition={{ duration: 0.3 }}
-                        />
-                      </div>
-                    )}
-                    {form.password && (
-                      <p className="mt-0.5 text-xs font-semibold" style={{ color: pwStrength.color }}>
-                        {pwStrength.label}
-                      </p>
-                    )}
-                    {errors.password && <p className="mt-1 text-xs text-rose-500 font-medium">{errors.password}</p>}
-                  </label>
+                      <label className="block"><span className="mb-1 block text-sm font-medium">Hospital</span>
+                        <select value={form.hospital_id} onChange={(e) => { update("hospital_id", e.target.value); const h = hospitals.find((x) => x.id === e.target.value); update("hospital_name", h?.name ?? ""); update("specialty", ""); }} className="h-11 w-full rounded-md border border-fcn-primary/20 bg-white px-3 text-sm outline-none focus:border-fcn-accent focus:ring-2 focus:ring-fcn-accent/30 dark:bg-fcn-dark" aria-label="Hospital">
+                          <option value="">Select a hospital...</option>
+                          {hospitals.map((h) => <option key={h.id} value={h.id}>{h.name} — {h.location}</option>)}
+                        </select>
+                        {hospitalsError && <p className="mt-1 text-xs text-fcn-danger">Couldn't load hospitals. Please refresh and try again.</p>}
+                      </label>
 
-                  <label className="block">
-                    <span className="mb-1.5 block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-                      Confirm password
-                    </span>
-                    <input
-                      type="password"
-                      value={form.confirmPassword}
-                      onChange={(e) => update("confirmPassword", e.target.value)}
-                      autoComplete="new-password"
-                      className="h-12 w-full rounded-2xl border border-slate-200 bg-slate-50/50 px-3.5 text-sm text-slate-900 outline-none transition focus:border-teal-500 focus:bg-white focus:ring-4 focus:ring-teal-500/15 dark:border-white/10 dark:bg-white/5 dark:text-white dark:focus:border-teal-400 dark:focus:bg-slate-900"
-                      placeholder="••••••••"
-                      aria-label="Confirm password"
-                    />
-                    {errors.confirmPassword && (
-                      <p className="mt-1 text-xs text-rose-500 font-medium">{errors.confirmPassword}</p>
-                    )}
-                  </label>
-
-                  <Button
-                    variant="action"
-                    onClick={() => {
-                      if (validateStep1()) handleSendOTP();
-                    }}
-                    loading={isSubmitting}
-                    className="w-full min-h-[50px] mt-2"
-                  >
-                    <span>Continue to Verification</span>
-                    <ArrowRight className="w-4 h-4 ml-1" />
-                  </Button>
-
-                  <p className="text-center text-xs text-slate-500 dark:text-slate-400 font-medium">
-                    Already have an account?{" "}
-                    <Link to="/login" className="font-bold text-teal-600 dark:text-teal-400 hover:underline">
-                      Login
-                    </Link>
-                  </p>
-                </motion.div>
-              )}
-
-              {phase === "otp" && (
-                <OTPVerification
-                  key="otp"
-                  email={form.email.trim()}
-                  onVerify={handleVerifyOTP}
-                  onResend={handleResendOTP}
-                  onBack={() => setPhase("account")}
-                  isLoading={isOTPLoading}
-                  error={otpError}
-                  locked={otpLocked}
-                  title="Verify your email"
-                  subtitle="Enter the 6-digit code sent to"
-                />
-              )}
-
-              {phase === "role" && (
-                <motion.div
-                  key="role"
-                  initial={!shouldReduceMotion ? { opacity: 0, x: 20 } : undefined}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={!shouldReduceMotion ? { opacity: 0, x: -20 } : undefined}
-                  className="space-y-4"
-                >
-                  <div className="mb-2">
-                    <h2 className="text-xl font-black text-slate-900 dark:text-white tracking-tight">
-                      I am joining as...
-                    </h2>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">
-                      Select your role on Fast Care Now
-                    </p>
-                  </div>
-
-                  {errors.role && (
-                    <p className="text-xs text-rose-500 font-bold bg-rose-50 dark:bg-rose-950/30 p-2.5 rounded-xl">
-                      {errors.role}
-                    </p>
-                  )}
-
-                  <div className="grid grid-cols-2 gap-2.5">
-                    {roleCards.map((card) => {
-                      const isSelected = form.role === card.role;
-                      return (
-                        <button
-                          key={card.role}
-                          type="button"
-                          onClick={() => {
-                            setForm((prev) => ({ ...prev, role: card.role }));
-                            setErrors((prev) => ({ ...prev, role: "" }));
-                          }}
-                          className={clsx(
-                            "rounded-2xl border-2 p-3.5 text-left transition-all duration-150 select-none",
-                            "hover:scale-[1.02] active:scale-[0.98]",
-                            isSelected
-                              ? "border-teal-500 bg-teal-500/10 dark:bg-teal-400/20 shadow-[0_4px_16px_rgba(20,184,166,0.25)]"
-                              : "border-slate-200 dark:border-white/10 hover:border-slate-300 dark:hover:border-white/20 bg-slate-50/50 dark:bg-white/[0.02]"
-                          )}
-                        >
-                          <div
-                            className={clsx(
-                              "w-10 h-10 rounded-xl flex items-center justify-center mb-2",
-                              card.bg,
-                              card.accent
-                            )}
-                          >
-                            <card.icon className="h-5 w-5" />
+                      <label className="block"><span className="mb-1 block text-sm font-medium">Specialty</span>
+                        {form.hospital_id && specialtiesLoading ? (
+                          <div className="flex h-11 items-center gap-2 rounded-md border border-fcn-primary/20 bg-white px-3 dark:bg-fcn-dark">
+                            <Spinner size="sm" />
+                            <span className="text-sm text-fcn-text-light/50">Loading specialties...</span>
                           </div>
-                          <div className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">
-                            {card.title}
-                          </div>
-                          <div className="mt-0.5 text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2 leading-tight">
-                            {card.desc}
-                          </div>
-                        </button>
-                      );
-                    })}
-                  </div>
-
-                  {/* Doctor specific fields */}
-                  <AnimatePresence>
-                    {form.role === "doctor" && (
-                      <motion.div
-                        key="doctor-fields"
-                        initial={!shouldReduceMotion ? { height: 0, opacity: 0 } : undefined}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        className="space-y-3 pt-2"
-                      >
-                        <label className="block">
-                          <span className="mb-1 block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-                            License number
-                          </span>
-                          <input
-                            type="text"
-                            value={form.license_number}
-                            onChange={(e) => update("license_number", e.target.value)}
-                            className="h-12 w-full rounded-2xl border border-slate-200 bg-slate-50/50 px-3.5 text-sm text-slate-900 outline-none focus:border-teal-500 dark:border-white/10 dark:bg-white/5 dark:text-white"
-                            placeholder="e.g. ETH-MD-12345"
-                            aria-label="License number"
-                          />
-                          {errors.license_number && (
-                            <p className="mt-1 text-xs text-rose-500 font-medium">{errors.license_number}</p>
-                          )}
-                        </label>
-
-                        <label className="block">
-                          <span className="mb-1 block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-                            Hospital affiliation
-                          </span>
-                          <select
-                            value={form.hospital_id}
-                            onChange={(e) => {
-                              update("hospital_id", e.target.value);
-                              const h = hospitals.find((x) => x.id === e.target.value);
-                              update("hospital_name", h?.name ?? "");
-                              update("specialty", "");
-                            }}
-                            className="h-12 w-full rounded-2xl border border-slate-200 bg-slate-50/50 px-3 text-sm text-slate-900 outline-none focus:border-teal-500 dark:border-white/10 dark:bg-white/5 dark:text-white"
-                            aria-label="Hospital"
-                          >
-                            <option value="">Select a hospital...</option>
-                            {hospitals.map((h) => (
-                              <option key={h.id} value={h.id}>
-                                {h.name} — {h.location}
-                              </option>
-                            ))}
+                        ) : dynamicSpecialties && dynamicSpecialties.length > 0 ? (
+                          <select value={form.specialty} onChange={(e) => update("specialty", e.target.value)} className="h-11 w-full rounded-md border border-fcn-primary/20 bg-white px-3 text-sm outline-none focus:border-fcn-accent focus:ring-2 focus:ring-fcn-accent/30 dark:bg-fcn-dark" aria-label="Specialty">
+                            <option value="">Select specialty...</option>
+                            {dynamicSpecialties.map((s) => <option key={s} value={s}>{s}</option>)}
                           </select>
-                          {hospitalsError && (
-                            <p className="mt-1 text-xs text-rose-500">
-                              Couldn't load hospitals. Please refresh and try again.
-                            </p>
-                          )}
-                        </label>
+                        ) : form.hospital_id ? (
+                          <div className="flex h-11 items-center gap-2 rounded-md border border-fcn-primary/20 bg-white px-3 text-sm text-fcn-text-light/50 dark:bg-fcn-dark">
+                            No specialties available for this hospital
+                          </div>
+                        ) : (
+                          <div className="flex h-11 items-center gap-2 rounded-md border border-fcn-primary/20 bg-white px-3 text-sm text-fcn-text-light/50 dark:bg-fcn-dark">
+                            Select a hospital first
+                          </div>
+                        )}
+                        {errors.specialty && <p className="mt-1 text-xs text-fcn-danger">{errors.specialty}</p>}
+                      </label>
 
-                        <label className="block">
-                          <span className="mb-1 block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-                            Specialty
-                          </span>
-                          {form.hospital_id && specialtiesLoading ? (
-                            <div className="flex h-12 items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50/50 px-3 dark:border-white/10">
-                              <Spinner size="sm" />
-                              <span className="text-xs text-slate-500">Loading specialties...</span>
-                            </div>
-                          ) : dynamicSpecialties && dynamicSpecialties.length > 0 ? (
-                            <select
-                              value={form.specialty}
-                              onChange={(e) => update("specialty", e.target.value)}
-                              className="h-12 w-full rounded-2xl border border-slate-200 bg-slate-50/50 px-3 text-sm text-slate-900 outline-none focus:border-teal-500 dark:border-white/10 dark:bg-white/5 dark:text-white"
-                              aria-label="Specialty"
-                            >
-                              <option value="">Select specialty...</option>
-                              {dynamicSpecialties.map((s) => (
-                                <option key={s} value={s}>
-                                  {s}
-                                </option>
-                              ))}
-                            </select>
-                          ) : form.hospital_id ? (
-                            <div className="flex h-12 items-center rounded-2xl border border-slate-200 bg-slate-50/50 px-3 text-xs text-slate-500 dark:border-white/10">
-                              No specialties found for this hospital
-                            </div>
-                          ) : (
-                            <div className="flex h-12 items-center rounded-2xl border border-slate-200 bg-slate-50/50 px-3 text-xs text-slate-500 dark:border-white/10">
-                              Select a hospital first
-                            </div>
-                          )}
-                          {errors.specialty && (
-                            <p className="mt-1 text-xs text-rose-500 font-medium">{errors.specialty}</p>
-                          )}
-                        </label>
+                      <label className="block"><span className="mb-1 block text-sm font-medium">Years experience</span><input type="number" min="0" value={form.years_experience} onChange={(e) => update("years_experience", e.target.value)} className="h-11 w-full rounded-md border border-fcn-primary/20 bg-white px-3 text-sm outline-none focus:border-fcn-accent focus:ring-2 focus:ring-fcn-accent/30 dark:bg-fcn-dark" aria-label="Years experience" /></label>
 
-                        <label className="block">
-                          <span className="mb-1 block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-                            Years experience
-                          </span>
-                          <input
-                            type="number"
-                            min="0"
-                            value={form.years_experience}
-                            onChange={(e) => update("years_experience", e.target.value)}
-                            className="h-12 w-full rounded-2xl border border-slate-200 bg-slate-50/50 px-3.5 text-sm text-slate-900 outline-none focus:border-teal-500 dark:border-white/10 dark:bg-white/5 dark:text-white"
-                            placeholder="e.g. 5"
-                            aria-label="Years experience"
-                          />
-                        </label>
-
-                        <label className="block">
-                          <span className="mb-1 block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider flex items-center justify-between">
-                            <span>Direct Call Phone Number (2G / Cellular)</span>
-                            <span className="text-[10px] text-teal-600 dark:text-teal-400 font-bold lowercase">Required</span>
-                          </span>
-                          <input
-                            type="tel"
-                            value={form.phone}
-                            onChange={(e) => update("phone", e.target.value)}
-                            className="h-12 w-full rounded-2xl border border-slate-200 bg-slate-50/50 px-3.5 text-sm text-slate-900 outline-none focus:border-teal-500 dark:border-white/10 dark:bg-white/5 dark:text-white"
-                            placeholder="+251 91 234 5678 or 0912345678"
-                            aria-label="Direct Consultation Phone Number"
-                          />
-                          <p className="mt-1 text-[11px] text-slate-500">
-                            Elderly and rural patients with poor 2G connectivity can call this number directly during scheduled consultations.
-                          </p>
-                          {errors.phone && (
-                            <p className="mt-1 text-xs text-rose-500 font-medium">{errors.phone}</p>
-                          )}
-                        </label>
-                      </motion.div>
-                    )}
-
-                    {/* Nurse / Rural Health Officer specific fields */}
-                    {(form.role === "nurse" || form.role === "rural_health_officer") && (
-                      <motion.div
-                        key="nurse-fields"
-                        initial={!shouldReduceMotion ? { height: 0, opacity: 0 } : undefined}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        className="space-y-3 pt-2"
-                      >
-                        <label className="block">
-                          <span className="mb-1 block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-                            Nursing license number
-                          </span>
-                          <input
-                            type="text"
-                            value={form.nursing_license_number}
-                            onChange={(e) => update("nursing_license_number", e.target.value)}
-                            className="h-12 w-full rounded-2xl border border-slate-200 bg-slate-50/50 px-3.5 text-sm text-slate-900 outline-none focus:border-teal-500 dark:border-white/10 dark:bg-white/5 dark:text-white"
-                            placeholder="e.g. NUR-ET-987"
-                            aria-label="Nursing license number"
-                          />
-                          {errors.nursing_license_number && (
-                            <p className="mt-1 text-xs text-rose-500 font-medium">
-                              {errors.nursing_license_number}
-                            </p>
-                          )}
-                        </label>
-
-                        <label className="block">
-                          <span className="mb-1 block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-                            Coverage zone
-                          </span>
-                          <input
-                            type="text"
-                            value={form.coverage_zone}
-                            onChange={(e) => update("coverage_zone", e.target.value)}
-                            className="h-12 w-full rounded-2xl border border-slate-200 bg-slate-50/50 px-3.5 text-sm text-slate-900 outline-none focus:border-teal-500 dark:border-white/10 dark:bg-white/5 dark:text-white"
-                            placeholder='e.g. "Sabian, Kezira"'
-                            aria-label="Coverage zone"
-                          />
-                          {errors.coverage_zone && (
-                            <p className="mt-1 text-xs text-rose-500 font-medium">{errors.coverage_zone}</p>
-                          )}
-                        </label>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-
-                  <div className="flex gap-2.5 pt-2">
-                    <Button
-                      variant="secondary"
-                      onClick={() => (isGoogle ? navigate("/login") : setPhase("account"))}
-                      className="flex-1 min-h-[48px]"
-                    >
-                      <ArrowLeft className="w-4 h-4 mr-1" />
-                      <span>Back</span>
-                    </Button>
-                    <Button
-                      variant="action"
-                      onClick={() => {
-                        if (validateStep2()) setPhase("review");
-                      }}
-                      className="flex-1 min-h-[48px]"
-                    >
-                      <span>Review</span>
-                      <ArrowRight className="w-4 h-4 ml-1" />
-                    </Button>
-                  </div>
-                </motion.div>
-              )}
-
-              {phase === "review" && (
-                <motion.div
-                  key="review"
-                  initial={!shouldReduceMotion ? { opacity: 0, x: 20 } : undefined}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={!shouldReduceMotion ? { opacity: 0, x: -20 } : undefined}
-                  className="space-y-4"
-                >
-                  <div className="mb-2">
-                    <h2 className="text-xl font-black text-slate-900 dark:text-white tracking-tight">
-                      Review & Confirm
-                    </h2>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">
-                      Verify your details and agree to terms
-                    </p>
-                  </div>
-
-                  {apiError && (
-                    <div className="rounded-2xl px-4 py-3 text-xs font-semibold bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20">
-                      {apiError}
-                    </div>
+                      <label className="block">
+                        <span className="mb-1 block text-sm font-medium">Consultation phone number</span>
+                        <input
+                          type="tel"
+                          value={form.phone}
+                          onChange={(e) => update("phone", e.target.value)}
+                          className="h-11 w-full rounded-md border border-fcn-primary/20 bg-white px-3 text-sm outline-none focus:border-fcn-accent focus:ring-2 focus:ring-fcn-accent/30 dark:bg-fcn-dark"
+                          placeholder="+251 91 234 5678 or 0912345678"
+                          aria-label="Consultation phone number"
+                        />
+                        <p className="mt-1 text-xs text-fcn-text-light/50">For direct cellular calls during scheduled consultations</p>
+                        {errors.phone && <p className="mt-1 text-xs text-fcn-danger">{errors.phone}</p>}
+                      </label>
+                    </motion.div>
                   )}
 
-                  <div className="space-y-2 rounded-2xl border border-slate-200/80 bg-slate-50/70 p-4 dark:border-white/10 dark:bg-white/[0.03]">
-                    <div className="flex justify-between text-xs sm:text-sm">
-                      <span className="text-slate-500 dark:text-slate-400">Name</span>
-                      <span className="font-bold text-slate-800 dark:text-slate-200">{form.full_name}</span>
-                    </div>
-                    <div className="flex justify-between text-xs sm:text-sm">
-                      <span className="text-slate-500 dark:text-slate-400">Email</span>
-                      <span className="font-bold text-slate-800 dark:text-slate-200">{form.email}</span>
-                    </div>
-                    <div className="flex justify-between text-xs sm:text-sm">
-                      <span className="text-slate-500 dark:text-slate-400">Role</span>
-                      <span className="font-bold capitalize text-teal-600 dark:text-teal-400">
-                        {form.role}
-                      </span>
-                    </div>
-                    {form.role === "doctor" && (
-                      <>
-                        <div className="flex justify-between text-xs sm:text-sm">
-                          <span className="text-slate-500 dark:text-slate-400">License</span>
-                          <span className="font-bold text-slate-800 dark:text-slate-200">
-                            {form.license_number}
-                          </span>
-                        </div>
-                        <div className="flex justify-between text-xs sm:text-sm">
-                          <span className="text-slate-500 dark:text-slate-400">Specialty</span>
-                          <span className="font-bold text-slate-800 dark:text-slate-200">{form.specialty}</span>
-                        </div>
-                        {form.hospital_name && (
-                          <div className="flex justify-between text-xs sm:text-sm">
-                            <span className="text-slate-500 dark:text-slate-400">Hospital</span>
-                            <span className="font-bold text-slate-800 dark:text-slate-200">
-                              {form.hospital_name}
-                            </span>
-                          </div>
-                        )}
-                        {form.phone && (
-                          <div className="flex justify-between text-xs sm:text-sm">
-                            <span className="text-slate-500 dark:text-slate-400">Direct Call Phone</span>
-                            <span className="font-bold text-slate-800 dark:text-slate-200">
-                              {form.phone}
-                            </span>
-                          </div>
-                        )}
-                      </>
-                    )}
-                    {(form.role === "nurse" || form.role === "rural_health_officer") && (
-                      <>
-                        <div className="flex justify-between text-xs sm:text-sm">
-                          <span className="text-slate-500 dark:text-slate-400">License</span>
-                          <span className="font-bold text-slate-800 dark:text-slate-200">
-                            {form.nursing_license_number}
-                          </span>
-                        </div>
-                        <div className="flex justify-between text-xs sm:text-sm">
-                          <span className="text-slate-500 dark:text-slate-400">Zone</span>
-                          <span className="font-bold text-slate-800 dark:text-slate-200">
-                            {form.coverage_zone}
-                          </span>
-                        </div>
-                      </>
-                    )}
-                  </div>
+                  {(form.role === "nurse" || form.role === "rural_health_officer") && (
+                    <motion.div key="nurse-fields" initial={!shouldReduceMotion ? { height: 0, opacity: 0 } : undefined} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="space-y-3 overflow-hidden">
+                      <label className="block"><span className="mb-1 block text-sm font-medium">Nursing license number</span><input type="text" value={form.nursing_license_number} onChange={(e) => update("nursing_license_number", e.target.value)} className="h-11 w-full rounded-md border border-fcn-primary/20 bg-white px-3 text-sm outline-none focus:border-fcn-accent focus:ring-2 focus:ring-fcn-accent/30 dark:bg-fcn-dark" aria-label="Nursing license number" />{errors.nursing_license_number && <p className="mt-1 text-xs text-fcn-danger">{errors.nursing_license_number}</p>}</label>
+                      <label className="block"><span className="mb-1 block text-sm font-medium">Coverage zone</span><input type="text" value={form.coverage_zone} onChange={(e) => update("coverage_zone", e.target.value)} className="h-11 w-full rounded-md border border-fcn-primary/20 bg-white px-3 text-sm outline-none focus:border-fcn-accent focus:ring-2 focus:ring-fcn-accent/30 dark:bg-fcn-dark" placeholder='e.g. "Sabian, Kezira"' aria-label="Coverage zone" />{errors.coverage_zone && <p className="mt-1 text-xs text-fcn-danger">{errors.coverage_zone}</p>}</label>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
 
-                  <label className="flex items-start gap-2.5 text-xs text-slate-600 dark:text-slate-400 cursor-pointer select-none">
-                    <input
-                      type="checkbox"
-                      checked={agreeTerms}
-                      onChange={(e) => setAgreeTerms(e.target.checked)}
-                      className="mt-0.5 h-4 w-4 rounded-md border-slate-300 text-teal-600 focus:ring-teal-500"
-                    />
-                    <span>
-                      I agree to Fast Care Now's{" "}
-                      <Link
-                        to="/terms-of-service"
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-teal-600 dark:text-teal-400 font-semibold underline hover:text-teal-700"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        Terms of Service
-                      </Link>{" "}
-                      and{" "}
-                      <Link
-                        to="/privacy-policy"
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-teal-600 dark:text-teal-400 font-semibold underline hover:text-teal-700"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        Privacy Policy
-                      </Link>
-                    </span>
-                  </label>
+                <div className="flex gap-3">
+                  <Button variant="secondary" onClick={() => isGoogle ? navigate("/login") : setPhase("account")} className="flex-1">Back</Button>
+                  <Button onClick={() => { if (validateStep2()) setPhase("review"); }} className="flex-1">Next</Button>
+                </div>
+              </motion.div>
+            )}
 
-                  <div className="flex gap-2.5 pt-2">
-                    <Button
-                      variant="secondary"
-                      onClick={() => setPhase("role")}
-                      className="flex-1 min-h-[48px]"
-                    >
-                      <ArrowLeft className="w-4 h-4 mr-1" />
-                      <span>Back</span>
-                    </Button>
-                    <Button
-                      variant="action"
-                      onClick={handleSubmit}
-                      loading={isSubmitting}
-                      className="flex-1 min-h-[48px]"
-                    >
-                      <span>Complete Account</span>
-                    </Button>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.div>
-        </div>
+            {phase === "review" && (
+              <motion.div key="review" initial={!shouldReduceMotion ? { opacity: 0, x: 40 } : undefined} animate={{ opacity: 1, x: 0 }} exit={!shouldReduceMotion ? { opacity: 0, x: -40 } : undefined} className="space-y-4">
+                <div className="mb-2 text-center">
+                  <h2 className="text-xl font-bold text-fcn-text-light dark:text-fcn-text-dark">Review & Confirm</h2>
+                  <p className="text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">Step 3 of 3 — Verify your details</p>
+                </div>
+
+                {apiError && <p className="rounded-md bg-fcn-danger/10 px-3 py-2 text-sm text-fcn-danger">{apiError}</p>}
+
+                <div className="space-y-2 rounded-lg border border-fcn-primary/10 bg-fcn-light/50 p-4 dark:bg-fcn-dark/50">
+                  <div className="flex justify-between text-sm"><span className="text-fcn-text-light/60 dark:text-fcn-text-dark/60">Name</span><span className="font-medium">{form.full_name}</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-fcn-text-light/60 dark:text-fcn-text-dark/60">Email</span><span className="font-medium">{form.email}</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-fcn-text-light/60 dark:text-fcn-text-dark/60">Role</span><span className="font-medium capitalize">{form.role}</span></div>
+                  {form.role === "doctor" && (
+                    <>
+                      <div className="flex justify-between text-sm"><span className="text-fcn-text-light/60 dark:text-fcn-text-dark/60">License</span><span className="font-medium">{form.license_number}</span></div>
+                      <div className="flex justify-between text-sm"><span className="text-fcn-text-light/60 dark:text-fcn-text-dark/60">Specialty</span><span className="font-medium">{form.specialty}</span></div>
+                      <div className="flex justify-between text-sm"><span className="text-fcn-text-light/60 dark:text-fcn-text-dark/60">Phone</span><span className="font-medium">{form.phone}</span></div>
+                    </>
+                  )}
+                  {(form.role === "nurse" || form.role === "rural_health_officer") && (
+                    <>
+                      <div className="flex justify-between text-sm"><span className="text-fcn-text-light/60 dark:text-fcn-text-dark/60">License</span><span className="font-medium">{form.nursing_license_number}</span></div>
+                      <div className="flex justify-between text-sm"><span className="text-fcn-text-light/60 dark:text-fcn-text-dark/60">Zone</span><span className="font-medium">{form.coverage_zone}</span></div>
+                    </>
+                  )}
+                </div>
+
+                <label className="flex items-start gap-2 text-sm">
+                  <input type="checkbox" checked={agreeTerms} onChange={(e) => setAgreeTerms(e.target.checked)} className="mt-0.5 h-4 w-4 rounded border-fcn-primary/30 text-fcn-primary focus:ring-fcn-accent" />
+                  <span className="text-fcn-text-light/70 dark:text-fcn-text-dark/70">I agree to Fast Care Now Terms of Service and Privacy Policy</span>
+                </label>
+
+                <div className="flex gap-3">
+                  <Button variant="secondary" onClick={() => setPhase("role")} className="flex-1">Back</Button>
+                  <Button onClick={handleSubmit} loading={isSubmitting} className="flex-1">{isSubmitting ? "Creating..." : "Submit"}</Button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
       </div>
     </div>
   );
