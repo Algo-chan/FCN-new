@@ -21,6 +21,15 @@ const featurePills = [
 
 const avatarColors = ["#0A7EA4", "#2DD4BF", "#10B981"];
 
+const DEMO_ACCOUNTS = [
+  { label: "Patient", email: "demo.patient@fcncare.com", pass: "Patient@123", icon: "🩺", desc: "Dagem Tesfaye (Patient)" },
+  { label: "Doctor", email: "demo.doctor1@fcncare.com", pass: "Doctor@123", icon: "👨‍⚕️", desc: "Dr. Abebe Bekele (General Medicine)" },
+  { label: "Super Admin", email: "admin@fcncare.com", pass: "Admin@123", icon: "🛡️", desc: "Full System Administrator" },
+  { label: "Nurse", email: "demo.nurse@fcncare.com", pass: "Nurse@123", icon: "💉", desc: "Bethel Mekonnen (Nurse)" },
+  { label: "Hospital", email: "demo.hospitaladmin@fcncare.com", pass: "Hospital@123", icon: "🏥", desc: "Dil Chora Hospital Admin" },
+  { label: "Pharmacy", email: "demo.pharmacy@fcncare.com", pass: "Pharmacy@123", icon: "💊", desc: "Central Pharmacy Admin" }
+];
+
 const LoginPage = () => {
   usePageMeta({
     title: "Login | Fast Care Now",
@@ -101,8 +110,14 @@ const LoginPage = () => {
   const redirectUser = (user: { role: string; status: string }) => {
     if (user.role === "admin" || user.role === "super_admin") {
       navigate("/admin", { replace: true });
+    } else if (user.role === "hospital_admin") {
+      navigate("/hospital-admin", { replace: true });
+    } else if (user.role === "pharmacy_admin") {
+      navigate("/pharmacy-admin", { replace: true });
     } else if ((user.role === "doctor" || user.role === "nurse" || user.role === "rural_health_officer") && user.status === "pending") {
       navigate("/pending", { replace: true });
+    } else if (user.role === "doctor" || user.role === "nurse" || user.role === "rural_health_officer") {
+      navigate(from ?? "/dashboard", { replace: true });
     } else {
       authService.getOnboardingStatus().then(({ data }) => {
         if (data.data?.completed) {
@@ -302,24 +317,63 @@ const LoginPage = () => {
                   </Button>
                 </form>
 
-                <p className="mt-6 text-center text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">
+                {/* Instant Demo Accounts Selector */}
+                <div className="mt-5 border-t border-fcn-primary/10 pt-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-fcn-text-light/50 dark:text-fcn-text-dark/50">
+                      Instant Demo Login
+                    </span>
+                    <span className="text-[10px] font-bold text-fcn-primary bg-fcn-primary/10 px-2 py-0.5 rounded-full">
+                      Tap role to fill
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-3 gap-1.5">
+                    {DEMO_ACCOUNTS.map((acc) => (
+                      <button
+                        key={acc.label}
+                        type="button"
+                        onClick={() => {
+                          setEmail(acc.email);
+                          setPassword(acc.pass);
+                          setError(null);
+                        }}
+                        className={`flex flex-col items-center justify-center p-2 rounded-lg text-center border transition-all text-xs font-semibold ${
+                          email === acc.email
+                            ? "border-fcn-accent bg-fcn-accent/15 text-fcn-accent ring-2 ring-fcn-accent/30 shadow-sm"
+                            : "border-fcn-primary/15 bg-fcn-primary/5 hover:bg-fcn-primary/10 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10 text-fcn-text-light dark:text-fcn-text-dark"
+                        }`}
+                        title={`${acc.desc} (${acc.email})`}
+                      >
+                        <span className="text-base leading-none mb-1">{acc.icon}</span>
+                        <span className="leading-tight text-[11px] font-bold truncate max-w-full">{acc.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <p className="mt-5 text-center text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">
                   Don't have an account?{" "}
                   <Link to="/register" className="font-medium text-fcn-primary hover:underline">Register here</Link>
                 </p>
               </motion.div>
             ) : (
-              <OTPVerification
-                key="login-otp"
-                email={otpEmail}
-                onVerify={handleVerifyOTP}
-                onResend={handleResendOTP}
-                onBack={otpLocked ? undefined : handleBackToLogin}
-                isLoading={isOTPLoading}
-                error={otpError}
-                locked={otpLocked}
-                title="Two-factor authentication"
-                subtitle="Enter the 6-digit code sent to"
-              />
+              <div>
+                <OTPVerification
+                  key="login-otp"
+                  email={otpEmail}
+                  onVerify={handleVerifyOTP}
+                  onResend={handleResendOTP}
+                  onBack={otpLocked ? undefined : handleBackToLogin}
+                  isLoading={isOTPLoading}
+                  error={otpError}
+                  locked={otpLocked}
+                  title="Two-factor authentication"
+                  subtitle="Enter the 6-digit code sent to"
+                />
+                <div className="mt-4 p-2.5 rounded-lg bg-fcn-accent/10 border border-fcn-accent/20 text-center text-xs text-fcn-accent font-medium">
+                  Testing? Enter universal master code: <strong className="font-mono font-bold tracking-widest text-fcn-accent">123456</strong>
+                </div>
+              </div>
             )}
           </AnimatePresence>
         </motion.div>
