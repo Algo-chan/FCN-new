@@ -864,15 +864,15 @@ Recommended: See ${store.finalAssessment.recommended_specialty || "a doctor"}`;
               {/* Sidebar with Tips & Health Profile */}
               <div className="space-y-4">
                 {/* Clinical AI Guide Card with Overflowing 3D African Doctor */}
-                <div className="relative mt-8 sm:mt-10 overflow-visible rounded-2xl border border-teal-500/25 bg-gradient-to-br from-teal-700 via-teal-800 to-sky-950 p-5 text-white shadow-lg">
-                  {/* Overflowing 3D African Doctor Desta */}
+                <div className="relative mt-2 sm:mt-10 overflow-visible rounded-2xl border border-teal-500/25 bg-gradient-to-br from-teal-700 via-teal-800 to-sky-950 p-5 text-white shadow-lg">
+                  {/* Overflowing 3D African Doctor Desta (Hidden on mobile) */}
                   <img
                     src="/images/doctors/doctor-african-male.svg"
                     alt="Dr. Desta - Clinical Triage"
                     aria-hidden="true"
-                    className="pointer-events-none absolute -top-12 sm:-top-14 -right-2 z-10 h-44 sm:h-48 object-contain select-none drop-shadow-[0_18px_30px_rgba(4,30,40,0.65)]"
+                    className="pointer-events-none absolute hidden sm:block sm:-top-14 -right-2 z-10 sm:h-48 object-contain select-none drop-shadow-[0_18px_30px_rgba(4,30,40,0.65)]"
                   />
-                  <div className="relative z-0 pr-28">
+                  <div className="relative z-0 sm:pr-28">
                     <span className="inline-block px-2 py-0.5 rounded-full bg-white/10 text-teal-200 text-[10px] font-bold uppercase tracking-wider mb-1">
                       Clinical AI Guide
                     </span>

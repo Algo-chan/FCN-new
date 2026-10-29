@@ -147,7 +147,7 @@ export const PatientDashboard = () => {
   return (
     <div className="space-y-6">
       {/* Pattern #6: Greeting Header with Today's Summary Card & Overflowing 3D African Doctor */}
-      <div className="relative mt-8 sm:mt-12 overflow-visible rounded-[24px] sm:rounded-3xl border border-teal-500/30 bg-gradient-to-br from-teal-700 via-teal-800 to-sky-950 p-5 sm:p-7 text-white shadow-[0_20px_50px_rgba(13,148,136,0.3)]">
+      <div className="relative mt-2 sm:mt-12 overflow-visible rounded-[24px] sm:rounded-3xl border border-teal-500/30 bg-gradient-to-br from-teal-700 via-teal-800 to-sky-950 p-5 sm:p-7 text-white shadow-[0_20px_50px_rgba(13,148,136,0.3)]">
         {/* Subtle background telemetry watermark */}
         <img
           src="/images/medical/ecg-monitor.svg"
@@ -156,15 +156,15 @@ export const PatientDashboard = () => {
           className="pointer-events-none absolute -bottom-10 left-1/4 z-0 h-44 w-44 object-contain opacity-[0.08] select-none"
         />
 
-        {/* Overflowing 3D African Female Doctor standing on the right edge */}
+        {/* Overflowing 3D African Female Doctor standing on the right edge (Hidden on mobile) */}
         <img
-          src="/images/doctors/doctor-african-female.svg"
+          src="/images/doctors/doctor-african-female.png"
           alt="Dr. Hanna - Fast Care Now"
           aria-hidden="true"
-          className="pointer-events-none absolute -top-10 sm:-top-16 -right-2 sm:right-4 lg:right-8 z-20 h-48 sm:h-64 lg:h-72 object-contain select-none drop-shadow-[0_25px_40px_rgba(4,30,40,0.65)]"
+          className="pointer-events-none absolute hidden sm:block sm:-top-16 right-4 lg:right-8 z-20 sm:h-64 lg:h-72 object-contain select-none drop-shadow-[0_25px_40px_rgba(4,30,40,0.65)]"
         />
 
-        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 pr-28 sm:pr-48 lg:pr-56">
+        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 sm:pr-48 lg:pr-56">
           <div className="min-w-0">
             <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/10 backdrop-blur-md text-teal-200 text-[11px] font-semibold mb-2">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
