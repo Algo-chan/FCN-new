@@ -157,12 +157,15 @@ export const PatientDashboard = () => {
         />
 
         {/* Overflowing 3D African Female Doctor standing on the right edge (Hidden on mobile) */}
-        <img
-          src="/images/doctors/doctor-african-female.png"
-          alt="Dr. Hanna - Fast Care Now"
-          aria-hidden="true"
-          className="pointer-events-none absolute hidden sm:block sm:-top-16 right-4 lg:right-8 z-20 sm:h-64 lg:h-72 object-contain select-none drop-shadow-[0_25px_40px_rgba(4,30,40,0.65)]"
-        />
+        <picture className="pointer-events-none absolute hidden sm:block bottom-0 right-4 lg:right-10 z-20 select-none">
+          <source srcSet="/images/doctors/doctor-african-female.webp" type="image/webp" />
+          <img
+            src="/images/doctors/doctor-african-female.png"
+            alt="Dr. Hanna - Fast Care Now"
+            aria-hidden="true"
+            className="sm:h-60 md:h-72 lg:h-80 w-auto object-contain drop-shadow-[0_20px_35px_rgba(4,30,40,0.65)]"
+          />
+        </picture>
 
         <div className="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 sm:pr-48 lg:pr-56">
           <div className="min-w-0">
