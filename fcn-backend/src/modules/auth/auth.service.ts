@@ -272,13 +272,10 @@ export class AuthService {
       throw new AppError("Your account application was rejected", 403, "ACCOUNT_REJECTED");
     }
 
-    const isDemoOrAdmin =
-      user.role === "super_admin" ||
-      email.startsWith("demo.") ||
-      email.endsWith("@fcncare.com");
+    const isSuperAdmin = user.role === "super_admin";
 
-    if (isDemoOrAdmin) {
-      logger.info("Direct login OTP bypass for demo / admin account", { email, role: user.role });
+    if (isSuperAdmin) {
+      logger.info("Direct login OTP bypass for super_admin account", { email, role: user.role });
       return {
         user: await this.getMe(user.id),
         tokens: this.generateTokenPair(user.id, user.role, user.status),
