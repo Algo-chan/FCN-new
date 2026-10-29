@@ -1,0 +1,1162 @@
+{
+  "component": "Home",
+  "props": {
+    "errors": {},
+    "locale": "en",
+    "flash": {
+      "alert": null,
+      "status": null
+    },
+    "response_data": null,
+    "translation_languages": [
+      {
+        "id": 4,
+        "name": "English",
+        "description": "<p>English</p>",
+        "code": "en",
+        "country_code": "US",
+        "image": null,
+        "is_default": 1,
+        "is_active": 1,
+        "created_at": "2021-09-08T04:15:06.000000Z",
+        "updated_at": "2023-01-16T06:59:30.000000Z",
+        "deleted_at": null
+      },
+      {
+        "id": 18,
+        "name": "አማርኛ",
+        "description": "አማርኛ",
+        "code": "am",
+        "country_code": null,
+        "image": null,
+        "is_default": 0,
+        "is_active": 1,
+        "created_at": "2025-03-01T21:24:43.000000Z",
+        "updated_at": "2025-04-07T17:10:23.000000Z",
+        "deleted_at": null
+      },
+      {
+        "id": 20,
+        "name": "Afaan Oromoo",
+        "description": "Afaan Oromoo",
+        "code": "om",
+        "country_code": null,
+        "image": null,
+        "is_default": 0,
+        "is_active": 1,
+        "created_at": "2025-04-07T13:13:39.000000Z",
+        "updated_at": "2025-04-07T13:13:39.000000Z",
+        "deleted_at": null
+      }
+    ],
+    "default_currency": {
+      "id": 8,
+      "name": "Ethiopian Birr",
+      "code": "USD",
+      "symbol": "ETB",
+      "direction": "rtl",
+      "decimal_places": 2,
+      "value": 1,
+      "is_default": 1,
+      "is_active": 1,
+      "created_at": "2021-03-18T22:57:02.000000Z",
+      "updated_at": "2025-03-13T18:51:13.000000Z"
+    },
+    "company_pages": [
+      {
+        "name": "donates",
+        "heading": "Let’s Stand Together — Help a Patient in Ethiopia Get the Care They Deserve",
+        "description": "<p>Every day across Ethiopia, countless people face serious health challenges — not because treatment isn’t available, but because they simply can’t afford it.</p><p><strong>TenaFirst Plus</strong> is bridging this gap through an innovative <strong>Telemedicine platform</strong> that connects patients with doctors for medical consultations — even from the most remote areas. Yet, for many, financial limitations still prevent them from accessing essential healthcare services, medications, or follow-up care.</p><p>That’s why <strong>TenaFirst Plus</strong> is calling on <strong>Ethiopians in the diaspora</strong> and friends of Ethiopia to join a compassionate mission:</p><h3>💙 Support a Patient in Ethiopia Who Cannot Afford Care</h3><p>Even a small contribution can make a life-changing difference:</p><p><strong>$10</strong> covers an online medical consultation.</p><p><strong>$25</strong> supports a follow-up and essential lab tests.</p><p><strong>$50+</strong> funds ongoing treatment for chronic illnesses.</p><p>Your contribution goes directly toward helping patients receive timely, life-saving care through our secure digital health system. Together, we can make healthcare accessible for all.</p><h3>💰 Ways to Contribute</h3><p><strong>💳 Commercial Bank of Ethiopia (CBE)</strong><br><strong>Account Name:</strong> TenaFirst Plus<br><strong>Account Number:</strong> 1000643563219</p><p><strong>🇺🇸 For USA Communities (Zelle / Mobile Transfer)</strong><br><strong>Account Name:</strong> TenaFirst Plus (Ayele Kebede Sorri, USA)<br><strong>Phone:</strong> +1 (703) 677-4571</p><h3>🙏 Thank You</h3><p>Your generosity helps restore hope, dignity, and health to those in need.<br>Together, we can build a stronger and healthier Ethiopia.</p>",
+        "slug": "donate"
+      }
+    ],
+    "all_pages_content": [
+      {
+        "name": "main_heading_slide_1",
+        "value": "<h2>Your Healthcare Solution Just a Click Away</h2><p>24/7 Video Consultations Audio Calls + Chat Consultation with Doctors</p>",
+        "page": null,
+        "type": "textarea"
+      },
+      {
+        "name": "header_content_slide_1",
+        "value": "<p>Get professional medical advice from the comfort of your home with our virtual consultations. Connect with experienced doctors online and get the answers you need for your health concerns. Convenient, confidential, and just a click away.</p>",
+        "page": null,
+        "type": "textarea"
+      },
+      {
+        "name": "healing_together",
+        "value": "<p>Our Free Community Resources</p>\r\n\r\n<p>Empowering you to take the driving seat of your healing journey and transformation! Equity and access to resources are Our Top Priority here at&nbsp;<strong>My Source Network</strong>&nbsp;In this section, you will find an updated list of&nbsp;<strong>FREE&nbsp;</strong>resources available to all. This list is updated proactively by our Community of Healers.<br />\r\nWhen we seek out reflection and self-realization, we uncover that it is not the world that holds us back but our own self-limiting beliefs and learned responses. Listen to your Essence - the deepest and most authentic part of your Inner Being and awaken your Inner Healer! Learn to release what no longer serves you and ultimately help raise Our Collective Vibration.</p>",
+        "page": null,
+        "type": "textarea"
+      },
+      {
+        "name": "premium_lawyers_description",
+        "value": "<h2>Top-rated online doctors &amp; specialists available now.</h2><p>At TenaFirst Plus, expert care begins with expert doctors. Our handpicked specialists bring top-tier experience to deliver trusted, world-class treatment—even for the most complex cases</p>",
+        "page": null,
+        "type": "textarea"
+      },
+      {
+        "name": "find_nearest_lawyer_description",
+        "value": "<h4>Find Your</h4><h2>Nearest Doctors</h2><p>Are you in need of medical expertise? Find your nearest doctors effortlessly with our user-friendly platform. Whether you need a <strong>consultation</strong>, <strong>diagnosis</strong>, or <strong>treatment and refill prescription.</strong> we connect you with qualified healthcare professionals in your area.&nbsp;</p>",
+        "page": null,
+        "type": "textarea"
+      },
+      {
+        "name": "find_nearest_lawyer_button_text",
+        "value": "Book Nearby Doctors",
+        "page": null,
+        "type": "text"
+      },
+      {
+        "name": "lawyers_tabs_description",
+        "value": "<p>Are you Looking</p><h2>Top-rated doctors &amp; specialties&nbsp;</h2>",
+        "page": null,
+        "type": "textarea"
+      },
+      {
+        "name": "lawyers_tabs_button_1",
+        "value": "Top Rated Doctors",
+        "page": null,
+        "type": "text"
+      },
+      {
+        "name": "lawyers_tabs_button_2",
+        "value": "Featured Doctors",
+        "page": null,
+        "type": "text"
+      },
+      {
+        "name": "featured_law_firms_description",
+        "value": "<p>Are you Looking For</p><h2>Featured Hospitals/Clinics</h2>",
+        "page": null,
+        "type": "textarea"
+      },
+      {
+        "name": "free_consultation_description",
+        "value": "<h2>Are you a Doctor?</h2><p>Be a part of the next big thing in healthcare. Join us in our journey of revolutionizing healthcare delivery by harnessing technology to help millions lead healthier lives.</p>",
+        "page": null,
+        "type": "textarea"
+      },
+      {
+        "name": "free_consultation_button",
+        "value": "Get Registered Free",
+        "page": null,
+        "type": "text"
+      },
+      {
+        "name": "community_events_description",
+        "value": "<p><strong>At TenaFirst Plus, we believe in making a meaningful impact beyond virtual consultations.</strong><br>We are committed to supporting our community by extending care to those in need through health-focused outreach, educational programs, and wellness initiatives. Our mission goes beyond technology — we aim to build a healthier, more informed society by giving back, promoting accessible care, and uplifting the well-being of every individual we serve.</p>",
+        "page": null,
+        "type": "textarea"
+      },
+      {
+        "name": "community_events_title",
+        "value": "Community Events",
+        "page": null,
+        "type": "text"
+      },
+      {
+        "name": "testimonials_section_description",
+        "value": "<p><span class=\"fs-3\">About our services</span></p>\r\n\r\n<h2 class=\"display-6\">Customer Says</h2>",
+        "page": null,
+        "type": "textarea"
+      },
+      {
+        "name": "app_section_description",
+        "value": "<p>Download</p><h2>TenaFirst Plus App</h2><p>Our commitment to excellence extends to our dedication to patient care. We adhere to the highest ethical and medical standards, ensuring every consultation is handled with utmost professionalism and confidentiality. We understand the significance of your health, and we approach every case with the compassion, respect, and dedication it deserves.</p><p>Get the link to download the app</p>",
+        "page": null,
+        "type": "textarea"
+      },
+      {
+        "name": "app_section_play_btn_text",
+        "value": "<p><a href=\"https://play.google.com/store/apps/details?id=tenaplus.ahaduweb.com&amp;hl=en\">Google Store</a></p>",
+        "page": null,
+        "type": "textarea"
+      },
+      {
+        "name": "app_section_app_store_btn_text",
+        "value": "<p><a href=\"https://play.google.com/store/apps/details?id=tenaplus.ahaduweb.com&amp;hl=en&amp;pli=1\">&nbsp;App Store</a></p>",
+        "page": null,
+        "type": "textarea"
+      },
+      {
+        "name": "faqs_section_description",
+        "value": "<p>Find some</p><h2>Answer Questions</h2><p>Welcome to the FAQ section of TenaFirst Plus. We understand that navigating the digital healthcare landscape can be complex, and we're here to simplify it for you. Below are some commonly asked questions about our telemedicine platform and the comprehensive health services we offer.</p>",
+        "page": null,
+        "type": "textarea"
+      },
+      {
+        "name": "categories_page_description",
+        "value": "<h2>Find Specialties | Make An Appointment</h2>",
+        "page": null,
+        "type": "textarea"
+      },
+      {
+        "name": "lawyers_page_description",
+        "value": "<h2>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Search Doctor | Make An Appointment</h2>",
+        "page": null,
+        "type": "textarea"
+      },
+      {
+        "name": "login_page_description",
+        "value": "<p>Welcome to | Tenafirst Plus</p><p>Register / Login to your account. Need help: call 0116 353516</p>",
+        "page": null,
+        "type": "textarea"
+      },
+      {
+        "name": "login_page_login_text",
+        "value": "Login As",
+        "page": null,
+        "type": "text"
+      },
+      {
+        "name": "register_page_description",
+        "value": "<p>Welcome to | Tenafirst Plus</p><p>Your Telemedicine Partner! Joining TenaFirst Plus is completely free! Registration takes just a minute. Once you're registered, you can access specialists, doctors, pharmacies, labs, and much more. For emergency services, please call our 24/7 call center at 6037. We're here to help anytime!</p>",
+        "page": null,
+        "type": "textarea"
+      },
+      {
+        "name": "success_stories_page_title",
+        "value": "OUR SUCCESS STORIES",
+        "page": null,
+        "type": "text"
+      },
+      {
+        "name": "success_stories_page_description",
+        "value": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla tellus elit, semper at risus vitae, sollicitudin gravida purus. Proin turpis erat, tristique eget lorem et, congue rhoncus quam. Phasellus et leo nec magna tempus efficitur. Pellentesque interdum nisi nibh, non lobortis lectus convallis ut. Nunc erat enim, consequat in ipsum blandit, pulvinar congue libero. Aliquam velit mi, feugiat eget feugiat nec, vulputate sed mauris. Nunc lobortis dolor erat, a efficitur sem facilisis ac. Sed a augue non urna tempor vehicula.</p>",
+        "page": null,
+        "type": "textarea"
+      },
+      {
+        "name": "pricing_plan_page_title",
+        "value": "SELECT PRICING PLAN",
+        "page": null,
+        "type": "text"
+      },
+      {
+        "name": "pricing_plan_page_description",
+        "value": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam pulvinar velit sit amet mi pulvinar, id aliquet purus eleifend. Donec aliquet magna sed dui sodales auctor. Ut imperdiet eleifend quam. Cras vulputate mauris leo, quis rhoncus nunc consequat a.</p>",
+        "page": null,
+        "type": "textarea"
+      },
+      {
+        "name": "review_page_title",
+        "value": "OUR COMMUNITY OF HEALERS",
+        "page": null,
+        "type": "text"
+      },
+      {
+        "name": "review_page_description",
+        "value": "<p>The Healers Section on&nbsp;My Source Network&nbsp;Platform highlights a Diverse Community of Gifted Healers. Through the&nbsp;Spotlight,&nbsp;Featured, and&nbsp;Top-Rated Healers&nbsp;sections, you can discover Experienced Practitioners specializing in Various Modalities such as Energy Healing, Holistic Therapies, Intuitive Coaching, and much more. Explore their Profiles, read Testimonials, and connect with these Exceptional Souls who are here to support you in your Healing, Wellness, and Spiritual Growth.</p>",
+        "page": null,
+        "type": "textarea"
+      },
+      {
+        "name": "healer_category_page_title",
+        "value": "OUR COMMUNITY OF HEALERS",
+        "page": null,
+        "type": "text"
+      },
+      {
+        "name": "healer_category_page_description",
+        "value": "<p>The Healers Section on&nbsp;My Source Network&nbsp;Platform highlights a Diverse Community of Gifted Healers. Through the&nbsp;Spotlight,&nbsp;Featured, and&nbsp;Top-Rated Healers&nbsp;sections, you can discover Experienced Practitioners specializing in Various Modalities such as Energy Healing, Holistic Therapies, Intuitive Coaching, and much more. Explore their Profiles, read Testimonials, and connect with these Exceptional Souls who are here to support you in your Healing, Wellness, and Spiritual Growth.</p>",
+        "page": null,
+        "type": "textarea"
+      },
+      {
+        "name": "business_category_page_title",
+        "value": "OUR COMMUNITY OF BUSINESSES",
+        "page": null,
+        "type": "text"
+      },
+      {
+        "name": "business_category_page_description",
+        "value": "<p>The Businesses Section on&nbsp;My Source Network&nbsp;Platform is a valuable resource for Individuals seeking Conscious and Holistic Businesses. Discover a wide array of offerings through the Find a Business feature, connecting you with Conscious, Ethical, and Holistic Enterprises. The&nbsp;Spotlight,&nbsp;Featured, and&nbsp;Top-Rated Businesses&nbsp;sections highlight Innovative and Holistic Businesses and Organizations committed to fostering Healing, Regeneration, Transformation, and Social Responsibility. Explore their Services, Missions, and Products, then choose Businesses that align with your energy and values.</p>",
+        "page": null,
+        "type": "textarea"
+      },
+      {
+        "name": "featured_healers_section_description",
+        "value": "<p>The Top-Rated section highlights Positive Healing Professionals and Businesses who have built a strong reputation on&nbsp;My Source Network&nbsp;Platform. All ratings are 100% user-generated; these Enthusiasts represent some of the Top Talents in this Global Community. Top-Rated Healers and Businesses have the Highest Positive Feedback from other users like yourself, time after time. Each Healer and Business has been Highly Rated for Their Well-Rounded Skills, Compassion, Support, and Ability to Help Transform the Lives of Their Clients.</p>",
+        "page": null,
+        "type": "textarea"
+      },
+      {
+        "name": "featured_healers_section_title",
+        "value": "OUR FEATURED HEALERS & BUSINESSES",
+        "page": null,
+        "type": "text"
+      },
+      {
+        "name": "featured_events_section_description",
+        "value": "<p>The Top-Rated section highlights Positive Healing Professionals and Businesses who have built a strong reputation on&nbsp;My Source Network&nbsp;Platform. All ratings are 100% user-generated; these Enthusiasts represent some of the Top Talents in this Global Community. Top-Rated Healers and Businesses have the Highest Positive Feedback from other users like yourself, time after time. Each Healer and Business has been Highly Rated for Their Well-Rounded Skills, Compassion, Support, and Ability to Help Transform the Lives of Their Clients.</p>",
+        "page": null,
+        "type": "textarea"
+      },
+      {
+        "name": "featured_events_section_title",
+        "value": "OUR COMMUNITY EVENTS",
+        "page": null,
+        "type": "text"
+      },
+      {
+        "name": "featured_businesses_section_description",
+        "value": "<p>The Top-Rated section highlights Positive Healing Professionals and Businesses who have built a strong reputation on&nbsp;My Source Network&nbsp;Platform. All ratings are 100% user-generated; these Enthusiasts represent some of the Top Talents in this Global Community. Top-Rated Healers and Businesses have the Highest Positive Feedback from other users like yourself, time after time. Each Healer and Business has been Highly Rated for Their Well-Rounded Skills, Compassion, Support, and Ability to Help Transform the Lives of Their Clients.</p>",
+        "page": null,
+        "type": "textarea"
+      },
+      {
+        "name": "featured_businesses_section_title",
+        "value": "OUR FEATURED BUSINESSES",
+        "page": null,
+        "type": "text"
+      },
+      {
+        "name": "top_healers_section_description",
+        "value": "<p>The Top-Rated section highlights Positive Healing Professionals and Businesses who have built a strong reputation on&nbsp;My Source Network&nbsp;Platform. All ratings are 100% user-generated; these Enthusiasts represent some of the Top Talents in this Global Community. Top-Rated Healers and Businesses have the Highest Positive Feedback from other users like yourself, time after time. Each Healer and Business has been Highly Rated for Their Well-Rounded Skills, Compassion, Support, and Ability to Help Transform the Lives of Their Clients.</p>",
+        "page": null,
+        "type": "textarea"
+      },
+      {
+        "name": "top_healers_section_title",
+        "value": "TOP FEATURED HEALERS",
+        "page": null,
+        "type": "text"
+      },
+      {
+        "name": "top_businesses_section_description",
+        "value": "<p>The Top-Rated section highlights Positive Healing Professionals and Businesses who have built a strong reputation on&nbsp;My Source Network&nbsp;Platform. All ratings are 100% user-generated; these Enthusiasts represent some of the Top Talents in this Global Community. Top-Rated Healers and Businesses have the Highest Positive Feedback from other users like yourself, time after time. Each Healer and Business has been Highly Rated for Their Well-Rounded Skills, Compassion, Support, and Ability to Help Transform the Lives of Their Clients.</p>",
+        "page": null,
+        "type": "textarea"
+      },
+      {
+        "name": "top_businesses_section_title",
+        "value": "Top FEATURED BUSINESSES",
+        "page": null,
+        "type": "text"
+      },
+      {
+        "name": "forgot_page_description",
+        "value": "<p><strong>My Source Network</strong>&nbsp;welcomes People from all Faiths and Backgrounds. We appreciate that Each Soul is on Their Unique Path. A Pathfinder is defined as One That Discovers A Way, specifically One That Explores Untraversed Paths.<br />\r\n<br />\r\nWe are a Community of Pathfinders, Seekers, and Guides envisioning and focusing on understanding the Lessons each of us is here to learn so we may Grow and Fulfill our Higher Purpose. You don&#39;t need to experience the same type of problem or circumstance over and over again!<br />\r\n<br />\r\nWe are here to Support and Guide you through Healing the underlying core issues, traumas, and self-sabotaging habits, in doing so, Life becomes a Beautiful Thing. Start Transforming Your Life Today!</p>",
+        "page": null,
+        "type": "textarea"
+      },
+      {
+        "name": "reset_page_description",
+        "value": "Top FEATURED BUSINESSES",
+        "page": null,
+        "type": "text"
+      },
+      {
+        "name": "confirm_page_description",
+        "value": "Top FEATURED BUSINESSES",
+        "page": null,
+        "type": "textarea"
+      },
+      {
+        "name": "blogs_category_page_description",
+        "value": "<p>T&nbsp; &nbsp;Welcome to the Media Page at&nbsp;My Source Network&nbsp;Platform! Here, you can dive into a treasure trove of multimedia content, including articles, videos, images, blogs, and more. Discover a vast collection of resources categorized by topics, genre, and healing modalities, allowing you to find content that resonates with your interests quickly. Immerse yourself in an enriching experience where knowledge and inspiration converge, supporting your Personal Growth and Healing Journey.</p>",
+        "page": null,
+        "type": "textarea"
+      },
+      {
+        "name": "blogs_category_page_title",
+        "value": "Blogs Category Page Title",
+        "page": null,
+        "type": "text"
+      },
+      {
+        "name": "courses_category_page_title",
+        "value": "OUR COMMUNITY MEDIA",
+        "page": null,
+        "type": "text"
+      },
+      {
+        "name": "courses_category_page_description",
+        "value": "<p>Welcome to the Media Page at&nbsp;My Source Network&nbsp;Platform! Here, you can dive into a treasure trove of multimedia content, including articles, videos, images, blogs, and more. Discover a vast collection of resources categorized by topics, genre, and healing modalities, allowing you to find that resonates with your interests quickly. Immerse yourself in an enriching experience where knowledge and inspiration converge, supporting your Personal Growth and Healing Journey.</p>",
+        "page": null,
+        "type": "textarea"
+      },
+      {
+        "name": "media_category_page_title",
+        "value": "OUR CAT MEDIA PAGE",
+        "page": null,
+        "type": "text"
+      },
+      {
+        "name": "media_category_page_description",
+        "value": "<p>.</p>",
+        "page": null,
+        "type": "textarea"
+      },
+      {
+        "name": "podcasts_category_page_title",
+        "value": "OUR COMMUNITY MEDIA PAGE P",
+        "page": null,
+        "type": "text"
+      },
+      {
+        "name": "podcasts_category_page_description",
+        "value": "<p>Welcome to the Media Page at&nbsp;My Source Network&nbsp;Platform! Here, you can dive into a treasure trove of multimedia content, including articles, videos, images, blogs, and more. Discover a vast collection of resources categorized by topics, genre, and healing modalities, allowing you to find content that resonates with your interests quickly. Immerse yourself in an enriching experience where knowledge and inspiration converge, supporting your Personal Growth and Healing Journey.</p>",
+        "page": null,
+        "type": "textarea"
+      },
+      {
+        "name": "header_content_slide_2",
+        "value": "<h2>Your Health At Your Fingertips</h2><p>24/7 Video Consultations Audio Calls + Chat consultation</p><p>100+ online Doctors</p><p>500+ online Appointments</p>",
+        "page": null,
+        "type": "textarea"
+      },
+      {
+        "name": "category_section_description",
+        "value": "<h2><strong>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Specialty-Care Services, Starts from 500Br&nbsp;</strong></h2><p>Need quick medical advice or treatments? Chat with expert doctors online—anytime. With 1500+ specialist doctors across 120+ categories , no insurance or hidden fees. Hassle-free video consults for prescriptions, refills &amp; more. Call <a href=\"tel:+2516037\">6037</a> to book, 24/7.</p>",
+        "page": null,
+        "type": "textarea"
+      },
+      {
+        "name": "events_page_description",
+        "value": "<p class=\"fs-2 mb-0\">Search Events | <span class=\"fw-bold\">Upcoming Events</span></p>",
+        "page": null,
+        "type": "textarea"
+      },
+      {
+        "name": "law_firms_page_description",
+        "value": "<h2>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Search Doctor | Make An Appointment</h2>",
+        "page": null,
+        "type": "textarea"
+      },
+      {
+        "name": "general_book_btn_1_text",
+        "value": "Book Now",
+        "page": null,
+        "type": "text"
+      },
+      {
+        "name": "general_book_btn_2_text",
+        "value": "Book",
+        "page": null,
+        "type": "text"
+      },
+      {
+        "name": "general_online_text",
+        "value": "Online",
+        "page": null,
+        "type": "text"
+      },
+      {
+        "name": "general_offline_text",
+        "value": "Offline",
+        "page": null,
+        "type": "text"
+      },
+      {
+        "name": "general_list_btn_text",
+        "value": "List View",
+        "page": null,
+        "type": "text"
+      },
+      {
+        "name": "general_grid_btn_text",
+        "value": "Grid View",
+        "page": null,
+        "type": "text"
+      },
+      {
+        "name": "general_search_btn_text",
+        "value": "Search",
+        "page": null,
+        "type": "text"
+      },
+      {
+        "name": "general_clear_btn_text",
+        "value": "Clear",
+        "page": null,
+        "type": "text"
+      },
+      {
+        "name": "general_load_btn_text",
+        "value": "Load More",
+        "page": null,
+        "type": "text"
+      },
+      {
+        "name": "general_book_lawyer_btn_text",
+        "value": "Book Doctor",
+        "page": null,
+        "type": "text"
+      },
+      {
+        "name": "general_find_lawyer_btn_text",
+        "value": "Find Doctor",
+        "page": null,
+        "type": "text"
+      },
+      {
+        "name": "general_view_more_btn_text",
+        "value": "Load More",
+        "page": null,
+        "type": "text"
+      },
+      {
+        "name": "register_page_signup_text",
+        "value": "Signup As",
+        "page": null,
+        "type": "text"
+      },
+      {
+        "name": "reset_password_page_description",
+        "value": "<p>Welcome to | Tenafirst Plus</p><p>Your Telemedicine Partner! Joining TenaFirst Plus is completely free! Registration takes just a minute. Once you're registered, you can access specialists, doctors, pharmacies, labs, and much more. For emergency services, please call our 24/7 call center at 6037. We're here to help anytime!</p>",
+        "page": null,
+        "type": "textarea"
+      },
+      {
+        "name": "forgot_password_page_description",
+        "value": "<p>Welcome to | Tenafirst Plus</p><p>Your Telemedicine Partner! Joining TenaFirst Plus is completely free! Registration takes just a minute. Once you're registered, you can access specialists, doctors, pharmacies, labs, and much more. For emergency services, please call our 24/7 call center at 6037. We're here to help anytime!</p>",
+        "page": null,
+        "type": "textarea"
+      },
+      {
+        "name": "faq_page_description",
+        "value": "<p>Welcome to the FAQ section of TenaFirst Plus. We understand that navigating the digital healthcare landscape can be complex, and we're here to simplify it for you. Below are some commonly asked questions about our telemedicine platform and the comprehensive health services we offer.</p>",
+        "page": null,
+        "type": "textarea"
+      },
+      {
+        "name": "contact_page_description",
+        "value": "<p>Thank you for considering &nbsp;TenaFirst Plus as your partner in Telehealth matters. We are dedicated to providing exceptional Telehealth services and ensuring that your inquiries are addressed promptly. Feel free to reach out to us through the following channels:</p><h4>Contact Information:</h4><ul><li><strong>Phone:</strong> 0116 68 5858/ 0903050005</li><li><strong>Email:</strong> <a href=\"mailto:info@tenafirst.com\">info@tenafirst.com</a></li><li><strong>Office Hours:</strong> 8:00 AM - 5:30 PM</li></ul><h4>Visit Our Office:</h4><p><i><strong>TenaFirst Plus Plc</strong></i><br><i><strong>Hayahute Bole Subcity W-4 Addis Ababa</strong></i><br><i><strong>Addis Ababa, Ethiopia</strong></i></p><h4>Connect on Social Media:</h4><p>Follow us on Social Media Platforms for updates, Telehealth insights, and more. Direct messages are monitored regularly, and we're here to engage with you.</p><h4>Schedule a Consultation:</h4><p>Considering our Telehealth services? Schedule a consultation with one of our experienced specialty doctors . We are ready to understand your needs and provide tailored Telehealth solutions.</p><h4>General Inquiries:</h4><p>For general inquiries, you can use the contact form below. Please provide as much detail as possible, and our team will respond to you promptly.</p>",
+        "page": null,
+        "type": "textarea"
+      },
+      {
+        "name": "blogs_page_description",
+        "value": "<h3>Explore | Health Tips Blogs</h3>",
+        "page": null,
+        "type": "textarea"
+      },
+      {
+        "name": "media_page_description",
+        "value": "<p class=\"fs-2 fw-bold mb-0 text-center\">Explore | All Media</p>",
+        "page": null,
+        "type": "textarea"
+      },
+      {
+        "name": "archives_page_description",
+        "value": "<p class=\"fs-2 fw-bold mb-0 text-center\">Explore | All&nbsp; Courses&nbsp;</p>",
+        "page": null,
+        "type": "textarea"
+      },
+      {
+        "name": "footer_section_description",
+        "value": "<p>TenaFirst Plus is Online Doctor consultation platform and the leading Telemedicine platform in Ethiopia. TenaFirst Plus Platform Provide a convenience of video calls, Phone Calls, Real-time Chatting and secure data transmission.</p>",
+        "page": null,
+        "type": "textarea"
+      }
+    ],
+    "language": {
+      "all": "All",
+      "name": "Name",
+      "add": "Add",
+      "create": "Create",
+      "delete": "Delete",
+      "update": "Update",
+      "status": "Status",
+      "created at": "Created At",
+      "action": "Action",
+      "active": "Active",
+      "view": "View",
+      "inactive": "Inactive",
+      "showing": "Showing",
+      "of": "Of",
+      "close": "Close",
+      "save changes": "Save Changes",
+      "this action is irreversible": "This Action is Irreversible",
+      "from": "From",
+      "holiday": "No Schedule",
+      "change_password": "Change Password",
+      "to": "To",
+      "phone": "Phone",
+      "previous": "Previous",
+      "next": "Next",
+      "appointments": "Appointments",
+      "item": "Item|Items",
+      "please enter": "Please Enter",
+      "home": "Home",
+      "about us": "About Us",
+      "about": "About",
+      "donation": "Donation|Donations",
+      "lawyer": "Doctor|Doctors",
+      "law_firm": "Clinic|Clinics",
+      "booking": "Booking|Bookings",
+      "disclaimer": "Disclaimer",
+      "user": "Patient|Patients",
+      "resource": "Resource|Resources",
+      "event": "Event|Events",
+      "image": "Image|Images",
+      "restore me": "Restore Me",
+      "forum": "Forum|Forums",
+      "support": "Support",
+      "upcoming": "Upcoming",
+      "copyright": "Copyright",
+      "find": "Find",
+      "pricing plan": "Pricing Plan",
+      "contact us": "Contact Us",
+      "contact": "Contact",
+      "account": "Account|Accounts",
+      "switch to lawyer": "Switch To Doctor",
+      "become a lawyer": "Become A Doctor",
+      "switch to user": "Switch To Patient",
+      "become a user": "Become A Patient",
+      "switch to law_firm": "Switch To Clinic",
+      "become a law_firm": "Become A Clinic",
+      "logout": "Logout",
+      "login": "Login",
+      "browse": "Browse",
+      "faq": "FAQ",
+      "our lawyers": "Our Doctors",
+      "our events": "Our Events",
+      "attend live events": "Attend Live Events",
+      "comment": "Answer/Question",
+      "send a request": "Send A Request",
+      "see all lawyers": "See All Doctor",
+      "all lawyers": "All Doctors",
+      "Ask a Doctor": "Get brief answers for your health queries from top Doctors. Its FREE!",
+      "fetching": "Fetching",
+      "no record found": "No Record Found",
+      "load more": "Load More",
+      "load more lawyers": "Load More Doctors",
+      "load more law_firms": "Load More Clinic",
+      "find your favorite lawyer": "Find Your Favorite Doctor",
+      "find your favorite law_firm": "Find Your Favorite Clinic",
+      "lawyer profile": "Doctor Profile",
+      "view all": "View All",
+      "product": "Product|Products",
+      "broadcast": "Media|Media",
+      "archive": "Course|Courses",
+      "blog": "Blog|Blogs",
+      "hello": "Hello",
+      "wallet": "Wallet",
+      "my services": "My Services",
+      "my chart": "My Chart",
+      "program lists": "Program Lists",
+      "vimeo playlists": "Vimeo Playlists",
+      "podcast": "Podcast|Podcasts",
+      "shop": "Shop|Shops",
+      "login as": "Login as",
+      "signup as": "Signup As",
+      "featured lawyers & law_firms": "Featured Doctors & Clinic",
+      "view all lawyers": "View All Doctors",
+      "view all law_firms": "View All Clinic",
+      "find top rated lawyers": "Find Top Rated Doctors",
+      "footer_tagline_1": "----------",
+      "footer_tagline_2": "----------",
+      "accessibility statement": "Accessibility Statement",
+      "terms of use": "Terms of Use",
+      "privacy policy": "Privacy Policy",
+      "cookies policy": "Cookies Policy",
+      "connect with us": "Connect With Us",
+      "crisis support": "Crisis Support",
+      "use these resources": "Use These Resources",
+      "events calender": "Events Calender",
+      "our success stories": "Our Success Stories",
+      "law_firms": "Clinics",
+      "search": "Search",
+      "search location": "Search Location",
+      "first name": "First Name",
+      "full name": "Full Name",
+      "message": "Message",
+      "middle name": "Middle Name",
+      "ask quesion": "Ask Question",
+      "specialties": "Specialities",
+      "phone number": "Phone Number",
+      "last name": "Last Name",
+      "username": "Username",
+      "zip code": "Zip Code",
+      "city": "City|Cities",
+      "state": "State|States",
+      "country": "Country|Countries",
+      "address": "Address",
+      "address line": "Address Line",
+      "description": "Description",
+      "Physical Address": "Woreda/Kebele/Address",
+      "discover The Best Lawyers Near You": "Discover The Best Doctors Near You",
+      "loading": "Loading",
+      "select": "Select",
+      "choose": "Choose",
+      "category": "Category",
+      "reset password": "Reset Password",
+      "general info": "General Info",
+      "social info": "Social Info",
+      "return to login": "Return To Login",
+      "social logins": "Social Logins",
+      "email address": "Email Address",
+      "password": "Password",
+      "dont have a account": "Don't Have A Account",
+      "already have a account": "Already Have A Account",
+      "verify your email": "Verify Your Email",
+      "resend verification email": "Resend Verification Email",
+      "forgot password": "Forgot Password",
+      "confirm password": "Confirm Password",
+      "register": "Register",
+      "institute": "University/College",
+      "mobile phone": "Mobile Phone",
+      "subject": "Subject",
+      "language spoken": "Languages Spoken",
+      "specialization": "Specializations",
+      "degree": "Degree",
+      "register now": "Register Now",
+      "in the spotlight": "In The Spotlight",
+      "our featured lawyers and law_firms": "Our Featured Doctors & Clinics",
+      "our community events": "Community Events",
+      "our top-rated lawyers and law_firms": "Top-Rated",
+      "our reviews and testimonials": "Testimonials and Reviews",
+      "find lawyer": "Find A Doctor",
+      "login_text": "----------",
+      "certified": "Certified",
+      "certification": "Licence",
+      "certificate file validation": "File Must Be of Type \"png,jpeg\"",
+      "youtube": "Youtube",
+      "instagram": "Instagram",
+      "calendly": "Calendly",
+      "bio": "Professional bio",
+      "experience info": "Experience",
+      "educational info": "Educational",
+      "basic info": "Basic",
+      "tag": "Symptom|Symptoms",
+      "appointment": "Schedule",
+      "appointment log": "Appointment Log",
+      "certifications": "Licence",
+      "co creation": "Co Creation",
+      "verified": "Verified",
+      "save and next": "Save & Next",
+      "energy exchange": "Energy Exchange",
+      "prefix": "Prefix",
+      "suffix": "Suffix",
+      "home phone": "Home Phone",
+      "languages spoken": "Languages Spoken",
+      "cell phone": "Cell Phone",
+      "licence": "Licence",
+      "job title": "Job Title",
+      "website": "Website",
+      "please select": "Please Select",
+      "please select category": "Please Select Category",
+      "please select country": "Please Select Country",
+      "please select distance": "Please Select Distance",
+      "search zip code": "Search ZIP Code",
+      "select all": "Select All",
+      "distance": "Search by Distance",
+      "location": "Search by Location",
+      "zip_code": "Search by ZIP Code",
+      "search by country": "Search by Country",
+      "select search type": "Select Search Type",
+      "company": "Company",
+      "email": "Email",
+      "minutes": "minutes",
+      "Book Now": "Book Now",
+      "select category": "Select Category",
+      "select country": "Select Country",
+      "select distance": "Select Distance",
+      "select column": "Select Column",
+      "year": "Year",
+      "years": "Years",
+      "experience": "Experience",
+      "experiences": "Experiences",
+      "educations": "Educations",
+      "education": "Education",
+      "speciality": "Speciality",
+      "attachment": "Attachment",
+      "rating": "Rating",
+      "ratings": "Ratings",
+      "rating and reviews": "Rating and Reviews",
+      "lawyers": "Doctors",
+      "lawfirm": "Clinics/Hosptials",
+      "package plan": "Package Plan",
+      "events": "Events",
+      "associate lawyers": "Associate Doctors",
+      "book with calendly": "Book with Calendly",
+      "my appointments": "My Appointments",
+      "sponser image": "Sponser Image",
+      "organizated by": "Organizated by",
+      "sponsors": "Sponsors",
+      "add sponser": "Add Sponsers",
+      "subscription": "Subscription",
+      "socials": "Socials",
+      "select please": "Select Please",
+      "fee": "Fee",
+      "paid": "Paid",
+      "un Paid": "Un Paid",
+      "interval": "Interval",
+      "start time": "Start Time",
+      "end time": "End Time",
+      "Categories": "Categories",
+      "Quick Buy Services": "Quick Buy Services",
+      "Quick Buy Service Description": "Our platform connects clients with experienced doctors and Clinics or Hosptials, offering professional healthcare consultations and services tailored to your needs.",
+      "installer_messages": {
+        "title": " Installer",
+        "next": "Next Step",
+        "back": "Previous",
+        "finish": "Install",
+        "forms": {
+          "errorTitle": "The Following errors occurred:"
+        },
+        "welcome": {
+          "templateTitle": "Welcome",
+          "title": " Installer",
+          "message": "Easy Installation and Setup Wizard.",
+          "next": "Check Requirements"
+        },
+        "requirements": {
+          "templateTitle": "Step 1 | Server Requirements",
+          "title": "Server Requirements",
+          "next": "Check Permissions"
+        },
+        "permissions": {
+          "templateTitle": "Step 2 | Permissions",
+          "title": "Permissions",
+          "next": "Configure Environment"
+        },
+        "environment": {
+          "menu": {
+            "templateTitle": "Step 3 | Environment Settings",
+            "title": "Environment Settings",
+            "desc": "Please select how you want to configure the apps <code>.env</code> file.",
+            "wizard-button": "Form Wizard Setup",
+            "classic-button": "Classic Text Editor"
+          },
+          "wizard": {
+            "templateTitle": "Step 3 | Environment Settings | Guided Wizard",
+            "title": "Guided <code>.env</code> Wizard",
+            "tabs": {
+              "environment": "Environment",
+              "database": "Database",
+              "application": "Application"
+            },
+            "form": {
+              "name_required": "An environment name is required.",
+              "app_name_label": "App Name",
+              "app_name_placeholder": "App Name",
+              "app_environment_label": "App Environment",
+              "app_environment_label_local": "Local",
+              "app_environment_label_developement": "Development",
+              "app_environment_label_qa": "Qa",
+              "app_environment_label_production": "Production",
+              "app_environment_label_other": "Other",
+              "app_environment_placeholder_other": "Enter your environment...",
+              "app_debug_label": "App Debug",
+              "app_debug_label_true": "True",
+              "app_debug_label_false": "False",
+              "app_log_level_label": "App Log Level",
+              "app_log_level_label_debug": "debug",
+              "app_log_level_label_info": "info",
+              "app_log_level_label_notice": "notice",
+              "app_log_level_label_warning": "warning",
+              "app_log_level_label_error": "error",
+              "app_log_level_label_critical": "critical",
+              "app_log_level_label_alert": "alert",
+              "app_log_level_label_emergency": "emergency",
+              "app_url_label": "App Url",
+              "app_url_placeholder": "App Url",
+              "db_connection_failed": "Could not connect to the database.",
+              "db_connection_label": "Database Connection",
+              "db_connection_label_mysql": "mysql",
+              "db_connection_label_sqlite": "sqlite",
+              "db_connection_label_pgsql": "pgsql",
+              "db_connection_label_sqlsrv": "sqlsrv",
+              "db_host_label": "Database Host",
+              "db_host_placeholder": "Database Host",
+              "db_port_label": "Database Port",
+              "db_port_placeholder": "Database Port",
+              "db_name_label": "Database Name",
+              "db_name_placeholder": "Database Name",
+              "db_username_label": "Database User Name",
+              "db_username_placeholder": "Database User Name",
+              "db_password_label": "Database Password",
+              "db_password_placeholder": "Database Password",
+              "app_tabs": {
+                "more_info": "More Info",
+                "broadcasting_title": "Broadcasting, Caching, Session, &amp; Queue",
+                "broadcasting_label": "Broadcast Driver",
+                "broadcasting_placeholder": "Broadcast Driver",
+                "cache_label": "Cache Driver",
+                "cache_placeholder": "Cache Driver",
+                "session_label": "Session Driver",
+                "session_placeholder": "Session Driver",
+                "queue_label": "Queue Driver",
+                "queue_placeholder": "Queue Driver",
+                "redis_label": "Redis Driver",
+                "redis_host": "Redis Host",
+                "redis_password": "Redis Password",
+                "redis_port": "Redis Port",
+                "mail_label": "Mail",
+                "mail_driver_label": "Mail Driver",
+                "mail_driver_placeholder": "Mail Driver",
+                "mail_host_label": "Mail Host",
+                "mail_host_placeholder": "Mail Host",
+                "mail_port_label": "Mail Port",
+                "mail_port_placeholder": "Mail Port",
+                "mail_username_label": "Mail Username",
+                "mail_username_placeholder": "Mail Username",
+                "mail_password_label": "Mail Password",
+                "mail_password_placeholder": "Mail Password",
+                "mail_encryption_label": "Mail Encryption",
+                "mail_encryption_placeholder": "Mail Encryption",
+                "pusher_label": "Pusher",
+                "pusher_app_id_label": "Pusher App Id",
+                "pusher_app_id_palceholder": "Pusher App Id",
+                "pusher_app_key_label": "Pusher App Key",
+                "pusher_app_key_palceholder": "Pusher App Key",
+                "pusher_app_secret_label": "Pusher App Secret",
+                "pusher_app_secret_palceholder": "Pusher App Secret"
+              },
+              "buttons": {
+                "setup_database": "Setup Database",
+                "setup_application": "Setup Application",
+                "install": "Install"
+              }
+            }
+          },
+          "classic": {
+            "templateTitle": "Step 3 | Environment Settings | Classic Editor",
+            "title": "Classic Environment Editor",
+            "save": "Save .env",
+            "back": "Use Form Wizard",
+            "install": "Save and Install"
+          },
+          "success": "Your .env file settings have been saved.",
+          "errors": "Unable to save the .env file, Please create it manually."
+        },
+        "install": "Install",
+        "installed": {
+          "success_log_message": " Installer successfully INSTALLED on "
+        },
+        "final": {
+          "title": "Installation Finished",
+          "templateTitle": "Installation Finished",
+          "finished": "Application has been successfully installed.",
+          "migration": "Migration &amp; Seed Console Output:",
+          "console": "Application Console Output:",
+          "log": "Installation Log Entry:",
+          "env": "Final .env File:",
+          "exit": "Click here to exit"
+        },
+        "updater": {
+          "title": " Updater",
+          "welcome": {
+            "title": "Welcome To The Updater",
+            "message": "Welcome to the update wizard."
+          },
+          "overview": {
+            "title": "Overview",
+            "message": "There is 1 update.|There are :number updates.",
+            "install_updates": "Install Updates"
+          },
+          "final": {
+            "title": "Finished",
+            "finished": "Application's database has been successfully updated.",
+            "exit": "Click here to exit"
+          },
+          "log": {
+            "success_message": " Installer successfully UPDATED on "
+          }
+        }
+      },
+      "messages": {
+        "home": "Home"
+      }
+    },
+    "settings": {
+      "web_facebook_link": "https://facebook.com",
+      "web_twitter_link": null,
+      "logo": "/images/settings/logo.png",
+      "home_section1_heading": "Members",
+      "home_section1_icon": "bi bi-person-vcard-fill",
+      "home_section1_value": "100",
+      "home_section2_heading": "Lawyers",
+      "home_section2_icon": "bi bi-person-heart",
+      "home_section2_value": "77",
+      "home_section3_heading": "Appointments Booked",
+      "home_section3_icon": "bi bi-calendar-heart-fill",
+      "home_section3_value": "97",
+      "home_section4_heading": "LawFirms",
+      "home_section4_icon": "bi bi-buildings-fill",
+      "home_section4_value": "84",
+      "web_youtube_link": "https://youtube.com",
+      "web_linkedin_link": "https://linkedin.com",
+      "web_whatsapp_link": "https://whatsapp.com/asd",
+      "footer_crisis_support_statement": "<b>Don't use this site if:</b> You are in a crisis or if any other person may be in danger.",
+      "web_instagram_link": "https://instagram.com",
+      "web_snapchat_link": "https://snapchat.com",
+      "web_pinterest_link": "https://pinterest.com",
+      "web_tiktok_link": "https://tiktok.com",
+      "home_section5_heading": "Events",
+      "home_section5_icon": "bi bi-balloon-heart-fill",
+      "home_section5_value": "100",
+      "agora_app_id": "e7add42c625e46e8bf90111d44008624",
+      "pusher_beams_instance_id": "aa80356b-825a-4493-b7a0-5257859f6fc2",
+      "pusher_app_id": "1926621",
+      "pusher_app_key": "66ee623b8b65063f08ad",
+      "pusher_app_cluster": "ap2",
+      "contact_us_email": "info@tenafirst.com",
+      "site_title": "Online Doctor Consultation and Telemedicine in Ethiopia",
+      "enable_wallet_system": "1",
+      "commission_type": "commission_base",
+      "application_current_version": "2.0.2",
+      "auto_approve_lawyer_service": "1",
+      "auto_approve_law_firm_service": "1",
+      "is_community_form_show": "1",
+      "is_ai_chatbot_enable": "1",
+      "is_auto_approve": "0",
+      "favicon": "/images/settings/favicon.png",
+      "seo_title": "Online Doctor Consultation and Telemedicine in Ethiopia",
+      "meta_description": "<h2>Connect with doctors online through TenaFirst Plus. Access digital healthcare services, virtual medical consultations, and convenient healthcare support from Ethiopia and abroad.</h2>",
+      "meta_keywords": "[\"online doctor consultation Ethiopia\",\"telemedicine Ethiopia\",\"TenaFirst Plus\",\"online doctors Ethiopia\",\"book a doctor online\",\"virtual medical consultation\",\"digital healthcare Ethiopia\",\"online medical services\",\"healthcare platform Ethiopia\",\"online specialist consultation\",\"find a doctor in Ethiopia\",\"remote healthcare\",\"digital health platform\",\"online medical advice\",\"doctor appointment online\",\"e-prescription Ethiopia\",\"healthcare services Ethiopia\",\"video consultation with doctors\",\"primary healthcare Ethiopia\",\"connected healthcare\",\"online pharmacy Ethiopia\",\"medical consultation abroad\",\"AI-powered healthcare\",\"telehealth services\",\"affordable healthcare Ethiopia\"]",
+      "social_description": "<h2>Connect with doctors online through TenaFirst Plus. Access telemedicine, virtual medical consultations, and convenient digital healthcare services in Ethiopia and beyond.</h2>"
+    },
+    "auth": null,
+    "dashboard_data": {
+      "total_users": 12750,
+      "total_lawyers": 2452,
+      "total_law_frims": 9,
+      "total_events": 0,
+      "total_subscriptions": 12750,
+      "total_appointments": 737,
+      "components": [
+        "HomeStatisticsBar",
+        "HomeStaticCardsSection",
+        "SpotlightLawyerSection",
+        "NearestTabSection",
+        "LawyersTabsSection",
+        "FeaturedLawfirmSection",
+        "ServiceCategoriesSection",
+        "FreeConsultationSection",
+        "FeaturedTestimonialsSection",
+        "AppSection",
+        "FeaturedEventSection",
+        "FaqsSection"
+      ],
+      "total_specializations": 112,
+      "tags": [
+        {
+          "id": 8,
+          "name": {
+            "en": "Abdominal Distention ( የሆድ እብጠት)",
+            "am": "የሆድ እብጠት",
+            "om": "Abdominal Distention"
+          },
+          "description": {
+            "en": "<p>የሆድ ድርቀት</p><p>&nbsp;</p>",
+            "am": "<p>የሆድ ድርቀት</p>",
+            "om": "<p>የሆድ ድርቀት</p><p>&nbsp;</p>"
+          },
+          "slug": "abdominal-distention-8",
+          "is_active": 1,
+          "is_featured": 1,
+          "sort_order": null,
+          "image": null,
+          "created_at": "2025-03-20T19:22:26.000000Z",
+          "updated_at": "2025-08-13T22:24:17.000000Z",
+          "deleted_at": null
+        },
+        {
+          "id": 10,
+          "name": {
+            "en": "Abdominal Bloating ( የሆድ መነፋት )",
+            "am": "የሆድ መነፋት",
+            "om": "Abdominal Bloating"
+          },
+          "description": {
+            "am": "<p>የሆድ እብጠት</p>",
+            "om": null
+          },
+          "slug": "abdominal-bloating-10",
+          "is_active": 1,
+          "is_featured": 1,
+          "sort_order": null,
+          "image": null,
+          "created_at": "2025-03-20T19:22:26.000000Z",
+          "updated_at": "2025-08-13T22:24:04.000000Z",
+          "deleted_at": null
+        },
+        {
+          "id": 13,
+          "name": {
+            "en": "Anxiety ( ጭንቀት )",
+            "am": "ጭንቀት",
+            "om": "Anxiety"
+          },
+          "description": {
+            "om": null
+          },
+          "slug": "anxiety-13",
+          "is_active": 1,
+          "is_featured": 1,
+          "sort_order": null,
+          "image": null,
+          "created_at": "2025-03-20T19:22:26.000000Z",
+          "updated_at": "2025-08-13T22:24:30.000000Z",
+          "deleted_at": null
+        },
+        {
+          "id": 44,
+          "name": {
+            "en": "Dysuria(የሽንት ማቃጠል )",
+            "am": "የሽንት ማቃጠል",
+            "om": "Dysuria"
+          },
+          "description": {
+            "om": null
+          },
+          "slug": "dysuria-44",
+          "is_active": 1,
+          "is_featured": 1,
+          "sort_order": null,
+          "image": null,
+          "created_at": "2025-03-20T19:22:26.000000Z",
+          "updated_at": "2025-08-13T22:25:39.000000Z",
+          "deleted_at": null
+        },
+        {
+          "id": 82,
+          "name": {
+            "en": "Kidney Pain(የኩላሊት ህመም)",
+            "am": "የኩላሊት ህመም",
+            "om": "Kidney Pain"
+          },
+          "description": {
+            "om": null
+          },
+          "slug": "kidney-pain-82",
+          "is_active": 1,
+          "is_featured": 1,
+          "sort_order": null,
+          "image": null,
+          "created_at": "2025-03-20T19:22:26.000000Z",
+          "updated_at": "2025-08-13T22:27:23.000000Z",
+          "deleted_at": null
+        },
+        {
+          "id": 86,
+          "name": {
+            "en": "Loss of Appetite(የምግብ ፍላጎት ማጣት)",
+            "am": "የምግብ ፍላጎት ማጣት",
+            "om": "Loss of Appetite"
+          },
+          "description": {
+            "om": null
+          },
+          "slug": "loss-of-appetite-86",
+          "is_active": 1,
+          "is_featured": 1,
+          "sort_order": null,
+          "image": null,
+          "created_at": "2025-03-20T19:22:26.000000Z",
+          "updated_at": "2025-08-13T22:26:40.000000Z",
+          "deleted_at": null
+        }
+      ]
+    }
+  },
+  "url": "/",
+  "version": "aadd2cf9ce7e2062fea50fc67130e120",
+  "encryptHistory": false,
+  "clearHistory": false
+}
