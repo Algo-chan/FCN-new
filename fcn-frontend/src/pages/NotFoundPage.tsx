@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import gsap from "gsap";
 import { Home, Stethoscope, ArrowLeft, HeartPulse, Building2 } from "lucide-react";
+import { BrandLogo } from "@/components/common/BrandLogo";
 
 export default function NotFoundPage() {
   const crossRef = useRef<HTMLDivElement>(null);
@@ -25,9 +26,8 @@ export default function NotFoundPage() {
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col items-center justify-center px-4 sm:px-6 py-12 text-center transition-colors">
       <Link to="/dashboard" className="mb-8 inline-block">
-        <img
-          src="/logo/fcn-logo-full.png"
-          alt="Fast Care Now"
+        <BrandLogo
+          variant="adaptive"
           className="h-10 sm:h-12 w-auto mx-auto drop-shadow-sm"
         />
       </Link>

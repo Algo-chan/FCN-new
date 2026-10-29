@@ -274,7 +274,7 @@ export class ProfileService {
       <div style="background:#F8FFFE;padding:32px;font-family:Inter,Arial,sans-serif;color:#1E293B">
         <div style="max-width:560px;margin:0 auto;background:#FFFFFF;border:1px solid rgba(10,126,164,0.16);border-radius:12px;overflow:hidden">
           <div style="background:#0A7EA4;color:#FFFFFF;padding:20px 24px">
-            <img src="${env.FRONTEND_URL}/assets/logo-fast-care-now.png" alt="Fast Care Now" style="height:36px" />
+            <img src="${env.FRONTEND_URL}/fcn-brand/png/logo-dark@2x.png" alt="Fast Care Now" style="height:36px;width:auto" />
           </div>
           <div style="padding:24px">
             <p style="margin:0 0 16px;font-size:16px">Use this one-time code to ${purpose.replace(/_/g, " ")}.</p>

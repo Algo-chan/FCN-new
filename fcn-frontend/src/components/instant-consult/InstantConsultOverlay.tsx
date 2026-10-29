@@ -8,6 +8,7 @@ import { useSocket } from "@/hooks/useSocket";
 import { FindingDoctorScreen } from "./FindingDoctorScreen";
 import { DoctorFoundScreen } from "./DoctorFoundScreen";
 import { NoDoctorScreen } from "./NoDoctorScreen";
+import { BrandLogo } from "@/components/common/BrandLogo";
 
 export const InstantConsultOverlay = () => {
   const navigate = useNavigate();
@@ -144,9 +145,8 @@ export const InstantConsultOverlay = () => {
           transition={{ duration: 0.4 }}
           className="flex items-center gap-2"
         >
-          <img
-            src="/logo/fcn-logo-full.png"
-            alt="Fast Care Now Logo"
+          <BrandLogo
+            variant="dark"
             className="h-10 w-auto object-contain filter drop-shadow-[0_2px_12px_rgba(45,212,191,0.3)]"
           />
         </motion.div>

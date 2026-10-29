@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Facebook, Heart, Instagram, Linkedin, Mail, MapPin, Send, Twitter } from "lucide-react";
+import { BrandLogo } from "@/components/common/BrandLogo";
 
 interface NavLink {
   label: string;
@@ -61,9 +62,8 @@ export const Footer = () => {
         {/* Top band: brand + newsletter */}
         <div className="grid gap-10 border-b border-fcn-primary/10 pb-12 dark:border-white/10 lg:grid-cols-12 lg:gap-8">
           <div className="lg:col-span-7">
-            <img
-              src="/logo/fcn-logo-full.png"
-              alt="Fast Care Now Logo"
+            <BrandLogo
+              variant="adaptive"
               className="h-9 w-auto"
             />
             <p className="mt-4 max-w-md text-sm leading-relaxed text-fcn-text-light/55 dark:text-fcn-text-dark/55">

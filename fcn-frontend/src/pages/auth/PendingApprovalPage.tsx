@@ -8,6 +8,7 @@ import { useAuthStore } from "@/store/auth.store";
 import { useSound } from "@/hooks/useSound";
 import { Button } from "@/components/ui/Button";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
+import { BrandLogo } from "@/components/common/BrandLogo";
 
 const infoCards = [
   {
@@ -109,10 +110,9 @@ const PendingApprovalPage = () => {
         {/* Top bar with Logo & Language */}
         <div className="mb-8 flex items-center justify-between">
           <Link to="/">
-            <img
-              src="/logo/fcn-logo-full.png"
-              alt="Fast Care Now Logo"
-              className="h-8 sm:h-9 w-auto object-contain"
+            <BrandLogo
+              variant="adaptive"
+              className="h-8 sm:h-9 w-auto"
             />
           </Link>
           <LanguageSwitcher variant="pill" />

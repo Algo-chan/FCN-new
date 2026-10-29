@@ -20,6 +20,7 @@ const config: Config = {
             light: "#FFFFFF",
           },
           accent: "#2DD4BF",
+          navy: "#0D1B3E",
           dark: "#0D1117",
           light: "#F8FFFE",
           surface: {

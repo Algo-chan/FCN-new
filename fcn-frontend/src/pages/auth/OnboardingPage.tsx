@@ -9,6 +9,7 @@ import { useSound } from "@/hooks/useSound";
 import { Button } from "@/components/ui/Button";
 import { StepIndicator } from "@/components/ui/StepIndicator";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
+import { BrandLogo } from "@/components/common/BrandLogo";
 import { clsx } from "clsx";
 
 const bloodTypes = ["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"];
@@ -205,10 +206,9 @@ const OnboardingPage = () => {
 
       {/* Top Header */}
       <header className="flex items-center justify-between px-4 sm:px-8 py-4 border-b border-slate-200/80 dark:border-white/10 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md">
-        <img
-          src="/logo/fcn-logo-full.png"
-          alt="Fast Care Now Logo"
-          className="h-8 sm:h-9 w-auto object-contain"
+        <BrandLogo
+          variant="adaptive"
+          className="h-8 sm:h-9 w-auto"
         />
         <div className="flex items-center gap-3">
           <LanguageSwitcher variant="pill" />

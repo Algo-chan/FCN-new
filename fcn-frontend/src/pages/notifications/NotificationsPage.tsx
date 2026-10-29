@@ -5,6 +5,7 @@ import { Bell, Trash2, CheckCheck, Loader2 } from "lucide-react";
 import { clsx } from "clsx";
 import { format } from "date-fns";
 import { Card } from "@/components/ui/Card";
+import { BrandLogo } from "@/components/common/BrandLogo";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { PageHeader } from "@/components/ui/PageHeader";
@@ -207,7 +208,7 @@ const NotificationsPage = () => {
                 Check back after your next consultation.
               </p>
             </div>
-            <img src="/logo/fcn-logo-full.png" alt="Fast Care Now" className="h-5 md:h-6 w-auto opacity-40" />
+            <BrandLogo variant="adaptive" className="h-5 md:h-6 w-auto opacity-40" />
           </Card>
         ) : (
           <div className="space-y-4 md:space-y-6">

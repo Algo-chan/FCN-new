@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { X, ExternalLink } from "lucide-react";
 import type { MessagePayload } from "@/config/firebase";
+import { BrandLogo } from "@/components/common/BrandLogo";
 
 interface ForegroundNotificationToastProps {
   title: string;
@@ -48,11 +49,7 @@ export const ForegroundNotificationToast = ({ title, body, payload, onDismiss }:
       onClick={handleClick}
     >
       <div className="flex items-start gap-3 p-3">
-        <img
-          src="/logo/fcn-logo-full.png"
-          alt="Fast Care Now"
-          className="mt-0.5 h-6 w-auto shrink-0"
-        />
+        <BrandLogo variant="icon" className="mt-0.5 h-6 w-6 shrink-0 rounded-md shadow-xs" />
 
         <div className="min-w-0 flex-1">
           <p className="text-sm font-semibold text-fcn-text-light dark:text-fcn-text-dark">

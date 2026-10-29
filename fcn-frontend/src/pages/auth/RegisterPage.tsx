@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/Button";
 import { INSTALL_PROMPT_KEY } from "@/components/pwa/InstallPromptBanner";
 import { Spinner } from "@/components/ui/Spinner";
 import { OTPVerification } from "@/components/auth/OTPVerification";
+import { BrandLogo } from "@/components/common/BrandLogo";
 
 type Role = "patient" | "doctor" | "nurse" | "rural_health_officer";
 type Phase = "account" | "otp" | "role" | "review";
@@ -283,11 +284,13 @@ const RegisterPage = () => {
           className="pointer-events-none absolute top-12 right-12 z-0 w-32 -rotate-25 select-none opacity-30 drop-shadow-[0_15px_30px_rgba(13,148,136,0.35)]"
         />
         <div className="absolute left-8 top-8 z-10">
-          <img
-            src="/logo/fcn-logo-full.png"
-            alt="Fast Care Now Logo"
-            className="h-10 w-auto"
-          />
+          <Link to="/" title="Fast Care Now">
+            <BrandLogo
+              variant="dark"
+              className="h-10 w-auto"
+              priority
+            />
+          </Link>
         </div>
         <div className="relative z-10 flex h-full flex-col justify-center px-16 pb-24">
           <h1 ref={headlineRef} className="mb-6 text-5xl font-bold leading-tight text-white">
@@ -302,6 +305,13 @@ const RegisterPage = () => {
       {/* Right Panel */}
       <div className="flex w-full items-center justify-center bg-white px-6 dark:bg-fcn-dark md:w-2/5 md:px-10">
         <motion.div initial={!shouldReduceMotion ? { opacity: 0, x: 20 } : undefined} animate={{ opacity: 1, x: 0 }} className="w-full max-w-sm">
+
+          {/* Mobile Logo */}
+          <div className="mb-6 flex justify-center md:hidden">
+            <Link to="/" title="Fast Care Now">
+              <BrandLogo variant="adaptive" className="h-9 w-auto" />
+            </Link>
+          </div>
 
           {/* Step Indicator */}
           <div className="mb-8 flex items-center justify-center gap-2">

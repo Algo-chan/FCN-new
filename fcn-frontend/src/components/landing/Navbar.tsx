@@ -12,6 +12,7 @@ import { useAuthStore } from "@/store/auth.store";
 import { getRoleDashboard } from "@/constants/roles";
 import { clsx } from "clsx";
 import { MOTION } from "@/styles/motion";
+import { BrandLogo } from "@/components/common/BrandLogo";
 
 const navLinks = [
   { label: "Find Doctors", href: "/doctors", isRoute: true },
@@ -55,19 +56,13 @@ export const Navbar = () => {
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${bgClasses}`}>
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        {/* Logo */}
+        {/* Brand Logo */}
         <Link to="/" className="flex items-center gap-2">
-          <img
-            src="/logo/fcn-logo-full.png"
-            alt="Fast Care Now Logo"
-            className="hidden sm:block h-8 w-auto sm:h-9 object-contain"
+          <BrandLogo
+            variant={scrolled ? "adaptive" : "dark"}
+            className="h-8 w-auto sm:h-9"
+            priority
           />
-          <span className="sm:hidden flex items-center gap-1 text-lg font-black tracking-tight leading-none">
-            <span className="text-slate-900 dark:text-white">Fast</span>
-            <span className="bg-gradient-to-r from-teal-500 via-teal-400 to-sky-500 bg-clip-text text-transparent">
-              Care
-            </span>
-          </span>
         </Link>
 
         {/* Desktop nav */}
@@ -174,10 +169,9 @@ export const Navbar = () => {
               className="fixed right-0 top-0 flex h-full w-80 max-w-[85vw] flex-col bg-white px-6 py-8 dark:bg-slate-900 shadow-2xl"
             >
               <div className="mb-6 flex items-center justify-between">
-                <img
-                  src="/logo/fcn-logo-full.png"
-                  alt="Fast Care Now Logo"
-                  className="h-7 w-auto object-contain"
+                <BrandLogo
+                  variant="adaptive"
+                  className="h-7 w-auto"
                 />
                 <button
                   onClick={closeMobile}

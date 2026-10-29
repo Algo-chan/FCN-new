@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
 import {
   Activity,
   ArrowUpCircle,
@@ -30,6 +30,7 @@ import {
   X,
 } from "lucide-react";
 import { clsx } from "clsx";
+import { BrandLogo } from "@/components/common/BrandLogo";
 import { useUiStore } from "@/store/ui.store";
 import { useAuthStore } from "@/store/auth.store";
 import { useWindowSize } from "@/hooks/useWindowSize";
@@ -316,19 +317,19 @@ export const Sidebar = () => {
       {/* Header with Logo */}
       <div className="flex h-16 items-center justify-between border-b border-slate-200/80 px-4 dark:border-white/10">
         {!sidebarCollapsed || isMobile ? (
-          <div className="flex items-center gap-2">
-            <img
-              src="/logo/fcn-logo-full.png"
-              alt="Fast Care Now Logo"
+          <Link to="/" className="flex items-center gap-2 hover:opacity-90 transition-opacity">
+            <BrandLogo
+              variant="adaptive"
               className="h-8 w-auto object-contain"
             />
-          </div>
+          </Link>
         ) : (
-          <img
-            src="/logo/fcn-logo-full.png"
-            alt="Fast Care Now Logo"
-            className="mx-auto h-8 w-auto object-contain"
-          />
+          <Link to="/" className="mx-auto flex items-center justify-center hover:opacity-90 transition-opacity" title="Fast Care Now">
+            <BrandLogo
+              variant="icon"
+              className="h-8 w-8 object-contain"
+            />
+          </Link>
         )}
 
         {isMobile ? (

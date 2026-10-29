@@ -3,6 +3,7 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import gsap from "gsap";
 import { AlertTriangle, X, ArrowLeft, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { BrandLogo } from "@/components/common/BrandLogo";
 import { useSound } from "@/hooks/useSound";
 import { useNotifications } from "@/hooks/useNotifications";
 import { useAuthStore } from "@/store/auth.store";
@@ -476,7 +477,7 @@ export const AccountDeletionFlow = ({ fullName, onCancel }: Props) => {
                 Your account has been successfully deleted. Thank you for using Fast Care Now.
               </p>
               <p className="text-sm text-fcn-text-light/40 dark:text-fcn-text-dark/40">We're sorry to see you go.</p>
-              <img src="/logo/fcn-logo-full.png" alt="Fast Care Now" className="mx-auto h-8 opacity-50" />
+              <BrandLogo variant="adaptive" className="mx-auto h-8 opacity-50" />
               <p className="text-xs text-fcn-text-light/30 dark:text-fcn-text-dark/30">Redirecting...</p>
             </motion.div>
           )}

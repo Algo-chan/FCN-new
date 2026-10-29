@@ -46,26 +46,32 @@ export default defineConfig({
         categories: ["medical", "health", "lifestyle"],
         screenshots: [
           {
-            src: "/logo/fcn-logo-full.png",
+            src: "/fcn-brand/png/logo-light@2x.png",
             type: "image/png",
             sizes: "512x512"
           }
         ],
         icons: [
           {
-            src: "/icons/icon-192x192.png",
+            src: "/fcn-brand/png/icon-192.png",
             sizes: "192x192",
             type: "image/png",
             purpose: "any"
           },
           {
-            src: "/icons/icon-512x512.png",
+            src: "/fcn-brand/png/icon-192-maskable.png",
+            sizes: "192x192",
+            type: "image/png",
+            purpose: "maskable"
+          },
+          {
+            src: "/fcn-brand/png/icon-512.png",
             sizes: "512x512",
             type: "image/png",
             purpose: "any"
           },
           {
-            src: "/icons/icon-512x512.png",
+            src: "/fcn-brand/png/icon-512-maskable.png",
             sizes: "512x512",
             type: "image/png",
             purpose: "maskable"

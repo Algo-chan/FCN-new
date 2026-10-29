@@ -5,6 +5,7 @@ import { X, AlertTriangle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { pharmacyService } from "@/services/pharmacy.service";
 import { Button } from "@/components/ui/Button";
+import { BrandLogo } from "@/components/common/BrandLogo";
 import { Spinner } from "@/components/ui/Spinner";
 import { formatDate } from "@/utils/formatters";
 
@@ -52,7 +53,7 @@ export const QRDisplayModal = ({ prescriptionId, onClose }: QRDisplayModalProps)
         >
           <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <img src="/logo/fcn-logo-full.png" alt="Fast Care Now" className="h-6 w-auto" />
+              <BrandLogo variant="adaptive" className="h-6 w-auto" />
               <span className="text-sm font-medium text-fcn-text-light/60 dark:text-fcn-text-dark/60">
                 Show this to the pharmacist
               </span>

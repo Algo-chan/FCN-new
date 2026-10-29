@@ -155,8 +155,8 @@ class NotificationService {
           notification: {
             title,
             body: message,
-            icon: '/logo/fcn-logo-full.png',
-            badge: '/logo/fcn-badge.png',
+            icon: '/fcn-brand/png/icon-192.png',
+            badge: '/fcn-brand/png/favicon-48.png',
             vibrate: [200, 100, 200],
             actions: actionUrl ? [{ action: 'open', title: 'View' }] : [],
           },

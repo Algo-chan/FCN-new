@@ -50,8 +50,8 @@ if (messaging) {
 
     self.registration.showNotification(title ?? "Fast Care Now", {
       body: body ?? "",
-      icon: icon ?? "/assets/logo-fast-care-now.png",
-      badge: "/logo/fcn-logo-full.png",
+      icon: icon ?? "/fcn-brand/png/icon-192.png",
+      badge: "/fcn-brand/png/favicon-48.png",
       vibrate: [200, 100, 200],
       data: payload.data,
       actions: [
