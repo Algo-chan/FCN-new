@@ -22,32 +22,43 @@ interface StatCardProps {
   gradient: string;
   subtitle?: string;
   badge?: string;
+  bgToolImage?: string;
 }
 
-const StatCard = ({ label, value, icon, gradient, subtitle, badge }: StatCardProps) => (
-  <Card className="p-4 sm:p-5 rounded-2xl relative overflow-hidden transition-all hover:shadow-md hover:border-fcn-primary/20">
-    <div className="flex items-center justify-between mb-3">
-      <div className={clsx("flex h-11 w-11 items-center justify-center rounded-2xl text-white shadow-sm", gradient)}>
-        {icon}
+const StatCard = ({ label, value, icon, gradient, subtitle, badge, bgToolImage }: StatCardProps) => (
+  <Card className="group p-4 sm:p-5 rounded-2xl relative overflow-hidden transition-all hover:shadow-md hover:border-fcn-primary/20">
+    {bgToolImage && (
+      <img
+        src={bgToolImage}
+        alt=""
+        aria-hidden="true"
+        className="pointer-events-none absolute -bottom-3 -right-3 z-0 h-20 w-20 object-contain opacity-[0.06] transition-all duration-300 group-hover:scale-110 group-hover:opacity-[0.15] dark:opacity-[0.1] dark:group-hover:opacity-[0.2] select-none"
+      />
+    )}
+    <div className="relative z-10">
+      <div className="flex items-center justify-between mb-3">
+        <div className={clsx("flex h-11 w-11 items-center justify-center rounded-2xl text-white shadow-sm", gradient)}>
+          {icon}
+        </div>
+        {badge && (
+          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-fcn-primary/10 text-fcn-primary">
+            {badge}
+          </span>
+        )}
       </div>
-      {badge && (
-        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-fcn-primary/10 text-fcn-primary">
-          {badge}
-        </span>
-      )}
-    </div>
-    <div className="space-y-0.5">
-      <p className="font-mono text-2xl sm:text-3xl font-extrabold text-fcn-text-light dark:text-fcn-text-dark">
-        {value}
-      </p>
-      <p className="text-xs font-semibold text-fcn-text-light/60 dark:text-fcn-text-dark/60 truncate">
-        {label}
-      </p>
-      {subtitle && (
-        <p className="text-[11px] font-medium text-fcn-text-light/40 dark:text-fcn-text-dark/40 pt-1 border-t border-fcn-primary/5 truncate">
-          {subtitle}
+      <div className="space-y-0.5">
+        <p className="font-mono text-2xl sm:text-3xl font-extrabold text-fcn-text-light dark:text-fcn-text-dark">
+          {value}
         </p>
-      )}
+        <p className="text-xs font-semibold text-fcn-text-light/60 dark:text-fcn-text-dark/60 truncate">
+          {label}
+        </p>
+        {subtitle && (
+          <p className="text-[11px] font-medium text-fcn-text-light/40 dark:text-fcn-text-dark/40 pt-1 border-t border-fcn-primary/5 truncate">
+            {subtitle}
+          </p>
+        )}
+      </div>
     </div>
   </Card>
 );
@@ -122,6 +133,7 @@ export const DoctorDashboard = () => {
             icon={<Calendar className="h-5 w-5" />}
             gradient="bg-gradient-to-br from-teal-500 to-emerald-600"
             subtitle={stats.week_appointments > 0 ? `${stats.week_appointments} this week` : "None scheduled"}
+            bgToolImage="/images/medical/stethoscope.svg"
           />
           <StatCard
             label="Pending Requests"
@@ -129,6 +141,7 @@ export const DoctorDashboard = () => {
             icon={<Clock className="h-5 w-5" />}
             gradient="bg-gradient-to-br from-amber-500 to-orange-600"
             badge={stats.pending_requests > 0 ? "Action Needed" : undefined}
+            bgToolImage="/images/medical/prescription-pad.svg"
           />
           <StatCard
             label="Total Patients"
@@ -136,6 +149,7 @@ export const DoctorDashboard = () => {
             icon={<Users className="h-5 w-5" />}
             gradient="bg-gradient-to-br from-sky-500 to-blue-600"
             subtitle="Registered in care"
+            bgToolImage="/images/medical/ecg-monitor.svg"
           />
           <StatCard
             label="Rating Score"
@@ -143,6 +157,7 @@ export const DoctorDashboard = () => {
             icon={<Star className="h-5 w-5" />}
             gradient="bg-gradient-to-br from-indigo-500 to-violet-600"
             subtitle={`${stats.rating_count} patient reviews`}
+            bgToolImage="/images/medical/medical-kit.svg"
           />
         </div>
       )}

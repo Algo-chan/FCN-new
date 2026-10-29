@@ -146,11 +146,32 @@ export const PatientDashboard = () => {
 
   return (
     <div className="space-y-6">
-      {/* Pattern #6: Greeting Header with Today's Summary Card */}
-      <div className="relative overflow-hidden rounded-[24px] sm:rounded-3xl border border-teal-500/25 bg-gradient-to-br from-teal-600 via-teal-700 to-sky-800 p-5 sm:p-7 text-white shadow-[0_16px_40px_rgba(13,148,136,0.25)]">
-        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
+      {/* Pattern #6: Greeting Header with Today's Summary Card & Overflowing 3D African Doctor */}
+      <div className="relative mt-8 sm:mt-12 overflow-visible rounded-[24px] sm:rounded-3xl border border-teal-500/30 bg-gradient-to-br from-teal-700 via-teal-800 to-sky-950 p-5 sm:p-7 text-white shadow-[0_20px_50px_rgba(13,148,136,0.3)]">
+        {/* Subtle background telemetry watermark */}
+        <img
+          src="/images/medical/ecg-monitor.svg"
+          alt=""
+          aria-hidden="true"
+          className="pointer-events-none absolute -bottom-10 left-1/4 z-0 h-44 w-44 object-contain opacity-[0.08] select-none"
+        />
+
+        {/* Overflowing 3D African Female Doctor standing on the right edge */}
+        <img
+          src="/images/doctors/doctor-african-female.svg"
+          alt="Dr. Hanna - Fast Care Now"
+          aria-hidden="true"
+          className="pointer-events-none absolute -top-10 sm:-top-16 -right-2 sm:right-4 lg:right-8 z-20 h-48 sm:h-64 lg:h-72 object-contain select-none drop-shadow-[0_25px_40px_rgba(4,30,40,0.65)]"
+        />
+
+        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 pr-28 sm:pr-48 lg:pr-56">
+          <div className="min-w-0">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/10 backdrop-blur-md text-teal-200 text-[11px] font-semibold mb-2">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              Dire Dawa Network Online
+            </div>
+
+            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white truncate">
               {greeting}, {firstName}!
               <span className="hidden sm:inline-block ml-2 select-none" aria-hidden="true">
                 👋
@@ -162,17 +183,17 @@ export const PatientDashboard = () => {
               <LifelinePulse />
             </div>
 
-            <p className="mt-1 text-xs sm:text-sm text-teal-100/80 font-medium max-w-md">
+            <p className="mt-1 text-xs sm:text-sm text-teal-100/90 font-medium max-w-md line-clamp-2">
               {nextAppointment
-                ? `You have an appointment coming up with Dr. ${nextAppointment.doctor?.full_name ?? "Doctor"}.`
-                : "Your vitals and records are up to date. Keep maintaining your health goals!"}
+                ? `You have an upcoming appointment with Dr. ${nextAppointment.doctor?.full_name ?? "Doctor"}.`
+                : "Your health records are up to date. Consult our doctors or AI triage anytime."}
             </p>
           </div>
 
           {/* Health Score Circular Ring (Pattern #4) */}
           <div
             onClick={() => setShowHealthScore(true)}
-            className="flex items-center gap-4 bg-white/10 hover:bg-white/15 backdrop-blur-md rounded-2xl p-3 sm:p-4 border border-white/15 cursor-pointer transition-all active:scale-95 select-none"
+            className="flex-shrink-0 flex items-center gap-3.5 bg-white/10 hover:bg-white/15 backdrop-blur-md rounded-2xl p-2.5 sm:p-3.5 border border-white/15 cursor-pointer transition-all active:scale-95 select-none self-start lg:self-auto"
             role="button"
             tabIndex={0}
             title="View Health Score Breakdown"
@@ -180,8 +201,8 @@ export const PatientDashboard = () => {
             <CircularProgress
               value={data.healthScore}
               max={100}
-              size={68}
-              strokeWidth={7}
+              size={60}
+              strokeWidth={6}
               color="emerald"
               showValue={true}
             />
@@ -189,10 +210,10 @@ export const PatientDashboard = () => {
               <span className="text-[10px] font-bold uppercase tracking-wider text-teal-200">
                 Health Score
               </span>
-              <p className="text-lg font-black text-white leading-tight">
+              <p className="text-base sm:text-lg font-black text-white leading-tight">
                 {data.healthScore >= 80 ? "Optimal" : data.healthScore >= 60 ? "Good" : "Needs Review"}
               </p>
-              <span className="text-[11px] text-teal-100/70 font-semibold underline">
+              <span className="text-[10px] sm:text-[11px] text-teal-100/70 font-semibold underline">
                 View breakdown →
               </span>
             </div>
@@ -216,6 +237,7 @@ export const PatientDashboard = () => {
             icon={<Sparkles className="w-6 h-6 text-white" />}
             gradient="violet"
             onClick={() => navigate("/ai-check")}
+            bgToolImage="/images/medical/ecg-monitor.svg"
           />
 
           <FitnessCard
@@ -224,6 +246,7 @@ export const PatientDashboard = () => {
             icon={<Stethoscope className="w-6 h-6 text-white" />}
             gradient="clinical"
             onClick={() => navigate("/appointments/book")}
+            bgToolImage="/images/medical/stethoscope.svg"
           />
 
           <FitnessCard
@@ -232,6 +255,7 @@ export const PatientDashboard = () => {
             icon={<Building2 className="w-6 h-6 text-white" />}
             gradient="coral"
             onClick={() => navigate("/hospitals")}
+            bgToolImage="/images/medical/medical-kit.svg"
           />
 
           <FitnessCard
@@ -240,6 +264,7 @@ export const PatientDashboard = () => {
             icon={<Pill className="w-6 h-6 text-white" />}
             gradient="amber"
             onClick={() => navigate("/pharmacy")}
+            bgToolImage="/images/medical/capsules.svg"
           />
         </div>
       </div>

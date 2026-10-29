@@ -21,6 +21,7 @@ export interface FitnessCardProps {
   rightElement?: ReactNode;
   className?: string;
   disabled?: boolean;
+  bgToolImage?: string;
 }
 
 const gradientStyles: Record<
@@ -117,6 +118,7 @@ export const FitnessCard = ({
   rightElement,
   className,
   disabled = false,
+  bgToolImage,
 }: FitnessCardProps) => {
   const styles = gradientStyles[gradient] || gradientStyles.teal;
 
@@ -146,7 +148,15 @@ export const FitnessCard = ({
         className
       )}
     >
-      <div className="flex items-center justify-between gap-3.5">
+      {bgToolImage && (
+        <img
+          src={bgToolImage}
+          alt=""
+          aria-hidden="true"
+          className="pointer-events-none absolute -bottom-4 -right-4 z-0 h-24 w-24 object-contain opacity-[0.08] transition-all duration-300 group-hover:scale-110 group-hover:opacity-[0.18] dark:opacity-[0.14] dark:group-hover:opacity-[0.24] select-none"
+        />
+      )}
+      <div className="relative z-10 flex items-center justify-between gap-3.5">
         <div className="flex items-center gap-3.5 min-w-0">
           {icon && (
             <div

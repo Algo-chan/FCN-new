@@ -1,0 +1,242 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 450 650" fill="none">
+  <defs>
+    <!-- 3D Ambient Drop Shadow -->
+    <filter id="docShadow" x="-30%" y="-20%" width="160%" height="150%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="24" stdDeviation="18" flood-color="#041E28" flood-opacity="0.55" />
+      <feDropShadow dx="8" dy="12" stdDeviation="12" flood-color="#0A7EA4" flood-opacity="0.3" />
+    </filter>
+
+    <!-- Glowing Tablet Screen -->
+    <filter id="tabletGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+
+    <!-- Skin Gradients (Warm African Skin Tones with 3D Specular Highlight) -->
+    <linearGradient id="skinGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#C68642" />
+      <stop offset="35%" stop-color="#A5672D" />
+      <stop offset="75%" stop-color="#7B471A" />
+      <stop offset="100%" stop-color="#542F0D" />
+    </linearGradient>
+
+    <radialGradient id="faceShade" cx="45%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#DF9B56" />
+      <stop offset="45%" stop-color="#B87635" />
+      <stop offset="85%" stop-color="#844D1E" />
+      <stop offset="100%" stop-color="#59310F" />
+    </radialGradient>
+
+    <!-- Hair Gradient -->
+    <linearGradient id="hairGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2D1C12" />
+      <stop offset="40%" stop-color="#1A110B" />
+      <stop offset="100%" stop-color="#090503" />
+    </linearGradient>
+
+    <!-- White Doctor Coat Gradients (Crisp 3D Shading) -->
+    <linearGradient id="coatGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="40%" stop-color="#F8FAFC" />
+      <stop offset="75%" stop-color="#E2E8F0" />
+      <stop offset="100%" stop-color="#CBD5E1" />
+    </linearGradient>
+
+    <linearGradient id="coatShadow" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#94A3B8" stop-opacity="0.3" />
+      <stop offset="100%" stop-color="#64748B" stop-opacity="0.5" />
+    </linearGradient>
+
+    <!-- Teal Scrub Gradient -->
+    <linearGradient id="scrubGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2DD4BF" />
+      <stop offset="50%" stop-color="#0D9488" />
+      <stop offset="100%" stop-color="#0F766E" />
+    </linearGradient>
+
+    <!-- Metallic Stethoscope Gradient -->
+    <linearGradient id="metalGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#94A3B8" />
+      <stop offset="50%" stop-color="#FFFFFF" />
+      <stop offset="100%" stop-color="#64748B" />
+    </linearGradient>
+
+    <linearGradient id="stethTube" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0A7EA4" />
+      <stop offset="50%" stop-color="#064E67" />
+      <stop offset="100%" stop-color="#082F49" />
+    </linearGradient>
+  </defs>
+
+  <g filter="url(#docShadow)">
+    <!-- BACK HAIR BUN / PUFF -->
+    <ellipse cx="225" cy="115" rx="92" ry="86" fill="url(#hairGrad)" />
+    <circle cx="225" cy="62" r="48" fill="url(#hairGrad)" />
+    <!-- Hair Texture / Highlights -->
+    <ellipse cx="225" cy="54" rx="34" ry="16" fill="#3D2619" opacity="0.6" />
+    <ellipse cx="270" cy="100" rx="36" ry="50" fill="#2D1C12" opacity="0.7" />
+
+    <!-- NECK & CHEST BASE -->
+    <path d="M198 190 L198 255 L252 255 L252 190 Z" fill="url(#skinGrad)" />
+    <!-- Neck shadow under chin -->
+    <ellipse cx="225" cy="205" rx="26" ry="12" fill="#542F0D" opacity="0.45" />
+
+    <!-- TEAL MEDICAL SCRUB INNER SHIRT -->
+    <path d="M185 240 L265 240 L275 320 L175 320 Z" fill="url(#scrubGrad)" />
+    <!-- V-Neck Cutout -->
+    <path d="M205 240 L225 272 L245 240 Z" fill="url(#skinGrad)" />
+
+    <!-- FAST CARE NOW LANYARD BADGE -->
+    <path d="M216 240 L212 335 L222 335 L220 240 Z" fill="#0A7EA4" />
+    <path d="M234 240 L238 335 L228 335 L230 240 Z" fill="#0A7EA4" />
+    <!-- ID Card -->
+    <rect x="206" y="325" width="38" height="52" rx="4" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5" />
+    <rect x="210" y="330" width="30" height="6" fill="#0A7EA4" rx="2" />
+    <circle cx="218" cy="350" r="5" fill="#C68642" />
+    <line x1="226" y1="346" x2="236" y2="346" stroke="#94A3B8" stroke-width="2" stroke-linecap="round" />
+    <line x1="226" y1="352" x2="234" y2="352" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round" />
+    <text x="210" y="371" fill="#0D9488" font-family="system-ui, sans-serif" font-size="5" font-weight="800">FCN • MD</text>
+
+    <!-- HEAD & FACIAL STRUCTURE -->
+    <g id="head">
+      <!-- Ears -->
+      <ellipse cx="152" cy="155" rx="13" ry="18" fill="url(#skinGrad)" />
+      <ellipse cx="152" cy="155" rx="8" ry="12" fill="#7B471A" opacity="0.5" />
+      <circle cx="154" cy="164" r="3.5" fill="url(#metalGrad)" /> <!-- Small pearl earring -->
+
+      <ellipse cx="298" cy="155" rx="13" ry="18" fill="url(#skinGrad)" />
+      <ellipse cx="298" cy="155" rx="8" ry="12" fill="#7B471A" opacity="0.5" />
+      <circle cx="296" cy="164" r="3.5" fill="url(#metalGrad)" /> <!-- Small pearl earring -->
+
+      <!-- Main Face Shape -->
+      <path d="M162 135 C162 75, 288 75, 288 135 C288 185, 255 220, 225 220 C195 220, 162 185, 162 135 Z" fill="url(#faceShade)" />
+
+      <!-- Front Hairline / Curls Framing Face -->
+      <path d="M158 130 C165 95, 200 80, 225 80 C250 80, 285 95, 292 130 C280 110, 260 100, 225 100 C190 100, 170 110, 158 130 Z" fill="url(#hairGrad)" />
+      
+      <!-- Eyebrows (Graceful curved brows) -->
+      <path d="M182 132 C192 126, 204 128, 208 134" stroke="#1A110B" stroke-width="3.5" stroke-linecap="round" fill="none" />
+      <path d="M268 132 C258 126, 246 128, 242 134" stroke="#1A110B" stroke-width="3.5" stroke-linecap="round" fill="none" />
+
+      <!-- Eyes (Warm, bright, expressive) -->
+      <!-- Left Eye -->
+      <ellipse cx="196" cy="144" rx="10" ry="7" fill="#FFFFFF" />
+      <ellipse cx="197" cy="144" rx="5.5" ry="5.5" fill="#3D2619" />
+      <circle cx="197" cy="144" r="3.5" fill="#0F0A06" />
+      <circle cx="195" cy="142" r="1.8" fill="#FFFFFF" /> <!-- Specular catchlight -->
+      <!-- Eyelashes -->
+      <path d="M186 142 Q196 137 206 142" stroke="#1A110B" stroke-width="2.2" fill="none" stroke-linecap="round" />
+
+      <!-- Right Eye -->
+      <ellipse cx="254" cy="144" rx="10" ry="7" fill="#FFFFFF" />
+      <ellipse cx="253" cy="144" rx="5.5" ry="5.5" fill="#3D2619" />
+      <circle cx="253" cy="144" r="3.5" fill="#0F0A06" />
+      <circle cx="251" cy="142" r="1.8" fill="#FFFFFF" /> <!-- Specular catchlight -->
+      <!-- Eyelashes -->
+      <path d="M244 142 Q254 137 264 142" stroke="#1A110B" stroke-width="2.2" fill="none" stroke-linecap="round" />
+
+      <!-- Nose (Subtle soft African contour) -->
+      <path d="M225 140 L223 166 C219 167, 218 172, 222 173 C224 173.5, 226 173.5, 228 173 C232 172, 231 167, 227 166" 
+            stroke="#7B471A" stroke-width="2.2" stroke-linecap="round" fill="none" />
+      <ellipse cx="225" cy="170" rx="6" ry="3" fill="#844D1E" opacity="0.4" />
+
+      <!-- Cheeks Highlight -->
+      <ellipse cx="180" cy="162" rx="12" ry="6" fill="#E28B47" opacity="0.3" />
+      <ellipse cx="270" cy="162" rx="12" ry="6" fill="#E28B47" opacity="0.3" />
+
+      <!-- Mouth (Warm, confident, caring smile with clean teeth) -->
+      <path d="M210 188 Q225 204 240 188 Z" fill="#991B1B" /> <!-- Lip base -->
+      <path d="M213 189 Q225 198 237 189 Z" fill="#FFFFFF" /> <!-- Clean smile teeth -->
+      <path d="M208 187 Q225 190 242 187" stroke="#681515" stroke-width="2.5" fill="none" stroke-linecap="round" /> <!-- Upper lip outline -->
+      <path d="M214 198 Q225 203 236 198" stroke="#7F1D1D" stroke-width="2" fill="none" stroke-linecap="round" /> <!-- Lower lip line -->
+    </g>
+
+    <!-- DOCTOR'S WHITE COAT (MAIN TORSO & ARMS) -->
+    <!-- Left Shoulder & Arm -->
+    <path d="M175 240 C140 255, 100 295, 85 365 C80 390, 85 450, 95 520 L155 520 L160 380 L185 280 Z" fill="url(#coatGrad)" />
+    <!-- Right Shoulder & Arm (Holding Tablet) -->
+    <path d="M275 240 C310 255, 345 295, 360 365 C370 410, 375 465, 370 520 L315 520 L300 380 L265 280 Z" fill="url(#coatGrad)" />
+
+    <!-- Coat Main Body (Center Panels) -->
+    <path d="M165 270 L175 620 L275 620 L285 270 Z" fill="url(#coatGrad)" />
+
+    <!-- Coat Crisp Lapels & Collar -->
+    <!-- Left Lapel -->
+    <path d="M195 240 L160 350 L210 350 L215 240 Z" fill="#FFFFFF" filter="drop-shadow(2px 4px 6px rgba(0,0,0,0.12))" />
+    <path d="M195 240 L160 350 L202 350 Z" stroke="#CBD5E1" stroke-width="1.5" fill="none" />
+    
+    <!-- Right Lapel -->
+    <path d="M255 240 L290 350 L240 350 L235 240 Z" fill="#FFFFFF" filter="drop-shadow(-2px 4px 6px rgba(0,0,0,0.12))" />
+    <path d="M255 240 L290 350 L248 350 Z" stroke="#CBD5E1" stroke-width="1.5" fill="none" />
+
+    <!-- Coat Pocket with Clinical Pen -->
+    <rect x="135" y="380" width="42" height="48" rx="6" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1.5" />
+    <!-- Pen clip in pocket -->
+    <rect x="145" y="370" width="4" height="18" rx="2" fill="url(#metalGrad)" />
+    <rect x="155" y="372" width="4" height="16" rx="2" fill="#0A7EA4" />
+
+    <!-- Coat Buttons -->
+    <circle cx="225" cy="400" r="5" fill="#E2E8F0" stroke="#94A3B8" stroke-width="1.5" />
+    <circle cx="225" cy="460" r="5" fill="#E2E8F0" stroke="#94A3B8" stroke-width="1.5" />
+    <circle cx="225" cy="520" r="5" fill="#E2E8F0" stroke="#94A3B8" stroke-width="1.5" />
+
+    <!-- MEDICAL STETHOSCOPE (OVER SHOULDERS) -->
+    <g id="stethoscope">
+      <!-- Metallic Binaural Arch around neck -->
+      <path d="M185 240 C185 275, 205 315, 212 360" stroke="url(#stethTube)" stroke-width="10" stroke-linecap="round" fill="none" />
+      <path d="M265 240 C265 275, 245 315, 238 360" stroke="url(#stethTube)" stroke-width="10" stroke-linecap="round" fill="none" />
+      <!-- Tubing loop to chestpiece -->
+      <path d="M212 360 C212 410, 248 425, 252 460" stroke="url(#stethTube)" stroke-width="10" stroke-linecap="round" fill="none" />
+      
+      <!-- Chrome Chestpiece (Diaphragm & Bell) hanging on coat -->
+      <circle cx="254" cy="470" r="22" fill="url(#metalGrad)" />
+      <circle cx="254" cy="470" r="18" fill="#0A2540" />
+      <circle cx="254" cy="470" r="14" fill="#0284C7" />
+      <circle cx="254" cy="470" r="5" fill="url(#metalGrad)" />
+      <!-- Specular reflection on diaphragm -->
+      <path d="M245 463 A 12 12 0 0 1 263 463" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.8" />
+    </g>
+
+    <!-- RIGHT HAND HOLDING MODERN DIGITAL CLINICAL TABLET -->
+    <g id="digitalTablet" transform="translate(230, 390) rotate(-6)">
+      <!-- Hands / Fingers wrapped around tablet -->
+      <path d="M125 110 C135 110, 145 95, 140 80 C135 70, 120 70, 115 80 Z" fill="url(#skinGrad)" />
+
+      <!-- Tablet Outer Case -->
+      <rect x="0" y="0" width="135" height="180" rx="14" fill="#0F172A" stroke="#334155" stroke-width="3" filter="drop-shadow(6px 14px 18px rgba(0,0,0,0.4))" />
+      <!-- Glowing Medical Screen -->
+      <rect x="8" y="8" width="119" height="164" rx="8" fill="#0A2540" />
+
+      <!-- Vital Signs Readout on Tablet Screen -->
+      <g filter="url(#tabletGlow)">
+        <text x="16" y="28" fill="#2DD4BF" font-family="system-ui, sans-serif" font-size="10" font-weight="700">PATIENT VITALS</text>
+        <text x="88" y="28" fill="#38BDF8" font-family="system-ui, sans-serif" font-size="9" font-weight="700">72 BPM</text>
+
+        <!-- Dynamic ECG Line on Tablet -->
+        <path d="M16 60 L35 60 L42 50 L48 60 L54 60 L58 68 L64 36 L70 82 L76 56 L82 62 L88 60 L112 60" 
+              stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+        
+        <!-- Clinical Metrics Bars -->
+        <rect x="16" y="90" width="95" height="6" rx="3" fill="#1E293B" />
+        <rect x="16" y="90" width="78" height="6" rx="3" fill="#38BDF8" />
+
+        <rect x="16" y="106" width="95" height="6" rx="3" fill="#1E293B" />
+        <rect x="16" y="106" width="88" height="6" rx="3" fill="#2DD4BF" />
+
+        <text x="16" y="132" fill="#E2E8F0" font-family="system-ui, sans-serif" font-size="8" font-weight="600">Fast Care Now • Online</text>
+        <circle cx="106" cy="129" r="3.5" fill="#22C55E" />
+      </g>
+
+      <!-- Thumb gripping the front bezel -->
+      <path d="M-6 80 C-4 65, 12 68, 14 85 C14 100, -2 100, -6 80 Z" fill="url(#skinGrad)" />
+      <ellipse cx="6" cy="82" rx="3" ry="5" fill="#FFFFFF" opacity="0.25" />
+    </g>
+
+    <!-- LEFT HAND RELAXED RESTING AT WAIST -->
+    <g id="leftHand" transform="translate(130, 485)">
+      <path d="M-15 0 C-10 -15, 15 -15, 20 0 C22 15, -10 25, -15 0 Z" fill="url(#skinGrad)" />
+      <!-- Fingers curled cleanly into coat pocket edge -->
+      <ellipse cx="2" cy="6" rx="14" ry="8" fill="url(#skinGrad)" />
+    </g>
+  </g>
+</svg>
