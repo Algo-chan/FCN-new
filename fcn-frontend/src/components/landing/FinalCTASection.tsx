@@ -67,6 +67,20 @@ export const FinalCTASection = () => {
         ))}
       </div>
 
+      {/* Overflowing 3D Medical Tools Background Accents */}
+      <img
+        src="/images/medical/stethoscope.svg"
+        alt=""
+        aria-hidden="true"
+        className="pointer-events-none absolute -top-12 -left-12 z-0 w-52 -rotate-12 select-none opacity-30 drop-shadow-[0_20px_35px_rgba(10,37,64,0.6)] sm:-top-16 sm:-left-16 sm:w-72 md:w-88"
+      />
+      <img
+        src="/images/medical/medical-kit.svg"
+        alt=""
+        aria-hidden="true"
+        className="pointer-events-none absolute -bottom-10 -right-10 z-0 w-56 rotate-12 select-none opacity-40 drop-shadow-[0_25px_45px_rgba(10,37,64,0.65)] sm:-bottom-16 sm:-right-14 sm:w-72 md:w-88"
+      />
+
       <motion.div
         initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}

@@ -268,6 +268,20 @@ const RegisterPage = () => {
             <div key={i} className="medical-cross" style={{ left: `${(i * 9 + 3) % 100}%`, top: `${(i * 7 + 5) % 100}%`, animationDelay: `${i * 0.7}s`, animationDuration: `${4 + (i % 3)}s` }} />
           ))}
         </div>
+
+        {/* Ambient 3D Medical Tools Background Accents */}
+        <img
+          src="/images/medical/stethoscope.svg"
+          alt=""
+          aria-hidden="true"
+          className="pointer-events-none absolute -bottom-16 -right-16 z-0 w-80 rotate-12 select-none opacity-25 drop-shadow-[0_25px_45px_rgba(10,37,64,0.85)]"
+        />
+        <img
+          src="/images/medical/capsules.svg"
+          alt=""
+          aria-hidden="true"
+          className="pointer-events-none absolute top-12 right-12 z-0 w-32 -rotate-25 select-none opacity-30 drop-shadow-[0_15px_30px_rgba(13,148,136,0.35)]"
+        />
         <div className="absolute left-8 top-8 z-10">
           <img
             src="/logo/fcn-logo-full.png"

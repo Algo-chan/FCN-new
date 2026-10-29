@@ -219,9 +219,51 @@ export const HeroSection = () => {
           </motion.div>
         </div>
 
-        {/* Right column — Phone mockup (shown on all sizes; compact on mobile, anchored below CTA) */}
-        <div className="flex flex-1 items-center justify-center">
-          <div ref={phoneRef} className="mx-auto w-56 max-w-xs sm:w-72" style={{ willChange: "transform" }}>
+        {/* Right column — Phone mockup with overflowing 3D medical tools */}
+        <div className="relative flex flex-1 items-center justify-center">
+          {/* Overflowing 3D Stethoscope Behind Phone (bleeds to bottom-right) */}
+          <motion.img
+            src="/images/medical/stethoscope.svg"
+            alt="Medical Stethoscope"
+            aria-hidden="true"
+            initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.85, rotate: 8 }}
+            animate={{
+              opacity: 0.9,
+              scale: 1,
+              rotate: [8, 12, 8],
+              y: [0, -10, 0]
+            }}
+            transition={{
+              opacity: { duration: 0.8, delay: 0.4 },
+              scale: { duration: 0.8, delay: 0.4 },
+              rotate: { duration: 7, repeat: Infinity, ease: "easeInOut" },
+              y: { duration: 5.5, repeat: Infinity, ease: "easeInOut" }
+            }}
+            className="pointer-events-none absolute -bottom-8 -right-8 z-0 w-48 select-none drop-shadow-[0_20px_35px_rgba(10,37,64,0.7)] sm:-bottom-12 sm:-right-14 sm:w-64 md:-bottom-16 md:-right-20 md:w-72 lg:w-80"
+          />
+
+          {/* Overflowing 3D Floating Capsules (bleeds to top-left) */}
+          <motion.img
+            src="/images/medical/capsules.svg"
+            alt="Pharmaceutical Capsules"
+            aria-hidden="true"
+            initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.8, rotate: -20 }}
+            animate={{
+              opacity: 0.95,
+              scale: 1,
+              rotate: [-20, -14, -20],
+              y: [0, 8, 0]
+            }}
+            transition={{
+              opacity: { duration: 0.8, delay: 0.6 },
+              scale: { duration: 0.8, delay: 0.6 },
+              rotate: { duration: 6, repeat: Infinity, ease: "easeInOut" },
+              y: { duration: 5, repeat: Infinity, ease: "easeInOut" }
+            }}
+            className="pointer-events-none absolute -top-6 -left-4 z-20 w-24 select-none drop-shadow-[0_15px_25px_rgba(13,148,136,0.4)] sm:-top-10 sm:-left-10 sm:w-32 md:-top-12 md:-left-14 md:w-36"
+          />
+
+          <div ref={phoneRef} className="relative z-10 mx-auto w-56 max-w-xs sm:w-72" style={{ willChange: "transform" }}>
             <div className="rounded-[2.5rem] border-4 border-gray-600 bg-gray-900 p-3 shadow-2xl">
               <div className="overflow-hidden rounded-[2rem] bg-white dark:bg-[#0D1117]">
                 {/* Phone top bar */}

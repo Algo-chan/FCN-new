@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" fill="none">
+  <defs>
+    <filter id="kitShadow" x="-25%" y="-25%" width="150%" height="150%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="8" dy="16" stdDeviation="14" flood-color="#0A2540" flood-opacity="0.4" />
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#0A7EA4" flood-opacity="0.25" />
+    </filter>
+
+    <linearGradient id="kitBodyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="40%" stop-color="#F1F5F9" />
+      <stop offset="85%" stop-color="#CBD5E1" />
+      <stop offset="100%" stop-color="#94A3B8" />
+    </linearGradient>
+
+    <linearGradient id="kitMetalGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#64748B" />
+      <stop offset="35%" stop-color="#E2E8F0" />
+      <stop offset="60%" stop-color="#FFFFFF" />
+      <stop offset="100%" stop-color="#475569" />
+    </linearGradient>
+
+    <linearGradient id="crossRedGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2DD4BF" />
+      <stop offset="50%" stop-color="#0D9488" />
+      <stop offset="100%" stop-color="#0F766E" />
+    </linearGradient>
+  </defs>
+
+  <g filter="url(#kitShadow)" transform="translate(250, 260) rotate(-8) translate(-250, -260)">
+    <!-- Kit Handle -->
+    <path d="M190 140 C190 90, 310 90, 310 140" stroke="url(#kitMetalGrad)" stroke-width="16" stroke-linecap="round" fill="none" />
+    <path d="M190 140 C190 90, 310 90, 310 140" stroke="#0F172A" stroke-width="4" stroke-linecap="round" fill="none" opacity="0.3" />
+    <!-- Handle Hinges -->
+    <rect x="180" y="130" width="20" height="18" rx="4" fill="url(#kitMetalGrad)" />
+    <rect x="300" y="130" width="20" height="18" rx="4" fill="url(#kitMetalGrad)" />
+
+    <!-- Main Briefcase Body -->
+    <rect x="90" y="140" width="320" height="230" rx="36" fill="url(#kitBodyGrad)" />
+    
+    <!-- Top Lid Bevel Line -->
+    <path d="M92 195 L408 195" stroke="#94A3B8" stroke-width="3" />
+    <path d="M92 197 L408 197" stroke="#FFFFFF" stroke-width="2" opacity="0.8" />
+
+    <!-- Metallic Corner Protectors -->
+    <path d="M90 176 C90 156, 106 140, 126 140 L126 176 Z" fill="url(#kitMetalGrad)" />
+    <path d="M410 176 C410 156, 394 140, 374 140 L374 176 Z" fill="url(#kitMetalGrad)" />
+    <path d="M90 334 C90 354, 106 370, 126 370 L126 334 Z" fill="url(#kitMetalGrad)" />
+    <path d="M410 334 C410 354, 394 370, 374 370 L374 334 Z" fill="url(#kitMetalGrad)" />
+
+    <!-- Center Clasp Latch -->
+    <rect x="230" y="180" width="40" height="32" rx="6" fill="url(#kitMetalGrad)" />
+    <circle cx="250" cy="196" r="5" fill="#334155" />
+
+    <!-- Embossed Medical Cross Badge -->
+    <circle cx="250" cy="275" r="52" fill="#FFFFFF" />
+    <circle cx="250" cy="275" r="48" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="2" />
+    
+    <!-- Medical Cross -->
+    <g transform="translate(250, 275)">
+      <rect x="-10" y="-32" width="20" height="64" rx="5" fill="url(#crossRedGrad)" />
+      <rect x="-32" y="-10" width="64" height="20" rx="5" fill="url(#crossRedGrad)" />
+      <!-- Specular Highlight on Cross -->
+      <path d="M-8 -30 H-2 V-12 H-30 V-8 H-12 V30 H-8 Z" fill="#FFFFFF" opacity="0.3" />
+    </g>
+
+    <!-- Subtle Body Specular Sheen -->
+    <path d="M120 150 Q250 160 380 150" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" opacity="0.7" fill="none" />
+  </g>
+</svg>

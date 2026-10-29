@@ -4,12 +4,42 @@ import { Activity, Brain, ChevronDown, FileHeart, Hospital, Pill, Video } from "
 import { MOTION } from "@/styles/motion";
 
 const features = [
-  { icon: Video, title: "Remote Consultation", body: "Connect with licensed doctors via text, voice, or video — no waiting room required." },
-  { icon: Activity, title: "Nurse Home Visits", body: "Can't make it to a lab? Our nurses come to you for sample collection and vitals recording." },
-  { icon: Pill, title: "E-Prescriptions", body: "Doctors issue digital prescriptions instantly. Scan your QR code at any partner pharmacy." },
-  { icon: Brain, title: "AI Symptom Checker", body: "Describe your symptoms and get instant AI-powered guidance on urgency and next steps." },
-  { icon: FileHeart, title: "Digital Health Records", body: "Your complete medical history, vitals, and prescriptions in one secure place — always accessible." },
-  { icon: Hospital, title: "Hospital Checker", body: "See real-time hospital occupancy before you travel. Know before you go." }
+  {
+    icon: Video,
+    title: "Remote Consultation",
+    body: "Connect with licensed doctors via text, voice, or video — no waiting room required.",
+    bgImage: "/images/medical/stethoscope.svg"
+  },
+  {
+    icon: Activity,
+    title: "Nurse Home Visits",
+    body: "Can't make it to a lab? Our nurses come to you for sample collection and vitals recording.",
+    bgImage: "/images/medical/medical-kit.svg"
+  },
+  {
+    icon: Pill,
+    title: "E-Prescriptions",
+    body: "Doctors issue digital prescriptions instantly. Scan your QR code at any partner pharmacy.",
+    bgImage: "/images/medical/capsules.svg"
+  },
+  {
+    icon: Brain,
+    title: "AI Symptom Checker",
+    body: "Describe your symptoms and get instant AI-powered guidance on urgency and next steps.",
+    bgImage: "/images/medical/ecg-monitor.svg"
+  },
+  {
+    icon: FileHeart,
+    title: "Digital Health Records",
+    body: "Your complete medical history, vitals, and prescriptions in one secure place — always accessible.",
+    bgImage: "/images/medical/prescription-pad.svg"
+  },
+  {
+    icon: Hospital,
+    title: "Hospital Checker",
+    body: "See real-time hospital occupancy before you travel. Know before you go.",
+    bgImage: "/images/medical/medical-kit.svg"
+  }
 ];
 
 export const FeaturesSection = () => {
@@ -114,13 +144,25 @@ export const FeaturesSection = () => {
                 key={f.title}
                 variants={shouldReduceMotion ? undefined : itemVariants}
                 whileHover={shouldReduceMotion ? {} : { y: -8, boxShadow: "0 20px 40px rgba(10,126,164,0.15)" }}
-                className="group rounded-2xl border border-fcn-primary/10 bg-white p-4 transition-shadow dark:bg-white/[0.03] sm:p-6"
+                className="group relative overflow-hidden rounded-2xl border border-fcn-primary/10 bg-white p-4 transition-all duration-300 dark:bg-white/[0.03] sm:p-6"
               >
-                <div className="mb-3 inline-flex rounded-xl bg-gradient-to-br from-fcn-primary/15 to-fcn-accent/15 p-2 sm:mb-4 sm:p-3">
-                  <Icon className="h-5 w-5 text-fcn-primary sm:h-6 sm:w-6" />
+                {/* Overflowing subtle medical tool watermark in bottom-right corner */}
+                {f.bgImage && (
+                  <img
+                    src={f.bgImage}
+                    alt=""
+                    aria-hidden="true"
+                    className="pointer-events-none absolute -bottom-4 -right-4 z-0 h-28 w-28 select-none object-contain opacity-[0.09] transition-all duration-300 group-hover:scale-110 group-hover:opacity-[0.22] dark:opacity-[0.14] dark:group-hover:opacity-[0.26]"
+                  />
+                )}
+
+                <div className="relative z-10">
+                  <div className="mb-3 inline-flex rounded-xl bg-gradient-to-br from-fcn-primary/15 to-fcn-accent/15 p-2 sm:mb-4 sm:p-3">
+                    <Icon className="h-5 w-5 text-fcn-primary sm:h-6 sm:w-6" />
+                  </div>
+                  <h3 className="mb-1 text-sm font-semibold text-fcn-text-light dark:text-white sm:mb-2 sm:text-lg">{f.title}</h3>
+                  <p className="text-xs leading-relaxed text-fcn-text-light/60 dark:text-gray-400 sm:text-sm">{f.body}</p>
                 </div>
-                <h3 className="mb-1 text-sm font-semibold text-fcn-text-light dark:text-white sm:mb-2 sm:text-lg">{f.title}</h3>
-                <p className="text-xs leading-relaxed text-fcn-text-light/60 dark:text-gray-400 sm:text-sm">{f.body}</p>
               </motion.div>
             );
           })}

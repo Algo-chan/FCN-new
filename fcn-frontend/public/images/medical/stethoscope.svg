@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" fill="none">
+  <defs>
+    <!-- Ambient & Drop Shadows -->
+    <filter id="stethShadow" x="-20%" y="-20%" width="150%" height="150%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="8" dy="16" stdDeviation="16" flood-color="#0A2540" flood-opacity="0.45" />
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#0A7EA4" flood-opacity="0.3" />
+    </filter>
+    <filter id="chestPieceGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="12" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+    
+    <!-- Metallic Gradients -->
+    <linearGradient id="chromeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E2E8F0" />
+      <stop offset="25%" stop-color="#FFFFFF" />
+      <stop offset="45%" stop-color="#94A3B8" />
+      <stop offset="70%" stop-color="#CBD5E1" />
+      <stop offset="100%" stop-color="#64748B" />
+    </linearGradient>
+
+    <!-- Rubber Tube Gradient (Medical Teal / Cyan) -->
+    <linearGradient id="tubeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0D9488" />
+      <stop offset="35%" stop-color="#0A7EA4" />
+      <stop offset="70%" stop-color="#064E67" />
+      <stop offset="100%" stop-color="#0F172A" />
+    </linearGradient>
+
+    <!-- Specular Tube Highlight -->
+    <linearGradient id="tubeHighlight" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#2DD4BF" stop-opacity="0.8" />
+      <stop offset="50%" stop-color="#A5F3FC" stop-opacity="0.4" />
+      <stop offset="100%" stop-color="#0A7EA4" stop-opacity="0" />
+    </linearGradient>
+
+    <!-- Chest Piece Diaphragm Gradient -->
+    <radialGradient id="diaphragmGrad" cx="40%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#38BDF8" />
+      <stop offset="30%" stop-color="#0284C7" />
+      <stop offset="70%" stop-color="#0369A1" />
+      <stop offset="100%" stop-color="#075985" />
+    </radialGradient>
+  </defs>
+
+  <!-- Group with Shadow -->
+  <g filter="url(#stethShadow)">
+    <!-- Ear Tubes (Metallic Binaural) -->
+    <!-- Left Earpiece Tube -->
+    <path d="M210 110 C210 180, 240 240, 290 270" stroke="url(#chromeGrad)" stroke-width="14" stroke-linecap="round" fill="none" />
+    <path d="M210 110 C210 180, 240 240, 290 270" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" fill="none" opacity="0.6" />
+
+    <!-- Right Earpiece Tube -->
+    <path d="M370 110 C370 180, 340 240, 290 270" stroke="url(#chromeGrad)" stroke-width="14" stroke-linecap="round" fill="none" />
+    <path d="M370 110 C370 180, 340 240, 290 270" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" fill="none" opacity="0.6" />
+
+    <!-- Binaural Tension Spring Bar -->
+    <path d="M235 190 Q290 205 345 190" stroke="url(#chromeGrad)" stroke-width="7" stroke-linecap="round" fill="none" />
+
+    <!-- Ear Tips -->
+    <!-- Left Ear Tip -->
+    <ellipse cx="210" cy="100" rx="11" ry="14" fill="#0F172A" transform="rotate(-15 210 100)" />
+    <ellipse cx="208" cy="98" rx="5" ry="7" fill="#64748B" opacity="0.6" transform="rotate(-15 208 98)" />
+    <!-- Right Ear Tip -->
+    <ellipse cx="370" cy="100" rx="11" ry="14" fill="#0F172A" transform="rotate(15 370 100)" />
+    <ellipse cx="372" cy="98" rx="5" ry="7" fill="#64748B" opacity="0.6" transform="rotate(15 372 98)" />
+
+    <!-- Metal Stem / Y-Connector Base -->
+    <rect x="282" y="260" width="16" height="30" rx="6" fill="url(#chromeGrad)" />
+
+    <!-- Flexible Acoustic Tubing -->
+    <!-- Lower Loop to Chestpiece -->
+    <path d="M290 285 C290 380, 160 380, 160 460 C160 520, 260 560, 360 500 C450 440, 440 330, 410 320" 
+          stroke="url(#tubeGrad)" stroke-width="22" stroke-linecap="round" fill="none" />
+    
+    <!-- Specular Sheen on Tubing -->
+    <path d="M290 285 C290 380, 160 380, 160 460 C160 520, 260 560, 360 500 C450 440, 440 330, 410 320" 
+          stroke="url(#tubeHighlight)" stroke-width="5" stroke-linecap="round" fill="none" />
+
+    <!-- Chest Piece (Diaphragm & Bell) -->
+    <!-- Connector Stem to Diaphragm -->
+    <path d="M410 320 L425 315" stroke="url(#chromeGrad)" stroke-width="16" stroke-linecap="round" />
+
+    <!-- Outer Chrome Ring -->
+    <g transform="translate(450, 305) rotate(25)">
+      <!-- Outer Metal Bezel -->
+      <circle cx="0" cy="0" r="58" fill="url(#chromeGrad)" />
+      <circle cx="0" cy="0" r="54" fill="#0A2540" />
+      <circle cx="0" cy="0" r="50" fill="url(#chromeGrad)" />
+      
+      <!-- Blue Diaphragm Glass Membrane -->
+      <circle cx="0" cy="0" r="44" fill="url(#diaphragmGrad)" />
+      
+      <!-- Inner Acoustic Center Ring -->
+      <circle cx="0" cy="0" r="14" fill="url(#chromeGrad)" />
+      <circle cx="0" cy="0" r="10" fill="#0284C7" />
+      
+      <!-- Specular Highlight Curve on Diaphragm -->
+      <path d="M-28 -24 A 36 36 0 0 1 28 -24" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" opacity="0.65" fill="none" />
+      <ellipse cx="-12" cy="-20" rx="8" ry="4" fill="#FFFFFF" opacity="0.4" transform="rotate(-15 -12 -20)" />
+
+      <!-- Glowing Cyan Medical Pulse Cross Motif inside Diaphragm -->
+      <path d="M-6 0 H6 M0 -6 V6" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" opacity="0.75" />
+    </g>
+  </g>
+</svg>
