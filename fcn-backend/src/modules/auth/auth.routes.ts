@@ -3,6 +3,7 @@ import passport from "passport";
 import { env } from "../../config/env";
 import { authMiddleware } from "../../middleware/auth.middleware";
 import { redisRateLimit } from "../../middleware/rate-limit.middleware";
+import { uploadFlexibleImageMiddleware } from "../../middleware/upload.middleware";
 import { errorResponse } from "../../utils/response";
 import {
   forgotPasswordController,
@@ -20,7 +21,8 @@ import {
   resetPasswordController,
   sendOTPController,
   verifyOTPController,
-  verifyRegistrationOTPController
+  verifyRegistrationOTPController,
+  uploadRegistrationPhotoController
 } from "./auth.controller";
 
 export const authRoutes = Router();
@@ -29,6 +31,7 @@ authRoutes.post("/register", redisRateLimit({ keyPrefix: "auth-register", maxReq
 authRoutes.post("/register/step1", redisRateLimit({ keyPrefix: "auth-register-step1", maxRequests: 5, windowSeconds: 60 * 60 }), registerStep1Controller);
 authRoutes.post("/register/verify-otp", redisRateLimit({ keyPrefix: "auth-verify-otp", maxRequests: 10, windowSeconds: 60 * 60 }), verifyRegistrationOTPController);
 authRoutes.post("/register/step2", registerStep2Controller);
+authRoutes.post("/register/upload-photo", redisRateLimit({ keyPrefix: "auth-upload-photo", maxRequests: 10, windowSeconds: 60 * 15 }), uploadFlexibleImageMiddleware, uploadRegistrationPhotoController);
 authRoutes.post("/register-google", redisRateLimit({ keyPrefix: "auth-register-google", maxRequests: 5, windowSeconds: 60 * 60 }), registerGoogleController);
 authRoutes.post("/login", redisRateLimit({ keyPrefix: "auth-login", maxRequests: 5, windowSeconds: 15 * 60 }), loginController);
 authRoutes.post("/login/verify-otp", redisRateLimit({ keyPrefix: "auth-login-verify-otp", maxRequests: 5, windowSeconds: 15 * 60 }), loginVerifyOTPController);

@@ -283,3 +283,16 @@ export const resendOTPController = async (req: Request, res: Response, next: Nex
     next(error);
   }
 };
+
+export const uploadRegistrationPhotoController = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    if (!req.file) {
+      throw new AppError("No photo file uploaded", 400, "FILE_REQUIRED");
+    }
+
+    const result = await authService.uploadRegistrationDoctorPhoto(req.file.buffer);
+    successResponse(res, result, 200);
+  } catch (error) {
+    next(error);
+  }
+};

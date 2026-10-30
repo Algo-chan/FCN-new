@@ -1,3 +1,4 @@
+import { AppError } from "../../utils/app-error";
 import type { NextFunction, Request, Response } from "express";
 import { verifyAccessToken } from "../../utils/jwt";
 import { successResponse } from "../../utils/response";
@@ -139,6 +140,26 @@ export async function moderateArticleController(
       input
     );
     successResponse(res, article);
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function uploadArticleImageController(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    if (!req.file) {
+      throw new AppError("No image file uploaded", 400, "FILE_REQUIRED");
+    }
+
+    const result = await articlesService.uploadArticleImage(
+      req.user!.id,
+      req.file.buffer
+    );
+    successResponse(res, result, 200);
   } catch (error) {
     next(error);
   }

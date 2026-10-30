@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { authMiddleware } from "../../middleware/auth.middleware";
 import { requireRole } from "../../middleware/role.guard";
+import { uploadFlexibleImageMiddleware } from "../../middleware/upload.middleware";
 import {
   createArticleController,
   deleteArticleController,
@@ -9,7 +10,8 @@ import {
   getArticlesController,
   getDoctorArticlesController,
   moderateArticleController,
-  updateArticleController
+  updateArticleController,
+  uploadArticleImageController
 } from "./articles.controller";
 
 export const articleRoutes = Router();
@@ -21,6 +23,7 @@ const adminOnly = [authMiddleware, requireRole("super_admin")];
 // --- Public Endpoints & Doctor Scoped Endpoints ---
 // Specific route /my MUST be registered before /:slug
 articleRoutes.get("/my", ...doctorOnly, getDoctorArticlesController);
+articleRoutes.post("/upload-image", ...doctorOnly, uploadFlexibleImageMiddleware, uploadArticleImageController);
 articleRoutes.post("/", ...doctorOnly, createArticleController);
 articleRoutes.put("/:id", ...doctorOnly, updateArticleController);
 articleRoutes.delete("/:id", ...doctorOnly, deleteArticleController);

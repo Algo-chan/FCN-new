@@ -71,6 +71,16 @@ export const authService = {
   registerStep2: (data: Record<string, unknown>) =>
     api.post<ApiResponse<RegisterResponse>>("/auth/register/step2", data),
 
+  uploadDoctorRegistrationPhoto: (file: File) => {
+    const formData = new FormData();
+    formData.append("photo", file);
+    return api.post<ApiResponse<{ photo_url: string; photo_public_id: string }>>(
+      "/auth/register/upload-photo",
+      formData,
+      { headers: { "Content-Type": "multipart/form-data" } }
+    );
+  },
+
   registerGoogle: (data: Record<string, unknown>) =>
     api.post<ApiResponse<RegisterResponse>>("/auth/register-google", data),
 

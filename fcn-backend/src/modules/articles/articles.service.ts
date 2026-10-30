@@ -486,3 +486,11 @@ export async function moderateArticle(
 
   return updated;
 }
+
+export async function uploadArticleImage(
+  doctorId: string,
+  buffer: Buffer
+): Promise<{ url: string; public_id: string }> {
+  const { cloudinaryService } = await import("../../services/cloudinary.service");
+  return cloudinaryService.uploadArticleImage(buffer, `art-${doctorId}`);
+}

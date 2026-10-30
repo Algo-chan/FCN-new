@@ -73,6 +73,8 @@ export class AuthService {
             specialty: data.specialty!,
             years_experience: data.years_experience ?? 0,
             hospital_id,
+            photo_url: data.photo_url || null,
+            photo_public_id: data.photo_public_id || null,
             show_phone: true
           }
         });
@@ -205,6 +207,8 @@ export class AuthService {
             specialty: roleData.specialty!,
             years_experience: roleData.years_experience ?? 0,
             hospital_id,
+            photo_url: roleData.photo_url || null,
+            photo_public_id: roleData.photo_public_id || null,
             show_phone: true
           }
         });
@@ -228,6 +232,15 @@ export class AuthService {
     const safeUser = await this.getMe(user.id);
     const tokens = user.status === "active" ? this.generateTokenPair(user.id, user.role, user.status) : undefined;
     return { user: safeUser, tokens };
+  }
+
+  async uploadRegistrationDoctorPhoto(fileBuffer: Buffer): Promise<{ photo_url: string; photo_public_id: string }> {
+    const { cloudinaryService } = await import("../../services/cloudinary.service");
+    const result = await cloudinaryService.uploadDoctorPhoto(fileBuffer, `reg-${Date.now()}`);
+    return {
+      photo_url: result.url,
+      photo_public_id: result.public_id
+    };
   }
 
   async resendOTP(email: string, purpose: "registration" | "login"): Promise<void> {
@@ -482,6 +495,8 @@ export class AuthService {
     years_experience?: number;
     nursing_license_number?: string;
     coverage_zone?: string;
+    photo_url?: string | null;
+    photo_public_id?: string | null;
   }): Promise<{ user: SafeUser; tokens: AuthTokens }> {
     const existing = await prisma.user.findUnique({ where: { email: data.email } });
     if (existing) {
@@ -530,6 +545,8 @@ export class AuthService {
             specialty: data.specialty!,
             years_experience: data.years_experience ?? 0,
             hospital_id,
+            photo_url: data.photo_url || null,
+            photo_public_id: data.photo_public_id || null,
             show_phone: true
           }
         });

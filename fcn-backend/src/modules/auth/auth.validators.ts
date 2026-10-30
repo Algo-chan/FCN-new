@@ -19,7 +19,9 @@ export const RegisterSchema = z
     hospital_id: z.string().uuid().optional(),
     years_experience: z.coerce.number().int().min(0).optional(),
     nursing_license_number: z.string().trim().optional(),
-    coverage_zone: z.string().trim().optional()
+    coverage_zone: z.string().trim().optional(),
+    photo_url: z.string().url().optional().nullable().or(z.literal("")),
+    photo_public_id: z.string().optional().nullable().or(z.literal(""))
   })
   .superRefine((data, ctx) => {
     if (data.role === "doctor") {
@@ -102,7 +104,9 @@ export const RegisterGoogleSchema = z
     hospital_id: z.string().uuid().optional(),
     years_experience: z.coerce.number().int().min(0).optional(),
     nursing_license_number: z.string().trim().optional(),
-    coverage_zone: z.string().trim().optional()
+    coverage_zone: z.string().trim().optional(),
+    photo_url: z.string().url().optional().nullable().or(z.literal("")),
+    photo_public_id: z.string().optional().nullable().or(z.literal(""))
   })
   .superRefine((data, ctx) => {
     if (data.role === "doctor") {
@@ -153,7 +157,9 @@ export const RegisterStep2Schema = z
     hospital_id: z.string().uuid().optional(),
     years_experience: z.coerce.number().int().min(0).optional(),
     nursing_license_number: z.string().trim().optional(),
-    coverage_zone: z.string().trim().optional()
+    coverage_zone: z.string().trim().optional(),
+    photo_url: z.string().url().optional().nullable().or(z.literal("")),
+    photo_public_id: z.string().optional().nullable().or(z.literal(""))
   })
   .superRefine((data, ctx) => {
     if (data.role === "doctor") {

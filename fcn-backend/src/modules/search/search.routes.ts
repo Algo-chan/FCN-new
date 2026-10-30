@@ -42,7 +42,7 @@ router.get("/", async (req, res, next) => {
           id: true,
           full_name: true,
           doctor_profile: {
-            select: { specialty: true, hospital: { select: { name: true } } }
+            select: { specialty: true, photo_url: true, rating_average: true, rating_count: true, years_experience: true, hospital: { select: { name: true } } }
           }
         },
         take: 10

@@ -20,6 +20,9 @@ interface SearchResult {
     full_name: string;
     doctor_profile: {
       specialty: string;
+      photo_url?: string | null;
+      rating_average?: number | null;
+      years_experience?: number | null;
       hospital: { name: string } | null;
     } | null;
   }[];
@@ -129,12 +132,35 @@ const SearchPage = () => {
           <div className="grid gap-2 sm:grid-cols-2">
             {results.doctors.map((d) => (
               <Link key={d.id} to={`/doctors/${d.id}`}>
-                <Card className="p-4 transition hover:border-fcn-primary/40">
-                  <h3 className="text-sm font-semibold text-fcn-text-light dark:text-fcn-text-dark">Dr. {d.full_name}</h3>
-                  <p className="mt-1 text-xs text-fcn-text-light/60 dark:text-fcn-text-dark/60">
-                    {d.doctor_profile?.specialty}
-                    {d.doctor_profile?.hospital?.name ? ` — ${d.doctor_profile.hospital.name}` : ""}
-                  </p>
+                <Card className="flex items-center gap-3.5 p-3.5 transition hover:border-fcn-primary/40 hover:shadow-md">
+                  <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-full border border-fcn-primary/20 bg-slate-100 dark:bg-slate-800">
+                    {d.doctor_profile?.photo_url ? (
+                      <img
+                        src={d.doctor_profile.photo_url}
+                        alt={d.full_name}
+                        className="h-full w-full object-cover object-top"
+                      />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center font-bold text-fcn-primary text-sm dark:text-fcn-accent">
+                        {d.full_name
+                          .split(" ")
+                          .map((n) => n[0])
+                          .slice(0, 2)
+                          .join("")}
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-sm font-semibold text-fcn-text-light dark:text-fcn-text-dark truncate">
+                      Dr. {d.full_name}
+                    </h3>
+                    <p className="text-xs text-fcn-primary dark:text-fcn-accent font-medium truncate">
+                      {d.doctor_profile?.specialty}
+                    </p>
+                    <p className="mt-0.5 text-[11px] text-fcn-text-light/60 dark:text-fcn-text-dark/60 truncate">
+                      {d.doctor_profile?.hospital?.name || "Dire Dawa Medical Network"}
+                    </p>
+                  </div>
                 </Card>
               </Link>
             ))}

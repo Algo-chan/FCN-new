@@ -44,6 +44,16 @@ export const articleService = {
       .delete<ApiResponse<{ deleted: boolean }>>(`/articles/${id}`)
       .then((r) => r.data.data),
 
+  uploadArticleImage: (file: File) => {
+    const formData = new FormData();
+    formData.append("image", file);
+    return api
+      .post<ApiResponse<{ url: string; public_id: string }>>("/articles/upload-image", formData, {
+        headers: { "Content-Type": "multipart/form-data" }
+      })
+      .then((r) => r.data.data);
+  },
+
   // Super Admin
   getAdminArticles: (params?: ArticleQueryParams) =>
     api

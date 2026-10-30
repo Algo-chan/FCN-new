@@ -15,6 +15,7 @@ import { INSTALL_PROMPT_KEY } from "@/components/pwa/InstallPromptBanner";
 import { Spinner } from "@/components/ui/Spinner";
 import { OTPVerification } from "@/components/auth/OTPVerification";
 import { BrandLogo } from "@/components/common/BrandLogo";
+import { DoctorPhotoUploader } from "@/components/auth/DoctorPhotoUploader";
 
 type Role = "patient" | "doctor" | "nurse" | "rural_health_officer";
 type Phase = "account" | "otp" | "role" | "review";
@@ -33,6 +34,8 @@ interface FormData {
   phone: string;
   nursing_license_number: string;
   coverage_zone: string;
+  photo_url?: string;
+  photo_public_id?: string;
 }
 
 const roleCards = [
@@ -74,7 +77,7 @@ const RegisterPage = () => {
   const [form, setForm] = useState<FormData>({
     full_name: googleName, email: googleEmail, password: "", confirmPassword: "",
     role: null, license_number: "", specialty: "", years_experience: "",
-    hospital_name: "", hospital_id: "", phone: "", nursing_license_number: "", coverage_zone: ""
+    hospital_name: "", hospital_id: "", phone: "", nursing_license_number: "", coverage_zone: "", photo_url: "", photo_public_id: ""
   });
 
   const headlineRef = useRef<HTMLHeadingElement>(null);
@@ -228,6 +231,10 @@ const RegisterPage = () => {
       payload.years_experience = form.years_experience ? parseInt(form.years_experience) : 0;
       payload.hospital_name = form.hospital_name.trim() || undefined;
       payload.phone = form.phone.trim();
+      if (form.photo_url) {
+        payload.photo_url = form.photo_url;
+        payload.photo_public_id = form.photo_public_id;
+      }
     }
     if (form.role === "nurse" || form.role === "rural_health_officer") {
       payload.nursing_license_number = form.nursing_license_number.trim();
@@ -418,7 +425,18 @@ const RegisterPage = () => {
 
                 <AnimatePresence>
                   {form.role === "doctor" && (
-                    <motion.div key="doctor-fields" initial={!shouldReduceMotion ? { height: 0, opacity: 0 } : undefined} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="space-y-3 overflow-hidden">
+                    <motion.div key="doctor-fields" initial={!shouldReduceMotion ? { height: 0, opacity: 0 } : undefined} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="space-y-4 overflow-hidden">
+                      <DoctorPhotoUploader
+                        photoUrl={form.photo_url}
+                        onPhotoUploaded={(url, publicId) => {
+                          update("photo_url", url);
+                          update("photo_public_id", publicId);
+                        }}
+                        onPhotoRemoved={() => {
+                          update("photo_url", "");
+                          update("photo_public_id", "");
+                        }}
+                      />
                       <label className="block"><span className="mb-1 block text-sm font-medium">License number</span><input type="text" value={form.license_number} onChange={(e) => update("license_number", e.target.value)} className="h-11 w-full rounded-md border border-fcn-primary/20 bg-white px-3 text-sm outline-none focus:border-fcn-accent focus:ring-2 focus:ring-fcn-accent/30 dark:bg-fcn-dark" aria-label="License number" />{errors.license_number && <p className="mt-1 text-xs text-fcn-danger">{errors.license_number}</p>}</label>
 
                       <label className="block"><span className="mb-1 block text-sm font-medium">Hospital</span>
@@ -500,6 +518,19 @@ const RegisterPage = () => {
                   <div className="flex justify-between text-sm"><span className="text-fcn-text-light/60 dark:text-fcn-text-dark/60">Role</span><span className="font-medium capitalize">{form.role}</span></div>
                   {form.role === "doctor" && (
                     <>
+                      {form.photo_url && (
+                        <div className="flex items-center gap-3 pb-3 border-b border-fcn-primary/10 dark:border-white/10">
+                          <img
+                            src={form.photo_url}
+                            alt="Doctor preview"
+                            className="h-12 w-12 rounded-full object-cover border-2 border-teal-500 shadow-sm"
+                          />
+                          <div className="text-xs">
+                            <span className="font-semibold text-fcn-text-light dark:text-fcn-text-dark">Profile Photo Attached</span>
+                            <p className="text-fcn-text-light/50 dark:text-fcn-text-dark/50">Ready for doctor directory</p>
+                          </div>
+                        </div>
+                      )}
                       <div className="flex justify-between text-sm"><span className="text-fcn-text-light/60 dark:text-fcn-text-dark/60">License</span><span className="font-medium">{form.license_number}</span></div>
                       <div className="flex justify-between text-sm"><span className="text-fcn-text-light/60 dark:text-fcn-text-dark/60">Specialty</span><span className="font-medium">{form.specialty}</span></div>
                       <div className="flex justify-between text-sm"><span className="text-fcn-text-light/60 dark:text-fcn-text-dark/60">Phone</span><span className="font-medium">{form.phone}</span></div>
