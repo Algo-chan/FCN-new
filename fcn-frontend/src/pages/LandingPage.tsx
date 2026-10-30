@@ -3,6 +3,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useReducedMotion } from "framer-motion";
 import { PageTransition } from "@/components/animations/PageTransition";
+import { LifelineSplashScreen } from "@/components/common/LifelineSplashScreen";
 import { Navbar } from "@/components/landing/Navbar";
 import { HeroSection } from "@/components/landing/HeroSection";
 import { TrustBar } from "@/components/landing/TrustBar";
@@ -37,22 +38,25 @@ const LandingPage = () => {
   }, [shouldReduceMotion]);
 
   return (
-    <PageTransition>
-      <div ref={pageRef} className="min-h-screen bg-fcn-light text-fcn-text-light dark:bg-fcn-dark dark:text-fcn-text-dark">
-        <Navbar />
-        <HeroSection />
-        <TrustBar />
-        <FeaturedDoctorsSection />
-        <FeaturesSection />
-        <HowItWorksSection />
-        <ForHospitalsSection />
-        <ForDoctorsSection />
-        <TestimonialsSection />
-        <FAQSection />
-        <FinalCTASection />
-        <Footer />
-      </div>
-    </PageTransition>
+    <>
+      <LifelineSplashScreen />
+      <PageTransition>
+        <div ref={pageRef} className="min-h-screen bg-fcn-light text-fcn-text-light dark:bg-fcn-dark dark:text-fcn-text-dark">
+          <Navbar />
+          <HeroSection />
+          <TrustBar />
+          <FeaturedDoctorsSection />
+          <FeaturesSection />
+          <HowItWorksSection />
+          <ForHospitalsSection />
+          <ForDoctorsSection />
+          <TestimonialsSection />
+          <FAQSection />
+          <FinalCTASection />
+          <Footer />
+        </div>
+      </PageTransition>
+    </>
   );
 };
 

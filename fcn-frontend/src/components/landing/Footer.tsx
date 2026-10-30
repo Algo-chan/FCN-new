@@ -477,6 +477,18 @@ export const Footer = () => {
               <span>EFDA Rx Verify</span>
               <ExternalLink className="h-3 w-3" />
             </Link>
+            <button
+              type="button"
+              onClick={() => {
+                sessionStorage.removeItem("fcn_splash_shown_v1");
+                window.location.href = "/?splash=1";
+              }}
+              className="inline-flex items-center gap-1 transition text-teal-600 dark:text-teal-400 hover:underline cursor-pointer"
+              title="Replay the medical lifeline intro screen"
+            >
+              <Activity className="h-3 w-3" />
+              <span>Replay Intro</span>
+            </button>
           </div>
 
           <p className="flex items-center gap-1.5 text-xs text-fcn-text-light/50 dark:text-fcn-text-dark/50">
