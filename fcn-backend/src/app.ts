@@ -98,6 +98,7 @@ app.use("/api/v1/instant-consult", instantConsultRoutes);
 app.use("/api/v1/waitlist", waitlistRoutes);
 app.use("/api/v1/articles", articleRoutes);
 app.use("/api/v1/admin/articles", adminArticleRoutes);
+app.use("/api/v1/search", searchRoutes);
 app.use("/search", searchRoutes);
 
 app.use(errorMiddleware);
