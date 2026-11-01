@@ -47,10 +47,10 @@ export const DoctorPublicProfilePage = () => {
   useEffect(() => {
     if (profile) {
       const city = profile.city || profile.hospital_location || "Dire Dawa";
-      document.title = `Dr. ${profile.full_name} - ${profile.specialty} in ${city} | Fast Care Now`;
+      document.title = `Dr. ${profile.full_name} - ${profile.specialty} in ${city} | Fast Care Network`;
     }
     return () => {
-      document.title = "Fast Care Now - Healthcare in Ethiopia";
+      document.title = "Fast Care Network - Healthcare in Ethiopia";
     };
   }, [profile]);
 

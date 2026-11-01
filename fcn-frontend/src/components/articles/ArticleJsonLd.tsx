@@ -9,7 +9,7 @@ export const ArticleJsonLd = ({ article }: ArticleJsonLdProps) => {
   useEffect(() => {
     const authorName = article.author?.user?.full_name
       ? `Dr. ${article.author.user.full_name.replace(/^Dr\.?\s*/i, "")}`
-      : "Fast Care Now Medical Contributor";
+      : "Fast Care Network Medical Contributor";
 
     const schemaData = {
       "@context": "https://schema.org",
@@ -31,13 +31,13 @@ export const ArticleJsonLd = ({ article }: ArticleJsonLdProps) => {
         medicalSpecialty: article.author?.specialty || article.category,
         worksFor: {
           "@type": "MedicalOrganization",
-          name: article.author?.hospital?.name || "Fast Care Now Health Network",
+          name: article.author?.hospital?.name || "Fast Care Network Health Network",
           location: article.author?.hospital?.location || "Ethiopia"
         }
       },
       publisher: {
         "@type": "Organization",
-        name: "Fast Care Now Ethiopia",
+        name: "Fast Care Network Ethiopia",
         url: window.location.origin,
         logo: {
           "@type": "ImageObject",

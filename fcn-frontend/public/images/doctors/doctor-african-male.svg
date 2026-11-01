@@ -81,7 +81,7 @@
     <!-- V-Neck Opening -->
     <path d="M202 240 L225 275 L248 240 Z" fill="url(#maleSkinGrad)" />
 
-    <!-- FAST CARE NOW LANYARD WITH DOCTOR ID -->
+    <!-- FAST CARE NETWORK LANYARD WITH DOCTOR ID -->
     <path d="M214 240 L210 338 L220 338 L218 240 Z" fill="#2DD4BF" />
     <path d="M236 240 L240 338 L230 338 L232 240 Z" fill="#2DD4BF" />
     <rect x="204" y="328" width="42" height="56" rx="5" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5" />

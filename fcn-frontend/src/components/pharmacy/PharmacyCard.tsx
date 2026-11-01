@@ -28,7 +28,7 @@ export const PharmacyCard = ({ pharmacy }: PharmacyCardProps) => {
           <div className="absolute right-3 top-3">
             <Badge variant="success">
               <ShieldCheck className="mr-1 h-3 w-3" />
-              Fast Care Now Partner
+              Fast Care Network Partner
             </Badge>
           </div>
         )}

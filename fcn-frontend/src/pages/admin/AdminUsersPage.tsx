@@ -15,7 +15,7 @@ const AdminUsersPage = () => {
     <div className="space-y-6">
       <PageHeader
         title="User Management"
-        description="Oversee and manage patient, doctor, nurse, and admin accounts across Fast Care Now"
+        description="Oversee and manage patient, doctor, nurse, and admin accounts across Fast Care Network"
         icon={Users}
         iconVariant="indigo"
       />

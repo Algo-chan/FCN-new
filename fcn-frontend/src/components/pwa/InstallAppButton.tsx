@@ -71,7 +71,7 @@ export const InstallAppButton = ({
       icon={<Check className={size === "sm" ? "h-3.5 w-3.5 text-emerald-500" : "h-4 w-4 text-emerald-500"} />}
       onClick={handleClick}
       className={fullWidth ? "w-full" : className}
-      title="Fast Care app is up to date"
+      title="Fast Care Network app is up to date"
     >
       App v{CURRENT_APP_VERSION}
     </Button>

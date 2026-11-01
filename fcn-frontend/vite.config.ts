@@ -34,8 +34,8 @@ export default defineConfig({
         globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"]
 },
       manifest: {
-        name: "Fast Care",
-        short_name: "Fast Care",
+        name: "Fast Care Network",
+        short_name: "Fast Care Network",
         description: "Ethiopia's digital healthcare platform. Book doctors, AI health checks, e-prescriptions. Now live in Dire Dawa.",
         start_url: "/app",
         display: "standalone",

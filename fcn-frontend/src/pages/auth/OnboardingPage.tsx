@@ -671,7 +671,7 @@ const OnboardingPage = () => {
                 You're All Set!
               </h2>
               <p className="text-sm text-slate-500 dark:text-slate-400 font-medium max-w-sm mx-auto leading-relaxed mb-6">
-                Welcome to Fast Care Now. Your health profile has been saved. Taking you to your dashboard...
+                Welcome to Fast Care Network. Your health profile has been saved. Taking you to your dashboard...
               </p>
               <div className="flex items-center justify-center gap-2 text-xs font-bold text-teal-600 dark:text-teal-400">
                 <Sparkles className="w-4 h-4 animate-spin" />

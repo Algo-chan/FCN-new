@@ -5,7 +5,7 @@
 ---
 
 ### Overview & Goal
-Build the on-demand **Instant Consult** flow for Fast Care Now.
+Build the on-demand **Instant Consult** flow for Fast Care Network.
 When a patient taps **"See a Doctor Now"**, rather than browsing directory cards, they immediately enter an on-demand matching flow:
 1. **Screen 1 (`FindingDoctorScreen.tsx`)**: Full-screen modal overlay with breathing stethoscope SVG animation, 4 rotating reassurance messages (4s crossfading), EKG SVG baseline, and haptic vibration.
 2. **Screen 2 (`DoctorFoundScreen.tsx`)**: In-place center transition via `AnimatePresence` revealing the matched doctor card, "Ready now" status, auto-greeting quote, an animated 3-second progress bar, and an optional allergy note input.

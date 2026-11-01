@@ -62,7 +62,7 @@ export const VitalSummaryCard = ({
   const handleShare = () => {
     if (!shareData) return;
     const text = `My latest ${shareData.vitalName}: ${shareData.value} ${shareData.unit} — ${shareData.status}
-Recorded ${shareData.timeAgo} on Fast Care Now`;
+Recorded ${shareData.timeAgo} on Fast Care Network`;
     navigator.clipboard.writeText(text).then(() => {
       toast.success("Copied to clipboard!");
     }).catch(() => {

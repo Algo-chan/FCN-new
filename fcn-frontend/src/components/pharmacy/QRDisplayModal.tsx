@@ -117,12 +117,12 @@ export const QRDisplayModal = ({ prescriptionId, onClose }: QRDisplayModalProps)
 
               <div className="flex items-center justify-center gap-1.5 rounded-lg bg-fcn-success/5 p-2 text-xs text-fcn-success">
                 <span>🔒</span>
-                <span>Cryptographically verified by Fast Care Now &middot; Cannot be forged</span>
+                <span>Cryptographically verified by Fast Care Network &middot; Cannot be forged</span>
               </div>
 
               <div className="border-t border-fcn-primary/10 pt-3 text-center">
                 <p className="text-[10px] text-fcn-text-light/30 dark:text-fcn-text-dark/30">
-                  Fast Care Now &middot; Compassion. Connection. Care.
+                  Fast Care Network &middot; Compassion. Connection. Care.
                 </p>
               </div>
             </motion.div>

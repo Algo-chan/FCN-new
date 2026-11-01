@@ -19,7 +19,7 @@ import { Button } from "@/components/ui/Button";
 
 export const PrivacyPolicyPage = () => {
   useEffect(() => {
-    document.title = "Privacy Policy | Fast Care Now";
+    document.title = "Privacy Policy | Fast Care Network";
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
@@ -43,7 +43,7 @@ export const PrivacyPolicyPage = () => {
         <header className="space-y-4 border-b border-slate-200 dark:border-white/10 pb-8">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-500/10 border border-teal-500/25 text-teal-700 dark:text-teal-300 text-xs font-bold">
             <ShieldCheck className="h-4 w-4" />
-            <span>Fast Care Now • Legal & Medical Privacy</span>
+            <span>Fast Care Network • Legal & Medical Privacy</span>
           </div>
 
           <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-900 dark:text-white">
@@ -51,7 +51,7 @@ export const PrivacyPolicyPage = () => {
           </h1>
 
           <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-3xl leading-relaxed">
-            Fast Care Now is dedicated to protecting your sensitive medical records and personal
+            Fast Care Network is dedicated to protecting your sensitive medical records and personal
             information. We treat your health data with the strictest confidentiality required by
             Ethiopian healthcare ethics and international clinical privacy standards.
           </p>
@@ -112,7 +112,7 @@ export const PrivacyPolicyPage = () => {
               <span>Information We Collect</span>
             </h2>
             <p>
-              When you use the Fast Care Now healthcare platform, we collect information necessary to
+              When you use the Fast Care Network healthcare platform, we collect information necessary to
               provide clinical care, facilitate consultations, and ensure patient safety:
             </p>
             <ul className="list-disc list-inside space-y-2 pl-2 text-slate-600 dark:text-slate-400">
@@ -201,7 +201,7 @@ export const PrivacyPolicyPage = () => {
                 <span>Strict Need-to-Know Clinical Access</span>
               </p>
               <p>
-                Fast Care Now customer support staff and administrative personnel cannot view private
+                Fast Care Network customer support staff and administrative personnel cannot view private
                 consultation dialogue, diagnoses, or sensitive health records. Only the treating doctor
                 and assigned medical team possess clearance to review your medical encounter history.
               </p>
@@ -217,7 +217,7 @@ export const PrivacyPolicyPage = () => {
               <span>Data Retention & Your Patient Rights</span>
             </h2>
             <p>
-              You maintain ownership and agency over your healthcare profile. Under Fast Care Now privacy guidelines, you have the right to:
+              You maintain ownership and agency over your healthcare profile. Under Fast Care Network privacy guidelines, you have the right to:
             </p>
             <ul className="list-disc list-inside space-y-1.5 pl-2 text-slate-600 dark:text-slate-400">
               <li>Access and review your complete digital health records and appointment history at any time.</li>
@@ -236,7 +236,7 @@ export const PrivacyPolicyPage = () => {
               <span>Cookie & Session Storage Policy</span>
             </h2>
             <p>
-              Fast Care Now uses essential local storage and secure HTTP cookies strictly to keep you authenticated,
+              Fast Care Network uses essential local storage and secure HTTP cookies strictly to keep you authenticated,
               remember your preferred language (English or Amharic), and maintain your active appointment state. We do not use third-party tracking cookies or sell your browsing footprint.
             </p>
           </div>
@@ -251,8 +251,8 @@ export const PrivacyPolicyPage = () => {
               If you have any questions regarding your health data privacy or would like to submit a data request, please reach out directly to our compliance officer:
             </p>
             <div className="pt-2 text-sm font-semibold space-y-1 text-slate-800 dark:text-slate-200">
-              <p>Fast Care Now Clinical Operations</p>
-              <p className="text-teal-600 dark:text-teal-400">Email: privacy@fastcarenow.et / hello@fcncare.com</p>
+              <p>Fast Care Network Clinical Operations</p>
+              <p className="text-teal-600 dark:text-teal-400">Email: privacy@fastcarenetwork.et / hello@fcncare.com</p>
               <p className="text-xs text-slate-500">Dire Dawa, Ethiopia</p>
             </div>
           </div>

@@ -20,7 +20,7 @@ import { Button } from "@/components/ui/Button";
 
 export const TermsOfServicePage = () => {
   useEffect(() => {
-    document.title = "Terms of Service | Fast Care Now";
+    document.title = "Terms of Service | Fast Care Network";
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
@@ -44,7 +44,7 @@ export const TermsOfServicePage = () => {
         <header className="space-y-4 border-b border-slate-200 dark:border-white/10 pb-8">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-500/10 border border-teal-500/25 text-teal-700 dark:text-teal-300 text-xs font-bold">
             <Scale className="h-4 w-4" />
-            <span>Fast Care Now • Legal Agreement</span>
+            <span>Fast Care Network • Legal Agreement</span>
           </div>
 
           <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-900 dark:text-white">
@@ -52,7 +52,7 @@ export const TermsOfServicePage = () => {
           </h1>
 
           <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-3xl leading-relaxed">
-            Welcome to Fast Care Now. These Terms of Service govern your access to and use of our
+            Welcome to Fast Care Network. These Terms of Service govern your access to and use of our
             telemedicine and digital healthcare services, doctor directory, AI symptom triage, and pharmacy tools.
           </p>
 
@@ -72,7 +72,7 @@ export const TermsOfServicePage = () => {
             <span>CRITICAL NOTICE: NOT FOR IMMEDIATE MEDICAL EMERGENCIES</span>
           </div>
           <p className="text-xs sm:text-sm leading-relaxed text-rose-800/90 dark:text-rose-300/90">
-            Fast Care Now is an appointment-based digital healthcare and triage platform. It is{" "}
+            Fast Care Network is an appointment-based digital healthcare and triage platform. It is{" "}
             <strong>NOT an emergency response system</strong>. If you or someone in your care is experiencing severe
             chest pain, shortness of breath, sudden weakness, severe bleeding, or other life-threatening symptoms,
             proceed immediately to the nearest hospital emergency room (e.g., <strong>Dil Chora Referral Hospital</strong> in Dire Dawa)
@@ -124,7 +124,7 @@ export const TermsOfServicePage = () => {
               <span>Acceptance & Eligibility</span>
             </h2>
             <p>
-              By accessing Fast Care Now (via website, mobile application, or partner terminal), you confirm that you:
+              By accessing Fast Care Network (via website, mobile application, or partner terminal), you confirm that you:
             </p>
             <ul className="list-disc list-inside space-y-1.5 pl-2 text-slate-600 dark:text-slate-400">
               <li>Are at least 18 years of age or possess legal parental/guardian consent if booking care for a minor.</li>
@@ -168,11 +168,11 @@ export const TermsOfServicePage = () => {
               <span>Telemedicine & Patient Care Relationship</span>
             </h2>
             <p>
-              Fast Care Now provides technology infrastructure connecting patients with independent, licensed medical practitioners:
+              Fast Care Network provides technology infrastructure connecting patients with independent, licensed medical practitioners:
             </p>
             <ul className="list-disc list-inside space-y-1.5 pl-2 text-slate-600 dark:text-slate-400">
               <li>
-                <strong className="text-slate-900 dark:text-white">Independent Medical Judgment:</strong> Consulting physicians exercise their independent professional medical judgment. Fast Care Now does not interfere in diagnostic or therapeutic decisions.
+                <strong className="text-slate-900 dark:text-white">Independent Medical Judgment:</strong> Consulting physicians exercise their independent professional medical judgment. Fast Care Network does not interfere in diagnostic or therapeutic decisions.
               </li>
               <li>
                 <strong className="text-slate-900 dark:text-white">Physical vs Remote Care:</strong> While many ailments can be managed via remote video or audio visits, your doctor may determine that an in-person clinic visit, lab test, or home nurse follow-up is medically required.
@@ -192,7 +192,7 @@ export const TermsOfServicePage = () => {
               <span>Transparent Pricing & Fee Structure</span>
             </h2>
             <p>
-              Fast Care Now displays transparent consultation rates upfront on doctor cards and profile pages.
+              Fast Care Network displays transparent consultation rates upfront on doctor cards and profile pages.
               Patients can review fees before confirming an appointment. All rates are shown in Ethiopian Birr (ETB)
               with zero hidden platform markups.
             </p>
@@ -239,8 +239,8 @@ export const TermsOfServicePage = () => {
               For questions regarding our terms, provider onboarding, or patient rights:
             </p>
             <div className="pt-2 text-sm font-semibold space-y-1 text-slate-800 dark:text-slate-200">
-              <p>Fast Care Now Legal Operations</p>
-              <p className="text-teal-600 dark:text-teal-400">Email: legal@fastcarenow.et / hello@fcncare.com</p>
+              <p>Fast Care Network Legal Operations</p>
+              <p className="text-teal-600 dark:text-teal-400">Email: legal@fastcarenetwork.et / hello@fcncare.com</p>
               <p className="text-xs text-slate-500">Dire Dawa, Ethiopia</p>
             </div>
           </div>

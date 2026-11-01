@@ -33,7 +33,7 @@
 
     <!-- Paper Header Banner -->
     <rect x="95" y="105" width="310" height="42" rx="14" fill="#0A7EA4" />
-    <text x="120" y="132" fill="#FFFFFF" font-family="system-ui, sans-serif" font-size="14" font-weight="700" letter-spacing="1">FAST CARE NOW • Rx</text>
+    <text x="120" y="132" fill="#FFFFFF" font-family="system-ui, sans-serif" font-size="14" font-weight="700" letter-spacing="1">FAST CARE NETWORK • Rx</text>
 
     <!-- Metallic Clip at Top -->
     <path d="M190 70 L310 70 C316 70, 320 74, 320 80 L320 115 L180 115 L180 80 C180 74, 184 70, 190 70 Z" fill="url(#clipMetalGrad)" />

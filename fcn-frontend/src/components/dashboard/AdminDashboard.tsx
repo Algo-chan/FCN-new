@@ -130,7 +130,7 @@ export const AdminDashboard = () => {
     <div className="mx-auto max-w-7xl space-y-6 pb-20 md:pb-8">
       <PageHeader
         title="Executive Control Tower"
-        description="National Fast Care Now healthcare network, clinical capacity, and live telemetry"
+        description="National Fast Care Network healthcare network, clinical capacity, and live telemetry"
         icon={Shield}
         iconVariant="indigo"
         actions={

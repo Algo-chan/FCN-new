@@ -148,7 +148,7 @@ export const InstallPromptBanner = () => {
                 <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-xl border border-teal-500/20 bg-teal-50 p-1 shadow-md dark:border-teal-400/20 dark:bg-teal-950/40">
                   <img
                     src="/fcn-brand/png/icon-192.png"
-                    alt="Fast Care App"
+                    alt="Fast Care Network App"
                     className="h-full w-full object-contain"
                   />
                   {effectiveMode === "update" ? (
@@ -183,10 +183,10 @@ export const InstallPromptBanner = () => {
 
                   <h3 className="mt-1 text-base font-bold text-slate-900 dark:text-white leading-tight">
                     {effectiveMode === "download"
-                      ? "Download the Fast Care App"
+                      ? "Download the Fast Care Network App"
                       : effectiveMode === "update"
-                      ? "Update Fast Care App"
-                      : "Fast Care is Up to Date"}
+                      ? "Update Fast Care Network App"
+                      : "Fast Care Network is Up to Date"}
                   </h3>
                 </div>
               </div>
@@ -207,7 +207,7 @@ export const InstallPromptBanner = () => {
               /* ── DOWNLOAD MODE (Not installed before) ── */
               <div className="relative mt-3">
                 <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                  Fast Care works best as an app on your phone or computer. Install it now for
+                  Fast Care Network works best as an app on your phone or computer. Install it now for
                   instant 1-tap bookings, doctor consultations, and offline e-prescriptions.
                 </p>
 
@@ -294,7 +294,7 @@ export const InstallPromptBanner = () => {
                       <Check className="h-5 w-5" />
                     </div>
                     <p className="text-sm font-bold text-emerald-800 dark:text-emerald-200">
-                      Fast Care Updated to v{CURRENT_APP_VERSION}!
+                      Fast Care Network Updated to v{CURRENT_APP_VERSION}!
                     </p>
                     <p className="text-xs text-emerald-600 dark:text-emerald-300">
                       Reloading with the latest features...
@@ -303,7 +303,7 @@ export const InstallPromptBanner = () => {
                 ) : (
                   <>
                     <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                      A fresh update is ready for your Fast Care app! Update now to enjoy the latest
+                      A fresh update is ready for your Fast Care Network app! Update now to enjoy the latest
                       Dire Dawa doctor rosters, faster booking speed, and enhanced offline medical records.
                     </p>
 
@@ -337,7 +337,7 @@ export const InstallPromptBanner = () => {
                         }
                         onClick={handleUpdateClick}
                       >
-                        {isUpdating ? "Updating Fast Care..." : "Update the App"}
+                        {isUpdating ? "Updating Fast Care Network..." : "Update the App"}
                       </Button>
                       <Button
                         size="sm"
@@ -355,7 +355,7 @@ export const InstallPromptBanner = () => {
               /* ── UP-TO-DATE MODE (Installed and running latest version) ── */
               <div className="relative mt-3">
                 <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                  Your Fast Care app is running the latest clinical version (v{CURRENT_APP_VERSION}).
+                  Your Fast Care Network app is running the latest clinical version (v{CURRENT_APP_VERSION}).
                   All doctor rosters, prescriptions, and offline emergency sync are up to date.
                 </p>
 
@@ -391,7 +391,7 @@ export const InstallPromptBanner = () => {
 
             {/* Quick Testing & State Switcher (Discreet utility footer) */}
             <div className="mt-3 pt-2.5 border-t border-slate-100 dark:border-white/5 flex items-center justify-between text-[10px] text-slate-400">
-              <span className="truncate">Fast Care Health v{CURRENT_APP_VERSION}</span>
+              <span className="truncate">Fast Care Network v{CURRENT_APP_VERSION}</span>
               <div className="flex items-center gap-2">
                 <button
                   type="button"

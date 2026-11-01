@@ -161,7 +161,7 @@ export const PatientDashboard = () => {
           <source srcSet="/images/doctors/doctor-african-female.webp" type="image/webp" />
           <img
             src="/images/doctors/doctor-african-female.png"
-            alt="Dr. Hanna - Fast Care Now"
+            alt="Dr. Hanna - Fast Care Network"
             aria-hidden="true"
             className="block sm:h-60 md:h-72 lg:h-84 w-auto object-contain object-bottom drop-shadow-[0_20px_35px_rgba(4,30,40,0.65)]"
           />

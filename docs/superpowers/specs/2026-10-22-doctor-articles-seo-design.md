@@ -1,7 +1,7 @@
 # Design Specification: Doctor Articles & SEO Publishing System
 
 ## 1. Intent & The "Why"
-Fast Care Now (FCN) aims to establish a zero-cost organic patient acquisition flywheel and elevate physician authority through clinical content marketing:
+Fast Care Network (FCN) aims to establish a zero-cost organic patient acquisition flywheel and elevate physician authority through clinical content marketing:
 1. **Physician Authority**: Verified Ethiopian doctors publish high-quality health guides (e.g., Dr. Sara writes *"Managing Diabetes in Ethiopia"*).
 2. **Search Engine Discovery**: Articles are indexed by Google with structured `MedicalWebPage` metadata. When patients search queries like *"diabetes management Ethiopia"* or *"child fever care Dire Dawa"*, FCN articles rank at the top.
 3. **High-Conversion Booking Loop**: Readers consume the verified article. Throughout their reading session, a **floating doctor pill dock (Option A)** stays anchored at the bottom with Dr. Sara's verified credentials, consultation fee, and a direct **"Book Dr. Sara ➔"** CTA.
@@ -115,7 +115,7 @@ model Article {
   * `PATCH /api/v1/admin/articles/:id/status` — Approve or reject article with feedback.
 
 ### 4.3 SEO & Structured Data Requirements
-* Dynamic `<title>`: `[Article Title] — Dr. [Doctor Name] | Fast Care Now`
+* Dynamic `<title>`: `[Article Title] — Dr. [Doctor Name] | Fast Care Network`
 * Meta Description: `[Article Excerpt]`
 * Canonical URL: `https://fcncare.com/articles/[slug]`
 * JSON-LD:
@@ -133,7 +133,7 @@ model Article {
     },
     "publisher": {
       "@type": "Organization",
-      "name": "Fast Care Now Ethiopia",
+      "name": "Fast Care Network Ethiopia",
       "url": "https://fcncare.com"
     }
   }

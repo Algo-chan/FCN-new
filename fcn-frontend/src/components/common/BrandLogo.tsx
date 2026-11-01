@@ -9,7 +9,7 @@ export interface BrandLogoProps extends React.ImgHTMLAttributes<HTMLImageElement
 }
 
 /**
- * Fast Care Now Brand Logo Component
+ * Fast Care Network Brand Logo Component
  * Built on the unified vector brand kit in /fcn-brand
  *
  * Variants:
@@ -22,7 +22,7 @@ export interface BrandLogoProps extends React.ImgHTMLAttributes<HTMLImageElement
 export const BrandLogo: React.FC<BrandLogoProps> = ({
   variant = "adaptive",
   className = "h-8 w-auto",
-  alt = "Fast Care Now",
+  alt = "Fast Care Network",
   priority = false,
   ...rest
 }) => {

@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to the Fast Care Now (FCN) monorepo are documented here.
+All notable changes to the Fast Care Network (FCN) monorepo are documented here.
 
 ## [Unreleased] — Feature 2.1: Public Doctor Profiles
 

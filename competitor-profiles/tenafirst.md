@@ -2,7 +2,7 @@
 **Analysis Date:** 2026-10-28  
 **Target URLs:** https://www.tenafirst.com/ | https://www.tenafirst.net/  
 **Raw Data Reference:** `competitor-profiles/raw/tenafirst/2026-10-28/scrapes/`  
-**Focus:** Landing Page Architecture, Service Offerings, Patient Journeys & Adaptable Features for Fast Care Now (FCN)
+**Focus:** Landing Page Architecture, Service Offerings, Patient Journeys & Adaptable Features for Fast Care Network (FCN)
 
 ---
 
@@ -18,7 +18,7 @@ A deep reverse-engineering of their production web application revealed that the
 
 From live HTTP headers, JavaScript bundles (`app-8cc86598.js`), and server responses:
 
-| Dimension | TenaFirst Implementation | Fast Care Now (FCN) Architecture | Comparative Advantage |
+| Dimension | TenaFirst Implementation | Fast Care Network (FCN) Architecture | Comparative Advantage |
 | :--- | :--- | :--- | :--- |
 | **Backend Architecture** | Laravel (PHP 8.x) + Inertia.js SSR + MySQL | Node.js / Express + TypeScript + Prisma / MongoDB / PostgreSQL | **FCN** has faster asynchronous event loops, native TypeScript type-safety across stack. |
 | **Frontend Framework** | Vue.js (Inertia.js SPA) + Bootstrap 5 / Tailwind CSS + FontAwesome 6 | React 18 + TypeScript + Vite + Tailwind CSS + Framer Motion + GSAP | **FCN** delivers significantly superior visual polish, 60fps animations, and mobile responsiveness. |
@@ -110,7 +110,7 @@ Provides social proof through transparent network metrics:
 
 ---
 
-## 5. High-Impact Features Recommended for Fast Care Now (FCN)
+## 5. High-Impact Features Recommended for Fast Care Network (FCN)
 
 Based on TenaFirst's highest-converting patterns, here are the concrete features FCN should adapt:
 

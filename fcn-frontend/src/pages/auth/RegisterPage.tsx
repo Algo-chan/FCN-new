@@ -58,8 +58,8 @@ const VITE_API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:5000/api/
 
 const RegisterPage = () => {
   usePageMeta({
-    title: "Register | Fast Care Now",
-    description: "Create your Fast Care Now account as a patient, doctor, nurse, or rural health officer. Join Ethiopia's platform for immediate, reliable healthcare.",
+    title: "Register | Fast Care Network",
+    description: "Create your Fast Care Network account as a patient, doctor, nurse, or rural health officer. Join Ethiopia's platform for immediate, reliable healthcare.",
     canonical: "https://fcncare.com/register"
   });
 
@@ -291,7 +291,7 @@ const RegisterPage = () => {
           className="pointer-events-none absolute top-12 right-12 z-0 w-32 -rotate-25 select-none opacity-30 drop-shadow-[0_15px_30px_rgba(13,148,136,0.35)]"
         />
         <div className="absolute left-8 top-8 z-10">
-          <Link to="/" title="Fast Care Now">
+          <Link to="/" title="Fast Care Network">
             <BrandLogo
               variant="dark"
               className="h-10 w-auto"
@@ -301,7 +301,7 @@ const RegisterPage = () => {
         </div>
         <div className="relative z-10 flex h-full flex-col justify-center px-16 pb-24">
           <h1 ref={headlineRef} className="mb-6 text-5xl font-bold leading-tight text-white">
-            {"Join Fast Care Now Today".split(" ").map((word, i) => (
+            {"Join Fast Care Network Today".split(" ").map((word, i) => (
               <span key={i} className="word mr-3 inline-block opacity-0">{word}</span>
             ))}
           </h1>
@@ -315,7 +315,7 @@ const RegisterPage = () => {
 
           {/* Mobile Logo */}
           <div className="mb-6 flex justify-center md:hidden">
-            <Link to="/" title="Fast Care Now">
+            <Link to="/" title="Fast Care Network">
               <BrandLogo variant="adaptive" className="h-9 w-auto" />
             </Link>
           </div>
@@ -407,7 +407,7 @@ const RegisterPage = () => {
             {phase === "role" && (
               <motion.div key="role" initial={!shouldReduceMotion ? { opacity: 0, x: 40 } : undefined} animate={{ opacity: 1, x: 0 }} exit={!shouldReduceMotion ? { opacity: 0, x: -40 } : undefined} className="space-y-4">
                 <div className="mb-2 text-center">
-                  <h2 className="text-xl font-bold text-fcn-text-light dark:text-fcn-text-dark">I am joining Fast Care Now as...</h2>
+                  <h2 className="text-xl font-bold text-fcn-text-light dark:text-fcn-text-dark">I am joining Fast Care Network as...</h2>
                   <p className="text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">Step 2 of 3 — Select your role</p>
                 </div>
 
@@ -546,7 +546,7 @@ const RegisterPage = () => {
 
                 <label className="flex items-start gap-2 text-sm">
                   <input type="checkbox" checked={agreeTerms} onChange={(e) => setAgreeTerms(e.target.checked)} className="mt-0.5 h-4 w-4 rounded border-fcn-primary/30 text-fcn-primary focus:ring-fcn-accent" />
-                  <span className="text-fcn-text-light/70 dark:text-fcn-text-dark/70">I agree to Fast Care Now Terms of Service and Privacy Policy</span>
+                  <span className="text-fcn-text-light/70 dark:text-fcn-text-dark/70">I agree to Fast Care Network Terms of Service and Privacy Policy</span>
                 </label>
 
                 <div className="flex gap-3">

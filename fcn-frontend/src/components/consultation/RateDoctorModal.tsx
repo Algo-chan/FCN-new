@@ -230,7 +230,7 @@ export const RateDoctorModal: React.FC<RateDoctorModalProps> = ({
 
           {/* Trust Footnote */}
           <p className="text-[11px] text-slate-400 dark:text-slate-500 leading-tight">
-            🛡️ Verified reviews help other patients choose the right care and help dedicated doctors build their clinical reputation on Fast Care Now.
+            🛡️ Verified reviews help other patients choose the right care and help dedicated doctors build their clinical reputation on Fast Care Network.
           </p>
 
           {/* Action Buttons */}

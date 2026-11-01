@@ -114,10 +114,10 @@ const CLINICAL_TRUST_PILLARS = [
 ];
 
 const SOCIALS = [
-  { icon: Facebook, label: "Facebook", href: "https://facebook.com/fastcarenow" },
-  { icon: Twitter, label: "X (Twitter)", href: "https://twitter.com/fastcarenow" },
-  { icon: Instagram, label: "Instagram", href: "https://instagram.com/fastcarenow" },
-  { icon: Linkedin, label: "LinkedIn", href: "https://linkedin.com/company/fastcarenow" },
+  { icon: Facebook, label: "Facebook", href: "https://facebook.com/fastcarenetwork" },
+  { icon: Twitter, label: "X (Twitter)", href: "https://twitter.com/fastcarenetwork" },
+  { icon: Instagram, label: "Instagram", href: "https://instagram.com/fastcarenetwork" },
+  { icon: Linkedin, label: "LinkedIn", href: "https://linkedin.com/company/fastcarenetwork" },
 ];
 
 export const Footer = () => {
@@ -239,7 +239,7 @@ export const Footer = () => {
             </div>
 
             <p className="mt-4 max-w-xl text-sm leading-relaxed text-fcn-text-light/65 dark:text-fcn-text-dark/65">
-              Fast Care Now (FCN) is Eastern Ethiopia&apos;s certified digital healthcare platform.
+              Fast Care Network (FCN) is Eastern Ethiopia&apos;s certified digital healthcare platform.
               We connect patients with verified Ethiopian physicians, Dil Chora Referral Hospital,
               and licensed community pharmacies for virtual triage, e-prescriptions, and continuous clinical care.
             </p>
@@ -322,7 +322,7 @@ export const Footer = () => {
               {subscribed ? (
                 <div className="mt-4 rounded-lg bg-emerald-500/10 border border-emerald-500/20 p-3 text-xs text-emerald-700 dark:text-emerald-300 flex items-center gap-2">
                   <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-500" />
-                  <span>You are subscribed to Fast Care Now Clinical Bulletins.</span>
+                  <span>You are subscribed to Fast Care Network Clinical Bulletins.</span>
                 </div>
               ) : (
                 <form onSubmit={handleSubscribe} className="mt-4">
@@ -429,7 +429,7 @@ export const Footer = () => {
         <div className="rounded-xl border border-fcn-primary/10 bg-fcn-primary/[0.03] dark:border-white/5 dark:bg-white/[0.015] p-4 text-xs leading-relaxed text-fcn-text-light/60 dark:text-fcn-text-dark/60">
           <p>
             <strong className="text-fcn-text-light/80 dark:text-white/80">Clinical & Legal Disclaimer: </strong>
-            Fast Care Now (FCN) is a digital healthcare platform providing appointment scheduling, telemedicine consultations,
+            Fast Care Network (FCN) is a digital healthcare platform providing appointment scheduling, telemedicine consultations,
             and digital prescription management in partnership with certified medical providers. The AI clinical triage assistant
             is designed for clinical decision support and health guidance, and is not a substitute for professional in-person medical
             diagnosis or emergency care. In case of acute trauma or life-threatening symptoms, immediately dial{" "}
@@ -443,7 +443,7 @@ export const Footer = () => {
         {/* ── 7. Bottom Legal Bar & Accreditation ────────────────────── */}
         <div className="mt-8 flex flex-col items-center justify-between gap-4 border-t border-fcn-primary/10 pt-6 text-xs text-fcn-text-light/50 dark:border-white/10 dark:text-fcn-text-dark/50 md:flex-row">
           <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 text-center sm:text-left">
-            <p>&copy; {year} Fast Care Now Health Technologies PLC. All rights reserved.</p>
+            <p>&copy; {year} Fast Care Network Health Technologies PLC. All rights reserved.</p>
             <span className="hidden sm:inline text-fcn-text-light/30 dark:text-fcn-text-dark/30">&bull;</span>
             <span className="inline-flex items-center gap-1.5 text-fcn-primary dark:text-fcn-accent font-medium">
               <FileCheck className="h-3.5 w-3.5" />

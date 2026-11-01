@@ -125,7 +125,7 @@ export const TopBar = () => {
           <Link
             to="/dashboard"
             className="flex items-center gap-1 md:hidden select-none group py-1 active:scale-95 transition-transform"
-            aria-label="Fast Care Dashboard"
+            aria-label="Fast Care Network Dashboard"
           >
             <span className="text-lg font-black tracking-tight leading-none font-sans">
               <span className="text-slate-900 dark:text-white group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">

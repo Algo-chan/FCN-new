@@ -24,8 +24,8 @@ const avatarColors = ["#0A7EA4", "#2DD4BF", "#10B981"];
 
 const LoginPage = () => {
   usePageMeta({
-    title: "Login | Fast Care Now",
-    description: "Sign in to your Fast Care Now account to book appointments, access remote consultations, and manage your healthcare.",
+    title: "Login | Fast Care Network",
+    description: "Sign in to your Fast Care Network account to book appointments, access remote consultations, and manage your healthcare.",
     canonical: "https://fcncare.com/login"
   });
 
@@ -219,7 +219,7 @@ const LoginPage = () => {
         />
 
         <div className="absolute left-8 top-8 z-10">
-          <Link to="/" title="Fast Care Now">
+          <Link to="/" title="Fast Care Network">
             <BrandLogo
               variant="dark"
               className="h-10 w-auto"
@@ -267,12 +267,12 @@ const LoginPage = () => {
               <motion.div key="login-form" initial={!shouldReduceMotion ? { opacity: 0, x: 20 } : undefined} animate={{ opacity: 1, x: 0 }} exit={!shouldReduceMotion ? { opacity: 0, x: -20 } : undefined}>
                 <div className="mb-8 text-center">
                   <div className="mb-4 flex justify-center md:hidden">
-                    <Link to="/" title="Fast Care Now">
+                    <Link to="/" title="Fast Care Network">
                       <BrandLogo variant="adaptive" className="h-9 w-auto" />
                     </Link>
                   </div>
                   <h2 className="text-2xl font-bold text-fcn-text-light dark:text-fcn-text-dark">Welcome back</h2>
-                  <p className="mt-1 text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">Sign in to your Fast Care Now account</p>
+                  <p className="mt-1 text-sm text-fcn-text-light/60 dark:text-fcn-text-dark/60">Sign in to your Fast Care Network account</p>
                 </div>
 
                 <a href={`${VITE_API_URL}/auth/google`} className="flex w-full items-center justify-center gap-3 rounded-md border border-fcn-primary/20 bg-white px-4 py-2.5 text-sm font-medium text-fcn-text-light shadow-sm transition hover:shadow-md dark:bg-fcn-dark dark:text-fcn-text-dark">

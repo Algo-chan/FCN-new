@@ -48,14 +48,14 @@ if (messaging) {
   onBackgroundMessage(messaging, (payload) => {
     const { title, body, icon } = payload.notification ?? {};
 
-    self.registration.showNotification(title ?? "Fast Care Now", {
+    self.registration.showNotification(title ?? "Fast Care Network", {
       body: body ?? "",
       icon: icon ?? "/fcn-brand/png/icon-192.png",
       badge: "/fcn-brand/png/favicon-48.png",
       vibrate: [200, 100, 200],
       data: payload.data,
       actions: [
-        { action: "open", title: "Open Fast Care Now" },
+        { action: "open", title: "Open Fast Care Network" },
         { action: "close", title: "Dismiss" }
       ]
     } as NotificationOptions);

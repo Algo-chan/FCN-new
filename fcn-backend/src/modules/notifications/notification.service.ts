@@ -11,13 +11,13 @@ const RATE_LIMIT_MAX = 50;
 const RATE_LIMIT_WINDOW = 3600;
 
 const SAFE_MESSAGE_FALLBACKS: Record<string, string> = {
-  vital_alert: 'New health alert — Open Fast Care Now to view',
-  ai_assessment_complete: 'Your AI assessment is ready — Open Fast Care Now to view',
-  lab_results_ready: 'Lab results are ready — Open Fast Care Now to view',
-  new_message: 'New message received — Open Fast Care Now to view',
-  prescription_issued: 'A prescription has been issued — Open Fast Care Now to view',
-  medication_reminder: 'Medication reminder — Open Fast Care Now to view',
-  refill_due: 'Refill is due — Open Fast Care Now to view',
+  vital_alert: 'New health alert — Open Fast Care Network to view',
+  ai_assessment_complete: 'Your AI assessment is ready — Open Fast Care Network to view',
+  lab_results_ready: 'Lab results are ready — Open Fast Care Network to view',
+  new_message: 'New message received — Open Fast Care Network to view',
+  prescription_issued: 'A prescription has been issued — Open Fast Care Network to view',
+  medication_reminder: 'Medication reminder — Open Fast Care Network to view',
+  refill_due: 'Refill is due — Open Fast Care Network to view',
 };
 
 interface SendNotificationParams {
@@ -219,7 +219,7 @@ class NotificationService {
 
     try {
       await twilioClient.messages.create({
-        body: `Fast Care Now: ${message}`,
+        body: `Fast Care Network: ${message}`,
         from: env.TWILIO_PHONE_NUMBER,
         to: user.phone
       });
@@ -341,7 +341,7 @@ class NotificationService {
     await this.send({
       userId,
       type: 'welcome',
-      title: '\u{1F3E5} Welcome to Fast Care Now!',
+      title: '\u{1F3E5} Welcome to Fast Care Network!',
       message: `Welcome ${userName}! Healthcare Without Walls starts here. Book your first consultation today.`,
       actionUrl: '/dashboard',
       channels: ['in_app', 'fcm'],

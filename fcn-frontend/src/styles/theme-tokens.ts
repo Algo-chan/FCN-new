@@ -1,5 +1,5 @@
 /**
- * Fast Care Now (FCN) Theme Tokens
+ * Fast Care Network (FCN) Theme Tokens
  *
  * Defines the design system foundation for both Light & Dark modes,
  * including clinical health colors, energetic mobile fitness-inspired gradients,

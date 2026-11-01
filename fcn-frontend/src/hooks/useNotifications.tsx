@@ -63,7 +63,7 @@ export function useNotifications() {
     });
 
     onForegroundMessage((payload) => {
-      const title = payload.notification?.title || "Fast Care Now";
+      const title = payload.notification?.title || "Fast Care Network";
       const body = payload.notification?.body || "";
 
       toast.custom(

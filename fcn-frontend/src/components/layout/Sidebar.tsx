@@ -324,7 +324,7 @@ export const Sidebar = () => {
             />
           </Link>
         ) : (
-          <Link to="/" className="mx-auto flex items-center justify-center hover:opacity-90 transition-opacity" title="Fast Care Now">
+          <Link to="/" className="mx-auto flex items-center justify-center hover:opacity-90 transition-opacity" title="Fast Care Network">
             <BrandLogo
               variant="icon"
               className="h-8 w-8 object-contain"

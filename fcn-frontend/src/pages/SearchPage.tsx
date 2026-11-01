@@ -79,7 +79,7 @@ const SearchPage = () => {
           onChange={(e) => setInput(e.target.value)}
           placeholder="Search doctors, hospitals, specialties..."
           className="h-12 w-full rounded-lg border border-fcn-primary/20 bg-white pl-10 pr-4 text-sm text-fcn-text-light outline-none focus:border-fcn-accent focus:ring-2 focus:ring-fcn-accent/30 dark:bg-fcn-dark dark:text-fcn-text-dark"
-          aria-label="Search Fast Care Now"
+          aria-label="Search Fast Care Network"
         />
       </div>
 
