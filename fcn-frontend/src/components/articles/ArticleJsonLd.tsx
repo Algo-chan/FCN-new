@@ -41,7 +41,7 @@ export const ArticleJsonLd = ({ article }: ArticleJsonLdProps) => {
         url: window.location.origin,
         logo: {
           "@type": "ImageObject",
-          url: `${window.location.origin}/logo.png`
+          url: `${window.location.origin}/fcn-brand/png/logo-light@2x.png`
         }
       },
       about: {

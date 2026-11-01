@@ -1,12 +1,14 @@
 import { create } from "zustand";
 
+export type AppPromptMode = "download" | "update" | "up-to-date";
+
 interface AppPromptState {
   isOpen: boolean;
-  manualOverrideMode: "download" | "update" | null;
-  open: (mode?: "download" | "update") => void;
+  manualOverrideMode: AppPromptMode | null;
+  open: (mode?: AppPromptMode) => void;
   close: () => void;
   toggle: () => void;
-  setOverrideMode: (mode: "download" | "update" | null) => void;
+  setOverrideMode: (mode: AppPromptMode | null) => void;
 }
 
 export const useAppPromptStore = create<AppPromptState>((set) => ({

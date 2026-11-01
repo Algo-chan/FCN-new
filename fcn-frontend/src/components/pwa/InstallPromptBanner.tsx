@@ -11,8 +11,8 @@ import {
   WifiOff,
   BellRing,
   ShieldCheck,
-  ChevronRight,
-  Smartphone
+  Smartphone,
+  Check
 } from "lucide-react";
 import { usePWAInstall, CURRENT_APP_VERSION } from "@/hooks/usePWAInstall";
 import { useAppPromptStore } from "@/store/app-prompt.store";
@@ -20,45 +20,61 @@ import { Button } from "@/components/ui/Button";
 
 export const INSTALL_PROMPT_KEY = "fcn_show_install_prompt";
 const DISMISS_SESSION_KEY = "fcn_app_popup_dismissed_session";
-const DISMISS_PERMANENT_KEY = "fcn_install_prompt_dismissed";
 
 export const InstallPromptBanner = () => {
   const {
     canInstall,
     isDownloadedBefore,
+    hasUpdate,
     isIOS,
     isUpdating,
     promptInstall,
     markAsDownloaded,
     resetDownloadedState,
+    checkForUpdates,
     updateApp
   } = usePWAInstall();
 
   const { isOpen, manualOverrideMode, open, close, setOverrideMode } = useAppPromptStore();
   const [showIOSGuide, setShowIOSGuide] = useState(false);
   const [updateSuccess, setUpdateSuccess] = useState(false);
+  const [checkingUpdate, setCheckingUpdate] = useState(false);
+  const [checkedMessage, setCheckedMessage] = useState<string | null>(null);
 
-  // Determine effective mode: manual override takes precedence if set, otherwise real device state
-  const effectiveMode: "download" | "update" =
-    manualOverrideMode ?? (isDownloadedBefore ? "update" : "download");
+  // Determine effective mode: manual override takes precedence, otherwise determine from download and update state
+  const effectiveMode: "download" | "update" | "up-to-date" =
+    manualOverrideMode ??
+    (!isDownloadedBefore
+      ? "download"
+      : hasUpdate
+      ? "update"
+      : "up-to-date");
 
-  // On page visit: trigger pop up after a smooth 1.2-second delay if not dismissed in this session
+  // On page visit: trigger pop up after 1.2s delay ONLY IF not dismissed in session AND (needs download OR has real update)
   useEffect(() => {
     const isDismissedInSession = sessionStorage.getItem(DISMISS_SESSION_KEY) === "1";
     const forceFromRegister = localStorage.getItem(INSTALL_PROMPT_KEY) === "1";
 
-    if (!isDismissedInSession || forceFromRegister) {
+    // Auto-open on visit if:
+    // 1. Not dismissed this session, AND
+    // 2. Either app is not downloaded yet (download prompt), OR has an actual pending update!
+    // (If already downloaded and already on latest version, do not pop up automatically!)
+    const shouldAutoOpen = !isDismissedInSession && (!isDownloadedBefore || hasUpdate);
+
+    if (shouldAutoOpen || forceFromRegister) {
       const timer = setTimeout(() => {
         open();
       }, 1200);
       return () => clearTimeout(timer);
     }
-  }, [open]);
+  }, [open, isDownloadedBefore, hasUpdate]);
 
   const handleDismiss = () => {
     sessionStorage.setItem(DISMISS_SESSION_KEY, "1");
     localStorage.removeItem(INSTALL_PROMPT_KEY);
     setShowIOSGuide(false);
+    setUpdateSuccess(false);
+    setCheckedMessage(null);
     close();
   };
 
@@ -75,7 +91,6 @@ export const InstallPromptBanner = () => {
         handleDismiss();
       }
     } else {
-      // Fallback guide if browser prompt is not immediately available
       setShowIOSGuide(true);
     }
   };
@@ -84,6 +99,24 @@ export const InstallPromptBanner = () => {
     const success = await updateApp();
     if (success) {
       setUpdateSuccess(true);
+      sessionStorage.setItem(DISMISS_SESSION_KEY, "1");
+
+      // Smoothly close popup and reload page so user experiences the fresh update
+      setTimeout(() => {
+        close();
+        window.location.reload();
+      }, 950);
+    }
+  };
+
+  const handleManualCheckUpdates = async () => {
+    setCheckingUpdate(true);
+    setCheckedMessage(null);
+    const needed = await checkForUpdates();
+    setCheckingUpdate(false);
+    if (!needed) {
+      setCheckedMessage("Your app is on the latest version!");
+      setTimeout(() => setCheckedMessage(null), 3500);
     }
   };
 
@@ -133,7 +166,7 @@ export const InstallPromptBanner = () => {
                       <Sparkles className="h-3 w-3 text-teal-600 dark:text-teal-400" />
                       Official App • Dire Dawa
                     </span>
-                  ) : (
+                  ) : effectiveMode === "update" ? (
                     <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/60">
                       <span className="relative flex h-2 w-2">
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
@@ -141,12 +174,19 @@ export const InstallPromptBanner = () => {
                       </span>
                       Update Available • v{CURRENT_APP_VERSION}
                     </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-teal-50 px-2.5 py-0.5 text-[11px] font-semibold text-teal-700 dark:bg-teal-950/60 dark:text-teal-300 border border-teal-200/60 dark:border-teal-800/60">
+                      <Check className="h-3 w-3 text-teal-600 dark:text-teal-400" />
+                      Up to Date • v{CURRENT_APP_VERSION}
+                    </span>
                   )}
 
                   <h3 className="mt-1 text-base font-bold text-slate-900 dark:text-white leading-tight">
                     {effectiveMode === "download"
                       ? "Download the Fast Care App"
-                      : "Update Fast Care App"}
+                      : effectiveMode === "update"
+                      ? "Update Fast Care App"
+                      : "Fast Care is Up to Date"}
                   </h3>
                 </div>
               </div>
@@ -155,7 +195,7 @@ export const InstallPromptBanner = () => {
               <button
                 type="button"
                 onClick={handleDismiss}
-                className="shrink-0 rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-white/10 dark:hover:text-slate-200 transition-colors"
+                className="shrink-0 rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-white/10 dark:hover:text-slate-200 transition-colors cursor-pointer"
                 aria-label="Close"
               >
                 <X className="h-4 w-4" />
@@ -164,6 +204,7 @@ export const InstallPromptBanner = () => {
 
             {/* Description & Features */}
             {effectiveMode === "download" ? (
+              /* ── DOWNLOAD MODE (Not installed before) ── */
               <div className="relative mt-3">
                 <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
                   Fast Care works best as an app on your phone or computer. Install it now for
@@ -192,7 +233,7 @@ export const InstallPromptBanner = () => {
                   </div>
                 </div>
 
-                {/* iOS or Manual Step-by-Step Instructions */}
+                {/* iOS Step-by-Step Instructions */}
                 {showIOSGuide ? (
                   <div className="mt-3 rounded-xl border border-teal-500/20 bg-teal-50/90 p-3 text-xs text-slate-700 dark:bg-slate-800/90 dark:text-slate-200 space-y-2">
                     <p className="font-semibold text-teal-800 dark:text-teal-300 flex items-center gap-1.5">
@@ -244,49 +285,97 @@ export const InstallPromptBanner = () => {
                   </div>
                 )}
               </div>
+            ) : effectiveMode === "update" ? (
+              /* ── UPDATE MODE (App is downloaded & has pending update) ── */
+              <div className="relative mt-3">
+                {updateSuccess ? (
+                  <div className="rounded-xl bg-emerald-50 p-3 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 text-center space-y-1.5">
+                    <div className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-emerald-500 text-white">
+                      <Check className="h-5 w-5" />
+                    </div>
+                    <p className="text-sm font-bold text-emerald-800 dark:text-emerald-200">
+                      Fast Care Updated to v{CURRENT_APP_VERSION}!
+                    </p>
+                    <p className="text-xs text-emerald-600 dark:text-emerald-300">
+                      Reloading with the latest features...
+                    </p>
+                  </div>
+                ) : (
+                  <>
+                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                      A fresh update is ready for your Fast Care app! Update now to enjoy the latest
+                      Dire Dawa doctor rosters, faster booking speed, and enhanced offline medical records.
+                    </p>
+
+                    {/* What's new bullet points */}
+                    <div className="mt-3 space-y-1.5 rounded-xl bg-slate-50 p-2.5 dark:bg-white/5 text-xs text-slate-700 dark:text-slate-200">
+                      <div className="flex items-start gap-2">
+                        <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-emerald-500 mt-0.5" />
+                        <span>Updated Dire Dawa clinic & specialist schedules</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <Zap className="h-3.5 w-3.5 shrink-0 text-teal-500 mt-0.5" />
+                        <span>Faster appointment booking & consultation chats</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-cyan-500 mt-0.5" />
+                        <span>Enhanced offline prescription and receipt caching</span>
+                      </div>
+                    </div>
+
+                    {/* Update Action Buttons */}
+                    <div className="mt-4 flex items-center gap-2">
+                      <Button
+                        size="sm"
+                        variant="action"
+                        disabled={isUpdating}
+                        className="flex-1 font-bold text-white bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 shadow-md shadow-emerald-950/20"
+                        icon={
+                          <RefreshCw
+                            className={`h-4 w-4 ${isUpdating ? "animate-spin" : ""}`}
+                          />
+                        }
+                        onClick={handleUpdateClick}
+                      >
+                        {isUpdating ? "Updating Fast Care..." : "Update the App"}
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="text-xs text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-100"
+                        onClick={handleDismiss}
+                      >
+                        Remind Later
+                      </Button>
+                    </div>
+                  </>
+                )}
+              </div>
             ) : (
-              /* UPDATE VIEW (App is downloaded before) */
+              /* ── UP-TO-DATE MODE (Installed and running latest version) ── */
               <div className="relative mt-3">
                 <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                  A fresh update is ready for your Fast Care app! Update now to enjoy the latest
-                  Dire Dawa doctor rosters, faster booking speed, and enhanced offline medical records.
+                  Your Fast Care app is running the latest clinical version (v{CURRENT_APP_VERSION}).
+                  All doctor rosters, prescriptions, and offline emergency sync are up to date.
                 </p>
 
-                {/* What's new bullet points */}
-                <div className="mt-3 space-y-1.5 rounded-xl bg-slate-50 p-2.5 dark:bg-white/5 text-xs text-slate-700 dark:text-slate-200">
-                  <div className="flex items-start gap-2">
-                    <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-emerald-500 mt-0.5" />
-                    <span>Updated Dire Dawa clinic & specialist schedules</span>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <Zap className="h-3.5 w-3.5 shrink-0 text-teal-500 mt-0.5" />
-                    <span>Faster appointment booking & consultation chats</span>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-cyan-500 mt-0.5" />
-                    <span>Enhanced offline prescription and receipt caching</span>
-                  </div>
-                </div>
+                {checkedMessage && (
+                  <p className="mt-2 text-xs font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                    <CheckCircle2 className="h-3.5 w-3.5" />
+                    {checkedMessage}
+                  </p>
+                )}
 
-                {/* Update Action Buttons */}
                 <div className="mt-4 flex items-center gap-2">
                   <Button
                     size="sm"
-                    variant="action"
-                    disabled={isUpdating || updateSuccess}
-                    className="flex-1 font-bold text-white bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 shadow-md shadow-emerald-950/20"
-                    icon={
-                      <RefreshCw
-                        className={`h-4 w-4 ${isUpdating ? "animate-spin" : ""}`}
-                      />
-                    }
-                    onClick={handleUpdateClick}
+                    variant="primary"
+                    disabled={checkingUpdate}
+                    className="flex-1 font-semibold text-xs"
+                    icon={<RefreshCw className={`h-3.5 w-3.5 ${checkingUpdate ? "animate-spin" : ""}`} />}
+                    onClick={handleManualCheckUpdates}
                   >
-                    {isUpdating
-                      ? "Updating Fast Care..."
-                      : updateSuccess
-                      ? "Updated! Refreshing..."
-                      : "Update the App"}
+                    {checkingUpdate ? "Checking..." : "Check for Updates"}
                   </Button>
                   <Button
                     size="sm"
@@ -294,7 +383,7 @@ export const InstallPromptBanner = () => {
                     className="text-xs text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-100"
                     onClick={handleDismiss}
                   >
-                    Remind Later
+                    Close
                   </Button>
                 </div>
               </div>
@@ -307,19 +396,25 @@ export const InstallPromptBanner = () => {
                 <button
                   type="button"
                   onClick={() =>
-                    setOverrideMode(effectiveMode === "download" ? "update" : "download")
+                    setOverrideMode(
+                      effectiveMode === "download"
+                        ? "update"
+                        : effectiveMode === "update"
+                        ? "up-to-date"
+                        : "download"
+                    )
                   }
-                  className="hover:text-teal-600 dark:hover:text-teal-400 underline decoration-dotted"
-                  title="Preview other mode for testing"
+                  className="hover:text-teal-600 dark:hover:text-teal-400 underline decoration-dotted cursor-pointer"
+                  title="Cycle between modes for preview/testing"
                 >
-                  Test: Switch to {effectiveMode === "download" ? "Update" : "Download"}
+                  Test Mode: {effectiveMode}
                 </button>
                 <span>•</span>
                 <button
                   type="button"
                   onClick={resetDownloadedState}
-                  className="hover:text-rose-500 underline decoration-dotted"
-                  title="Clear downloaded flag in local storage"
+                  className="hover:text-rose-500 underline decoration-dotted cursor-pointer"
+                  title="Clear downloaded flags in local storage"
                 >
                   Reset
                 </button>
