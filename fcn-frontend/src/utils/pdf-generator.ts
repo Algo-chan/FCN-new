@@ -88,7 +88,7 @@ export async function generateVitalsReport(data: VitalsPDFData): Promise<void> {
   // Load logo
   let logoBase64 = "";
   try {
-    const response = await fetch("/assets/logo-fast-care-now.png");
+    const response = await fetch("/fcn-brand/png/logo-light@2x.png");
     const blob = await response.blob();
     logoBase64 = await new Promise<string>((resolve) => {
       const reader = new FileReader();
