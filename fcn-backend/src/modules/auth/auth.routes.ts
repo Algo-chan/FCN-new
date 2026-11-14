@@ -1,10 +1,12 @@
 import { Router } from "express";
 import passport from "passport";
 import { env } from "../../config/env";
+import { resolveGoogleCallbackUrl } from "../../config/passport";
 import { authMiddleware } from "../../middleware/auth.middleware";
 import { redisRateLimit } from "../../middleware/rate-limit.middleware";
 import { uploadFlexibleImageMiddleware } from "../../middleware/upload.middleware";
 import { errorResponse } from "../../utils/response";
+import { logger } from "../../utils/logger";
 import {
   forgotPasswordController,
   getMeController,
@@ -47,14 +49,17 @@ authRoutes.get("/google", (req, res, next) => {
     errorResponse(res, "Google OAuth is not configured", 503, "GOOGLE_NOT_CONFIGURED");
     return;
   }
-  passport.authenticate("google", { scope: ["profile", "email"] })(req, res, next);
+  const callbackURL = resolveGoogleCallbackUrl(req);
+  logger.info(`Initiating Google OAuth redirect with callbackURL: ${callbackURL}`);
+  passport.authenticate("google", { scope: ["profile", "email"], callbackURL } as any)(req, res, next);
 });
 authRoutes.get(
   "/google/callback",
   (req, res, next) => {
     const isLocal = req.headers.host?.includes("localhost") || req.headers.host?.includes("127.0.0.1");
     const failureRedirect = `${isLocal ? "http://localhost:5173" : env.FRONTEND_URL}/login?error=google`;
-    passport.authenticate("google", { failureRedirect })(req, res, next);
+    const callbackURL = resolveGoogleCallbackUrl(req);
+    passport.authenticate("google", { failureRedirect, callbackURL } as any)(req, res, next);
   },
   googleCallbackController
 );
